@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>7b93f3b8-989a-4a3a-92b3-4d75d1a84f3c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>T_Rax_Controller.py</StartupFile>
+    <StartupFile>T_Rax_ROI_selector.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,9 +22,16 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Helper.py" />
+    <Compile Include="playing.py" />
+    <Compile Include="SPE_module.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Trax_Test.py" />
     <Compile Include="T_Rax_Controller.py" />
     <Compile Include="T_Rax_Data.py" />
-    <Compile Include="T_Rax_View.py" />
+    <Compile Include="T_Rax_Main_View.py" />
+    <Compile Include="T_Rax_ROI_selector.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>
