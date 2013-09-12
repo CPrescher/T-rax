@@ -286,19 +286,27 @@ class TRaxROIGraphPanel(wx.Panel):
         self.img = self.axes.imshow(self.data.img_data, cmap = 'hot', aspect = 'auto')
         self.axes.set_ylim([0,len(self.data.img_data) - 1])
         self.axes.set_xlim([0,len(self.data.img_data[0]) - 1])
+        self.img_background = self.canvas.copy_from_bbox(self.axes.bbox)
+        self.canvas.draw()
 
     def update_img(self, img_data):
         self.img.set_data(img_data)
         self.img.autoscale()
         self.canvas.draw()
 
-
     def plot_rects(self):
         self.us_rect = self.create_rect(self.data.roi_data.us_roi, 'US')
-        self.ds_rect = self.create_rect(self.data.roi_data.ds_roi, 'DS')        
+        self.ds_rect = self.create_rect(self.data.roi_data.ds_roi, 'DS')    
+        self.update_rects() 
+
+    def update_rects(self):                                    
+        self.canvas.restore_region(self.img_background)
+        self.axes.draw_artist(self.us_rect.rect)
+        self.axes.draw_artist(self.ds_rect.rect)
+        self.canvas.blit(self.axes.bbox)
 
     def create_rect(self, roi, flag):
-        return ResizeableRectangle(self.axes, self.canvas, wx.Rect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), flag)
+        return ResizeableRectangle(self, self.axes, self.canvas,wx.Rect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), flag)
 
     def connect_rects(self):
         self.us_rect.connect()
@@ -309,10 +317,13 @@ class TRaxROIGraphPanel(wx.Panel):
         self.ds_rect.set_roi(self.data.roi_data.ds_roi)
 
 class ResizeableRectangle:
-    def __init__(self, axes, canvas, init_rect, flag):       
+    lock = None #only one rect can be animated at a time
+    def __init__(self, parent, axes, canvas, init_rect, flag):       
         self.flag = flag
-        self.axes = axes
+        self.parent = parent
+        self.axes=axes
         self.canvas = canvas
+        
         self.xlim = self.axes.get_xlim()
         self.ylim = self.axes.get_ylim()
 
@@ -342,6 +353,7 @@ class ResizeableRectangle:
 
     def on_press(self, event):
         if event.inaxes != self.rect.axes: return
+        if ResizeableRectangle.lock is not None: return
         y_click = event.ydata
         x_click = event.xdata
         y0 = self.rect.get_y()
@@ -353,6 +365,8 @@ class ResizeableRectangle:
             x_click >= x0 - self.x_border and x_click <= x0 + width + self.x_border:
             self.set_mode(x_click, y_click, x0, y0, width, height)
             self.press = x0, y0, x_click, y_click
+            #self.rect.set_animated(True)
+            ResizeableRectangle.lock = self
 
     def set_mode(self,x_click, y_click, x0, y0, width, height):
         if y_click >= y0 + self.y_border and y_click <= y0 + height - self.y_border and \
@@ -427,7 +441,7 @@ class ResizeableRectangle:
             self.rect.set_x(int(self.rect.get_x() + width - new_width))
 
         self.send_message()
-        self.rect.figure.canvas.draw()
+        self.parent.update_rects()
 
     def send_message(self):
         pub.sendMessage(self.flag + " ROI GRAPH CHANGED", 
@@ -438,6 +452,8 @@ class ResizeableRectangle:
         'on release we reset the press data'
         self.press = None
         self.mode = None
+        ResizeableRectangle.lock = None
+        self.rect.set_animated(False)
 
 
         

@@ -1,99 +1,98 @@
-import wx
+# draggable rectangle with the animation blit techniques; see
+# http://www.scipy.org/Cookbook/Matplotlib/Animations
+import numpy as np
+import matplotlib.pyplot as plt
 
-########################################################################
-class TabPanel(wx.Panel):
-    """
-    This will be the first notebook tab
-    """
-    #----------------------------------------------------------------------
-    def __init__(self, parent):
-        """"""
+class DraggableRectangle:
+    lock = None  # only one can be animated at a time
+    def __init__(self, rect):
+        self.rect = rect
+        self.press = None
+        self.background = None
 
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
+    def connect(self):
+        'connect to all the events we need'
+        self.cidpress = self.rect.figure.canvas.mpl_connect(
+            'button_press_event', self.on_press)
+        self.cidrelease = self.rect.figure.canvas.mpl_connect(
+            'button_release_event', self.on_release)
+        self.cidmotion = self.rect.figure.canvas.mpl_connect(
+            'motion_notify_event', self.on_motion)
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        txtOne = wx.TextCtrl(self, wx.ID_ANY, "")
-        txtTwo = wx.TextCtrl(self, wx.ID_ANY, "")
+    def on_press(self, event):
+        'on button press we will see if the mouse is over us and store some data'
+        if event.inaxes != self.rect.axes: return
+        if DraggableRectangle.lock is not None: return
+        contains, attrd = self.rect.contains(event)
+        if not contains: return
+        print 'event contains', self.rect.xy
+        x0, y0 = self.rect.xy
+        self.press = x0, y0, event.xdata, event.ydata
+        DraggableRectangle.lock = self
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(txtOne, 0, wx.ALL, 5)
-        sizer.Add(txtTwo, 0, wx.ALL, 5)
+        # draw everything but the selected rectangle and store the pixel buffer
+        canvas = self.rect.figure.canvas
+        axes = self.rect.axes
+        #self.rect.set_animated(True)
+        canvas.draw()
+        self.background = canvas.copy_from_bbox(self.rect.axes.bbox)
 
-        self.SetSizer(sizer)
+        # now redraw just the rectangle
+        axes.draw_artist(self.rect)
 
+        # and blit just the redrawn area
+        canvas.blit(axes.bbox)
 
-########################################################################
-class NotebookDemo(wx.Notebook):
-    """
-    Notebook class
-    """
+    def on_motion(self, event):
+        'on motion we will move the rect if the mouse is over us'
+        if DraggableRectangle.lock is not self:
+            return
+        if event.inaxes != self.rect.axes: return
+        x0, y0, xpress, ypress = self.press
+        dx = event.xdata - xpress
+        dy = event.ydata - ypress
+        self.rect.set_x(x0+dx)
+        self.rect.set_y(y0+dy)
 
-    #----------------------------------------------------------------------
-    def __init__(self, parent):
-        wx.Notebook.__init__(self, parent, id=wx.ID_ANY, style=
-                             wx.BK_DEFAULT
-                             #wx.BK_TOP 
-                             #wx.BK_BOTTOM
-                             #wx.BK_LEFT
-                             #wx.BK_RIGHT
-                             )
+        canvas = self.rect.figure.canvas
+        axes = self.rect.axes
+        # restore the background region
+        canvas.restore_region(self.background)
 
-        # Create the first tab and add it to the notebook
-        tabOne = TabPanel(self)
-        tabOne.SetBackgroundColour("Gray")
-        self.AddPage(tabOne, "TabOne")
+        # redraw just the current rectangle
+        axes.draw_artist(self.rect)
 
-       
-        # Create and add the second tab
-        tabTwo = TabPanel(self)
-        self.AddPage(tabTwo, "TabTwo")
+        # blit just the redrawn area
+        canvas.blit(axes.bbox)
 
-        # Create and add the third tab
-        self.AddPage(TabPanel(self), "TabThree")
+    def on_release(self, event):
+        'on release we reset the press data'
+        if DraggableRectangle.lock is not self:
+            return
 
-        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
-        self.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.OnPageChanging)
+        self.press = None
+        DraggableRectangle.lock = None
 
-    def OnPageChanged(self, event):
-        old = event.GetOldSelection()
-        new = event.GetSelection()
-        sel = self.GetSelection()
-        print 'OnPageChanged,  old:%d, new:%d, sel:%d\n' % (old, new, sel)
-        event.Skip()
+        # turn off the rect animation property and reset the background
+        self.rect.set_animated(False)
+        self.background = None
 
-    def OnPageChanging(self, event):
-        old = event.GetOldSelection()
-        new = event.GetSelection()
-        sel = self.GetSelection()
-        print 'OnPageChanging, old:%d, new:%d, sel:%d\n' % (old, new, sel)
-        event.Skip()
+        # redraw the full figure
+        self.rect.figure.canvas.draw()
 
+    def disconnect(self):
+        'disconnect all the stored connection ids'
+        self.rect.figure.canvas.mpl_disconnect(self.cidpress)
+        self.rect.figure.canvas.mpl_disconnect(self.cidrelease)
+        self.rect.figure.canvas.mpl_disconnect(self.cidmotion)
 
-########################################################################
-class DemoFrame(wx.Frame):
-    """
-    Frame that holds all other widgets
-    """
+fig = plt.figure()
+ax = fig.add_subplot(111)
+rects = ax.bar(range(10), 20*np.random.rand(10))
+drs = []
+for rect in rects:
+    dr = DraggableRectangle(rect)
+    dr.connect()
+    drs.append(dr)
 
-    #----------------------------------------------------------------------
-    def __init__(self):
-        """Constructor"""
-        wx.Frame.__init__(self, None, wx.ID_ANY,
-                          "Notebook Tutorial",
-                          size=(600,400)
-                          )
-        panel = wx.Panel(self)
-
-        notebook = NotebookDemo(panel)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(notebook, 1, wx.ALL|wx.EXPAND, 5)
-        panel.SetSizer(sizer)
-        self.Layout()
-
-        self.Show()
-
-#----------------------------------------------------------------------
-if __name__ == "__main__":
-    app = wx.PySimpleApp()
-    frame = DemoFrame()
-    app.MainLoop()
+plt.show()
