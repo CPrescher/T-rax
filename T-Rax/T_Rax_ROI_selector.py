@@ -39,6 +39,7 @@ ROIData(ds_limits, us_limits):
 
 import wx
 import matplotlib as mpl
+import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from SPE_module import SPE_File
@@ -117,8 +118,7 @@ class TRaxROIController():
         self.view.Destroy()
         pub.unsubscribe(self.ds_roi_graph_changed, "DS ROI GRAPH CHANGED")
         pub.unsubscribe(self.us_roi_graph_changed, "US ROI GRAPH CHANGED")
-        pub.unsubscribe(self.ds_roi_changed, "DS ROI CHANGED")
-        pub.unsubscribe(self.us_roi_changed, "US ROI CHANGED")
+        pub.unsubscribe(self.roi_changed, "ROI CHANGED")
         pub.unsubscribe(self.exp_data_changed, "EXP DATA CHANGED")
         pub.sendMessage("ROI VIEW CLOSED")
         del self
@@ -171,8 +171,12 @@ class TRaxROIControlPanel(wx.Panel):
         self.SetSizer(self.main_sizer)
 
     def update_rois(self):
-        self.ds_roi_box.update_roi(self.data.roi_data.ds_roi)
-        self.us_roi_box.update_roi(self.data.roi_data.us_roi)
+        ds_txt_roi=self.data.roi_data.ds_roi.get_list()
+        us_txt_roi=self.data.roi_data.us_roi.get_list()
+        ds_txt_roi[2:]=self.data.get_wavelength(ds_txt_roi[2:])
+        us_txt_roi[2:]=self.data.get_wavelength(us_txt_roi[2:])
+        self.ds_roi_box.update_roi(ds_txt_roi)
+        self.us_roi_box.update_roi(us_txt_roi)
 
 class ROIEditBox():
     def __init__(self, parent, roi, label):
@@ -221,10 +225,10 @@ class ROIEditBox():
         return [y_min, y_max, x_min, x_max]
 
     def update_roi(self, roi):
-        self.x_min_txt.SetLabel(str(int(roi.x_min)))
-        self.x_max_txt.SetLabel(str(int(roi.x_max)))
-        self.y_min_txt.SetLabel(str(int(roi.y_min)))
-        self.y_max_txt.SetLabel(str(int(roi.y_max)))
+        self.x_min_txt.SetLabel(str(int(roi[2])))
+        self.x_max_txt.SetLabel(str(int(roi[3])))
+        self.y_min_txt.SetLabel(str(int(roi[0])))
+        self.y_max_txt.SetLabel(str(int(roi[1])))
 
 class TRaxROIGraphPanel(wx.Panel):
     def __init__(self, parent, data):
@@ -262,15 +266,15 @@ class TRaxROIGraphPanel(wx.Panel):
         self.redraw_figure()
 
     def redraw_figure(self):
-        self.figure.tight_layout(None, 1.2, None, None)
+        self.figure.tight_layout(None, 0.4, None, None)
         self.canvas.draw()
 
     def on_mouse_move(self, event):
         x_coord = event.xdata
         y_coord = event.ydata
         if x_coord <> None:
-            self.status_bar.SetStatusText(u'x: %(x).0F y: %(y).0F \N{GREEK SMALL LETTER LAMDA}: %(lambda).0F nm' \
-                               % {'x':x_coord, 'y':y_coord, 'lambda':self.data.get_wavelength(int(x_coord))})
+            self.status_bar.SetStatusText(u'x: %(x).0F y: %(y).0F' \
+                               % {'x':self.data.get_wavelength(int(x_coord)), 'y':y_coord})
         else:
             self.status_bar.SetStatusText('')
 
@@ -281,6 +285,17 @@ class TRaxROIGraphPanel(wx.Panel):
         self.axes.set_xlim([0,len(self.data.img_data[0]) - 1])
         self.img_background = self.canvas.copy_from_bbox(self.axes.bbox)
         self.canvas.draw()
+        self.create_wavelength_x_axis()
+
+    def create_wavelength_x_axis(self):
+        xlimits = self.data.get_limits()
+        xlimits = np.ceil(xlimits / 50.0) * 50
+        xtick_num = np.arange(xlimits[0],xlimits[1],50)
+        xtick_pos = self.data.calculate_ind(xtick_num)
+        self.axes.set_xticks(xtick_pos)
+        self.axes.set_xticklabels((map(int,xtick_num)))
+        self.axes.set_xlabel("$\lambda$ $(nm)$")
+        self.redraw_figure()
 
     def update_img(self, img_data):
         self.img.set_data(img_data)
@@ -314,7 +329,7 @@ class ResizeableRectangle:
     def __init__(self, parent, axes, canvas, init_rect, flag):       
         self.flag = flag
         self.parent = parent
-        self.axes=axes
+        self.axes = axes
         self.canvas = canvas
         
         self.xlim = self.axes.get_xlim()

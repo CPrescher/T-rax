@@ -2,6 +2,7 @@ from wx.lib.pubsub import Publisher as pub
 from SPE_module import SPE_File
 import os.path
 import numpy as np
+import scipy
 
 class TraxData(object):
     def __init__(self):
@@ -41,7 +42,23 @@ class TraxData(object):
         return np.array(spec)
 
     def get_wavelength(self,channel):
-        return self.x_whole_spectrum[channel]
+        if isinstance(channel,list):
+            result=[]
+            for c in channel:
+                result.append(self.x_whole_spectrum[c])
+            return np.array(result)
+        else:
+            return self.x_whole_spectrum[channel]
+
+    def calculate_ind(self, wavelength):
+        result=[]
+        for w in wavelength:
+            base_ind= max(max(np.where(self.x_whole_spectrum<=w)))
+            result.append((w-self.x_whole_spectrum[base_ind])/  \
+                (self.x_whole_spectrum[base_ind+1]-self.x_whole_spectrum[base_ind]) \
+                +base_ind)
+        return np.array(result)
+
 
     def load_next_file(self):
         new_file_name = self._file_base_str + '_' + str(self._file_number + 1) + '.SPE'
@@ -75,7 +92,10 @@ class TraxData(object):
         return self.x, self.y_whole_spectrum
 
     def save_roi_data(self):
-        np.savetxt('roi_data.txt', self.roi_data.get_roi_data(), delimiter=',', fmt='%.0f')         
+        np.savetxt('roi_data.txt', self.roi_data.get_roi_data(), delimiter=',', fmt='%.0f')     
+        
+    def get_limits(self):
+        return np.array([min(self.x_whole_spectrum), max(self.x_whole_spectrum)])
 
 
 class ROI():
@@ -119,9 +139,6 @@ class ROIData():
         data=[self.ds_roi.get_list()]
         data.append(self.us_roi.get_list())
         return data
-
-    def update_ds_roi(ds_limits):
-        self.ds_
 
     def set_ds_roi(self, ds_limits):
         self.ds_roi = ROI(ds_limits)
