@@ -6,6 +6,10 @@
 *.user
 *.sln.docstates
 
+*.pyc
+roi_data.txt
+
+
 # Build results
 
 [Dd]ebug/
@@ -152,5 +156,3 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
-
-*.pyc

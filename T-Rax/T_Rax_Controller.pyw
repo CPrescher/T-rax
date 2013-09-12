@@ -59,7 +59,7 @@ class TraxMainViewController(object):
     def spectra_changed(self, message):
         ds_x,ds_y=message.data.get_ds_spectrum()
         us_x,us_y=message.data.get_us_spectrum()
-        self.main_view.graph_panel.update_graph(ds_x,ds_y, ds_x, ds_y)
+        self.main_view.graph_panel.update_graph(ds_x,ds_y, us_x, us_y)
 
     def close_window_click(self, event):
         self.main_view.Destroy()
