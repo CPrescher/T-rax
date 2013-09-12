@@ -16,7 +16,7 @@ class SPE_File(object):
 
     def _read_parameter(self):
         self._read_size()
-        self._read_date_time()
+        #self._read_date_time()
         self._read_x_calibration_and_exposure_time()
         self._read_datatype()
 
@@ -35,37 +35,41 @@ class SPE_File(object):
         self.xml_offset = self._read_at(678,1,np.long)        
         if self.xml_offset == [0]: #means that there is no XML present, hence it is a pre 3.0 version of the SPE
                               #file
-            self.x_calibration = self._read_calibration_from_header()
-            self.exp_time = self._read_exposure_from_header()
+            self._read_calibration_from_header()
+            self._read_exposure_from_header()
         else:
-            self.dom = self._create_dom_from_xml()
-            self.x_calibration = self._read_calibration_from_dom()
-            self.exp_time = self._read_exposure_from_dom(dom)
+            self._get_xml_string()
+            self._create_dom_from_xml()
+            self._read_calibration_from_dom()
+            self._read_exposure_from_dom()
 
     def _read_calibration_from_header(self):
         x_polynocoeff = self._read_at(3263,6,np.double)
         x_val = np.arange(self._xdim) + 1
-        x_calibration = polyval(x_val, x_polynocoeff)
-        return x_calibration
+        self.x_calibration = polyval(x_val, x_polynocoeff)
 
     def _read_exposure_from_header(self):
-        return self._read_at(10,1,np.float)
+        self.exp_time = self._read_at(10,1,np.float)
 
     def _create_dom_from_xml(self):
-        return parseString(self.xml_string)
+        self.dom = parseString(self.xml_string)
 
     def _get_xml_string(self):
         xml_size = self.get_file_size() - self.xml_offset
-        xml = self._read_at(xml_offset, xml_size, np.byte)
-        self.xml_string=''.join([chr(i) for i in xml])
+        xml = self._read_at(self.xml_offset, xml_size, np.byte)
+        self.xml_string = ''.join([chr(i) for i in xml])
+        fid = open('spe_xml.xml', 'w')
+        for line in self.xml_string:
+            fid.write(line)
+        fid.close()
 
-    def _read_calibration_from_dom(self,dom):
-        spe_format = dom.childNodes[0]
+    def _read_calibration_from_dom(self):
+        spe_format = self.dom.childNodes[0]
         calibrations = spe_format.getElementsByTagName('Calibrations')[0]
         wavelengthmapping = calibrations.getElementsByTagName('WavelengthMapping')[0]
         wavelengths = wavelengthmapping.getElementsByTagName('Wavelength')[0]
         wavelength_values = wavelengths.childNodes[0]
-        return [float(i) for i in wavelength_values.toxml().split(',')]
+        self.x_calibration = [float(i) for i in wavelength_values.toxml().split(',')]
  
     def _read_exposure_from_dom(self):
         spe_format = self.dom.childNodes[0]
@@ -90,7 +94,6 @@ class SPE_File(object):
 
     def _read_datatype(self):
         self._data_type = self._read_at(108, 1, np.uint16)[0]
-        print self._data_type
 
     def _read_at(self, pos, size, ntype):
         self._fid.seek(pos)
@@ -116,8 +119,8 @@ class SPE_File(object):
         return self.file_size
 
     def get_mesh_grid(self):
-        y=np.arange(self._ydim)+1
-        x=self.x_calibration
+        y = np.arange(self._ydim) + 1
+        x = self.x_calibration
         return np.meshgrid(x,y)
 
 
@@ -131,8 +134,8 @@ if __name__ == "__main__":
    
     img_fig = figure()
     imgplot = plt.imshow(img, aspect='auto', cmap='gray')
-    y_spec=img.sum(axis=0)
-    x_spec=spe_file.x_calibration
+    y_spec = img.sum(axis=0)
+    x_spec = spe_file.x_calibration
 
     figure()
     plt.plot(x_spec,y_spec)

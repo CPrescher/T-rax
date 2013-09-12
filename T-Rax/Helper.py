@@ -1,3 +1,11 @@
+'''
+This helper file includes a validator for checking that only numbers are inserted into specfic text boxes
+Two validators possible:
+IntValidator - allowing only 1,2,3,4,5,6,7,8,9,0
+FloatValidator - allowing only 1,2,3,4,5,6,7,8,9,0 and ',' and '.'
+
+'''
+
 
 import wx
 import string
