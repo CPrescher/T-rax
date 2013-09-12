@@ -68,8 +68,7 @@ class TRaxROIController():
 
         pub.subscribe(self.ds_roi_graph_changed, "DS ROI GRAPH CHANGED")
         pub.subscribe(self.us_roi_graph_changed, "US ROI GRAPH CHANGED")
-        pub.subscribe(self.ds_roi_changed, "DS ROI CHANGED")
-        pub.subscribe(self.us_roi_changed, "US ROI CHANGED")
+        pub.subscribe(self.roi_changed, "ROI CHANGED")
         pub.subscribe(self.exp_data_changed, "EXP DATA CHANGED")
 
         self.view.control_panel.ok_button.Bind(wx.EVT_BUTTON, self.ok_btn_click)
@@ -90,13 +89,7 @@ class TRaxROIController():
     def us_roi_graph_changed(self, event):
         self.data.roi_data.set_us_roi(event.data)
 
-    def ds_roi_changed(self, event):
-        roi_data = event.data.roi_data
-        self.view.control_panel.update_rois()
-        self.view.graph_panel.set_rois()
-    
-    def us_roi_changed(self,event):
-        roi_data = event.data.roi_data
+    def roi_changed(self, event):
         self.view.control_panel.update_rois()
         self.view.graph_panel.set_rois()
 

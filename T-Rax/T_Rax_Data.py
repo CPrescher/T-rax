@@ -36,7 +36,7 @@ class TraxData(object):
         for x_ind in range(roi.x_min,roi.x_max+1):
             spec_val=0
             for y_ind in range(roi.y_min,roi.y_max+1):
-                spec_val=self.img_data[y_ind][x_ind]    
+                spec_val+=self.img_data[y_ind][x_ind]    
             spec.append(spec_val)
         return np.array(spec)
 
@@ -120,16 +120,17 @@ class ROIData():
         data.append(self.us_roi.get_list())
         return data
 
+    def update_ds_roi(ds_limits):
+        self.ds_
+
     def set_ds_roi(self, ds_limits):
         self.ds_roi = ROI(ds_limits)
         self.us_roi.set_x_limit(ds_limits[2:])
         self.parent.calc_spectra()
-        pub.sendMessage("DS ROI CHANGED", self.parent)
-        pub.sendMessage("US ROI CHANGED", self.parent)
+        pub.sendMessage("ROI CHANGED", self.parent)
 
     def set_us_roi(self, us_limits):
         self.us_roi = ROI(us_limits)
         self.ds_roi.set_x_limit(us_limits[2:])
         self.parent.calc_spectra()
-        pub.sendMessage("US ROI CHANGED", self.parent)
-        pub.sendMessage("DS ROI CHANGED", self.parent)
+        pub.sendMessage("ROI CHANGED", self.parent)

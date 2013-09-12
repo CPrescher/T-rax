@@ -20,8 +20,7 @@ class TraxMainViewController(object):
         self.controls.exp_previous_btn.Bind(wx.EVT_BUTTON, self.load_previous_data)
         self.controls.roi_setup_btn.Bind(wx.EVT_BUTTON, self.roi_setup_btn_click)
         pub.subscribe(self.data_changed, "EXP DATA CHANGED")
-        pub.subscribe(self.ds_roi_changed, "DS ROI CHANGED")
-        pub.subscribe(self.us_roi_changed, "US ROI CHANGED")
+        pub.subscribe(self.spectra_changed, "ROI CHANGED")
         pub.subscribe(self.unload_roi_view, "ROI VIEW CLOSED")
         self.main_view.Bind(wx.EVT_CLOSE, self.close_window_click)
 
@@ -57,13 +56,10 @@ class TraxMainViewController(object):
         self.main_view.graph_panel.redraw_figure()
         self.controls.exp_file_lbl.SetLabel(data.file_name.split('\\')[-1])
 
-    def ds_roi_changed(self, message):
-        x,y=message.data.get_ds_spectrum()
-        self.main_view.graph_panel.update_ds_graph(x,y)
-    
-    def us_roi_changed(self, message):
-        x,y=message.data.get_us_spectrum()
-        self.main_view.graph_panel.update_us_graph(x,y)
+    def spectra_changed(self, message):
+        ds_x,ds_y=message.data.get_ds_spectrum()
+        us_x,us_y=message.data.get_us_spectrum()
+        self.main_view.graph_panel.update_graph(ds_x,ds_y, ds_x, ds_y)
 
     def close_window_click(self, event):
         self.main_view.Destroy()
