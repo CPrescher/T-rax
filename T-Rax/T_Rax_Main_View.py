@@ -8,10 +8,13 @@ mpl.rc('xtick', color='white')
 mpl.rc('ytick', color='white')
 mpl.rc('figure', facecolor='black', edgecolor='black')
 
+import numpy as np
+import random
 from matplotlib.figure import Figure
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from Helper import IntValidator   
+from T_Rax_Data import black_body_function, Spectrum, FitSpectrum
 
 #text font parameter:
 class TraxMainWindow(wx.Frame):
@@ -244,6 +247,9 @@ class TraxMainGraphPanel(wx.Panel):
         self.ds_axes = self.figure.add_subplot(121)
         self.us_axes = self.figure.add_subplot(122)
     
+        self.create_ds_graph()
+        self.create_us_graph()
+        self.redraw_figure()
         #make the thing resizable:
         self.canvas.Bind(wx.EVT_SIZE, self.resize_graph)
         self.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
@@ -263,32 +269,90 @@ class TraxMainGraphPanel(wx.Panel):
         else:
             self.status_bar.SetStatusText('')
 
-    def plot_us_graph(self, spectrum):
-        self.us_axes.cla()
-        self.us_line, = self.us_axes.plot(spectrum.x,spectrum.y)
-        self.us_axes.yaxis.set_visible(False)
-        self.us_axes.set_xlim(spectrum.get_x_plot_limits())
-        self.us_axes.set_ylim(spectrum.get_y_plot_limits())
+    def create_us_graph(self):
+        data_spectrum=self.calculate_dummy_spectrum()
+        fit_spectrum=FitSpectrum(data_spectrum)
+        self.us_data_line , self.us_fit_line, self.us_temp_txt = \
+            self.create_axes_lines(self.us_axes, data_spectrum, fit_spectrum)    
         self.us_axes.set_title('UPSTREAM')
-        self.us_axes.set_xlabel('$\lambda$ $(nm)$')
+        
+    def create_ds_graph(self):
+        data_spectrum=self.calculate_dummy_spectrum()
+        fit_spectrum=FitSpectrum(data_spectrum)
+        self.ds_data_line , self.ds_fit_line, self.ds_temp_txt = \
+            self.create_axes_lines(self.ds_axes, data_spectrum, fit_spectrum)  
+        self.us_axes.set_title('DOWNSTREAM') 
 
-    def plot_ds_graph(self, spectrum):
-        self.ds_axes.cla()
-        self.ds_line, = self.ds_axes.plot(spectrum.x,spectrum.y)
-        self.ds_axes.yaxis.set_visible(False)
-        self.ds_axes.set_xlim(spectrum.get_x_plot_limits())
-        self.ds_axes.set_ylim(spectrum.get_y_plot_limits())
-        self.ds_axes.set_title('DOWNSTREAM')
-        self.ds_axes.set_xlabel('$\lambda$ $(nm)$')
+    def calculate_dummy_spectrum(self):
+        random.seed()
+        x=np.arange(500,900,.5)
+        T=random.randrange(1700,3000,1)
+        y=black_body_function(x, T, 1e-11)
+        y+=np.random.normal(0,.081*max(y),len(x))
+        return Spectrum(x,y)
+
+    def create_axes_lines(self, axes, data_spectrum, fit_spectrum):
+        data_line, = axes.plot(data_spectrum.x, data_spectrum.y, 'c-', lw=1.5)
+        fit_line, = axes.plot(fit_spectrum.x, fit_spectrum.y, 'r-', lw=3)
+        txt = axes.text(min(data_spectrum.x)+0.05*data_spectrum.get_x_range(),
+                               min(data_spectrum.y)+0.95*data_spectrum.get_y_range(),
+                               '{0:.0f} K $\pm$ {1:.0f}'.format(fit_spectrum.T, fit_spectrum.T_err), size=20)
+        
+        axes.yaxis.set_visible(False)
+        axes.set_xlim(data_spectrum.get_x_plot_limits())
+        axes.set_ylim(data_spectrum.get_y_plot_limits())
+        axes.set_xlabel('$\lambda$ $(nm)$')
+        return data_line, fit_line, txt
+
+    
+
+    def plot_ds_fit(self, fit):
+        self.ds_fit, =self.ds_axes.plot(fit.x,fit.y,'r-', lw=2)
+
+    def plot_us_fit(self, fit):
+        self.us_fit, =self.us_axes.plot(fit.x, fit.y, 'r-', lw=2)
 
     def update_graph(self, ds_spectrum, us_spectrum):
-        self.ds_line.set_data(ds_spectrum.get_data())
-        self.ds_axes.set_xlim(ds_spectrum.get_x_plot_limits())
-        self.ds_axes.set_ylim(ds_spectrum.get_y_plot_limits())
+        if isinstance(ds_spectrum,list):
+            ds_exp_spectrum = ds_spectrum[0]
+            ds_fit_spectrum = ds_spectrum[1]
+        else:
+            ds_exp_spectrum = ds_spectrum
+            ds_fit_spectrum = None
 
-        self.us_line.set_data(us_spectrum.get_data())
-        self.us_axes.set_xlim(us_spectrum.get_x_plot_limits())
-        self.us_axes.set_ylim(us_spectrum.get_y_plot_limits())
+        if isinstance(us_spectrum,list):
+            us_exp_spectrum = us_spectrum[0]
+            us_fit_spectrum = us_spectrum[1]
+        else:
+            us_exp_spectrum = us_spectrum
+            us_fit_spectrum = None
+
+        self.ds_data_line.set_data(ds_exp_spectrum.get_data())
+        self.ds_axes.set_xlim(ds_exp_spectrum.get_x_plot_limits())
+        self.ds_axes.set_ylim(ds_exp_spectrum.get_y_plot_limits())
+
+        self.us_data_line.set_data(us_exp_spectrum.get_data())
+        self.us_axes.set_xlim(us_exp_spectrum.get_x_plot_limits())
+        self.us_axes.set_ylim(us_exp_spectrum.get_y_plot_limits())
+
+        if ds_fit_spectrum==None:
+            self.ds_temp_txt.set_text('')
+            self.ds_fit_line.set_data([[],[]])
+        else:
+            self.ds_temp_txt.set_text('{0:.0f} K $\pm$ {1:.0f}'.format(ds_fit_spectrum.T, ds_fit_spectrum.T_err))
+            self.ds_fit_line.set_data(ds_fit_spectrum.get_data())
+            self.ds_temp_txt.set_x(min(ds_exp_spectrum.x)+0.05*ds_exp_spectrum.get_x_range())
+            self.ds_temp_txt.set_y(min(ds_exp_spectrum.y)+0.95*ds_exp_spectrum.get_y_range())
+
+        if us_fit_spectrum==None:
+            self.us_temp_txt.set_text('')
+            self.us_fit_line.set_data([[],[]])
+        else:
+            self.us_temp_txt.set_text('{0:.0f} K $\pm$ {1:.0f}'.format(us_fit_spectrum.T, us_fit_spectrum.T_err))
+            self.us_fit_line.set_data(us_fit_spectrum.get_data())
+            self.us_temp_txt.set_x(min(us_exp_spectrum.x)+0.05*us_exp_spectrum.get_x_range())
+            self.us_temp_txt.set_y(min(us_exp_spectrum.y)+0.95*us_exp_spectrum.get_y_range())
+
         self.canvas.draw()
 
     def redraw_figure(self):

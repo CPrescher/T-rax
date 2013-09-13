@@ -12,6 +12,8 @@ class TraxData(object):
         self._read_calib_param()
         self.ds_calib_data = None
         self.us_calib_data = None
+        self.ds_fit_spectrum = None
+        self.us_fit_spectrum = None
 
     def _read_roi_param(self):
         if os.path.isfile('roi_data.txt'):
@@ -21,11 +23,11 @@ class TraxData(object):
             self.roi_data = ROIData(self, [10,20,100,1000],[80,90,100,1000])
 
     def _read_calib_param(self):
-        self.ds_temp=2000;
-        self.us_temp=2000;
+        self.ds_temp = 2000
+        self.us_temp = 2000
         #read 15A lamp calibration:
-        data=np.loadtxt("Temperature Calibration\\15A Lamp.txt", delimiter = ',')
-        self.etalon_spectrum_func = ip.interp1d(data.T[0], data.T[1])
+        data = np.loadtxt("Temperature Calibration\\15A Lamp.txt", delimiter = ',')
+        self.etalon_spectrum_func = ip.interp1d(data.T[0], data.T[1],'cubic')
 
     def load_exp_data(self, file_name):
         self.exp_data = ExpData(file_name, self.roi_data)
@@ -51,7 +53,7 @@ class TraxData(object):
 
     def get_wavelength(self,channel):
         if isinstance(channel,list):
-            result=[]
+            result = []
             for c in channel:
                 result.append(self.exp_data.x_whole[c])
             return np.array(result)
@@ -59,13 +61,13 @@ class TraxData(object):
             return self.exp_data.x_whole[channel]
 
     def calculate_ind(self, wavelength):
-        result=[]
-        xdata=self.exp_data.x_whole
+        result = []
+        xdata = self.exp_data.x_whole
         for w in wavelength:
-            base_ind= max(max(np.where(xdata<=w)))
-            result.append((w-xdata[base_ind])/  \
-                (xdata[base_ind+1]-xdata[base_ind]) \
-                +base_ind)
+            base_ind = max(max(np.where(xdata <= w)))
+            result.append((w - xdata[base_ind]) / \
+                (xdata[base_ind + 1] - xdata[base_ind]) \
+                + base_ind)
         return np.array(result)
     
     def calc_spectra(self):
@@ -88,18 +90,22 @@ class TraxData(object):
         return self.exp_data.img_data
              
     def get_ds_spectrum(self):
-        if self.ds_calib_data==None:
+        if self.ds_calib_data == None:
             return self.exp_data.ds_spectrum
         else:
-            return self.exp_data.calc_corrected_ds_spectrum(self.ds_calib_data.ds_spectrum, 
-                                    self.etalon_spectrum_func(self.exp_data.ds_spectrum.x))
+            corrected_spectrum = self.exp_data.calc_corrected_ds_spectrum(self.ds_calib_data.ds_spectrum, 
+                                                self.etalon_spectrum_func(self.exp_data.ds_spectrum.x))
+            fitted_spectrum = FitSpectrum(corrected_spectrum)
+            return [corrected_spectrum, fitted_spectrum]
 
     def get_us_spectrum(self):
-        if self.us_calib_data==None:
+        if self.us_calib_data == None:
             return self.exp_data.us_spectrum
         else:
-            return self.exp_data.calc_corrected_us_spectrum(self.us_calib_data.us_spectrum, 
-                                    self.etalon_spectrum_func(self.exp_data.us_spectrum.x))
+            corrected_spectrum = self.exp_data.calc_corrected_us_spectrum(self.us_calib_data.us_spectrum, 
+                                                self.etalon_spectrum_func(self.exp_data.us_spectrum.x))
+            fitted_spectrum = FitSpectrum(corrected_spectrum)
+            return [corrected_spectrum, fitted_spectrum]
 
     def get_whole_spectrum(self):
         return self.exp_data.x, self.exp_data.y_whole_spectrum
@@ -113,27 +119,27 @@ class TraxData(object):
 
 class ImgData(object):
     def __init__(self,filename, roi_data):
-        self.roi_data=roi_data
+        self.roi_data = roi_data
         self.load_data(filename)
 
     def load_data(self, filename):
         self.filename = filename
         self._img_file = SPE_File(filename)
         self.img_data = self._img_file.img        
-        self.x_whole =  self._img_file.x_calibration
+        self.x_whole = self._img_file.x_calibration
         self.calc_spectra()
 
     def calc_spectra(self):
         x = self.x_whole[(self.roi_data.us_roi.x_min):           
-                                 (self.roi_data.us_roi.x_max+1)]
+                                 (self.roi_data.us_roi.x_max + 1)]
         self.ds_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.ds_roi))
         self.us_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.us_roi))
 
     def calc_spectrum(self, roi):
-        spec=[]
-        for x_ind in range(roi.x_min,roi.x_max+1):
-            spec_val=0
-            for y_ind in range(roi.y_min,roi.y_max+1):
+        spec = []
+        for x_ind in range(roi.x_min,roi.x_max + 1):
+            spec_val = 0
+            for y_ind in range(roi.y_min,roi.y_max + 1):
                 spec_val+=self.img_data[y_ind][x_ind]    
             spec.append(spec_val)
         return np.array(spec)
@@ -156,14 +162,15 @@ class ExpData(ImgData):
 
     def calc_corrected_ds_spectrum(self, calib_img_spectrum, calib_spectrum):
         response_function = calib_img_spectrum.y / calib_spectrum
-        corrected_exp_y=self.ds_spectrum.y / response_function
+        corrected_exp_y = self.ds_spectrum.y / response_function
         self.ds_corrected_spectrum = Spectrum(self.ds_spectrum.x, corrected_exp_y)
         return self.ds_corrected_spectrum
 
     def calc_corrected_us_spectrum(self, calib_img_spectrum, calib_spectrum):
         response_function = calib_img_spectrum.y / calib_spectrum
-        corrected_exp_y=self.us_spectrum.y / response_function
+        corrected_exp_y = self.us_spectrum.y / response_function
         self.us_corrected_spectrum = Spectrum(self.us_spectrum.x, corrected_exp_y)
+        test = FitSpectrum(self.us_corrected_spectrum)
         return self.us_corrected_spectrum
 
 
@@ -192,24 +199,39 @@ class ExpData(ImgData):
 
 class Spectrum():
     def __init__(self,x,y):
-        self.x=x
-        self.y=y
+        self.x = x
+        self.y = y
 
     def get_y_range(self):
-        return max(self.y)-min(self.y)
+        return max(self.y) - min(self.y)
 
     def get_x_range(self):
-        return max(self.x)-min(self.x)
+        return max(self.x) - min(self.x)
 
     def get_x_plot_limits(self):
         return [min(self.x), max(self.x)]
 
     def get_y_plot_limits(self, factor=0.05):
-        return [min(self.y), max(self.y)+factor*self.get_y_range()]
-
+        return [min(self.y), max(self.y) + factor * self.get_y_range()]
 
     def get_data(self):
         return [self.x,self.y]
+
+class FitSpectrum(Spectrum):
+    def __init__(self,spectrum):
+        self._orig_spectrum = spectrum
+        try:
+            param, cov = curve_fit(black_body_function, spectrum.x,spectrum.y,p0=[2000,1e-11])
+            self.T = param[0]
+            self.T_err = np.sqrt(cov[0,0])
+            
+            self.x = spectrum.x
+            self.y = black_body_function(self.x,param[0],param[1])
+        except (RuntimeError, TypeError):
+            self.T = np.NaN
+            self.T_err = np.NaN
+            self.x =[]
+            self.y = []
 
 
 
@@ -251,7 +273,7 @@ class ROIData():
         self.us_roi = ROI(us_limits)
 
     def get_roi_data(self):
-        data=[self.ds_roi.get_list()]
+        data = [self.ds_roi.get_list()]
         data.append(self.us_roi.get_list())
         return data
 
@@ -269,8 +291,8 @@ class ROIData():
 
 
 def black_body_function(wavelength, temp, scaling):
-    wavelength=np.array(wavelength)*1e-9
-    c1=3.7418e-16
-    c2=0.014388
-    return scaling*c1*wavelength**-5/(np.exp(c2/(wavelength*temp))-1)
+    wavelength = np.array(wavelength) * 1e-9
+    c1 = 3.7418e-16
+    c2 = 0.014388
+    return scaling * c1 * wavelength ** -5 / (np.exp(c2 / (wavelength * temp)) - 1)
 

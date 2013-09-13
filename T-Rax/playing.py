@@ -1,7 +1,14 @@
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
+from T_Rax_Data import black_body_function
 
-test=plt.plot([0,1,2,3,4],[0,1,4,9,16])
+def foo(a,b,c):
+    return a+b+c
 
-plt.show()
+
+def test():
+    return (1,2,3),
+
+print foo(test())
