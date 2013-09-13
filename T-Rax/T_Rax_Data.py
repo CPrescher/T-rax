@@ -53,14 +53,14 @@ class TraxData(object):
         if isinstance(channel,list):
             result=[]
             for c in channel:
-                result.append(self.exp_data.x_whole_spectrum[c])
+                result.append(self.exp_data.x_whole[c])
             return np.array(result)
         else:
-            return self.exp_data.x_whole_spectrum[channel]
+            return self.exp_data.x_whole[channel]
 
     def calculate_ind(self, wavelength):
         result=[]
-        xdata=self.exp_data.x_whole_spectrum
+        xdata=self.exp_data.x_whole
         for w in wavelength:
             base_ind= max(max(np.where(xdata<=w)))
             result.append((w-xdata[base_ind])/  \
@@ -89,22 +89,17 @@ class TraxData(object):
              
     def get_ds_spectrum(self):
         if self.ds_calib_data==None:
-            return self.exp_data.x,self.exp_data.y_ds_spectrum
+            return self.exp_data.ds_spectrum
         else:
-            response_function = self.ds_calib_data.y_ds_spectrum / self.etalon_spectrum_func(self.exp_data.x)
-            corrected_exp_y=self.exp_data.y_ds_spectrum / response_function
-            param, pcov = curve_fit(black_body_function,self.exp_data.x, corrected_exp_y, p0=[2000,1e-5])
-            print param
-            return self.exp_data.x, corrected_exp_y
+            return self.exp_data.calc_corrected_ds_spectrum(self.ds_calib_data.ds_spectrum, 
+                                    self.etalon_spectrum_func(self.exp_data.ds_spectrum.x))
 
     def get_us_spectrum(self):
         if self.us_calib_data==None:
-            return self.exp_data.x,self.exp_data.y_us_spectrum
+            return self.exp_data.us_spectrum
         else:
-            response_function = self.us_calib_data.y_us_spectrum / self.etalon_spectrum_func(self.exp_data.x)
-            corrected_exp_y=self.exp_data.y_us_spectrum / response_function
-
-            return self.exp_data.x, corrected_exp_y
+            return self.exp_data.calc_corrected_us_spectrum(self.us_calib_data.us_spectrum, 
+                                    self.etalon_spectrum_func(self.exp_data.us_spectrum.x))
 
     def get_whole_spectrum(self):
         return self.exp_data.x, self.exp_data.y_whole_spectrum
@@ -125,14 +120,14 @@ class ImgData(object):
         self.filename = filename
         self._img_file = SPE_File(filename)
         self.img_data = self._img_file.img        
-        self.x_whole_spectrum =  self._img_file.x_calibration
+        self.x_whole =  self._img_file.x_calibration
         self.calc_spectra()
 
     def calc_spectra(self):
-        self.x = self._img_file.x_calibration[(self.roi_data.us_roi.x_min):           
-                                            (self.roi_data.us_roi.x_max+1)]
-        self.y_ds_spectrum = self.calc_spectrum(self.roi_data.ds_roi)
-        self.y_us_spectrum = self.calc_spectrum(self.roi_data.us_roi)
+        x = self.x_whole[(self.roi_data.us_roi.x_min):           
+                                 (self.roi_data.us_roi.x_max+1)]
+        self.ds_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.ds_roi))
+        self.us_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.us_roi))
 
     def calc_spectrum(self, roi):
         spec=[]
@@ -144,7 +139,7 @@ class ImgData(object):
         return np.array(spec)
 
     def get_x_limits(self):
-        return np.array([min(self.x_whole_spectrum), max(self.x_whole_spectrum)])
+        return np.array([min(self.x_whole), max(self.x_whole)])
 
     
 
@@ -158,6 +153,19 @@ class ExpData(ImgData):
         super(ExpData, self).load_data(filename)
         self._get_file_number()
         self._get_file_base_str()
+
+    def calc_corrected_ds_spectrum(self, calib_img_spectrum, calib_spectrum):
+        response_function = calib_img_spectrum.y / calib_spectrum
+        corrected_exp_y=self.ds_spectrum.y / response_function
+        self.ds_corrected_spectrum = Spectrum(self.ds_spectrum.x, corrected_exp_y)
+        return self.ds_corrected_spectrum
+
+    def calc_corrected_us_spectrum(self, calib_img_spectrum, calib_spectrum):
+        response_function = calib_img_spectrum.y / calib_spectrum
+        corrected_exp_y=self.us_spectrum.y / response_function
+        self.us_corrected_spectrum = Spectrum(self.us_spectrum.x, corrected_exp_y)
+        return self.us_corrected_spectrum
+
 
     def _get_file_number(self):
         file_str = ''.join(self.filename.split('.')[0:-1])
@@ -180,6 +188,29 @@ class ExpData(ImgData):
         new_file_name = self._file_base_str + '_' + str(self._file_number - 1) + '.SPE'
         if os.path.isfile(new_file_name):
             self.load_data(new_file_name)
+
+
+class Spectrum():
+    def __init__(self,x,y):
+        self.x=x
+        self.y=y
+
+    def get_y_range(self):
+        return max(self.y)-min(self.y)
+
+    def get_x_range(self):
+        return max(self.x)-min(self.x)
+
+    def get_x_plot_limits(self):
+        return [min(self.x), max(self.x)]
+
+    def get_y_plot_limits(self, factor=0.05):
+        return [min(self.y), max(self.y)+factor*self.get_y_range()]
+
+
+    def get_data(self):
+        return [self.x,self.y]
+
 
 
 class ROI():

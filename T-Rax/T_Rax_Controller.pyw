@@ -6,6 +6,8 @@ import wx
 from wx.lib.pubsub import Publisher as pub
 import os
 
+wx.lib.pubsub.Publisher
+
 class TraxMainViewController(object):
     def __init__(self):
         self.data=TRData.TraxData()
@@ -86,17 +88,14 @@ class TraxMainViewController(object):
 
     def data_changed(self, message):
         data=message.data
-        ds_x,ds_y = data.get_ds_spectrum()
-        us_x,us_y = data.get_us_spectrum()
-        self.main_view.graph_panel.plot_ds_graph(ds_x,ds_y)
-        self.main_view.graph_panel.plot_us_graph(us_x,us_y)
+        self.main_view.graph_panel.plot_ds_graph(data.get_ds_spectrum())
+        self.main_view.graph_panel.plot_us_graph(data.get_us_spectrum())
         self.main_view.graph_panel.redraw_figure()
         self.exp_controls.exp_file_lbl.SetLabel(data.get_exp_file_name())
 
     def spectra_changed(self, message):
-        ds_x,ds_y=message.data.get_ds_spectrum()
-        us_x,us_y=message.data.get_us_spectrum()
-        self.main_view.graph_panel.update_graph(ds_x,ds_y, us_x, us_y)
+        data=message.data
+        self.main_view.graph_panel.update_graph(data.get_ds_spectrum(), data.get_us_spectrum())
 
     def close_window_click(self, event):
         self.main_view.Destroy()
@@ -106,7 +105,7 @@ if __name__=="__main__":
     app=wx.App(None)
     main_view=TraxMainViewController()
     main_view.data.load_exp_data('spe files\\t_47.SPE')
-    main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
-    main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
+    #main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
+    #main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
     app.MainLoop()
 

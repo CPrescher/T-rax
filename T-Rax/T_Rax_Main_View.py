@@ -243,7 +243,7 @@ class TraxMainGraphPanel(wx.Panel):
 
         self.ds_axes = self.figure.add_subplot(121)
         self.us_axes = self.figure.add_subplot(122)
-
+    
         #make the thing resizable:
         self.canvas.Bind(wx.EVT_SIZE, self.resize_graph)
         self.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
@@ -263,36 +263,32 @@ class TraxMainGraphPanel(wx.Panel):
         else:
             self.status_bar.SetStatusText('')
 
-    def plot_us_graph(self, x,y):
+    def plot_us_graph(self, spectrum):
         self.us_axes.cla()
-        self.us_line, = self.us_axes.plot(x,y)
+        self.us_line, = self.us_axes.plot(spectrum.x,spectrum.y)
         self.us_axes.yaxis.set_visible(False)
-        y_range = max(y) - min(y)
-        self.us_axes.set_xlim([min(x), max(x)])
-        self.us_axes.set_ylim([min(y),max(y) + 0.05 * y_range])
+        self.us_axes.set_xlim(spectrum.get_x_plot_limits())
+        self.us_axes.set_ylim(spectrum.get_y_plot_limits())
         self.us_axes.set_title('UPSTREAM')
         self.us_axes.set_xlabel('$\lambda$ $(nm)$')
 
-    def plot_ds_graph(self, x,y):
+    def plot_ds_graph(self, spectrum):
         self.ds_axes.cla()
-        self.ds_line, = self.ds_axes.plot(x,y)
-        y_range = max(y) - min(y)
+        self.ds_line, = self.ds_axes.plot(spectrum.x,spectrum.y)
         self.ds_axes.yaxis.set_visible(False)
-        self.ds_axes.set_xlim([min(x), max(x)])
-        self.ds_axes.set_ylim([min(y),max(y) + 0.05 * y_range])
+        self.ds_axes.set_xlim(spectrum.get_x_plot_limits())
+        self.ds_axes.set_ylim(spectrum.get_y_plot_limits())
         self.ds_axes.set_title('DOWNSTREAM')
         self.ds_axes.set_xlabel('$\lambda$ $(nm)$')
 
-    def update_graph(self, ds_x, ds_y, us_x, us_y):
-        self.ds_line.set_data([ds_x,ds_y])
-        y_range = max(ds_y) - min(ds_y)
-        self.ds_axes.set_xlim([min(ds_x), max(ds_x)])
-        self.ds_axes.set_ylim([min(ds_y), max(ds_y) + 0.05 * y_range])
+    def update_graph(self, ds_spectrum, us_spectrum):
+        self.ds_line.set_data(ds_spectrum.get_data())
+        self.ds_axes.set_xlim(ds_spectrum.get_x_plot_limits())
+        self.ds_axes.set_ylim(ds_spectrum.get_y_plot_limits())
 
-        self.us_line.set_data([us_x,us_y])
-        y_range = max(us_y) - min(us_y)
-        self.us_axes.set_xlim([min(us_x), max(us_x)])
-        self.us_axes.set_ylim([min(us_y),max(us_y) + 0.05 * y_range]) 
+        self.us_line.set_data(us_spectrum.get_data())
+        self.us_axes.set_xlim(us_spectrum.get_x_plot_limits())
+        self.us_axes.set_ylim(us_spectrum.get_y_plot_limits())
         self.canvas.draw()
 
     def redraw_figure(self):
