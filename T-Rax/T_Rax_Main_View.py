@@ -88,11 +88,12 @@ class CalibBox():
         self.file_lbl.SetForegroundColour(self.parent.file_lbl_color_None)
         self.file_lbl.SetFont(self.parent.file_lbl_font)
         self.temperature_txt = wx.TextCtrl(self.parent, -1, '2000', size=(30,24),
-                                           style=wx.ALIGN_RIGHT,  
+                                           style=wx.ALIGN_RIGHT|wx.PROCESS_ENTER,  
                                            validator = IntValidator(2))
         self.temperature_unit_lbl = wx.StaticText(self.parent, -1, 'K')
         
-        self.known_temperature_rb = wx.RadioButton(self.parent, -1, 'Temp', style =wx.RIGHT)
+        self.known_temperature_rb = wx.RadioButton(self.parent, -1, 'Temp', style =wx.RIGHT|wx.RB_GROUP)
+        self.known_temperature_rb.SetValue(1)
         self.etalon_spectrum_rb = wx.RadioButton(self.parent, -1, 'Etalon')
         self.load_etalon_data_btn = wx.Button(self.parent, wx.ID_ANY,'...', size =(35,22))
         self.polynom_rb = wx.RadioButton(self.parent, -1, 'Poly')

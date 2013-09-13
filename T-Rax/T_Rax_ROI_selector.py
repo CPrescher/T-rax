@@ -95,7 +95,7 @@ class TRaxROIController():
         self.view.graph_panel.set_rois()
 
     def exp_data_changed(self, event):
-        img_data = event.data.img_data
+        img_data = event.data.exp_img_data
         self.view.graph_panel.update_img(img_data)
 
     def ok_btn_click(self, event):
@@ -280,15 +280,16 @@ class TRaxROIGraphPanel(wx.Panel):
 
     def plot_img(self):
         self.axes.cla()
-        self.img = self.axes.imshow(self.data.img_data, cmap = 'hot', aspect = 'auto')
-        self.axes.set_ylim([0,len(self.data.img_data) - 1])
-        self.axes.set_xlim([0,len(self.data.img_data[0]) - 1])
+        self.img_data=self.data.get_exp_img_data()
+        self.img = self.axes.imshow(self.img_data, cmap = 'hot', aspect = 'auto')
+        self.axes.set_ylim([0,len(self.img_data) - 1])
+        self.axes.set_xlim([0,len(self.img_data[0]) - 1])
         self.img_background = self.canvas.copy_from_bbox(self.axes.bbox)
         self.canvas.draw()
         self.create_wavelength_x_axis()
 
     def create_wavelength_x_axis(self):
-        xlimits = self.data.get_limits()
+        xlimits = self.data.get_x_limits()
         xlimits = np.ceil(xlimits / 50.0) * 50
         xtick_num = np.arange(xlimits[0],xlimits[1],50)
         xtick_pos = self.data.calculate_ind(xtick_num)
@@ -470,7 +471,7 @@ class ResizeableRectangle:
 if __name__ == "__main__":
     spe_file = SPE_File('spe files\Pt_230.SPE')
     data = TraxData()
-    data.load_data('spe files\Pt_230.SPE')
+    data.load_exp_data('spe files\Pt_230.SPE')
     app = wx.App(None)
     TRaxROIController(None,data)
     
