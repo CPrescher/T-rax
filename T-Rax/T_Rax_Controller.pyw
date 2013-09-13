@@ -65,7 +65,7 @@ class TraxMainViewController(object):
             path = dlg.GetPath()  
             self._working_dir=os.path.split(path)[0]     
             self.data.load_ds_calib_data(path)
-            self.calib_controls.ds_calib_box.file_lbl.SetLabel(self.data.ds_calib_file_name.split('\\')[-1])
+            self.calib_controls.ds_calib_box.file_lbl.SetLabel(self.data.get_ds_calib_file_name())
 
     def load_us_calib_data(self, event):
         dlg = wx.FileDialog(self.main_view, message="Load Upstream calibration SPE", 
@@ -76,7 +76,7 @@ class TraxMainViewController(object):
             path = dlg.GetPath()  
             self._working_dir=os.path.split(path)[0]     
             self.data.load_us_calib_data(path)
-            self.calib_controls.us_calib_box.file_lbl.SetLabel(self.data.us_calib_file_name.split('\\')[-1])
+            self.calib_controls.us_calib_box.file_lbl.SetLabel(self.data.get_us_calib_file_name())
 
     def update_us_temp(self, event):
         self.data.us_temp = int(self.calib_controls.us_calib_box.temperature_txt.GetLabel())
@@ -105,6 +105,8 @@ class TraxMainViewController(object):
 if __name__=="__main__":
     app=wx.App(None)
     main_view=TraxMainViewController()
-    main_view.data.load_exp_data('binary files\\lamp_15_up(v3.0).SPE')
+    main_view.data.load_exp_data('spe files\\t_47.SPE')
+    main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
+    main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
     app.MainLoop()
 

@@ -95,7 +95,7 @@ class TRaxROIController():
         self.view.graph_panel.set_rois()
 
     def exp_data_changed(self, event):
-        img_data = event.data.exp_img_data
+        img_data = event.data.get_exp_img_data()
         self.view.graph_panel.update_img(img_data)
 
     def ok_btn_click(self, event):
