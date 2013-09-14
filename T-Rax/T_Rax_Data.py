@@ -116,7 +116,7 @@ class TraxData(object):
 
 
 class ImgData(object):
-    def __init__(self,filename, roi_data):
+    def __init__(self, filename, roi_data):
         self.roi_data = roi_data
         self.load_data(filename)
 
@@ -126,14 +126,27 @@ class ImgData(object):
         self.img_data = self._img_file.img        
         self.x_whole = self._img_file.x_calibration
         x_max, y_max = self._img_file.get_dimension()
-        self.roi_data.set_limits(x_max-1, y_max-1)
+
+        if y_max>1: #check if data file is image
+            self.type = 'img'
+            self.roi_data.set_limits(x_max-1, y_max-1)
+        else: #if data file is just spectrum:
+            self.type = 'spectrum'
+            self.roi_data.set_limits(x_max-1, 99)
         self.calc_spectra()
 
     def calc_spectra(self):
         x = self.x_whole[(self.roi_data.us_roi.x_min):           
-                                 (self.roi_data.us_roi.x_max + 1)]
-        self.ds_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.ds_roi))
-        self.us_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.us_roi))
+                         (self.roi_data.us_roi.x_max + 1)]
+        if self.type=='img':
+            self.ds_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.ds_roi))
+            self.us_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.us_roi))
+        elif self.type == 'spectrum':
+            self.ds_spectrum = Spectrum(x,self.img_data[0][(self.roi_data.us_roi.x_min):           
+                         (self.roi_data.us_roi.x_max + 1)])
+            self.us_spectrum = Spectrum(x,self.img_data[0][(self.roi_data.us_roi.x_min):           
+                         (self.roi_data.us_roi.x_max + 1)])
+
 
     def calc_spectrum(self, roi):
         spec = []
