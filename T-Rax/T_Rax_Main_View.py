@@ -73,8 +73,6 @@ class TraxCalibControlPanel(wx.Panel):
         self.SetSizer(self.main_sizer)
     
 
-    
-
 class CalibBox():
     def __init__(self, parent, label):
         self.label = label
@@ -102,12 +100,6 @@ class CalibBox():
         self.polynom_rb = wx.RadioButton(self.parent, -1, 'Poly')
         self.load_polynom_btn = wx.Button(self.parent, -1, '...',size =(35,22))
 
-        self.subtract_background_cb = wx.CheckBox(self.parent, -1, 'Subtract Background')
-        self.load_bkg_btn = wx.Button(self.parent, -1, 'Load Bkg')
-        self.bkg_file_lbl = wx.StaticText(self.parent, -1, 'Select file...')
-        self.bkg_file_lbl.SetForegroundColour(self.parent.file_lbl_color_None)
-        self.bkg_file_lbl.SetFont(self.parent.file_lbl_font)
-
     def set_sizer(self):
         self.gb_sizer = wx.GridBagSizer(7,7)
         self.gb_sizer.Add(self.load_data_btn, (0,0))
@@ -127,12 +119,6 @@ class CalibBox():
         self.gb_sizer.Add(self.load_etalon_data_btn, (3,0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
         self.gb_sizer.Add(self.polynom_rb, (4,1), flag =wx.EXPAND | wx.ALIGN_CENTRE_VERTICAL)
         self.gb_sizer.Add(self.load_polynom_btn, (4,0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
-        self.gb_sizer.Add(wx.StaticLine(self.parent, -1, style=wx.LI_HORIZONTAL),
-                               (5,0),(1,2), flag=wx.EXPAND)
-
-        self.gb_sizer.Add(self.load_bkg_btn, (6,0), flag =wx.EXPAND)
-        self.gb_sizer.Add(self.bkg_file_lbl,(6,1), flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
-        self.gb_sizer.Add(self.subtract_background_cb, (7,0),(1,2), flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
 
         self.gb_sizer.AddGrowableCol(1)
         self.box_sizer = wx.StaticBoxSizer(self.static_box, wx.HORIZONTAL)
@@ -169,10 +155,7 @@ class TraxExpControlPanel(wx.Panel):
         self.exp_auto_process_cb = wx.CheckBox(self, -1, 'autoprocess')
 
         self.exp_subtract_background_cb = wx.CheckBox(self, -1, 'Subtract Background')
-        self.exp_load_bkg_btn = wx.Button(self, -1, 'Load Bkg')
-        self.exp_bkg_file_lbl = wx.StaticText(self, -1, 'Select file...')
-        self.exp_bkg_file_lbl.SetForegroundColour(self.file_lbl_color_None)
-        self.exp_bkg_file_lbl.SetFont(self.file_lbl_font)
+        self.exp_load_bkg_btn = wx.Button(self, -1, 'Background Setup')
 
     def create_fit_box(self):
         self.fit_box = wx.StaticBox(self,-1, 'Fitting parameters')
@@ -197,8 +180,7 @@ class TraxExpControlPanel(wx.Panel):
         self.experiment_gb_sizer.Add(wx.StaticLine(self, -1, style=wx.LI_HORIZONTAL),
                                      (2,0),(1,2), flag=wx.EXPAND)
 
-        self.experiment_gb_sizer.Add(self.exp_load_bkg_btn, (3,0), flag =wx.EXPAND)
-        self.experiment_gb_sizer.Add(self.exp_bkg_file_lbl,(3,1), flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
+        self.experiment_gb_sizer.Add(self.exp_load_bkg_btn, (3,0), (1,2), flag =wx.EXPAND)
         self.experiment_gb_sizer.Add(self.exp_subtract_background_cb, (4,0),(1,2), flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
 
         self.experiment_gb_sizer.AddGrowableCol(1)
@@ -281,7 +263,7 @@ class TraxMainGraphPanel(wx.Panel):
         fit_spectrum=FitSpectrum(data_spectrum)
         self.ds_data_line , self.ds_fit_line, self.ds_temp_txt = \
             self.create_axes_lines(self.ds_axes, data_spectrum, fit_spectrum)  
-        self.us_axes.set_title('DOWNSTREAM') 
+        self.ds_axes.set_title('DOWNSTREAM') 
 
     def calculate_dummy_spectrum(self):
         random.seed()

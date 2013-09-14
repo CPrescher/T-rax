@@ -95,8 +95,7 @@ class TRaxROIController():
         self.view.graph_panel.set_rois()
 
     def exp_data_changed(self, event):
-        img_data = event.data.get_exp_img_data()
-        self.view.graph_panel.update_img(img_data)
+        self.view.graph_panel.update_img()
 
     def ok_btn_click(self, event):
         self.shut_down_window()
@@ -236,12 +235,15 @@ class TRaxROIGraphPanel(wx.Panel):
         
         self.data = data
         self.create_figure()
+        self.draw_image()
         self.create_sizer()
+        self.create_bindings()
+
+    def draw_image(self):
         self.plot_img()
         self.plot_rects()
         self.redraw_figure()
         self.connect_rects()
-        self.create_bindings()
 
     def create_figure(self):
         self.figure = Figure(None, dpi=100)
@@ -281,9 +283,15 @@ class TRaxROIGraphPanel(wx.Panel):
     def plot_img(self):
         self.axes.cla()
         self.img_data=self.data.get_exp_img_data()
-        self.img = self.axes.imshow(self.img_data, cmap = 'hot', aspect = 'auto')
+        y_max=len(self.data.get_exp_img_data())-1
+        x_max=len(self.data.get_exp_img_data()[0])-1
+        self.axes.set_ylim([0,y_max])
+        self.axes.set_xlim([0,x_max])
+        self.img = self.axes.imshow(self.img_data, cmap = 'hot', aspect = 'auto',
+                                    extent=[0,x_max+1,y_max+1,0])
         self.axes.set_ylim([0,len(self.img_data) - 1])
         self.axes.set_xlim([0,len(self.img_data[0]) - 1])
+        self.img.autoscale()
         self.img_background = self.canvas.copy_from_bbox(self.axes.bbox)
         self.canvas.draw()
         self.create_wavelength_x_axis()
@@ -298,10 +306,19 @@ class TRaxROIGraphPanel(wx.Panel):
         self.axes.set_xlabel("$\lambda$ $(nm)$")
         self.redraw_figure()
 
-    def update_img(self, img_data):
-        self.img.set_data(img_data)
+    def update_img(self):
+        y_max=len(self.data.get_exp_img_data())-1
+        x_max=len(self.data.get_exp_img_data()[0])-1
+        self.axes.set_ylim([0,y_max])
+        self.axes.set_xlim([0,x_max])
+        self.ds_rect.update_limits()
+        self.us_rect.update_limits()
+        self.img.set_data(self.data.get_exp_img_data())
+        self.img.set_extent([0,x_max+1,y_max+1,0])
+        self.create_wavelength_x_axis()
         self.img.autoscale()
-        self.canvas.draw()
+        self.set_rois()
+        self.redraw_figure()
 
     def plot_rects(self):
         self.us_rect = self.create_rect(self.data.roi_data.us_roi, 'US')
@@ -313,7 +330,7 @@ class TRaxROIGraphPanel(wx.Panel):
         self.axes.draw_artist(self.us_rect.rect)
         self.axes.draw_artist(self.ds_rect.rect)
         self.canvas.blit(self.axes.bbox)
-
+    
     def create_rect(self, roi, flag):
         return ResizeableRectangle(self, self.axes, self.canvas,wx.Rect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), flag)
 
@@ -354,6 +371,10 @@ class ResizeableRectangle:
             self.rect.set_height(roi.get_height())
             self.rect.set_width(roi.get_width())
             self.rect.figure.canvas.draw()
+
+    def update_limits(self):
+        self.xlim = self.axes.get_xlim()
+        self.ylim = self.axes.get_ylim()
 
     def connect(self):
         self.cidpress = self.canvas.mpl_connect('button_press_event', self.on_press)

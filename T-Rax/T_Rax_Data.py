@@ -12,8 +12,6 @@ class TraxData(object):
         self._read_calib_param()
         self.ds_calib_data = None
         self.us_calib_data = None
-        self.ds_fit_spectrum = None
-        self.us_fit_spectrum = None
 
     def _read_roi_param(self):
         if os.path.isfile('roi_data.txt'):
@@ -127,6 +125,8 @@ class ImgData(object):
         self._img_file = SPE_File(filename)
         self.img_data = self._img_file.img        
         self.x_whole = self._img_file.x_calibration
+        x_max, y_max = self._img_file.get_dimension()
+        self.roi_data.set_limits(x_max-1, y_max-1)
         self.calc_spectra()
 
     def calc_spectra(self):
@@ -152,8 +152,6 @@ class ImgData(object):
 class ExpData(ImgData):
     def __init__(self, filename, roi_data):
         super(ExpData, self).__init__(filename, roi_data)
-        self._get_file_number()
-        self._get_file_base_str()
 
     def load_data(self, filename):
         super(ExpData, self).load_data(filename)
@@ -179,22 +177,39 @@ class ExpData(ImgData):
         num_str = file_str.split('_')[-1]
         try:
             self._file_number = int(num_str)
+            self._num_char_amount = len(num_str) #if number has leading zeros
         except ValueError:
             self._file_number = 0
+            self._num_char_amount = 1
 
     def _get_file_base_str(self):
         file_str = ''.join(self.filename.split('.')[0:-1])
         self._file_base_str = ''.join(file_str.split('_')[0:-1])
+        self._file_ending = self.filename.split('.')[-1]
 
     def load_next_file(self):
-        new_file_name = self._file_base_str + '_' + str(self._file_number + 1) + '.SPE'
+        new_file_name = self._file_base_str + '_' + str(self._file_number + 1) + \
+                        '.' + self._file_ending
+        format_str='0'+str(self._num_char_amount)+'d'
+        number_str=("{0:"+format_str+'}').format(self._file_number + 1)
+        new_file_name_with_leading_zeros = self._file_base_str + '_' + \
+                    number_str + '.' + self._file_ending
         if os.path.isfile(new_file_name):
             self.load_data(new_file_name)
+        elif os.path.isfile(new_file_name_with_leading_zeros):
+            self.load_data(new_file_name_with_leading_zeros)
 
     def load_previous_file(self):
-        new_file_name = self._file_base_str + '_' + str(self._file_number - 1) + '.SPE'
+        new_file_name = self._file_base_str + '_' + str(self._file_number - 1) + \
+                        '.' + self._file_ending
+        format_str='0'+str(self._num_char_amount)+'d'
+        number_str=("{0:"+format_str+'}').format(self._file_number - 1)
+        new_file_name_with_leading_zeros = self._file_base_str + '_' + \
+                    number_str + '.' + self._file_ending
         if os.path.isfile(new_file_name):
             self.load_data(new_file_name)
+        elif os.path.isfile(new_file_name_with_leading_zeros):
+            self.load_data(new_file_name_with_leading_zeros)
 
 
 class Spectrum():
@@ -230,7 +245,7 @@ class FitSpectrum(Spectrum):
         except (RuntimeError, TypeError):
             self.T = np.NaN
             self.T_err = np.NaN
-            self.x =[]
+            self.x = []
             self.y = []
 
 
@@ -249,6 +264,18 @@ class ROI():
     def set_y_limit(self, ylimit):
         self.y_max = ylimit[0]
         self.y_max = ylimit[1]
+
+    def set_x_max(self, x_max):
+        if self.x_max > x_max:
+            self.x_max=x_max
+        if self.x_min >= x_max:
+            self.x_min=0;
+
+    def set_y_max(self, y_max):
+        if self.y_max > y_max:
+            self.y_max=y_max
+        if self.y_min >= y_max:
+            self.y_min=y_max - 10;
 
     def get_width(self):
         return self.x_max - self.x_min
@@ -288,6 +315,13 @@ class ROIData():
         self.ds_roi.set_x_limit(us_limits[2:])
         self.parent.calc_spectra()
         pub.sendMessage("ROI CHANGED", self.parent)
+
+    def set_limits(self, x_max, y_max):
+        self.ds_roi.set_x_max(x_max)
+        self.us_roi.set_x_max(x_max)
+
+        self.ds_roi.set_y_max(y_max)
+        self.us_roi.set_y_max(y_max)
 
 
 def black_body_function(wavelength, temp, scaling):

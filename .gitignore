@@ -7,7 +7,9 @@
 *.sln.docstates
 
 *.pyc
-roi_data.txt
+*.spe
+*.SPE
+*.txt
 
 
 # Build results

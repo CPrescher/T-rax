@@ -77,20 +77,27 @@ class SPE_File(object):
                         getElementsByTagName('DataHistory')[0].\
                         getElementsByTagName('Origin')[0]
         if len(origin.getElementsByTagName('Experiment')) != 1: #check if it is a real v3.0 file
-            exposure_time = origin.getElementsByTagName('Experiment')[0].\
+            camera = origin.getElementsByTagName('Experiment')[0].\
                         getElementsByTagName('Devices')[0].\
                         getElementsByTagName('Cameras')[0].\
-                        getElementsByTagName('Camera')[0].\
-                        getElementsByTagName('ShutterTiming')[0].\
-                        getElementsByTagName('ExposureTime')[0]
+                        getElementsByTagName('Camera')[0]
+            if len(camera.getElementsByTagName('ShutterTiming')) ==1: #check if it is a pixis detector
+                exposure_time = camera.getElementsByTagName('ShutterTiming')[0].\
+                                       getElementsByTagName('ExposureTime')[0].childNodes[0]
+                self.exposure_time = np.float(exposure_time.toxml())
+            else:
+                exposure_time = camera.getElementsByTagName('ReadoutControl')[0].\
+                                      getElementsByTagName('Time')[0].childNodes[0].nodeValue
+                accumulations = camera.getElementsByTagName('ReadoutControl')[0].\
+                                      getElementsByTagName('Accumulations')[0].childNodes[0].nodeValue
+                self.exposure_time = np.float(exposure_time) * np.float(accumulations)
 
         else: #this is searching for legacy experiment:
             exposure_time = origin.getElementsByTagName('LegacyExperiment')[0].\
                                  getElementsByTagName('Experiment')[0].\
                                  getElementsByTagName('CollectionParameters')[0].\
                                  getElementsByTagName('Exposure')[0].attributes["value"].value
-
-        self.exposure_time = np.float(exposure_time.split()[0])
+            self.exposure_time = np.float(exposure_time.toxml())
 
     def _read_datatype(self):
         self._data_type = self._read_at(108, 1, np.uint16)[0]
