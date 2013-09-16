@@ -79,8 +79,8 @@ class TraxMainViewController(object):
     def roi_setup_btn_click(self, event):
         try:
             self.roi_view = TRaxROIController(self.main_view, self.data)
-        except:
-            self.roi_view.activate()
+        except TRaxROIController, s:
+            s.activate()
 
     def unload_roi_view(self, message):
         self.roi_view=None

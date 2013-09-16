@@ -52,7 +52,9 @@ class TRaxROIController():
     __single = None
     def __init__(self, parent, data):
         if TRaxROIController.__single:
+            TRaxROIController.__single.view.Raise()
             raise TRaxROIController.__single
+
         TRaxROIController.__single = self
         self.data = data
         self.initial_ds_row = data.roi_data.ds_roi.get_y_limits()
@@ -102,7 +104,7 @@ class TRaxROIController():
         self.view.graph_panel.update_img()
 
     def activate(self):
-        TRaxROIController.__single.view.Raise()
+        self.view.Raise()
 
     def ok_btn_click(self, event):
         self.shut_down_window()
