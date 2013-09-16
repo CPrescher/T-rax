@@ -11,7 +11,6 @@ wx.lib.pubsub.Publisher
 class TraxMainViewController(object):
     def __init__(self):
         self.data=TRData.TraxData()
-        self.roi_view = None
         self.main_view = TRMView.TraxMainWindow(self)
         self.exp_controls = self.main_view.exp_panel
         self.timer = wx.Timer (self.main_view)
@@ -78,8 +77,10 @@ class TraxMainViewController(object):
             self._files_before=self._files_now
 
     def roi_setup_btn_click(self, event):
-        if self.roi_view==None:
+        try:
             self.roi_view = TRaxROIController(self.main_view, self.data)
+        except:
+            self.roi_view.activate()
 
     def unload_roi_view(self, message):
         self.roi_view=None
@@ -128,8 +129,8 @@ class TraxMainViewController(object):
 if __name__=="__main__":
     app=wx.App(None)
     main_view=TraxMainViewController()
-    #main_view.data.load_exp_data('spe files\\Pt_38.SPE')
-    main_view.data.load_exp_data('SPE test vers3\\test_075.spe')
+    main_view.data.load_exp_data('spe files\\Pt_38.SPE')
+    #main_view.data.load_exp_data('SPE test vers3\\test_074.spe')
     #main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
     #main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
     app.MainLoop()

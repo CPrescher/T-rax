@@ -49,7 +49,11 @@ from Helper import IntValidator
 from T_Rax_Data import TraxData
 
 class TRaxROIController():
+    __single = None
     def __init__(self, parent, data):
+        if TRaxROIController.__single:
+            raise TRaxROIController.__single
+        TRaxROIController.__single = self
         self.data = data
         self.initial_ds_row = data.roi_data.ds_roi.get_y_limits()
         self.initial_us_row = data.roi_data.us_roi.get_y_limits()
@@ -97,6 +101,9 @@ class TRaxROIController():
     def exp_data_changed(self, event):
         self.view.graph_panel.update_img()
 
+    def activate(self):
+        TRaxROIController.__single.view.Raise()
+
     def ok_btn_click(self, event):
         self.shut_down_window()
         del self
@@ -120,6 +127,7 @@ class TRaxROIController():
         pub.unsubscribe(self.roi_changed, "ROI CHANGED")
         pub.unsubscribe(self.exp_data_changed, "EXP DATA CHANGED")
         pub.sendMessage("ROI VIEW CLOSED")
+        TRaxROIController.__single = None
         del self
 
 class TRaxROIView(wx.MiniFrame):
@@ -293,8 +301,11 @@ class TRaxROIGraphPanel(wx.Panel):
         self.axes.set_xlim([0,len(self.img_data[0]) - 1])
         self.img.autoscale()
         self.img_background = self.canvas.copy_from_bbox(self.axes.bbox)
+
+        self.warning_txt = self.axes.text(0.05*x_max, 0.8*y_max, '', color='g', size=20)
         self.canvas.draw()
         self.create_wavelength_x_axis()
+        self.redraw_figure()
 
     def create_wavelength_x_axis(self):
         xlimits = self.data.get_x_limits()
@@ -304,21 +315,29 @@ class TRaxROIGraphPanel(wx.Panel):
         self.axes.set_xticks(xtick_pos)
         self.axes.set_xticklabels((map(int,xtick_num)))
         self.axes.set_xlabel("$\lambda$ $(nm)$")
-        self.redraw_figure()
 
     def update_img(self):
-        y_max=len(self.data.get_exp_img_data())-1
-        x_max=len(self.data.get_exp_img_data()[0])-1
-        self.axes.set_ylim([0,y_max])
-        self.axes.set_xlim([0,x_max])
-        self.ds_rect.update_limits()
-        self.us_rect.update_limits()
-        self.img.set_data(self.data.get_exp_img_data())
-        self.img.set_extent([0,x_max+1,y_max+1,0])
-        self.create_wavelength_x_axis()
-        self.img.autoscale()
-        self.set_rois()
-        self.redraw_figure()
+        if self.data.exp_data.type =='img':
+            y_max=len(self.data.get_exp_img_data())-1
+            x_max=len(self.data.get_exp_img_data()[0])-1
+            self.axes.set_ylim([0,y_max])
+            self.axes.set_xlim([0,x_max])
+            self.ds_rect.update_limits()
+            self.us_rect.update_limits()
+            self.img.set_data(self.data.get_exp_img_data())
+            self.img.set_extent([0,x_max+1,y_max+1,0])
+            self.create_wavelength_x_axis()
+            self.img.autoscale()
+            self.set_rois()
+            #self.warning_txt.set_text('')
+            self.redraw_figure()
+        else:
+            xlim = self.axes.get_xlim()
+            ylim = self.axes.get_ylim()
+            self.warning_txt.set_x(0.05*xlim[1])
+            self.warning_txt.set_y(0.8*ylim[1])
+            self.warning_txt.set_text('No image')
+            self.redraw_figure()
 
     def plot_rects(self):
         self.us_rect = self.create_rect(self.data.roi_data.us_roi, 'US')
