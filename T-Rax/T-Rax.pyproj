@@ -23,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helper.py" />
+    <Compile Include="ParkingLot.py" />
     <Compile Include="playing.py" />
     <Compile Include="SPE_module.py">
       <SubType>Code</SubType>

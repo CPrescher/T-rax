@@ -274,7 +274,7 @@ class TraxMainGraphPanel(wx.Panel):
         return Spectrum(x,y)
 
     def create_axes_lines(self, axes, data_spectrum, fit_spectrum):
-        data_line, = axes.plot(data_spectrum.x, data_spectrum.y, 'c-', lw=1.5)
+        data_line, = axes.plot(data_spectrum.x, data_spectrum.y, 'c-', lw=1.3)
         fit_line, = axes.plot(fit_spectrum.x, fit_spectrum.y, 'r-', lw=3)
         txt = axes.text(min(data_spectrum.x)+0.05*data_spectrum.get_x_range(),
                                min(data_spectrum.y)+0.95*data_spectrum.get_y_range(),
@@ -312,7 +312,6 @@ class TraxMainGraphPanel(wx.Panel):
         self.ds_data_line.set_data(ds_exp_spectrum.get_data())
         self.ds_axes.set_xlim(ds_exp_spectrum.get_x_plot_limits())
         self.ds_axes.set_ylim(ds_exp_spectrum.get_y_plot_limits())
-
         self.us_data_line.set_data(us_exp_spectrum.get_data())
         self.us_axes.set_xlim(us_exp_spectrum.get_x_plot_limits())
         self.us_axes.set_ylim(us_exp_spectrum.get_y_plot_limits())

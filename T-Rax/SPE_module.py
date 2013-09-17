@@ -8,11 +8,13 @@ from pylab import show, meshgrid,figure
 from xml.dom.minidom import parseString
 
 class SPE_File(object):
-    def __init__(self, fname):
-        self._fid = open(fname, 'rb')
+    def __init__(self, filename):
+        self.filename=filename
+        self._fid = open(filename, 'rb')
         self._read_parameter()
         self._load_img()
         self._fid.close()
+        self.determine_type()
 
     def _read_parameter(self):
         self._read_size()
@@ -46,7 +48,7 @@ class SPE_File(object):
     def _read_calibration_from_header(self):
         x_polynocoeff = self._read_at(3263,6,np.double)
         x_val = np.arange(self._xdim) + 1
-        self.x_calibration = polyval(x_val, x_polynocoeff)
+        self.x_calibration = np.array(polyval(x_val, x_polynocoeff))
 
     def _read_exposure_from_header(self):
         self.exp_time = self._read_at(10,1,np.float)
@@ -129,6 +131,13 @@ class SPE_File(object):
         y = np.arange(self._ydim) + 1
         x = self.x_calibration
         return np.meshgrid(x,y)
+
+    def determine_type(self):
+        if self._ydim==1:
+            self.type = 'spectrum'
+        elif self._ydim>1:
+            self.type = 'image'
+        return self.type
 
 
 

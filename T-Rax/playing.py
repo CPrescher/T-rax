@@ -1,20 +1,19 @@
-class Singleton:
-    __single = None
-    def __init__( self ):
-        if Singleton.__single:
-            raise Singleton.__single
-        Singleton.__single = self  
+from T_Rax_Data import TraxData
+
+data = TraxData()
+data.load_exp_data('SPE test vers3\\test_075.spe')
 
 
-class Child( Singleton ):
-    def __init__( self, name ):
-        Singleton.__init__( self )
-        self.__name = name
-    def name( self ):
-        return self.__name
+#for w in xrange(400, 600):
+#    i= data.calculate_ind(w)
+#    new_w = data.get_wavelength(i)
+#    if not w==new_w:
+#        print w
 
 
-child1 = Child("Herbert")
-child2 = Child("Linus")
+w = 500
 
-print child1.name()
+ind = data.calculate_ind(w)
+new_w = data.get_wavelength(ind)
+
+print int(new_w)

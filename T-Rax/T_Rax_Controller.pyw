@@ -52,10 +52,10 @@ class TraxMainViewController(object):
             self.data.load_exp_data(path)
 
     def load_exp_next_data(self, e):
-        self.data.load_next_file()
+        self.data.load_next_exp_file()
 
     def load_exp_previous_data(self, e):
-        self.data.load_previous_file()
+        self.data.load_previous_exp_file()
 
     def auto_process_cb_click(self, e):
         if e.EventObject.Value:
@@ -129,8 +129,8 @@ class TraxMainViewController(object):
 if __name__=="__main__":
     app=wx.App(None)
     main_view=TraxMainViewController()
-    main_view.data.load_exp_data('spe files\\Pt_38.SPE')
-    #main_view.data.load_exp_data('SPE test vers3\\test_074.spe')
+    #main_view.data.load_exp_data('spe files\\Pt_38.SPE')
+    main_view.data.load_exp_data('SPE test vers3\\test_075.spe')
     #main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
     #main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
     app.MainLoop()
