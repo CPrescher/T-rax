@@ -123,6 +123,7 @@ class TRaxROIController():
         new_limits = self.view.control_panel.limits_box.get_limits()
         new_limits_ind=np.array(self.data.calculate_ind(new_limits))
         self.data.roi_data.set_x_limits(new_limits_ind)
+        
         self.view.graph_panel.update_line_limits()
         self.view.graph_panel.update_lines()
 
@@ -176,7 +177,6 @@ class TRaxROIController():
         pub.unsubscribe(self.min_roi_line_changed, "MIN ROI LINE CHANGED")
         pub.unsubscribe(self.max_roi_line_changed, "MAX ROI LINE CHANGED")
         pub.unsubscribe(self.exp_data_changed, "EXP DATA CHANGED")
-        pub.sendMessage("ROI VIEW CLOSED")
         TRaxROIController.__single = None
         del self
 

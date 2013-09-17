@@ -162,9 +162,11 @@ class TraxExpControlPanel(wx.Panel):
         self.fit_box.SetFont(self.static_box_font)
         self.fit_from_lbl = wx.StaticText(self, -1, 'From')
         self.fit_to_lbl = wx.StaticText(self, -1, 'To')
-        self.fit_from_txt = wx.TextCtrl(self, -1, '200', size=(75,24), style=wx.ALIGN_RIGHT)
+        self.fit_from_txt = wx.TextCtrl(self, -1, '200', size=(75,24),
+                                    style =wx.ALIGN_RIGHT | wx.TE_PROCESS_ENTER, validator = IntValidator(2))
         self.fit_from_unit_lbl = wx.StaticText(self, -1, 'nm')
-        self.fit_to_txt = wx.TextCtrl(self, -1, '1000',size=(75,24), style=wx.ALIGN_RIGHT)
+        self.fit_to_txt = wx.TextCtrl(self, -1, '1000',size=(75,24), 
+                                    style =wx.ALIGN_RIGHT | wx.TE_PROCESS_ENTER, validator = IntValidator(2))
         self.fit_to_unit_lbl = wx.StaticText(self, -1, 'nm')
 
     def set_experiment_sizer(self):
@@ -213,6 +215,15 @@ class TraxExpControlPanel(wx.Panel):
         self.main_sizer.Add(self.roi_setup_btn, 0, wx.ALL | wx.EXPAND, 7)
         self.main_sizer.Add(self.fit_box_sizer,0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL,7)
         self.SetSizerAndFit(self.main_sizer)
+
+    def set_fit_x_limits(self, limits):
+        self.fit_from_txt.SetLabel(str(int(limits[0])))
+        self.fit_to_txt.SetLabel(str(int(limits[1])))
+
+    def get_fit_x_limits(self):
+        x_min = int(self.fit_from_txt.GetLabel())
+        x_max = int(self.fit_to_txt.GetLabel())
+        return [x_min, x_max]
 
 class TraxMainGraphPanel(wx.Panel):
     def __init__(self, parent):
