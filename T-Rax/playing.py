@@ -1,19 +1,20 @@
-from T_Rax_Data import TraxData
+import numpy as np
+import matplotlib.pyplot as plt
+from T_Rax_Data import CalibParam
 
-data = TraxData()
-data.load_exp_data('SPE test vers3\\test_075.spe')
+test_param=CalibParam()
+test_param.load_etalon_spec("Temperature Calibration\\15A Lamp.txt")
+test_param.set_temp(2500)
+x=np.linspace(600,900)
+
+plt.plot(x, test_param.get_calibrated_spec(x))
+plt.figure()
+test_param.set_modus(1)
+plt.plot(x, test_param.get_calibrated_spec(x))
+plt.figure()
+test_param.set_modus(2)
+test_param.set_polynom([1,2,0,4])
+plt.plot(x, test_param.get_calibrated_spec(x))
+plt.show()
 
 
-#for w in xrange(400, 600):
-#    i= data.calculate_ind(w)
-#    new_w = data.get_wavelength(i)
-#    if not w==new_w:
-#        print w
-
-
-w = 500
-
-ind = data.calculate_ind(w)
-new_w = data.get_wavelength(ind)
-
-print int(new_w)

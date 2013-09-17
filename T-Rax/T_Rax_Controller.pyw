@@ -41,8 +41,18 @@ class TraxMainViewController(object):
         self.calib_controls.ds_calib_box.load_data_btn.Bind(wx.EVT_BUTTON, self.load_ds_calib_data)
         self.calib_controls.us_calib_box.load_data_btn.Bind(wx.EVT_BUTTON, self.load_us_calib_data)
 
-        self.calib_controls.ds_calib_box.temperature_txt.Bind(wx.EVT_TEXT_ENTER, self.update_ds_temp)
-        self.calib_controls.us_calib_box.temperature_txt.Bind(wx.EVT_TEXT_ENTER, self.update_us_temp)
+        self.calib_controls.ds_calib_box.temperature_txt.Bind(wx.EVT_TEXT_ENTER, self.set_ds_temp)
+        self.calib_controls.us_calib_box.temperature_txt.Bind(wx.EVT_TEXT_ENTER, self.set_us_temp)
+
+        self.calib_controls.ds_calib_box.known_temperature_rb.Bind(wx.EVT_RADIOBUTTON, self.set_ds_modus_temp)
+        self.calib_controls.ds_calib_box.etalon_spectrum_rb.Bind(wx.EVT_RADIOBUTTON, self.set_ds_modus_etalon)
+        self.calib_controls.ds_calib_box.load_etalon_data_btn.Bind(wx.EVT_BUTTON, self.load_ds_etalon_data)
+        self.calib_controls.ds_calib_box.polynom_rb.Bind(wx.EVT_RADIOBUTTON, self.set_ds_modus_polynom)
+
+        self.calib_controls.us_calib_box.known_temperature_rb.Bind(wx.EVT_RADIOBUTTON, self.set_us_modus_temp)
+        self.calib_controls.us_calib_box.etalon_spectrum_rb.Bind(wx.EVT_RADIOBUTTON, self.set_us_modus_etalon)
+        self.calib_controls.us_calib_box.load_etalon_data_btn.Bind(wx.EVT_BUTTON, self.load_us_etalon_data)
+        self.calib_controls.us_calib_box.polynom_rb.Bind(wx.EVT_RADIOBUTTON, self.set_us_modus_polynom)
 
         self.exp_controls.fit_from_txt.Bind(wx.EVT_TEXT_ENTER, self.fit_limits_txt_changed)
         self.exp_controls.fit_to_txt.Bind(wx.EVT_TEXT_ENTER, self.fit_limits_txt_changed)
@@ -111,7 +121,6 @@ class TraxMainViewController(object):
             path = dlg.GetPath()  
             self._calib_working_dir=os.path.split(path)[0]     
             self.data.load_ds_calib_data(path)
-            self.calib_controls.ds_calib_box.file_lbl.SetLabel(self.data.get_ds_calib_file_name())
 
     def load_us_calib_data(self, event):
         dlg = wx.FileDialog(self.main_view, message="Load Upstream calibration SPE", 
@@ -122,18 +131,66 @@ class TraxMainViewController(object):
             path = dlg.GetPath()  
             self._calib_working_dir=os.path.split(path)[0]     
             self.data.load_us_calib_data(path)
-            self.calib_controls.us_calib_box.file_lbl.SetLabel(self.data.get_us_calib_file_name())
 
-    def update_us_temp(self, event):
-        self.data.us_temp = int(self.calib_controls.us_calib_box.temperature_txt.GetLabel())
+    def set_us_temp(self, event):
+        self.data.set_us_calib_temp(int(self.calib_controls.us_calib_box.temperature_txt.GetLabel()))
 
-    def update_ds_temp(self, event):
-        self.data.ds_temp = int(self.calib_controls.ds_calib_box.temperature_txt.GetLabel())
+    def set_ds_temp(self, event):
+        self.data.set_ds_calib_temp(int(self.calib_controls.ds_calib_box.temperature_txt.GetLabel()))
+
+    def set_ds_modus_temp(self, event):
+        self.data.set_ds_calib_modus(0)
+
+    def set_us_modus_temp(self, event):
+        self.data.set_us_calib_modus(0)
+
+    def set_ds_modus_etalon(self, event):
+        if self.data.ds_calib_param.etalon_spectrum_func==None:
+            self.main_view.calib_panel.ds_calib_box.known_temperature_rb.SetValue(True)
+            self.data.set_ds_calib_modus(0)
+        else:
+            self.data.set_ds_calib_modus(1)
+
+    def set_us_modus_etalon(self, event):
+        if self.data.us_calib_param.etalon_spectrum_func==None:
+            self.main_view.calib_panel.us_calib_box.known_temperature_rb.SetValue(True)
+            self.data.set_us_calib_modus(0)
+        else:
+            self.data.set_us_calib_modus(1)
+
+    def set_ds_modus_polynom(self, event):
+        self.main_view.calib_panel.ds_calib_box.known_temperature_rb.SetValue(True)
+        self.data.set_ds_calib_modus(0)
+
+    def set_us_modus_polynom(self, event):
+        self.main_view.calib_panel.us_calib_box.known_temperature_rb.SetValue(True)
+        self.data.set_us_calib_modus(0)
+
+    def load_ds_etalon_data(self, event):
+        dlg = wx.FileDialog(self.main_view, message="Load Downstream Etalon spectrum", 
+                            defaultDir = self._calib_working_dir,
+                            defaultFile ="", style=wx.OPEN)
+        
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()     
+            self.data.load_ds_calib_etalon(path)
+            self.calib_controls.ds_calib_box.etalon_file_lbl.SetLabel(path.split('\\')[-1])
+
+    def load_us_etalon_data(self, event):
+        dlg = wx.FileDialog(self.main_view, message="Load Upstream Etalon spectrum", 
+                            defaultDir = self._calib_working_dir,
+                            defaultFile ="", style=wx.OPEN)
+        
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()     
+            self.data.load_us_calib_etalon(path)
+            self.calib_controls.us_calib_box.etalon_file_lbl.SetLabel(path.split('\\')[-1])
 
     def data_changed(self, message):
-        data=message.data
-        self.main_view.graph_panel.update_graph(data.get_ds_spectrum(), data.get_us_spectrum())
-        self.exp_controls.exp_file_lbl.SetLabel(data.get_exp_file_name())
+        self.main_view.graph_panel.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum())
+        self.exp_controls.exp_file_lbl.SetLabel(self.data.get_exp_file_name())
+        self.calib_controls.ds_calib_box.file_lbl.SetLabel(self.data.get_ds_calib_file_name())
+        self.calib_controls.us_calib_box.file_lbl.SetLabel(self.data.get_us_calib_file_name())
 
     def roi_changed(self, message):
         data=message.data
@@ -149,10 +206,10 @@ class TraxMainViewController(object):
 if __name__=="__main__":
     app=wx.App(None)
     main_view=TraxMainViewController()
-    #main_view.data.load_exp_data('spe files\\Pt_38.SPE')
-    main_view.data.load_exp_data('SPE test vers3\\test_075.spe')
+    main_view.data.load_exp_data('spe files\\Pt_38.SPE')
+   # main_view.data.load_exp_data('SPE test vers3\\test_075.spe')
     main_view.set_parameter()
-    #main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
-    #main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
+    main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
+    main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
     app.MainLoop()
 

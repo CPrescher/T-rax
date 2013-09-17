@@ -9,9 +9,10 @@ from scipy.optimize import curve_fit
 class TraxData(object):
     def __init__(self):
         self._read_roi_param()
-        self._read_calib_param()
         self.ds_calib_data = None
+        self.ds_calib_param = CalibParam()
         self.us_calib_data = None
+        self.us_calib_param = CalibParam()
 
     def _read_roi_param(self):
         if os.path.isfile('roi_data.txt'):
@@ -19,13 +20,6 @@ class TraxData(object):
             self.roi_data = ROIData(self, map(int, roi_list[0]),map(int, roi_list[1]))
         else:
             self.roi_data = ROIData(self, [10,20,100,1000],[80,90,100,1000])
-
-    def _read_calib_param(self):
-        self.ds_temp = 2000
-        self.us_temp = 2000
-        #read 15A lamp calibration:
-        data = np.loadtxt("Temperature Calibration\\15A Lamp.txt", delimiter = ',')
-        self.etalon_spectrum_func = ip.interp1d(data.T[0], data.T[1],'cubic')
 
     def load_exp_data(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
@@ -53,14 +47,47 @@ class TraxData(object):
         elif img_file.type=='spectrum':
             return ExpSpecData(img_file, self.roi_data)
 
+
     def load_ds_calib_data(self, file_name):
-        self.ds_calib_data = ImgData(file_name, self.roi_data)
+        self.ds_calib_data = self.read_exp_image_file(file_name)
         self.calc_spectra()
         pub.sendMessage("EXP DATA CHANGED", self)
 
+    def set_ds_calib_modus(self, modus):
+        self.ds_calib_param.set_modus(modus)
+        pub.sendMessage("EXP DATA CHANGED", self)
+
+    def set_ds_calib_temp(self, val):
+        self.ds_calib_param.set_temp(val)
+        pub.sendMessage("EXP DATA CHANGED", self)
+
+    def load_ds_calib_etalon(self, fname):
+        self.ds_calib_param.load_etalon_spec(fname)
+        pub.sendMessage("EXP DATA CHANGED", self)
+
+    def set_ds_calib_polynom(self, polynom):
+        self.ds_calib_param.set_polynom(polynom)
+        pub.sendMessage("EXP DATA CHANGED", self)
+
     def load_us_calib_data(self, file_name):
-        self.us_calib_data = ImgData(file_name, self.roi_data)
+        self.us_calib_data = self.read_exp_image_file(file_name)
         self.calc_spectra()
+        pub.sendMessage("EXP DATA CHANGED", self)
+
+    def set_us_calib_modus(self, modus):
+        self.us_calib_param.set_modus(modus)
+        pub.sendMessage("EXP DATA CHANGED", self)
+
+    def set_us_calib_temp(self, val):
+        self.us_calib_param.set_temp(val)
+        pub.sendMessage("EXP DATA CHANGED", self)
+
+    def load_us_calib_etalon(self, fname):
+        self.us_calib_param.load_etalon_spec(fname)
+        pub.sendMessage("EXP DATA CHANGED", self)
+
+    def set_us_calib_polynom(self, polynom):
+        self.us_calib_param.set_polynom(polynom)
         pub.sendMessage("EXP DATA CHANGED", self)
 
     def get_wavelength(self,channel):
@@ -99,10 +126,16 @@ class TraxData(object):
         return self.exp_data.filename.split('\\')[-1]
 
     def get_ds_calib_file_name(self):
-        return self.ds_calib_data.filename.split('\\')[-1]
+        try:
+            return self.ds_calib_data.filename.split('\\')[-1]
+        except AttributeError:
+            return 'Select File...'
 
     def get_us_calib_file_name(self):
-        return self.us_calib_data.filename.split('\\')[-1]
+        try:
+            return self.us_calib_data.filename.split('\\')[-1]
+        except AttributeError:
+            return 'Select File...'
 
     def get_exp_img_data(self):
         return self.exp_data.get_img_data()
@@ -114,8 +147,9 @@ class TraxData(object):
         if self.ds_calib_data == None:
             return self.exp_data.ds_spectrum
         else:
+            x=self.exp_data.ds_spectrum.x
             corrected_spectrum = self.exp_data.calc_corrected_ds_spectrum(self.ds_calib_data.ds_spectrum, 
-                                                self.etalon_spectrum_func(self.exp_data.ds_spectrum.x))
+                                                self.ds_calib_param.get_calibrated_spec(x))
             fitted_spectrum = FitSpectrum(corrected_spectrum)
             return [corrected_spectrum, fitted_spectrum]
 
@@ -123,8 +157,9 @@ class TraxData(object):
         if self.us_calib_data == None:
             return self.exp_data.us_spectrum
         else:
+            x=self.exp_data.us_spectrum.x
             corrected_spectrum = self.exp_data.calc_corrected_us_spectrum(self.us_calib_data.us_spectrum, 
-                                                self.etalon_spectrum_func(self.exp_data.us_spectrum.x))
+                                                self.us_calib_param.get_calibrated_spec(x))
             fitted_spectrum = FitSpectrum(corrected_spectrum)
             return [corrected_spectrum, fitted_spectrum]
 
@@ -223,12 +258,14 @@ class ExpData(ImgData):
     def calc_corrected_ds_spectrum(self, calib_img_spectrum, calib_spectrum):
         response_function = calib_img_spectrum.y / calib_spectrum
         corrected_exp_y = self.ds_spectrum.y / response_function
+        corrected_exp_y = corrected_exp_y/max(corrected_exp_y)*max(self.ds_spectrum.y)
         self.ds_corrected_spectrum = Spectrum(self.ds_spectrum.x, corrected_exp_y)
         return self.ds_corrected_spectrum
 
     def calc_corrected_us_spectrum(self, calib_img_spectrum, calib_spectrum):
         response_function = calib_img_spectrum.y / calib_spectrum
         corrected_exp_y = self.us_spectrum.y / response_function
+        corrected_exp_y = corrected_exp_y/max(corrected_exp_y)*max(self.us_spectrum.y)
         self.us_corrected_spectrum = Spectrum(self.us_spectrum.x, corrected_exp_y)
         test = FitSpectrum(self.us_corrected_spectrum)
         return self.us_corrected_spectrum
@@ -283,7 +320,47 @@ class ExpSpecData(ExpData):
     def get_img_data(self):
         raise NotImplementedError
 
+class CalibParam(object):
+    def __init__(self):
+        self.modus=0 
+        #modi:  0 - given temperature
+        #       1 - etalon spectrum
+        #       2 - given polynom
 
+        self.temp=2000
+        self.etalon_spectrum_func = None
+        self.polynom = []
+
+    def set_modus(self, val):
+        self.modus = val
+
+    def set_temp(self, temp):
+        self.temp = temp
+        
+    def load_etalon_spec(self, fname):
+        try:
+            data = np.loadtxt(fname, delimiter = ',')
+        except ValueError:
+            try:
+                data = np.loadtxt(fname, delimiter = ' ')
+            except ValueError:
+                try:
+                    data = np.loadtxt(fname, delimiter = ';')
+                except:
+                    data = np.loadtxt(fname, delimiter = '\t')
+        self.etalon_spectrum_func = ip.interp1d(data.T[0], data.T[1],'cubic')
+
+    def set_polynom(self, poly):
+        self.polynom = poly
+
+    def get_calibrated_spec(self, wavelength):
+        if self.modus==0:
+            y=black_body_function(wavelength, self.temp, 1)
+            return y/max(y)
+        elif self.modus==1:
+            return self.etalon_spectrum_func(wavelength)
+        elif self.modus==2:
+            return np.polynomial.polynomial.polyval(wavelength, self.polynom)
 
 class Spectrum():
     def __init__(self,x,y):
