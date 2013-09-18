@@ -153,6 +153,9 @@ class TraxExpControlPanel(wx.Panel):
         self.exp_previous_btn = wx.Button(self, wx.ID_ANY,'<-', size=(30,20))
         self.exp_next_btn = wx.Button(self, wx.ID_ANY, '->', size=(30,20))
         self.exp_auto_process_cb = wx.CheckBox(self, -1, 'autoprocess')
+        self.exp_folder_lbl = wx.StaticText(self, -1, 'Folder')
+        self.exp_folder_lbl.SetForegroundColour(self.file_lbl_color_None)
+        self.exp_folder_lbl.SetFont(self.file_lbl_font)
 
         self.exp_subtract_background_cb = wx.CheckBox(self, -1, 'Subtract Background')
         self.exp_load_bkg_btn = wx.Button(self, -1, 'Background Setup')
@@ -178,12 +181,12 @@ class TraxExpControlPanel(wx.Panel):
         self.experiment_gb_sizer.Add(self.exp_file_lbl, (0,1), flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
         self.experiment_gb_sizer.Add(self.experiment_walk_sizer, (1,0), flag=wx.EXPAND)
         self.experiment_gb_sizer.Add(self.exp_auto_process_cb, (1,1), flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
-
+        self.experiment_gb_sizer.Add(self.exp_folder_lbl, (2,0),(1,2),flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
         self.experiment_gb_sizer.Add(wx.StaticLine(self, -1, style=wx.LI_HORIZONTAL),
-                                     (2,0),(1,2), flag=wx.EXPAND)
+                                     (3,0),(1,2), flag=wx.EXPAND)
 
-        self.experiment_gb_sizer.Add(self.exp_load_bkg_btn, (3,0), (1,2), flag =wx.EXPAND)
-        self.experiment_gb_sizer.Add(self.exp_subtract_background_cb, (4,0),(1,2), flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
+        self.experiment_gb_sizer.Add(self.exp_load_bkg_btn, (4,0), (1,2), flag =wx.EXPAND)
+        self.experiment_gb_sizer.Add(self.exp_subtract_background_cb, (5,0),(1,2), flag=wx.ALL | wx.ALIGN_CENTRE_VERTICAL, border=3)
 
         self.experiment_gb_sizer.AddGrowableCol(1)
         self.experiment_box_sizer = wx.StaticBoxSizer(self.exp_box, wx.VERTICAL)
@@ -214,6 +217,7 @@ class TraxExpControlPanel(wx.Panel):
         self.main_sizer.Add(self.experiment_box_sizer, 0, wx.ALL | wx.EXPAND, 7)
         self.main_sizer.Add(self.roi_setup_btn, 0, wx.ALL | wx.EXPAND, 7)
         self.main_sizer.Add(self.fit_box_sizer,0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL,7)
+        self.Layout()
         self.SetSizerAndFit(self.main_sizer)
 
     def set_fit_x_limits(self, limits):
@@ -224,6 +228,17 @@ class TraxExpControlPanel(wx.Panel):
         x_min = int(self.fit_from_txt.GetLabel())
         x_max = int(self.fit_to_txt.GetLabel())
         return [x_min, x_max]
+
+    def hide_folder_lbl(self):
+        self.experiment_gb_sizer.Hide(self.exp_folder_lbl)
+        
+        self.Layout()
+        self.experiment_gb_sizer.Layout()
+
+    def show_folder_lbl(self):
+        self.experiment_gb_sizer.Show(self.exp_folder_lbl)
+        self.Layout()
+        self.experiment_gb_sizer.Layout()
 
 class TraxMainGraphPanel(wx.Panel):
     def __init__(self, parent):
@@ -266,21 +281,21 @@ class TraxMainGraphPanel(wx.Panel):
         self.us_data_line , self.us_fit_line, self.us_temp_txt, \
             self.us_int_txt, self.us_warning_txt, self.us_calib_file_txt = \
             self.create_axes_lines(self.us_axes)    
-        self.us_axes.set_title('UPSTREAM', color=(1,0.55,0))
+        self.us_axes.set_title('UPSTREAM', color=(1,0.55,0), weight = 'bold')
         
     def create_ds_graph(self):
         self.ds_data_line , self.ds_fit_line, self.ds_temp_txt, \
             self.ds_int_txt, self.ds_warning_txt, self.ds_calib_file_txt = \
             self.create_axes_lines(self.ds_axes)  
-        self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0)) 
+        self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0), weight = 'bold') 
 
     def create_axes_lines(self, axes):
         data_line, = axes.plot([], [], 'c-', lw=0.5)
         fit_line, = axes.plot([], [], 'r-', lw=3)
         temp_txt = axes.text(0,0, '', size=20, ha='left', va='top')
-        int_txt = axes.text(0,0,'',size=8, color = 'g', ha='right')
+        int_txt = axes.text(0,0,'',size=13, color = (0.04,0.76,0.17), ha='right')
         warning_txt=axes.text(0,0,'', size=25, color = 'r', va='center', ha='center', weight = 'bold') 
-        calib_file_txt = axes.text(0,0, '', size=8, color = 'r', ha='left', va='top')
+        calib_file_txt = axes.text(0,0, '', size=9, color =  (0.04,0.76,0.17), ha='left', va='top', weight = 'bold')
 
         axes.yaxis.set_visible(False)
         axes.set_xlabel('$\lambda$ $(nm)$', size=11)

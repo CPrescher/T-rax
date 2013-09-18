@@ -182,6 +182,7 @@ class TraxMainViewController(object):
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.exp_controls.exp_file_lbl.SetLabel(self.data.get_exp_file_name().split('\\')[-1])
+        self.exp_controls.exp_folder_lbl.SetLabel('\\'.join(self.data.get_exp_file_name().split('\\')[-4:-1]))
         self.calib_controls.ds_calib_box.file_lbl.SetLabel(self.data.get_ds_calib_file_name().split('\\')[-1])
         self.calib_controls.us_calib_box.file_lbl.SetLabel(self.data.get_us_calib_file_name().split('\\')[-1])
         self.calib_controls.ds_calib_box.etalon_file_lbl.SetLabel(self.data.get_ds_calib_etalon_file_name().split('\\')[-1])
