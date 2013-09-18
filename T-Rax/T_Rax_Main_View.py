@@ -1,5 +1,6 @@
 import wx
 import matplotlib as mpl
+mpl.rcParams['font.size'] = 9
 mpl.rcParams['lines.linewidth'] = 0.5
 mpl.rcParams['lines.color'] = 'g'
 mpl.rcParams['text.color'] = 'white'
@@ -19,7 +20,7 @@ from T_Rax_Data import black_body_function, Spectrum, FitSpectrum
 #text font parameter:
 class TraxMainWindow(wx.Frame):
     def __init__(self, controller):
-        wx.Frame.__init__(self, None, -1, 'T-Rax ver 0.1', size=(1300,700))
+        wx.Frame.__init__(self, None, -1, 'T-Rax ver 0.1', size=(1300,700), style = wx.DEFAULT_FRAME_STYLE | wx.CLIP_CHILDREN)
         self.controller = controller
         self.init_UI()
         self.Show()
@@ -49,7 +50,7 @@ class TraxMainWindow(wx.Frame):
         self.main_sizer.AddMany([(self.graph_panel, 1 ,wx.EXPAND),(self.control_panel,0, wx.EXPAND)])
         self.main_panel.SetSizer(self.main_sizer)
         self.Layout()
-        self.SetMinSize((800,650))
+        self.SetMinSize((900,450))
 
 class TraxCalibControlPanel(wx.Panel):
     def __init__(self, parent):
@@ -100,8 +101,6 @@ class CalibBox():
         self.etalon_file_lbl.SetForegroundColour(self.parent.file_lbl_color_None)
         self.etalon_file_lbl.SetFont(self.parent.file_lbl_font)
         self.load_etalon_data_btn = wx.Button(self.parent, wx.ID_ANY,'...', size =(35,22))
-        self.polynom_rb = wx.RadioButton(self.parent, -1, 'Poly')
-        self.load_polynom_btn = wx.Button(self.parent, -1, '...',size =(35,22))
 
     def set_sizer(self):
         self.gb_sizer = wx.GridBagSizer(7,7)
@@ -121,10 +120,7 @@ class CalibBox():
         self.gb_sizer.Add(self.etalon_spectrum_rb, (3,1), flag = wx.EXPAND | wx.ALIGN_CENTRE_VERTICAL)
         self.gb_sizer.Add(self.load_etalon_data_btn, (3,0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
         self.gb_sizer.Add(self.etalon_file_lbl, (4,1), flag=wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL)
-        self.gb_sizer.Add(self.polynom_rb, (5,1), flag =wx.EXPAND | wx.ALIGN_CENTRE_VERTICAL)
-        self.gb_sizer.Add(self.load_polynom_btn, (5,0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
         self.gb_sizer.AddGrowableCol(1)
-        self.gb_sizer.AddGrowableRow(4)
         self.box_sizer = wx.StaticBoxSizer(self.static_box, wx.HORIZONTAL)
         self.box_sizer.Add(self.gb_sizer, 50, wx.ALL | wx.EXPAND)
 
@@ -166,10 +162,10 @@ class TraxExpControlPanel(wx.Panel):
         self.fit_box.SetFont(self.static_box_font)
         self.fit_from_lbl = wx.StaticText(self, -1, 'From')
         self.fit_to_lbl = wx.StaticText(self, -1, 'To')
-        self.fit_from_txt = wx.TextCtrl(self, -1, '200', size=(75,24),
+        self.fit_from_txt = wx.TextCtrl(self, -1, '500', size=(75,24),
                                     style =wx.ALIGN_RIGHT | wx.TE_PROCESS_ENTER, validator = IntValidator(2))
         self.fit_from_unit_lbl = wx.StaticText(self, -1, 'nm')
-        self.fit_to_txt = wx.TextCtrl(self, -1, '1000',size=(75,24), 
+        self.fit_to_txt = wx.TextCtrl(self, -1, '900',size=(75,24), 
                                     style =wx.ALIGN_RIGHT | wx.TE_PROCESS_ENTER, validator = IntValidator(2))
         self.fit_to_unit_lbl = wx.StaticText(self, -1, 'nm')
 
@@ -221,8 +217,8 @@ class TraxExpControlPanel(wx.Panel):
         self.SetSizerAndFit(self.main_sizer)
 
     def set_fit_x_limits(self, limits):
-        self.fit_from_txt.SetLabel(str(int(limits[0])))
-        self.fit_to_txt.SetLabel(str(int(limits[1])))
+        self.fit_from_txt.SetLabel(str(int(np.round(limits[0]))))
+        self.fit_to_txt.SetLabel(str(int(np.round(limits[1]))))
 
     def get_fit_x_limits(self):
         x_min = int(self.fit_from_txt.GetLabel())
@@ -267,41 +263,28 @@ class TraxMainGraphPanel(wx.Panel):
             self.status_bar.SetStatusText('')
 
     def create_us_graph(self):
-        data_spectrum=self.calculate_dummy_spectrum()
-        fit_spectrum=FitSpectrum(data_spectrum)
-        self.us_data_line , self.us_fit_line, self.us_temp_txt = \
-            self.create_axes_lines(self.us_axes, data_spectrum, fit_spectrum)    
-        self.us_axes.set_title('UPSTREAM')
+        self.us_data_line , self.us_fit_line, self.us_temp_txt, \
+            self.us_int_txt, self.us_warning_txt, self.us_calib_file_txt = \
+            self.create_axes_lines(self.us_axes)    
+        self.us_axes.set_title('UPSTREAM', color=(1,0.55,0))
         
     def create_ds_graph(self):
-        data_spectrum=self.calculate_dummy_spectrum()
-        fit_spectrum=FitSpectrum(data_spectrum)
-        self.ds_data_line , self.ds_fit_line, self.ds_temp_txt = \
-            self.create_axes_lines(self.ds_axes, data_spectrum, fit_spectrum)  
-        self.ds_axes.set_title('DOWNSTREAM') 
+        self.ds_data_line , self.ds_fit_line, self.ds_temp_txt, \
+            self.ds_int_txt, self.ds_warning_txt, self.ds_calib_file_txt = \
+            self.create_axes_lines(self.ds_axes)  
+        self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0)) 
 
-    def calculate_dummy_spectrum(self):
-        random.seed()
-        x=np.arange(500,900,.5)
-        T=random.randrange(1700,3000,1)
-        y=black_body_function(x, T, 1e-11)
-        y+=np.random.normal(0,.081*max(y),len(x))
-        return Spectrum(x,y)
+    def create_axes_lines(self, axes):
+        data_line, = axes.plot([], [], 'c-', lw=0.5)
+        fit_line, = axes.plot([], [], 'r-', lw=3)
+        temp_txt = axes.text(0,0, '', size=20, ha='left', va='top')
+        int_txt = axes.text(0,0,'',size=8, color = 'g', ha='right')
+        warning_txt=axes.text(0,0,'', size=25, color = 'r', va='center', ha='center', weight = 'bold') 
+        calib_file_txt = axes.text(0,0, '', size=8, color = 'r', ha='left', va='top')
 
-    def create_axes_lines(self, axes, data_spectrum, fit_spectrum):
-        data_line, = axes.plot(data_spectrum.x, data_spectrum.y, 'c-', lw=1.3)
-        fit_line, = axes.plot(fit_spectrum.x, fit_spectrum.y, 'r-', lw=3)
-        txt = axes.text(min(data_spectrum.x)+0.05*data_spectrum.get_x_range(),
-                               min(data_spectrum.y)+0.95*data_spectrum.get_y_range(),
-                               '{0:.0f} K $\pm$ {1:.0f}'.format(fit_spectrum.T, fit_spectrum.T_err), size=20)
-        
         axes.yaxis.set_visible(False)
-        axes.set_xlim(data_spectrum.get_x_plot_limits())
-        axes.set_ylim(data_spectrum.get_y_plot_limits())
-        axes.set_xlabel('$\lambda$ $(nm)$')
-        return data_line, fit_line, txt
-
-    
+        axes.set_xlabel('$\lambda$ $(nm)$', size=11)
+        return data_line, fit_line, temp_txt, int_txt, warning_txt, calib_file_txt
 
     def plot_ds_fit(self, fit):
         self.ds_fit, =self.ds_axes.plot(fit.x,fit.y,'r-', lw=2)
@@ -309,7 +292,7 @@ class TraxMainGraphPanel(wx.Panel):
     def plot_us_fit(self, fit):
         self.us_fit, =self.us_axes.plot(fit.x, fit.y, 'r-', lw=2)
 
-    def update_graph(self, ds_spectrum, us_spectrum):
+    def update_graph(self, ds_spectrum, us_spectrum, ds_max_int, us_max_int, ds_calib_fname, us_calib_fname):
         if isinstance(ds_spectrum,list):
             ds_exp_spectrum = ds_spectrum[0]
             ds_fit_spectrum = ds_spectrum[1]
@@ -331,6 +314,7 @@ class TraxMainGraphPanel(wx.Panel):
         self.us_axes.set_xlim(us_exp_spectrum.get_x_plot_limits())
         self.us_axes.set_ylim(us_exp_spectrum.get_y_plot_limits())
 
+        #Temperature labels:
         if ds_fit_spectrum==None:
             self.ds_temp_txt.set_text('')
             self.ds_fit_line.set_data([[],[]])
@@ -338,7 +322,7 @@ class TraxMainGraphPanel(wx.Panel):
             self.ds_temp_txt.set_text('{0:.0f} K $\pm$ {1:.0f}'.format(ds_fit_spectrum.T, ds_fit_spectrum.T_err))
             self.ds_fit_line.set_data(ds_fit_spectrum.get_data())
             self.ds_temp_txt.set_x(min(ds_exp_spectrum.x)+0.05*ds_exp_spectrum.get_x_range())
-            self.ds_temp_txt.set_y(min(ds_exp_spectrum.y)+0.95*ds_exp_spectrum.get_y_range())
+            self.ds_temp_txt.set_y(min(ds_exp_spectrum.y)+0.9*ds_exp_spectrum.get_y_range()*1.05)
 
         if us_fit_spectrum==None:
             self.us_temp_txt.set_text('')
@@ -347,9 +331,47 @@ class TraxMainGraphPanel(wx.Panel):
             self.us_temp_txt.set_text('{0:.0f} K $\pm$ {1:.0f}'.format(us_fit_spectrum.T, us_fit_spectrum.T_err))
             self.us_fit_line.set_data(us_fit_spectrum.get_data())
             self.us_temp_txt.set_x(min(us_exp_spectrum.x)+0.05*us_exp_spectrum.get_x_range())
-            self.us_temp_txt.set_y(min(us_exp_spectrum.y)+0.95*us_exp_spectrum.get_y_range())
+            self.us_temp_txt.set_y(min(us_exp_spectrum.y)+0.9*us_exp_spectrum.get_y_range()*1.05)
+
+        #Maximum intensity:
+        self.ds_int_txt.set_text('Max Int: {0:,.0f}'.format(ds_max_int))
+        self.ds_int_txt.set_x(min(ds_exp_spectrum.x)+0.97*ds_exp_spectrum.get_x_range())
+        self.ds_int_txt.set_y(min(ds_exp_spectrum.y)+0.03*ds_exp_spectrum.get_y_range())
+
+        self.us_int_txt.set_text('Max Int: {0:,.0f}'.format(us_max_int))
+        self.us_int_txt.set_x(min(us_exp_spectrum.x)+0.97*us_exp_spectrum.get_x_range())
+        self.us_int_txt.set_y(min(us_exp_spectrum.y)+0.03*us_exp_spectrum.get_y_range())
+
+        #do a warning if it is over a specific value:
+        if ds_max_int>=64400:
+            self.ds_warning_txt.set_text('SATURATION')
+            self.ds_warning_txt.set_x(min(ds_exp_spectrum.x)+0.5*ds_exp_spectrum.get_x_range())
+            self.ds_warning_txt.set_y(min(ds_exp_spectrum.y)+0.5*ds_exp_spectrum.get_y_range())
+        else:
+            self.ds_warning_txt.set_text('')
+
+        if us_max_int>=64400:
+            self.us_warning_txt.set_text('SATURATION')
+            self.us_warning_txt.set_x(min(us_exp_spectrum.x)+0.5*us_exp_spectrum.get_x_range())
+            self.us_warning_txt.set_y(min(us_exp_spectrum.y)+0.5*us_exp_spectrum.get_y_range())
+        else:
+            self.us_warning_txt.set_text('')
+
+        #Calibration files:
+        str='\\'.join(ds_calib_fname.split('\\')[-3:])
+        self.ds_calib_file_txt.set_text(str)
+        self.ds_calib_file_txt.set_x(min(ds_exp_spectrum.x)+0.03*ds_exp_spectrum.get_x_range())
+        self.ds_calib_file_txt.set_y(min(ds_exp_spectrum.y)+0.96*ds_exp_spectrum.get_y_range()*1.05)
+
+        str='\\'.join(us_calib_fname.split('\\')[-3:])
+        self.us_calib_file_txt.set_text(str)
+        self.us_calib_file_txt.set_x(min(us_exp_spectrum.x)+0.03*us_exp_spectrum.get_x_range())
+        self.us_calib_file_txt.set_y(min(us_exp_spectrum.y)+0.96*us_exp_spectrum.get_y_range()*1.05)
 
         self.canvas.draw()
+
+       
+       
 
     def redraw_figure(self):
         self.figure.tight_layout(None, 1.2, None, None)

@@ -2,17 +2,21 @@ from wx.lib.pubsub import Publisher as pub
 from SPE_module import SPE_File
 import os.path
 import numpy as np
+import random
 import scipy.interpolate as ip
 from scipy.optimize import curve_fit
 
 
 class TraxData(object):
     def __init__(self):
-        self._read_roi_param()
         self.ds_calib_data = None
         self.ds_calib_param = CalibParam()
         self.us_calib_data = None
         self.us_calib_param = CalibParam()
+
+        self._read_roi_param()
+        self._create_dummy_img()
+        self._load_calib_etalon()
 
     def _read_roi_param(self):
         if os.path.isfile('roi_data.txt'):
@@ -20,6 +24,13 @@ class TraxData(object):
             self.roi_data = ROIData(self, map(int, roi_list[0]),map(int, roi_list[1]))
         else:
             self.roi_data = ROIData(self, [10,20,100,1000],[80,90,100,1000])
+
+    def _create_dummy_img(self):
+        self.exp_data=DummyImg(self.roi_data)
+
+    def _load_calib_etalon(self):
+        self.load_us_calib_etalon('15A_lamp.txt')
+        self.load_ds_calib_etalon('15A_lamp.txt')
 
     def load_exp_data(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
@@ -90,7 +101,7 @@ class TraxData(object):
         self.us_calib_param.set_polynom(polynom)
         pub.sendMessage("EXP DATA CHANGED", self)
 
-    def get_wavelength(self,channel):
+    def calculate_wavelength(self,channel):
         if isinstance(channel,list):
             result = []
             for c in channel:
@@ -123,19 +134,25 @@ class TraxData(object):
             self.us_calib_data.calc_spectra()
 
     def get_exp_file_name(self):
-        return self.exp_data.filename.split('\\')[-1]
+        return self.exp_data.filename
 
     def get_ds_calib_file_name(self):
         try:
-            return self.ds_calib_data.filename.split('\\')[-1]
+            return self.ds_calib_data.filename
         except AttributeError:
             return 'Select File...'
 
     def get_us_calib_file_name(self):
         try:
-            return self.us_calib_data.filename.split('\\')[-1]
+            return self.us_calib_data.filename
         except AttributeError:
             return 'Select File...'
+
+    def get_ds_calib_etalon_file_name(self):
+        return self.ds_calib_param.get_etalon_fname()
+
+    def get_us_calib_etalon_file_name(self):
+        return self.us_calib_param.get_etalon_fname()
 
     def get_exp_img_data(self):
         return self.exp_data.get_img_data()
@@ -153,6 +170,9 @@ class TraxData(object):
             fitted_spectrum = FitSpectrum(corrected_spectrum)
             return [corrected_spectrum, fitted_spectrum]
 
+    def get_ds_roi_max(self):
+        return self.exp_data.calc_roi_max(self.roi_data.ds_roi)
+
     def get_us_spectrum(self):
         if self.us_calib_data == None:
             return self.exp_data.us_spectrum
@@ -162,6 +182,9 @@ class TraxData(object):
                                                 self.us_calib_param.get_calibrated_spec(x))
             fitted_spectrum = FitSpectrum(corrected_spectrum)
             return [corrected_spectrum, fitted_spectrum]
+
+    def get_us_roi_max(self):
+        return self.exp_data.calc_roi_max(self.roi_data.us_roi)
 
     def get_whole_spectrum(self):
         return self.exp_data.x, self.exp_data.y_whole_spectrum
@@ -217,13 +240,15 @@ class ImgData(GeneralData):
         self.us_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.us_roi))
 
     def calc_spectrum(self, roi):
-        spec = []
-        for x_ind in range(roi.x_min,roi.x_max + 1):
-            spec_val = 0
-            for y_ind in range(roi.y_min,roi.y_max + 1):
-                spec_val+=self.img_data[y_ind][x_ind]    
-            spec.append(spec_val)
-        return np.array(spec)
+        roi_img=self.get_roi_img(roi)
+        return np.sum(roi_img,0)
+
+    def calc_roi_max(self, roi):
+        roi_img=self.get_roi_img(roi)
+        return np.max(roi_img)
+
+    def get_roi_img(self, roi):
+        return self.img_data[roi.y_min : roi.y_max+1, roi.x_min:roi.x_max+1]
 
     def get_x_limits(self):
         return np.array([min(self.x_whole), max(self.x_whole)])
@@ -303,6 +328,37 @@ class ExpData(ImgData):
                     number_str + '.' + self._file_ending
         return new_file_name, new_file_name_with_leading_zeros
 
+class DummyImg(ExpData):
+    def __init__(self, roi_data):
+        self.roi_data=roi_data
+        self.create_img()
+        self.filename = 'dummy_img.spe'
+
+    def create_img(self):
+        x=np.linspace(645,850,1300)
+        y=np.linspace(0,101, 100)
+        X,Y = np.meshgrid(x,y)
+
+        Z=np.ones((len(y),len(x)))
+        random.seed()
+        T1=random.randrange(1700,3000,1)
+        T2=T1+ random.randrange(-200,200,1)
+
+        black1 = black_body_function(x,T1,1e-8)
+        gauss1 = gauss_curve_function(y,2,80,3)
+        black2 = black_body_function(x,T2,1e-8)
+        gauss2 = gauss_curve_function(y,2,15,3)
+
+        for x_ind in xrange(len(x)):
+            for y_ind in xrange(len(y)):
+                Z[y_ind,x_ind] = black1[x_ind]*gauss1[y_ind] +black2[x_ind]*gauss2[y_ind]
+        self.img_data=Z+np.random.normal(0,.1*max(black1),(len(y),len(x)))
+        self.x_whole = x
+        self.calc_spectra()
+        
+
+
+
 class ExpSpecData(ExpData):
     def update_roi(self):
         x_max, y_max = self._img_file.get_dimension()        
@@ -349,6 +405,7 @@ class CalibParam(object):
                 except:
                     data = np.loadtxt(fname, delimiter = '\t')
         self.etalon_spectrum_func = ip.interp1d(data.T[0], data.T[1],'cubic')
+        self.etalon_file_name = fname
 
     def set_polynom(self, poly):
         self.polynom = poly
@@ -361,6 +418,10 @@ class CalibParam(object):
             return self.etalon_spectrum_func(wavelength)
         elif self.modus==2:
             return np.polynomial.polynomial.polyval(wavelength, self.polynom)
+
+    def get_etalon_fname(self):
+        return self.etalon_file_name
+
 
 class Spectrum():
     def __init__(self,x,y):
@@ -502,3 +563,6 @@ def black_body_function(wavelength, temp, scaling):
     c2 = 0.014388
     return scaling * c1 * wavelength ** -5 / (np.exp(c2 / (wavelength * temp)) - 1)
 
+
+def gauss_curve_function(x, scaling, center, sigma):
+    return scaling*np.exp(-(x-float(center))**2/(2*sigma**2))

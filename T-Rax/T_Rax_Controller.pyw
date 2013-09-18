@@ -7,7 +7,6 @@ import wx
 from wx.lib.pubsub import Publisher as pub
 import os
 
-wx.lib.pubsub.Publisher
 
 class TraxMainViewController(object):
     def __init__(self):
@@ -19,10 +18,11 @@ class TraxMainViewController(object):
         self._exp_working_dir=os.getcwd()
         self._calib_working_dir=os.getcwd()
         self.set_bindings()
+        pub.sendMessage("EXP DATA CHANGED")
 
     def set_parameter(self):
         ds_txt_roi = self.data.roi_data.ds_roi.get_list()
-        ds_txt_roi[2:] = self.data.get_wavelength(ds_txt_roi[2:])
+        ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
         self.exp_controls.set_fit_x_limits(ds_txt_roi[2:])
 
     def set_bindings(self):
@@ -47,15 +47,14 @@ class TraxMainViewController(object):
         self.calib_controls.ds_calib_box.known_temperature_rb.Bind(wx.EVT_RADIOBUTTON, self.set_ds_modus_temp)
         self.calib_controls.ds_calib_box.etalon_spectrum_rb.Bind(wx.EVT_RADIOBUTTON, self.set_ds_modus_etalon)
         self.calib_controls.ds_calib_box.load_etalon_data_btn.Bind(wx.EVT_BUTTON, self.load_ds_etalon_data)
-        self.calib_controls.ds_calib_box.polynom_rb.Bind(wx.EVT_RADIOBUTTON, self.set_ds_modus_polynom)
 
         self.calib_controls.us_calib_box.known_temperature_rb.Bind(wx.EVT_RADIOBUTTON, self.set_us_modus_temp)
         self.calib_controls.us_calib_box.etalon_spectrum_rb.Bind(wx.EVT_RADIOBUTTON, self.set_us_modus_etalon)
         self.calib_controls.us_calib_box.load_etalon_data_btn.Bind(wx.EVT_BUTTON, self.load_us_etalon_data)
-        self.calib_controls.us_calib_box.polynom_rb.Bind(wx.EVT_RADIOBUTTON, self.set_us_modus_polynom)
 
         self.exp_controls.fit_from_txt.Bind(wx.EVT_TEXT_ENTER, self.fit_limits_txt_changed)
         self.exp_controls.fit_to_txt.Bind(wx.EVT_TEXT_ENTER, self.fit_limits_txt_changed)
+
 
     def load_exp_data(self, e):
         dlg = wx.FileDialog(self.main_view, message="Load Experiment SPE", 
@@ -96,7 +95,7 @@ class TraxMainViewController(object):
             
     def roi_setup_btn_click(self, event):
         try:
-            self.roi_view = TRaxROIController(self.main_view, self.data)
+            self.roi_view = TRaxROIController(None, self.data)
         except TRaxROIController, s:
             s.activate()
         except wx._core.PyDeadObjectError:
@@ -158,14 +157,6 @@ class TraxMainViewController(object):
         else:
             self.data.set_us_calib_modus(1)
 
-    def set_ds_modus_polynom(self, event):
-        self.main_view.calib_panel.ds_calib_box.known_temperature_rb.SetValue(True)
-        self.data.set_ds_calib_modus(0)
-
-    def set_us_modus_polynom(self, event):
-        self.main_view.calib_panel.us_calib_box.known_temperature_rb.SetValue(True)
-        self.data.set_us_calib_modus(0)
-
     def load_ds_etalon_data(self, event):
         dlg = wx.FileDialog(self.main_view, message="Load Downstream Etalon spectrum", 
                             defaultDir = self._calib_working_dir,
@@ -187,29 +178,41 @@ class TraxMainViewController(object):
             self.calib_controls.us_calib_box.etalon_file_lbl.SetLabel(path.split('\\')[-1])
 
     def data_changed(self, message):
-        self.main_view.graph_panel.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum())
-        self.exp_controls.exp_file_lbl.SetLabel(self.data.get_exp_file_name())
-        self.calib_controls.ds_calib_box.file_lbl.SetLabel(self.data.get_ds_calib_file_name())
-        self.calib_controls.us_calib_box.file_lbl.SetLabel(self.data.get_us_calib_file_name())
+        self.main_view.graph_panel.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
+                                                self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
+                                                self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
+        self.exp_controls.exp_file_lbl.SetLabel(self.data.get_exp_file_name().split('\\')[-1])
+        self.calib_controls.ds_calib_box.file_lbl.SetLabel(self.data.get_ds_calib_file_name().split('\\')[-1])
+        self.calib_controls.us_calib_box.file_lbl.SetLabel(self.data.get_us_calib_file_name().split('\\')[-1])
+        self.calib_controls.ds_calib_box.etalon_file_lbl.SetLabel(self.data.get_ds_calib_etalon_file_name().split('\\')[-1])
+        self.calib_controls.us_calib_box.etalon_file_lbl.SetLabel(self.data.get_us_calib_etalon_file_name().split('\\')[-1])
+        self.set_parameter()
 
     def roi_changed(self, message):
-        data=message.data
-        self.main_view.graph_panel.update_graph(data.get_ds_spectrum(), data.get_us_spectrum())
+        self.main_view.graph_panel.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
+                                                self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
+                                                self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         ds_txt_roi = self.data.roi_data.ds_roi.get_list()
-        ds_txt_roi[2:] = self.data.get_wavelength(ds_txt_roi[2:])
+        ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
         self.main_view.exp_panel.set_fit_x_limits(ds_txt_roi[2:])
 
     def close_window_click(self, event):
+        try:
+            self.roi_view.view.Destroy()
+            del self.roi_view
+        except:
+            pass
         self.main_view.Destroy()
         self.data.save_roi_data()
 
 if __name__=="__main__":
     app=wx.App(None)
     main_view=TraxMainViewController()
-    main_view.data.load_exp_data('spe files\\Pt_38.SPE')
-   # main_view.data.load_exp_data('SPE test vers3\\test_075.spe')
-    main_view.set_parameter()
-    main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
-    main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
+   # main_view.data.load_exp_data('spe files\\Pt_38.SPE')
+    #main_view.data.load_exp_data('SPE test vers3\\test_075.spe')
+    
+    main_view.data.load_exp_data('binary files\\lamp_15_dn.SPE')
+    #main_view.data.load_ds_calib_data('binary files\\lamp_15_dn.SPE')
+    #main_view.data.load_us_calib_data('binary files\\lamp_15_up.SPE')
     app.MainLoop()
 

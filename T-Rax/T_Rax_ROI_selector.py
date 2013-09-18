@@ -57,8 +57,8 @@ class TRaxROIController():
 
         TRaxROIController.__single = self
         self.data = data
-        self.initial_ds_row = data.roi_data.ds_roi.get_y_limits()
-        self.initial_us_row = data.roi_data.us_roi.get_y_limits()
+        self.initial_ds_row = data.roi_data.ds_roi.get_list()
+        self.initial_us_row = data.roi_data.us_roi.get_list()
         self.view = TRaxROIView(parent, data)
         self.set_bindings()
         
@@ -97,10 +97,12 @@ class TRaxROIController():
 
     def ds_roi_txt_changed(self, event):
         new_roi = self.view.control_panel.ds_roi_box.get_roi()
+        new_roi[2:] = self.data.calculate_ind(new_roi[2:])
         self.data.roi_data.set_ds_roi(new_roi)
 
     def us_roi_txt_changed(self, event):
         new_roi = self.view.control_panel.us_roi_box.get_roi()
+        new_roi[2:] = self.data.calculate_ind(new_roi[2:])
         self.data.roi_data.set_us_roi(new_roi)
 
     def ds_roi_graph_changed(self, event):
@@ -185,7 +187,7 @@ class TRaxROIView(wx.MiniFrame):
         wx.MiniFrame.__init__(self, parent, -1, 'ROI Setup', pos=(1000,400), size=(700,500), style=wx.DEFAULT_FRAME_STYLE)
         self.data = data
         self.init_UI()
-        self.SetMinSize((600,400))
+        self.SetMinSize((600,310))
         self.Show()
 
     def init_UI(self):
@@ -210,9 +212,15 @@ class TRaxROIControlPanel(wx.Panel):
         self.set_sizer()
 
     def create_controls(self):
-        self.ds_roi_box = ROIEditBox(self,self.data.roi_data.ds_roi, 'Downstream ROI')
-        self.us_roi_box = ROIEditBox(self,self.data.roi_data.us_roi, 'Upstream ROI')
-        self.limits_box = XLimitBox(self, self.data.get_wavelength(self.data.roi_data.ds_roi.get_list()[2:]), 'X - Limits')
+        us_roi = self.data.roi_data.us_roi.get_list()
+        us_roi[2:] = self.data.calculate_wavelength(us_roi[2:])
+        ds_roi = self.data.roi_data.ds_roi.get_list()
+        ds_roi[2:] = self.data.calculate_wavelength(ds_roi[2:])
+
+        
+        self.us_roi_box = ROIEditBox(self, us_roi, 'Upstream ROI')
+        self.ds_roi_box = ROIEditBox(self, ds_roi, 'Downstream ROI')
+        self.limits_box = XLimitBox(self, self.data.calculate_wavelength(self.data.roi_data.ds_roi.get_list()[2:]), 'X - Limits')
         self.create_buttons()
 
     def create_buttons(self):
@@ -223,8 +231,8 @@ class TRaxROIControlPanel(wx.Panel):
 
     def set_sizer(self):
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.main_sizer.Add(self.ds_roi_box.panel,0, wx.EXPAND | wx.ALL,5)
         self.main_sizer.Add(self.us_roi_box.panel,0, wx.EXPAND | wx.ALL,5)
+        self.main_sizer.Add(self.ds_roi_box.panel,0, wx.EXPAND | wx.ALL,5)
         self.main_sizer.Add(self.limits_box.panel, 0, wx.EXPAND | wx.ALL,5)
         self.main_sizer.Add(self.btn_sizer,0, wx.ALIGN_RIGHT)
         self.SetSizer(self.main_sizer)
@@ -232,15 +240,14 @@ class TRaxROIControlPanel(wx.Panel):
     def update_rois(self):
         ds_txt_roi = self.data.roi_data.ds_roi.get_list()
         us_txt_roi = self.data.roi_data.us_roi.get_list()
-        ds_txt_roi[2:] = self.data.get_wavelength(ds_txt_roi[2:])
-        us_txt_roi[2:] = self.data.get_wavelength(us_txt_roi[2:])
+        ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
+        us_txt_roi[2:] = self.data.calculate_wavelength(us_txt_roi[2:])
         self.ds_roi_box.update_roi(ds_txt_roi)
         self.us_roi_box.update_roi(us_txt_roi)
         self.limits_box.update_limits(ds_txt_roi[2:])
 
 class ROIEditBox():
     def __init__(self, parent, roi, label):
-        
         self.parent = parent
         self.roi = roi
         self.label = label
@@ -255,13 +262,13 @@ class ROIEditBox():
         self.max_lbl = wx.StaticText(self.panel, -1, 'max', style=wx.ALIGN_CENTER)
         self.x_lbl = wx.StaticText(self.panel, -1, 'x:')
         self.y_lbl = wx.StaticText(self.panel, -1, 'y:')
-        self.x_min_txt = wx.TextCtrl(self.panel, -1, str(self.roi.x_min), size=(63,22),
+        self.x_min_txt = wx.TextCtrl(self.panel, -1, str(int(np.round(self.roi[2]))), size=(63,22),
                                            style =wx.ALIGN_RIGHT | wx.TE_PROCESS_ENTER, validator = IntValidator(2))
-        self.x_max_txt = wx.TextCtrl(self.panel, -1, str(self.roi.x_max), size=(63,22),
+        self.x_max_txt = wx.TextCtrl(self.panel, -1, str(int(np.round(self.roi[3]))), size=(63,22),
                                            style =wx.ALIGN_RIGHT | wx.TE_PROCESS_ENTER, validator = IntValidator(2))
-        self.y_min_txt = wx.TextCtrl(self.panel, -1, str(self.roi.y_min), size=(63,22),
+        self.y_min_txt = wx.TextCtrl(self.panel, -1, str(int(np.round(self.roi[0]))), size=(63,22),
                                            style =wx.ALIGN_RIGHT | wx.TE_PROCESS_ENTER, validator = IntValidator(2))
-        self.y_max_txt = wx.TextCtrl(self.panel, -1, str(self.roi.y_max), size=(63,22),
+        self.y_max_txt = wx.TextCtrl(self.panel, -1, str(int(np.round(self.roi[1]))), size=(63,22),
                                            style =wx.ALIGN_RIGHT | wx.TE_PROCESS_ENTER, validator = IntValidator(2))
 
     def create_sizer(self):
@@ -288,10 +295,10 @@ class ROIEditBox():
         return [y_min, y_max, x_min, x_max]
 
     def update_roi(self, roi):
-        self.x_min_txt.SetLabel(str(int(roi[2])))
-        self.x_max_txt.SetLabel(str(int(roi[3])))
-        self.y_min_txt.SetLabel(str(int(roi[0])))
-        self.y_max_txt.SetLabel(str(int(roi[1])))
+        self.x_min_txt.SetLabel(str(int(np.round(roi[2]))))
+        self.x_max_txt.SetLabel(str(int(np.round(roi[3]))))
+        self.y_min_txt.SetLabel(str(int(np.round(roi[0]))))
+        self.y_max_txt.SetLabel(str(int(np.round(roi[1]))))
 
     def Hide(self):
         self.panel.Hide()
@@ -341,8 +348,8 @@ class XLimitBox():
         self.panel.SetSizer(self.panel_sizer)
 
     def update_limits(self, limits):
-        self.from_txt.SetLabel(str(int(limits[0])))
-        self.to_txt.SetLabel(str(int(limits[1])))
+        self.from_txt.SetLabel(str(int(np.round(limits[0]))))
+        self.to_txt.SetLabel(str(int(np.round(limits[1]))))
 
     def get_limits(self):
         return [int(self.from_txt.GetLabel()), int(self.to_txt.GetLabel())]
@@ -410,7 +417,7 @@ class TRaxROIGraphPanel(wx.Panel):
         y_coord = event.ydata
         if x_coord <> None:
             if self.mode == 'IMG':
-                x_print = self.data.get_wavelength(int(x_coord))
+                x_print = self.data.calculate_wavelength(int(x_coord))
             else:
                 x_print = x_coord
             self.status_bar.SetStatusText(u'x: %(x).0F y: %(y).0F' \
@@ -429,6 +436,7 @@ class TRaxROIGraphPanel(wx.Panel):
                                     extent=[0,x_max + 1,y_max + 1,0])
         self.axes.set_ylim([0,len(self.img_data) - 1])
         self.axes.set_xlim([0,len(self.img_data[0]) - 1])
+        self.axes.invert_yaxis()
         self.img.autoscale()
         self.img_background = self.canvas.copy_from_bbox(self.axes.bbox)
         self.canvas.draw()
@@ -484,11 +492,11 @@ class TRaxROIGraphPanel(wx.Panel):
             self.us_rect.set_roi(self.data.roi_data.us_roi)
             self.ds_rect.set_roi(self.data.roi_data.ds_roi)
         except:
-            self.min_line.set_roi(self.data.get_wavelength(self.data.roi_data.us_roi.x_min))
-            self.max_line.set_roi(self.data.get_wavelength(self.data.roi_data.us_roi.x_max))
+            self.min_line.set_roi(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_min))
+            self.max_line.set_roi(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_max))
 
     def plot_lines(self):
-        x_limits = self.data.get_wavelength(self.data.roi_data.us_roi.get_x_limits())
+        x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
         axes_xlim = self.axes.get_xlim()
                                              
         self.min_line = self.create_line(x_limits[0], [axes_xlim[0], x_limits[1]-1],"MIN")
@@ -501,7 +509,7 @@ class TRaxROIGraphPanel(wx.Panel):
         self.redraw_figure()
 
     def update_line_limits(self):
-        x_limits = self.data.get_wavelength(self.data.roi_data.us_roi.get_x_limits())
+        x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
         axes_xlim = self.axes.get_xlim()
         self.min_line.set_limit([axes_xlim[0], x_limits[1]-1] )
         self.max_line.set_limit([x_limits[0]+1, axes_xlim[1]] )                       
@@ -594,7 +602,7 @@ class ResizeableRectangle:
         self.canvas = canvas
         
         self.xlim = self.axes.get_xlim()
-        self.ylim = self.axes.get_ylim()
+        self.ylim = self.axes.get_ylim()#.reverse() #has to be reversed since the y_axis of the plot is reversed...
 
         self.x_border = 25
         self.y_border = 3
@@ -676,12 +684,12 @@ class ResizeableRectangle:
             x_new_pos = int(x0 + dx)
             top_pos = y_new_pos + height
             right_pos = x_new_pos + width
-            if y_new_pos >= 0 and (top_pos) <= self.ylim[1]:
+            if y_new_pos >= 0 and (top_pos) <= self.ylim[0]:
                 self.rect.set_y(y_new_pos)
             elif y_new_pos <= 0:
                 self.rect.set_y(0)
-            elif top_pos > self.ylim[1]:
-                self.rect.set_y(self.ylim[1] - height)
+            elif top_pos > self.ylim[0]:
+                self.rect.set_y(self.ylim[0] - height)
 
             if x_new_pos >= 0 and (right_pos) <= self.xlim[1]:
                 self.rect.set_x(x_new_pos)
@@ -734,7 +742,8 @@ class ResizeableRectangle:
 
 if __name__ == "__main__":
     data = TraxData()
-    data.load_exp_data('SPE test vers3\\test_075.spe')
+    #data.load_exp_data('SPE test vers3\\test_075.spe')
+    data.load_exp_data('spe files\\Pt_38.SPE')
     app = wx.App(None)
     TRaxROIController(None,data)
     
