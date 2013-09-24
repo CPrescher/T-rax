@@ -5,9 +5,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>7b93f3b8-989a-4a3a-92b3-4d75d1a84f3c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>run_T-Rax.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <StartupFile>run_T-Rax.pyw</StartupFile>
+    <SearchPath>..\T-Rax</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>T-Rax</Name>
@@ -22,10 +21,11 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="colors.py" />
     <Compile Include="Helper.py" />
     <Compile Include="ParkingLot.py" />
     <Compile Include="playing.py" />
-    <Compile Include="run_T-Rax.py" />
+    <Compile Include="run_T-Rax.pyw" />
     <Compile Include="SPE_module.py">
       <SubType>Code</SubType>
     </Compile>
@@ -34,8 +34,10 @@
     <Compile Include="T_Rax_Data.py" />
     <Compile Include="T_Rax_Main_View.py" />
     <Compile Include="T_Rax_ROI_selector.py" />
+    <Compile Include="spe_file_unit_test.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="unittests\" />
     <Folder Include="Temperature Calibration\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

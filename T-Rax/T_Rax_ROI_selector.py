@@ -47,12 +47,12 @@ from wx.lib.pubsub import Publisher as pub
 
 from Helper import IntValidator
 from T_Rax_Data import TraxData
+import colors
 
 class TRaxROIController():
     __single = None
     def __init__(self, parent, data):
         if TRaxROIController.__single:
-            TRaxROIController.__single.view.Raise()
             raise TRaxROIController.__single
 
         TRaxROIController.__single = self
@@ -123,7 +123,7 @@ class TRaxROIController():
 
     def limits_txt_changed(self, event):
         new_limits = self.view.control_panel.limits_box.get_limits()
-        new_limits_ind=np.array(self.data.calculate_ind(new_limits))
+        new_limits_ind = np.array(self.data.calculate_ind(new_limits))
         self.data.roi_data.set_x_limits(new_limits_ind)
         
         self.view.graph_panel.update_line_limits()
@@ -184,7 +184,7 @@ class TRaxROIController():
 
 class TRaxROIView(wx.MiniFrame):
     def __init__(self, parent, data):
-        wx.MiniFrame.__init__(self, parent, -1, 'ROI Setup', pos=(1000,400), size=(700,500), style=wx.DEFAULT_FRAME_STYLE)
+        wx.MiniFrame.__init__(self, parent, -1, 'ROI Setup', pos=(0,550), size=(900,350), style=wx.DEFAULT_FRAME_STYLE)
         self.data = data
         self.init_UI()
         self.SetMinSize((600,310))
@@ -196,12 +196,13 @@ class TRaxROIView(wx.MiniFrame):
 
     def create_panels(self):
         self.main_panel = wx.Panel(self)
+        self.main_panel.SetBackgroundColour((255,255,150))
         self.control_panel = TRaxROIControlPanel(self.main_panel,self.data)
         self.graph_panel = TRaxROIGraphPanel(self.main_panel,self.data)
 
     def create_sizers(self):
         self.main_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.main_sizer.AddMany([(self.graph_panel, 1 , wx.RIGHT | wx.EXPAND,10),(self.control_panel,0)])
+        self.main_sizer.AddMany([(self.graph_panel, 1 , wx.RIGHT | wx.EXPAND),(self.control_panel,0)])
         self.main_panel.SetSizer(self.main_sizer)
 
 class TRaxROIControlPanel(wx.Panel):
@@ -209,6 +210,8 @@ class TRaxROIControlPanel(wx.Panel):
         super(TRaxROIControlPanel, self).__init__(parent)
         self.data = data
         self.create_controls()
+        self.SetBackgroundColour(colors.BACKGROUND_COLOR)
+
         self.set_sizer()
 
     def create_controls(self):
@@ -218,8 +221,8 @@ class TRaxROIControlPanel(wx.Panel):
         ds_roi[2:] = self.data.calculate_wavelength(ds_roi[2:])
 
         
-        self.us_roi_box = ROIEditBox(self, us_roi, 'Upstream ROI')
-        self.ds_roi_box = ROIEditBox(self, ds_roi, 'Downstream ROI')
+        self.us_roi_box = ROIEditBox(self, us_roi, 'Upstream ROI', colors.UPSTREAM_COLOR)
+        self.ds_roi_box = ROIEditBox(self, ds_roi, 'Downstream ROI', colors.DOWNSTREAM_COLOR)
         self.limits_box = XLimitBox(self, self.data.calculate_wavelength(self.data.roi_data.ds_roi.get_list()[2:]), 'X - Limits')
         self.create_buttons()
 
@@ -231,9 +234,9 @@ class TRaxROIControlPanel(wx.Panel):
 
     def set_sizer(self):
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.main_sizer.Add(self.us_roi_box.panel,0, wx.EXPAND | wx.ALL,5)
-        self.main_sizer.Add(self.ds_roi_box.panel,0, wx.EXPAND | wx.ALL,5)
-        self.main_sizer.Add(self.limits_box.panel, 0, wx.EXPAND | wx.ALL,5)
+        self.main_sizer.Add(self.us_roi_box.panel,0, wx.EXPAND)
+        self.main_sizer.Add(self.ds_roi_box.panel,0, wx.EXPAND)
+        self.main_sizer.Add(self.limits_box.panel, 0, wx.EXPAND)
         self.main_sizer.Add(self.btn_sizer,0, wx.ALIGN_RIGHT)
         self.SetSizer(self.main_sizer)
 
@@ -247,15 +250,17 @@ class TRaxROIControlPanel(wx.Panel):
         self.limits_box.update_limits(ds_txt_roi[2:])
 
 class ROIEditBox():
-    def __init__(self, parent, roi, label):
+    def __init__(self, parent, roi, label, color):
         self.parent = parent
         self.roi = roi
         self.label = label
+        self.color = color
         self.create_controls()
         self.create_sizer()
 
     def create_controls(self):
-        self.panel=wx.Panel(self.parent, -1)
+        self.panel = wx.Panel(self.parent, -1)
+        self.panel.SetBackgroundColour(self.color)
         self.static_box = wx.StaticBox(self.panel, -1, self.label)
         self.static_box.SetFont(wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD))
         self.min_lbl = wx.StaticText(self.panel, -1, 'min', style=wx.ALIGN_CENTER)
@@ -284,7 +289,7 @@ class ROIEditBox():
         self.box_sizer = wx.StaticBoxSizer(self.static_box, wx.VERTICAL)
         self.box_sizer.Add(self.gb_sizer, 1, wx.EXPAND | wx.ALIGN_CENTRE)
         self.panel_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.panel_sizer.Add(self.box_sizer, 0, wx.EXPAND)
+        self.panel_sizer.Add(self.box_sizer, 0, wx.EXPAND | wx.ALL, 7)
         self.panel.SetSizer(self.panel_sizer)
 
     def get_roi(self):
@@ -315,6 +320,7 @@ class XLimitBox():
 
     def create_controls(self):
         self.panel = wx.Panel(self.parent, -1)
+        self.panel.SetBackgroundColour
         self.box = wx.StaticBox(self.panel,-1, 'X - Limits')
         self.box.SetFont(wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD))
         self.from_lbl = wx.StaticText(self.panel, -1, 'From')
@@ -389,18 +395,19 @@ class TRaxROIGraphPanel(wx.Panel):
         self.figure = Figure(None, dpi=100)
         self.canvas = FigCanvas(self, wx.ID_ANY, self.figure)
         self.axes = self.figure.add_subplot(111)
-        self.status_bar = wx.StatusBar(self, style=0)
+        #self.status_bar = wx.StatusBar(self, style=0)
         self.start_background = self.canvas.copy_from_bbox(self.axes.bbox)
 
     def create_sizer(self):
         box_sizer = wx.BoxSizer(wx.VERTICAL)
         box_sizer.Add(self.canvas,1, flag = wx.EXPAND)
-        box_sizer.Add(self.status_bar, 0, wx.EXPAND)
+        #box_sizer.Add(self.status_bar, 0, wx.EXPAND)
         self.SetSizer(box_sizer)
 
     def create_bindings(self):
-        self.canvas.Bind(wx.EVT_SIZE, self.resize_graph)
-        self.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
+        pass
+        #self.canvas.Bind(wx.EVT_SIZE, self.resize_graph)
+        #self.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
 
     def resize_graph(self, event):
         border = 5
@@ -432,7 +439,7 @@ class TRaxROIGraphPanel(wx.Panel):
         x_max = len(self.data.get_exp_img_data()[0]) - 1
         self.axes.set_ylim([0,y_max])
         self.axes.set_xlim([0,x_max])
-        self.img = self.axes.imshow(self.img_data, cmap = 'hot', aspect = 'auto',
+        self.img = self.axes.imshow(self.img_data, cmap = 'bone', aspect = 'auto',
                                     extent=[0,x_max + 1,y_max + 1,0])
         self.axes.set_ylim([0,len(self.img_data) - 1])
         self.axes.set_xlim([0,len(self.img_data[0]) - 1])
@@ -449,7 +456,6 @@ class TRaxROIGraphPanel(wx.Panel):
         self.axes.set_xlim(self.graph_spec.get_x_plot_limits())
         self.axes.set_ylim(self.graph_spec.get_y_plot_limits())
         self.graph = self.axes.plot(self.graph_spec.x, self.graph_spec.y, 'c-', lw=1)
-        self.axes.set_xlabel("$\lambda$ $(nm)$")
         self.graph_background = self.canvas.copy_from_bbox(self.axes.bbox)
         self.canvas.draw()
         self.redraw_figure()
@@ -461,7 +467,7 @@ class TRaxROIGraphPanel(wx.Panel):
         xtick_pos = self.data.calculate_ind(xtick_num)
         self.axes.set_xticks(xtick_pos)
         self.axes.set_xticklabels((map(int,xtick_num)))
-        self.axes.set_xlabel("$\lambda$ $(nm)$")
+       # self.axes.set_xlabel("$\lambda$ $(nm)$")
 
     def update_img(self):
         self.draw_image()
@@ -469,8 +475,8 @@ class TRaxROIGraphPanel(wx.Panel):
         #self.plot_lines()
 
     def plot_rects(self):
-        self.us_rect = self.create_rect(self.data.roi_data.us_roi, 'US')
-        self.ds_rect = self.create_rect(self.data.roi_data.ds_roi, 'DS')    
+        self.us_rect = self.create_rect(self.data.roi_data.us_roi, colors.UPSTREAM_COLOR_NORM, 'US')
+        self.ds_rect = self.create_rect(self.data.roi_data.ds_roi, colors.DOWNSTREAM_COLOR_NORM, 'DS')    
         self.update_rects() 
         self.update_lines()
 
@@ -480,8 +486,8 @@ class TRaxROIGraphPanel(wx.Panel):
         self.axes.draw_artist(self.ds_rect.rect)
         self.canvas.blit(self.axes.bbox)
     
-    def create_rect(self, roi, flag):
-        return ResizeableRectangle(self, self.axes, self.canvas,wx.Rect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), flag)
+    def create_rect(self, roi, color, flag):
+        return ResizeableRectangle(self, self.axes, self.canvas,wx.Rect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), color, flag)
 
     def connect_rects(self):
         self.us_rect.connect()
@@ -499,8 +505,8 @@ class TRaxROIGraphPanel(wx.Panel):
         x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
         axes_xlim = self.axes.get_xlim()
                                              
-        self.min_line = self.create_line(x_limits[0], [axes_xlim[0], x_limits[1]-1],"MIN")
-        self.max_line = self.create_line(x_limits[1], [x_limits[0]+1, axes_xlim[1]],"MAX")
+        self.min_line = self.create_line(x_limits[0], [axes_xlim[0], x_limits[1] - 1],"MIN")
+        self.max_line = self.create_line(x_limits[1], [x_limits[0] + 1, axes_xlim[1]],"MAX")
 
     def create_line(self, pos, limits, flag):
         return MoveableLine(self, self.axes, self.canvas,pos, limits, flag)
@@ -511,8 +517,8 @@ class TRaxROIGraphPanel(wx.Panel):
     def update_line_limits(self):
         x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
         axes_xlim = self.axes.get_xlim()
-        self.min_line.set_limit([axes_xlim[0], x_limits[1]-1] )
-        self.max_line.set_limit([x_limits[0]+1, axes_xlim[1]] )                       
+        self.min_line.set_limit([axes_xlim[0], x_limits[1] - 1])
+        self.max_line.set_limit([x_limits[0] + 1, axes_xlim[1]])                       
 
     def connect_lines(self):
         self.min_line.connect()
@@ -591,15 +597,16 @@ class MoveableLine:
         MoveableLine.lock = None
 
     def set_limit(self,limit):
-        self.limit=limit
+        self.limit = limit
 
 class ResizeableRectangle:
     lock = None #only one rect can be animated at a time
-    def __init__(self, parent, axes, canvas, init_rect, flag):       
+    def __init__(self, parent, axes, canvas, init_rect, color, flag):       
         self.flag = flag
         self.parent = parent
         self.axes = axes
         self.canvas = canvas
+        self.color = color
         
         self.xlim = self.axes.get_xlim()
         self.ylim = self.axes.get_ylim()#.reverse() #has to be reversed since the y_axis of the plot is reversed...
@@ -609,7 +616,7 @@ class ResizeableRectangle:
         self.min_width = 100
         self.min_height = 1
 
-        self.rect = mpl.patches.Rectangle((init_rect.x,init_rect.y),init_rect.width, init_rect.height, ec='w', fill=False, lw=2)
+        self.rect = mpl.patches.Rectangle((init_rect.x,init_rect.y),init_rect.width, init_rect.height, ec=self.color, fill=False, lw=2)
         self.axes.add_artist(self.rect)
                
         self.press = None 
@@ -650,8 +657,8 @@ class ResizeableRectangle:
             ResizeableRectangle.lock = self
 
     def set_mode(self,x_click, y_click, x0, y0, width, height):
-        if y_click >= y0 + self.y_border and y_click <= y0 + height - self.y_border and \
-            x_click >= x0 + self.x_border and x_click <= x0 + width - self.x_border:
+        if y_click >= y0 + self.y_border / 2.0 and y_click <= y0 + height - self.y_border / 2.0 and \
+            x_click >= x0 + self.x_border / 2.0 and x_click <= x0 + width - self.x_border / 2.0:
             self.mode = 'move'
         elif y_click > y0 + height - self.y_border and y_click <= y0 + height + self.y_border and \
             x_click >= x0 + self.x_border and x_click <= x0 + width - self.x_border:

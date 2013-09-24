@@ -17,10 +17,11 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from Helper import IntValidator   
 from T_Rax_Data import black_body_function, Spectrum, FitSpectrum
 
+
 #text font parameter:
 class TraxMainWindow(wx.Frame):
     def __init__(self, controller):
-        wx.Frame.__init__(self, None, -1, 'T-Rax ver 0.1', size=(1300,700), style = wx.DEFAULT_FRAME_STYLE | wx.CLIP_CHILDREN)
+        wx.Frame.__init__(self, None, -1, 'T-Rax ver 0.1', size=(900,450), style = wx.DEFAULT_FRAME_STYLE | wx.CLIP_CHILDREN)
         self.controller = controller
         self.init_UI()
         self.Show()
@@ -52,79 +53,6 @@ class TraxMainWindow(wx.Frame):
         self.Layout()
         self.SetMinSize((900,450))
 
-class TraxCalibControlPanel(wx.Panel):
-    def __init__(self, parent):
-        super(TraxCalibControlPanel, self).__init__(parent)        
-        self.static_box_font = wx.Font(10, wx.SWISS, wx.NORMAL, wx.BOLD)
-        self.file_lbl_font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD)
-        self.file_lbl_color_None = (20,118,10)
-        self.file_lbl_color_loaded = (30,30,255)
-
-        self.create_controls()
-        self.set_sizer()
-
-    def create_controls(self):
-        self.ds_calib_box = CalibBox(self, 'Downstream')
-        self.us_calib_box = CalibBox(self, 'Upstream')
-
-    def set_sizer(self):
-        self.main_sizer=wx.BoxSizer(wx.VERTICAL)
-        self.main_sizer.AddMany([(self.ds_calib_box.box_sizer, 0, wx.EXPAND| wx.ALL, 5),
-                                 (self.us_calib_box.box_sizer, 0, wx.EXPAND| wx.ALL, 5)])
-        self.SetSizer(self.main_sizer)
-    
-
-class CalibBox():
-    def __init__(self, parent, label):
-        self.label = label
-        self.parent = parent
-        self.create_controls()
-        self.set_sizer()
-
-    def create_controls(self):
-        self.static_box = wx.StaticBox(self.parent, -1, self.label)
-        self.static_box.SetFont(self.parent.static_box_font)
-
-        self.load_data_btn = wx.Button(self.parent, wx.ID_ANY, 'Load Data')
-        self.file_lbl = wx.StaticText(self.parent, -1, 'Select file...')
-        self.file_lbl.SetForegroundColour(self.parent.file_lbl_color_None)
-        self.file_lbl.SetFont(self.parent.file_lbl_font)
-        self.temperature_txt = wx.TextCtrl(self.parent, -1, '2000', size=(30,24),
-                                           style=wx.ALIGN_RIGHT|wx.PROCESS_ENTER,  
-                                           validator = IntValidator(2))
-        self.temperature_unit_lbl = wx.StaticText(self.parent, -1, 'K')
-        
-        self.known_temperature_rb = wx.RadioButton(self.parent, -1, 'Temp', style =wx.RIGHT|wx.RB_GROUP)
-        self.known_temperature_rb.SetValue(1)
-        self.etalon_spectrum_rb = wx.RadioButton(self.parent, -1, 'Etalon')
-        self.etalon_file_lbl = wx.StaticText(self.parent, -1, 'Select File...')
-        self.etalon_file_lbl.SetForegroundColour(self.parent.file_lbl_color_None)
-        self.etalon_file_lbl.SetFont(self.parent.file_lbl_font)
-        self.load_etalon_data_btn = wx.Button(self.parent, wx.ID_ANY,'...', size =(35,22))
-
-    def set_sizer(self):
-        self.gb_sizer = wx.GridBagSizer(7,7)
-        self.gb_sizer.Add(self.load_data_btn, (0,0))
-        self.gb_sizer.Add(self.file_lbl, (0,1), flag = wx.ALL | wx.ALIGN_CENTRE_VERTICAL)
-        self.gb_sizer.Add(wx.StaticLine(self.parent, -1, style=wx.LI_HORIZONTAL),
-                                     (1,0),(1,2), flag=wx.EXPAND)
-
-        
-        self.temp_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.temp_sizer.AddMany([(self.temperature_txt, 1, wx.EXPAND | wx.ALIGN_CENTER),
-                               (self.temperature_unit_lbl, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 3)])
-
-        self.gb_sizer.Add(self.temp_sizer, (2,0),  flag = wx.ALIGN_CENTRE_VERTICAL | wx.EXPAND)
-
-        self.gb_sizer.Add(self.known_temperature_rb, (2,1), flag=wx.EXPAND | wx.ALL | wx.ALIGN_CENTRE_VERTICAL)
-        self.gb_sizer.Add(self.etalon_spectrum_rb, (3,1), flag = wx.EXPAND | wx.ALIGN_CENTRE_VERTICAL)
-        self.gb_sizer.Add(self.load_etalon_data_btn, (3,0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
-        self.gb_sizer.Add(self.etalon_file_lbl, (4,1), flag=wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL)
-        self.gb_sizer.AddGrowableCol(1)
-        self.box_sizer = wx.StaticBoxSizer(self.static_box, wx.HORIZONTAL)
-        self.box_sizer.Add(self.gb_sizer, 50, wx.ALL | wx.EXPAND)
-
-
 class TraxExpControlPanel(wx.Panel):
     def __init__(self, parent):
         super(TraxExpControlPanel, self).__init__(parent)        
@@ -132,6 +60,8 @@ class TraxExpControlPanel(wx.Panel):
         self.file_lbl_font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD)
         self.file_lbl_color_None = (20,118,10)
         self.file_lbl_color_loaded = (30,30,255)
+        
+        self.SetBackgroundColour((255,255,255))
 
         self.create_controls()
         self.set_sizer()
@@ -263,7 +193,6 @@ class TraxMainGraphPanel(wx.Panel):
         self.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
 
     def resize_graph(self, event):
-        border = 5
         w,h = event.GetSize()
         self.figure.set_size_inches([w / 100.0,h / 100.0])
         self.redraw_figure()
@@ -281,17 +210,17 @@ class TraxMainGraphPanel(wx.Panel):
         self.us_data_line , self.us_fit_line, self.us_temp_txt, \
             self.us_int_txt, self.us_warning_txt, self.us_calib_file_txt = \
             self.create_axes_lines(self.us_axes)    
-        self.us_axes.set_title('UPSTREAM', color=(1,0.55,0), weight = 'bold')
+        self.us_axes.set_title('UPSTREAM', color=(1,0.55,0), weight = 'bold', va='bottom')
         
     def create_ds_graph(self):
         self.ds_data_line , self.ds_fit_line, self.ds_temp_txt, \
             self.ds_int_txt, self.ds_warning_txt, self.ds_calib_file_txt = \
             self.create_axes_lines(self.ds_axes)  
-        self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0), weight = 'bold') 
+        self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0), weight = 'bold', va='bottom') 
 
     def create_axes_lines(self, axes):
-        data_line, = axes.plot([], [], 'c-', lw=0.5)
-        fit_line, = axes.plot([], [], 'r-', lw=3)
+        fit_line, = axes.plot([], [], 'r-',  lw=3)
+        data_line, = axes.plot([], [], '-', color = (0.7,0.9,0.9), lw=1)
         temp_txt = axes.text(0,0, '', size=20, ha='left', va='top')
         int_txt = axes.text(0,0,'',size=13, color = (0.04,0.76,0.17), ha='right')
         warning_txt=axes.text(0,0,'', size=25, color = 'r', va='center', ha='center', weight = 'bold') 
@@ -300,12 +229,6 @@ class TraxMainGraphPanel(wx.Panel):
         axes.yaxis.set_visible(False)
         axes.set_xlabel('$\lambda$ $(nm)$', size=11)
         return data_line, fit_line, temp_txt, int_txt, warning_txt, calib_file_txt
-
-    def plot_ds_fit(self, fit):
-        self.ds_fit, =self.ds_axes.plot(fit.x,fit.y,'r-', lw=2)
-
-    def plot_us_fit(self, fit):
-        self.us_fit, =self.us_axes.plot(fit.x, fit.y, 'r-', lw=2)
 
     def update_graph(self, ds_spectrum, us_spectrum, ds_max_int, us_max_int, ds_calib_fname, us_calib_fname):
         if isinstance(ds_spectrum,list):
@@ -385,9 +308,87 @@ class TraxMainGraphPanel(wx.Panel):
 
         self.canvas.draw()
 
-       
-       
-
     def redraw_figure(self):
         self.figure.tight_layout(None, 1.2, None, None)
         self.canvas.draw()
+
+
+        
+class TraxCalibControlPanel(wx.Panel):
+    def __init__(self, parent):
+        super(TraxCalibControlPanel, self).__init__(parent)        
+        self.static_box_font = wx.Font(10, wx.SWISS, wx.NORMAL, wx.BOLD)
+        self.file_lbl_font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD)
+        self.file_lbl_color_None = (20,118,10)
+        self.file_lbl_color_loaded = (30,30,255)
+        self.SetBackgroundColour((255,255,150))
+        self.create_controls()
+        self.set_sizer()
+
+    def create_controls(self):
+        self.us_calib_box = CalibBox(self, 'Upstream', (255,140,0))
+        self.ds_calib_box = CalibBox(self, 'Downstream', (255,255,0))
+
+    def set_sizer(self):
+        self.main_sizer=wx.BoxSizer(wx.VERTICAL)
+        self.main_sizer.AddMany([(self.us_calib_box.panel, 0, wx.EXPAND),
+                                 (self.ds_calib_box.panel, 0, wx.EXPAND)])
+        self.SetSizer(self.main_sizer)
+    
+
+class CalibBox():
+    def __init__(self, parent, label, color):
+        self.label = label
+        self.parent = parent
+        self.color = color
+        self.create_controls()
+        self.set_sizer()
+
+    def create_controls(self):
+        self.panel = wx.Panel(self.parent,-1)
+        self.panel.SetBackgroundColour(self.color)
+        self.static_box = wx.StaticBox(self.panel, -1, self.label)
+        self.static_box.SetFont(self.parent.static_box_font)
+
+        self.load_data_btn = wx.Button(self.panel, wx.ID_ANY, 'Load Data')
+        self.file_lbl = wx.StaticText(self.panel, -1, 'Select file...')
+        self.file_lbl.SetForegroundColour(self.parent.file_lbl_color_None)
+        self.file_lbl.SetFont(self.parent.file_lbl_font)
+        self.temperature_txt = wx.TextCtrl(self.panel, -1, '2000', size=(30,24),
+                                           style=wx.ALIGN_RIGHT|wx.PROCESS_ENTER,  
+                                           validator = IntValidator(2))
+        self.temperature_unit_lbl = wx.StaticText(self.panel, -1, 'K')
+        
+        self.known_temperature_rb = wx.RadioButton(self.panel, -1, 'Temp', style =wx.RIGHT|wx.RB_GROUP)
+        self.known_temperature_rb.SetValue(1)
+        self.etalon_spectrum_rb = wx.RadioButton(self.panel, -1, 'Etalon')
+        self.etalon_file_lbl = wx.StaticText(self.panel, -1, 'Select File...')
+        self.etalon_file_lbl.SetForegroundColour(self.parent.file_lbl_color_None)
+        self.etalon_file_lbl.SetFont(self.parent.file_lbl_font)
+        self.load_etalon_data_btn = wx.Button(self.panel, wx.ID_ANY,'...', size =(35,22))
+
+    def set_sizer(self):
+        self.gb_sizer = wx.GridBagSizer(7,7)
+        self.gb_sizer.Add(self.load_data_btn, (0,0))
+        self.gb_sizer.Add(self.file_lbl, (0,1), flag = wx.ALL | wx.ALIGN_CENTRE_VERTICAL)
+        self.gb_sizer.Add(wx.StaticLine(self.panel, -1, style=wx.LI_HORIZONTAL),
+                                     (1,0),(1,2), flag=wx.EXPAND)
+
+        
+        self.temp_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.temp_sizer.AddMany([(self.temperature_txt, 1, wx.EXPAND | wx.ALIGN_CENTER),
+                               (self.temperature_unit_lbl, 0, wx.EXPAND | wx.ALL | wx.ALIGN_CENTER, 3)])
+
+        self.gb_sizer.Add(self.temp_sizer, (2,0),  flag = wx.ALIGN_CENTRE_VERTICAL | wx.EXPAND)
+
+        self.gb_sizer.Add(self.known_temperature_rb, (2,1), flag=wx.EXPAND | wx.ALL | wx.ALIGN_CENTRE_VERTICAL)
+        self.gb_sizer.Add(self.etalon_spectrum_rb, (3,1), flag = wx.EXPAND | wx.ALIGN_CENTRE_VERTICAL)
+        self.gb_sizer.Add(self.load_etalon_data_btn, (3,0), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
+        self.gb_sizer.Add(self.etalon_file_lbl, (4,1), flag=wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL)
+        self.gb_sizer.AddGrowableCol(1)
+        self.box_sizer = wx.StaticBoxSizer(self.static_box, wx.HORIZONTAL)
+        self.box_sizer.Add(self.gb_sizer, 50, wx.ALL | wx.EXPAND)
+
+        self.panel_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.panel_sizer.Add(self.box_sizer, 1, wx.EXPAND|wx.ALL, 10)
+        self.panel.SetSizer(self.panel_sizer)

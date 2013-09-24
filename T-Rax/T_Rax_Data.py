@@ -241,7 +241,7 @@ class ImgData(GeneralData):
 
     def calc_spectrum(self, roi):
         roi_img=self.get_roi_img(roi)
-        return np.sum(roi_img,0)
+        return np.sum(roi_img,0)/np.float(np.size(roi_img,0))
 
     def calc_roi_max(self, roi):
         roi_img=self.get_roi_img(roi)

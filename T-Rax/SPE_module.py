@@ -1,7 +1,9 @@
 # read_spe.py
 import numpy as np
 from numpy.polynomial.polynomial import polyval
+import datetime
 import time
+from dateutil import parser
 from matplotlib import tight_layout
 import matplotlib.pyplot as plt
 from pylab import show, meshgrid,figure 
@@ -18,32 +20,43 @@ class SPE_File(object):
 
     def _read_parameter(self):
         self._read_size()
-        #self._read_date_time()
-        self._read_x_calibration_and_exposure_time()
         self._read_datatype()
+        self._read_x_calibration_and_exposure_time()
 
     def _read_size(self):
         self._xdim = np.int64(self._read_at(42, 1, np.int16)[0])
         self._ydim = np.int64(self._read_at(656, 1, np.int16)[0])
 
-    def _read_date_time(self):
-        rawdate = self._read_at(20, 9, np.int8)
-        rawtime = self._read_at(172, 6, np.int8)
-        strdate = ''.join([chr(i) for i in rawdate])
-        strdate += ''.join([chr(i) for i in rawtime])
-        self._date_time = time.strptime(strdate,"%d%b%Y%H%M%S")
 
     def _read_x_calibration_and_exposure_time(self):
         self.xml_offset = self._read_at(678,1,np.long)        
         if self.xml_offset == [0]: #means that there is no XML present, hence it is a pre 3.0 version of the SPE
                               #file
+                              
+            self._read_date_time_from_header()
             self._read_calibration_from_header()
             self._read_exposure_from_header()
+            self._read_detector_from_header()
+            self._read_grating_from_header()
+            self._read_center_wavelength_from_header()
         else:
             self._get_xml_string()
             self._create_dom_from_xml()
+            self._read_date_time_from_dom()
             self._read_calibration_from_dom()
+            self._read_detector_from_dom()
             self._read_exposure_from_dom()
+            self._read_grating_from_dom()
+            self._read_center_wavelength_from_dom()
+
+    
+    def _read_date_time_from_header(self):
+        rawdate = self._read_at(20, 9, np.int8)
+        rawtime = self._read_at(172, 6, np.int8)
+        strdate = ''.join([chr(i) for i in rawdate])
+        strdate += ''.join([chr(i) for i in rawtime])
+        self.date_time = datetime.datetime.strptime(strdate,"%d%b%Y%H%M%S")
+
 
     def _read_calibration_from_header(self):
         x_polynocoeff = self._read_at(3263,6,np.double)
@@ -51,7 +64,16 @@ class SPE_File(object):
         self.x_calibration = np.array(polyval(x_val, x_polynocoeff))
 
     def _read_exposure_from_header(self):
-        self.exp_time = self._read_at(10,1,np.float)
+        self.exposure_time = self._read_at(10,1,np.float32)
+
+    def _read_detector_from_header(self):
+        self.detector = 'unspecified'
+
+    def _read_grating_from_header(self):
+        self.grating = str(self._read_at(650,1,np.float32)[0])
+
+    def _read_center_wavelength_from_header(self):
+        self.center_wavelength = self._read_at(72,1,np.float32)[0]
 
     def _create_dom_from_xml(self):
         self.dom = parseString(self.xml_string)
@@ -65,41 +87,63 @@ class SPE_File(object):
             fid.write(line)
         fid.close()
 
+    def _read_date_time_from_dom(self):
+        date_time_str = self.dom.getElementsByTagName('Origin')[0].getAttribute('created')
+        self.date_time = parser.parse(date_time_str)
+
     def _read_calibration_from_dom(self):
         spe_format = self.dom.childNodes[0]
         calibrations = spe_format.getElementsByTagName('Calibrations')[0]
         wavelengthmapping = calibrations.getElementsByTagName('WavelengthMapping')[0]
         wavelengths = wavelengthmapping.getElementsByTagName('Wavelength')[0]
+        #wavelengths = self.dom.getElementsByTagName('Wavelength')[0]
         wavelength_values = wavelengths.childNodes[0]
-        self.x_calibration = [float(i) for i in wavelength_values.toxml().split(',')]
+        self.x_calibration = np.array([float(i) for i in wavelength_values.toxml().split(',')])
  
     def _read_exposure_from_dom(self):
-        spe_format = self.dom.childNodes[0]
-        origin = spe_format.getElementsByTagName('DataHistories')[0].\
-                        getElementsByTagName('DataHistory')[0].\
-                        getElementsByTagName('Origin')[0]
-        if len(origin.getElementsByTagName('Experiment')) != 1: #check if it is a real v3.0 file
-            camera = origin.getElementsByTagName('Experiment')[0].\
-                        getElementsByTagName('Devices')[0].\
-                        getElementsByTagName('Cameras')[0].\
-                        getElementsByTagName('Camera')[0]
-            if len(camera.getElementsByTagName('ShutterTiming')) ==1: #check if it is a pixis detector
-                exposure_time = camera.getElementsByTagName('ShutterTiming')[0].\
-                                       getElementsByTagName('ExposureTime')[0].childNodes[0]
-                self.exposure_time = np.float(exposure_time.toxml())
+        if len(self.dom.getElementsByTagName('Experiment')) != 1: #check if it is a real v3.0 file
+            if len(self.dom.getElementsByTagName('ShutterTiming')) ==1: #check if it is a pixis detector
+                self._exposure_time = self.dom.getElementsByTagName('ExposureTime')[0].childNodes[0]
+                self.exposure_time = np.float(self._exposure_time.toxml())/1000.0
             else:
-                exposure_time = camera.getElementsByTagName('ReadoutControl')[0].\
+                self._exposure_time = self.dom.getElementsByTagName('ReadoutControl')[0].\
                                       getElementsByTagName('Time')[0].childNodes[0].nodeValue
-                accumulations = camera.getElementsByTagName('ReadoutControl')[0].\
-                                      getElementsByTagName('Accumulations')[0].childNodes[0].nodeValue
-                self.exposure_time = np.float(exposure_time) * np.float(accumulations)
-
+                self._accumulations = self.dom.getElementsByTagName('Accumulations')[0].childNodes[0].nodeValue
+                self.exposure_time = np.float(self._exposure_time) * np.float(self._accumulations)
         else: #this is searching for legacy experiment:
-            exposure_time = origin.getElementsByTagName('LegacyExperiment')[0].\
+            self._exposure_time = self.dom.getElementsByTagName('LegacyExperiment')[0].\
                                  getElementsByTagName('Experiment')[0].\
                                  getElementsByTagName('CollectionParameters')[0].\
                                  getElementsByTagName('Exposure')[0].attributes["value"].value
-            self.exposure_time = np.float(exposure_time.toxml())
+            self.exposure_time = np.float(self._exposure_time.split()[0])
+
+    def _read_detector_from_dom(self):
+        self._camera=self.dom.getElementsByTagName('Camera')
+        if len(self._camera)>=1:
+            self.detector=self._camera[0].getAttribute('model')
+        else:
+            self.detector = 'unspecified'
+
+    def _read_grating_from_dom(self):
+        try:
+            self._grating = self.dom.getElementsByTagName('Devices')[0].\
+                                     getElementsByTagName('Spectrometer')[0].\
+                                     getElementsByTagName('Grating')[0].\
+                                     getElementsByTagName('Selected')[0].childNodes[0].toxml()
+            self.grating = self._grating.split('[')[1].split(']')[0].replace(',', ' ')
+        except IndexError:
+            self._read_grating_from_header()
+
+    def _read_center_wavelength_from_dom(self):
+        try:
+            self._center_wavelength = self.dom.getElementsByTagName('Devices')[0].\
+                                               getElementsByTagName('Spectrometer')[0].\
+                                               getElementsByTagName('Grating')[0].\
+                                               getElementsByTagName('CenterWavelength')[0].\
+                                               childNodes[0].toxml()
+            self.center_wavelength= int(self._center_wavelength)
+        except IndexError:
+            self._read_center_wavelength_from_header()    
 
     def _read_datatype(self):
         self._data_type = self._read_at(108, 1, np.uint16)[0]
@@ -142,20 +186,25 @@ class SPE_File(object):
 
 
 if __name__ == "__main__":
-    spe_file = SPE_File('spe files\Pt_230.SPE')
+    #spe_file = SPE_File('spe files\Pt_38.SPE')
+    spe_file = SPE_File('D:\\Programming\\VS Projects\\T-Rax\\T-Rax\\SPE test vers3\\test_073.spe')
     #spe_file = SPE_File('binary files\lamp_15_up(v3.0).SPE')
-    img = spe_file.img
-    x,y = spe_file.get_mesh_grid()
 
-   
-    img_fig = figure()
-    imgplot = plt.imshow(img, aspect='auto', cmap='gray')
-    y_spec = img.sum(axis=0)
-    x_spec = spe_file.x_calibration
-
-    figure()
-    plt.plot(x_spec,y_spec)
-    plt.xlim(650,850)
-
-    plt.tight_layout()
-    show()
+  #img = spe_file.img
+  #x,y = spe_file.get_mesh_grid()
+  #
+  #
+  #img_fig = figure()
+  #imgplot = plt.imshow(img, aspect='auto', cmap='gray')
+  #y_spec = img.sum(axis=0)
+  #x_spec = spe_file.x_calibration
+  #
+  #print np.size(y_spec)
+  #print np.size(x_spec)
+  #
+  #figure()
+  #plt.plot(x_spec,y_spec)
+  #plt.xlim(650,850)
+  #
+  #plt.tight_layout()
+  #show()

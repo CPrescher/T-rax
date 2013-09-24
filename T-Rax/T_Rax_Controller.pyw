@@ -8,8 +8,10 @@ from wx.lib.pubsub import Publisher as pub
 import os
 
 
+
 class TraxMainViewController(object):
     def __init__(self):
+        
         self.data=TRData.TraxData()
         self.main_view = TRMView.TraxMainWindow(self)
         self.exp_controls = self.main_view.exp_panel
@@ -87,12 +89,21 @@ class TraxMainViewController(object):
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
         if len(self._files_added)>0:
             new_file_str=self._files_added[-1]
-            if new_file_str.endswith('.SPE') or \
-                    new_file_str.endswith('.spe'):
+            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
                 path=self._exp_working_dir+'\\'+new_file_str
                 self.data.load_exp_data(path)
             self._files_before=self._files_now
             
+    def file_is_esp(self, filename):
+        return filename.endswith('.SPE') or filename.endswith('.spe')
+    
+    def file_is_raw(self, filename):
+        try:
+            #checks if file contains "-raw" string at the end
+            return filename.split('-')[-1].split('.')[0] == 'raw'
+        except:
+            return false           
+
     def roi_setup_btn_click(self, event):
         try:
             self.roi_view = TRaxROIController(None, self.data)
