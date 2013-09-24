@@ -116,9 +116,12 @@ class TraxData(object):
         try:
             for w in wavelength:
                 base_ind = max(max(np.where(xdata <= w)))
-                result.append(int(np.round((w - xdata[base_ind]) / \
-                    (xdata[base_ind + 1] - xdata[base_ind]) \
-                    + base_ind)))
+                if base_ind< len(xdata)-1:
+                    result.append(int(np.round((w - xdata[base_ind]) / \
+                        (xdata[base_ind + 1] - xdata[base_ind]) \
+                        + base_ind)))
+                else:
+                    result.append(base_ind)
             return np.array(result)
         except TypeError:
             base_ind = max(max(np.where(xdata <= wavelength)))
@@ -329,8 +332,6 @@ class ExpData(ImgData):
         number_str=("{0:"+format_str+'}').format(self._file_number + 1)
         new_file_name_with_leading_zeros = self._file_base_str + '_' + \
                     number_str + '.' + self._file_ending
-        print new_file_name
-        print new_file_name_with_leading_zeros
         return new_file_name, new_file_name_with_leading_zeros
 
     def get_previous_file_names(self):
@@ -392,14 +393,12 @@ class ExpSpecData(ExpData):
 
 class CalibParam(object):
     def __init__(self):
-        self.modus=0 
+        self.modus=1
         #modi:  0 - given temperature
         #       1 - etalon spectrum
-        #       2 - given polynom
 
         self.temp=2000
         self.etalon_spectrum_func = None
-        self.polynom = []
 
     def set_modus(self, val):
         self.modus = val
@@ -420,9 +419,6 @@ class CalibParam(object):
                     data = np.loadtxt(fname, delimiter = '\t')
         self.etalon_spectrum_func = ip.interp1d(data.T[0], data.T[1],'cubic')
         self.etalon_file_name = fname
-
-    def set_polynom(self, poly):
-        self.polynom = poly
 
     def get_calibrated_spec(self, wavelength):
         if self.modus==0:

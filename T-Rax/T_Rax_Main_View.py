@@ -360,8 +360,8 @@ class CalibBox():
         self.temperature_unit_lbl = wx.StaticText(self.panel, -1, 'K')
         
         self.known_temperature_rb = wx.RadioButton(self.panel, -1, 'Temp', style =wx.RIGHT|wx.RB_GROUP)
-        self.known_temperature_rb.SetValue(1)
         self.etalon_spectrum_rb = wx.RadioButton(self.panel, -1, 'Etalon')
+        self.etalon_spectrum_rb.SetValue(1)
         self.etalon_file_lbl = wx.StaticText(self.panel, -1, 'Select File...')
         self.etalon_file_lbl.SetForegroundColour(self.parent.file_lbl_color_None)
         self.etalon_file_lbl.SetFont(self.parent.file_lbl_font)

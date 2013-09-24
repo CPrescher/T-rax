@@ -27,7 +27,6 @@ class SPE_File(object):
         self._xdim = np.int64(self._read_at(42, 1, np.int16)[0])
         self._ydim = np.int64(self._read_at(656, 1, np.int16)[0])
 
-
     def _read_x_calibration_and_exposure_time(self):
         self.xml_offset = self._read_at(678,1,np.long)        
         if self.xml_offset == [0]: #means that there is no XML present, hence it is a pre 3.0 version of the SPE
@@ -141,7 +140,7 @@ class SPE_File(object):
                                                getElementsByTagName('Grating')[0].\
                                                getElementsByTagName('CenterWavelength')[0].\
                                                childNodes[0].toxml()
-            self.center_wavelength= int(self._center_wavelength)
+            self.center_wavelength= float(self._center_wavelength)
         except IndexError:
             self._read_center_wavelength_from_header()    
 

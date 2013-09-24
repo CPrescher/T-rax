@@ -48,6 +48,7 @@ from wx.lib.pubsub import Publisher as pub
 from Helper import IntValidator
 from T_Rax_Data import TraxData
 import colors
+import copy
 
 class TRaxROIController():
     __single = None
@@ -439,8 +440,11 @@ class TRaxROIGraphPanel(wx.Panel):
         x_max = len(self.data.get_exp_img_data()[0]) - 1
         self.axes.set_ylim([0,y_max])
         self.axes.set_xlim([0,x_max])
-        self.img = self.axes.imshow(self.img_data, cmap = 'bone', aspect = 'auto',
-                                    extent=[0,x_max + 1,y_max + 1,0])
+        scaling = mpl.colors.Normalize()
+        scaling.autoscale(self.img_data)
+        self.img = self.axes.imshow(self.img_data, cmap = 'hot', aspect = 'auto',
+                                    extent=[0,x_max + 1,y_max + 1,0],
+                                    norm=scaling)
         self.axes.set_ylim([0,len(self.img_data) - 1])
         self.axes.set_xlim([0,len(self.img_data[0]) - 1])
         self.axes.invert_yaxis()
@@ -462,16 +466,25 @@ class TRaxROIGraphPanel(wx.Panel):
 
     def create_wavelength_x_axis(self):
         xlimits = self.data.get_x_limits()
-        xlimits = np.ceil(xlimits / 50.0) * 50
-        xtick_num = np.arange(xlimits[0],xlimits[1],50)
+        increment = self.get_x_axis_increment()
+        xlimits = np.ceil(xlimits / increment) * increment
+        xtick_num = np.arange(xlimits[0],xlimits[1],increment)
         xtick_pos = self.data.calculate_ind(xtick_num)
         self.axes.set_xticks(xtick_pos)
         self.axes.set_xticklabels((map(int,xtick_num)))
 
+    def get_x_axis_increment(self):
+        xlimits = self.data.get_x_limits()
+        #try different binnings
+        increments = [50,25,10,5,2,1]
+        for increment in increments:
+            x_tick_num=np.arange(xlimits[0],xlimits[1],increment)
+            if len(x_tick_num)>5:
+                return increment
+        return 0.5
+
     def update_img(self):
         self.draw_image()
-        #self.update_rects()
-        #self.plot_lines()
 
     def plot_rects(self):
         self.us_rect = self.create_rect(self.data.roi_data.us_roi, colors.UPSTREAM_COLOR_NORM, 'US')

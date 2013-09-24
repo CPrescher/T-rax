@@ -12,20 +12,32 @@ from epics import caput
 class TraxMainViewController(object):
     def __init__(self):
         
-        self.data=TRData.TraxData()
+        self.data = TRData.TraxData()
         self.main_view = TRMView.TraxMainWindow(self)
         self.exp_controls = self.main_view.exp_panel
-        self.timer = wx.Timer (self.main_view)
+        self.timer = wx.Timer(self.main_view)
         self.calib_controls = self.main_view.calib_panel
-        self._exp_working_dir=os.getcwd()
-        self._calib_working_dir=os.getcwd()
+        
+        self.load_parameter()
         self.set_bindings()
         pub.sendMessage("EXP DATA CHANGED")
+        
 
     def set_parameter(self):
         ds_txt_roi = self.data.roi_data.ds_roi.get_list()
         ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
         self.exp_controls.set_fit_x_limits(ds_txt_roi[2:])
+
+    def load_parameter(self):
+       try:
+            fid = open('parameters.txt', 'r')
+            self._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
+            self._calib_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
+            fid.close()
+       except IOError:
+            self._exp_working_dir = os.getcwd()
+            self._calib_working_dir = os.getcwd()
+
 
     def set_bindings(self):
         self.exp_controls.exp_load_data_btn.Bind(wx.EVT_BUTTON, self.load_exp_data)
@@ -65,8 +77,8 @@ class TraxMainViewController(object):
         
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()  
-            self._exp_working_dir=os.path.split(path)[0]   
-            self._files_before= dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing  
+            self._exp_working_dir = os.path.split(path)[0]  
+            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
             self.data.load_exp_data(path)
             self.set_parameter()
 
@@ -78,22 +90,21 @@ class TraxMainViewController(object):
 
     def auto_process_cb_click(self, e):
         if e.EventObject.Value:
-            self._files_before= dict([(f, None) for f in os.listdir(self._exp_working_dir)])
+            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)])
             self.timer.Start(100)
         else:
             self.timer.Stop()
 
     def check_files(self, event):
-        self._files_now = dict([(f,None) for f in os.listdir (self._exp_working_dir)])
+        self._files_now = dict([(f,None) for f in os.listdir(self._exp_working_dir)])
         self._files_added = [f for f in self._files_now if not f in self._files_before]
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
-        if len(self._files_added)>0:
-            new_file_str=self._files_added[-1]
-            print new_file_str
+        if len(self._files_added) > 0:
+            new_file_str = self._files_added[-1]
             if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
-                path=self._exp_working_dir+'\\'+new_file_str
+                path = self._exp_working_dir + '\\' + new_file_str
                 self.data.load_exp_data(path)
-            self._files_before=self._files_now
+            self._files_before = self._files_now
             
     def file_is_spe(self, filename):
         return filename.endswith('.SPE') or filename.endswith('.spe')
@@ -115,7 +126,7 @@ class TraxMainViewController(object):
 
     def fit_limits_txt_changed(self, event):
         new_limits = self.main_view.exp_panel.get_fit_x_limits()
-        new_limits_ind=np.array(self.data.calculate_ind(new_limits))
+        new_limits_ind = np.array(self.data.calculate_ind(new_limits))
         self.data.roi_data.set_x_limits(new_limits_ind)
         try:
             self.roi_view.view.graph_panel.update_line_limits()
@@ -130,7 +141,7 @@ class TraxMainViewController(object):
         
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()  
-            self._calib_working_dir=os.path.split(path)[0]     
+            self._calib_working_dir = os.path.split(path)[0]   
             self.data.load_ds_calib_data(path)
 
     def load_us_calib_data(self, event):
@@ -140,7 +151,7 @@ class TraxMainViewController(object):
         
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()  
-            self._calib_working_dir=os.path.split(path)[0]     
+            self._calib_working_dir = os.path.split(path)[0]    
             self.data.load_us_calib_data(path)
 
     def set_us_temp(self, event):
@@ -156,14 +167,14 @@ class TraxMainViewController(object):
         self.data.set_us_calib_modus(0)
 
     def set_ds_modus_etalon(self, event):
-        if self.data.ds_calib_param.etalon_spectrum_func==None:
+        if self.data.ds_calib_param.etalon_spectrum_func == None:
             self.main_view.calib_panel.ds_calib_box.known_temperature_rb.SetValue(True)
             self.data.set_ds_calib_modus(0)
         else:
             self.data.set_ds_calib_modus(1)
 
     def set_us_modus_etalon(self, event):
-        if self.data.us_calib_param.etalon_spectrum_func==None:
+        if self.data.us_calib_param.etalon_spectrum_func == None:
             self.main_view.calib_panel.us_calib_box.known_temperature_rb.SetValue(True)
             self.data.set_us_calib_modus(0)
         else:
@@ -218,6 +229,13 @@ class TraxMainViewController(object):
         caput('13IDD:up_t_int', str(self.data.get_us_roi_max()))
         caput('13IDD:dn_t_int', str(self.data.get_ds_roi_max()))
 
+    def save_parameter(self):
+        fid = open('parameters.txt', 'w')
+        output_str = \
+            'Working directory: ' + self._exp_working_dir + '\n' + \
+            'Calibration directory: ' + self._calib_working_dir
+        fid.write(output_str)
+        fid.close()
 
     def close_window_click(self, event):
         try:
@@ -226,11 +244,12 @@ class TraxMainViewController(object):
         except:
             pass
         self.main_view.Destroy()
+        self.save_parameter()
         self.data.save_roi_data()
 
-if __name__=="__main__":
-    app=wx.App(None)
-    main_view=TraxMainViewController()
+if __name__ == "__main__":
+    app = wx.App(None)
+    main_view = TraxMainViewController()
    # main_view.data.load_exp_data('spe files\\Pt_38.SPE')
     #main_view.data.load_exp_data('SPE test vers3\\test_075.spe')
     
