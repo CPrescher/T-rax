@@ -167,11 +167,17 @@ class TraxData(object):
             x=self.exp_data.ds_spectrum.x
             corrected_spectrum = self.exp_data.calc_corrected_ds_spectrum(self.ds_calib_data.ds_spectrum, 
                                                 self.ds_calib_param.get_calibrated_spec(x))
-            fitted_spectrum = FitSpectrum(corrected_spectrum)
-            return [corrected_spectrum, fitted_spectrum]
+            self.ds_fitted_spectrum = FitSpectrum(corrected_spectrum)
+            return [corrected_spectrum, self.ds_fitted_spectrum]
 
     def get_ds_roi_max(self):
         return self.exp_data.calc_roi_max(self.roi_data.ds_roi)
+
+    def get_ds_temp(self):
+        try:
+            return self.ds_fitted_spectrum.T
+        except AttributeError:
+            return 0
 
     def get_us_spectrum(self):
         if self.us_calib_data == None:
@@ -180,11 +186,17 @@ class TraxData(object):
             x=self.exp_data.us_spectrum.x
             corrected_spectrum = self.exp_data.calc_corrected_us_spectrum(self.us_calib_data.us_spectrum, 
                                                 self.us_calib_param.get_calibrated_spec(x))
-            fitted_spectrum = FitSpectrum(corrected_spectrum)
-            return [corrected_spectrum, fitted_spectrum]
+            self.us_fitted_spectrum = FitSpectrum(corrected_spectrum)
+            return [corrected_spectrum, self.us_fitted_spectrum]
 
     def get_us_roi_max(self):
         return self.exp_data.calc_roi_max(self.roi_data.us_roi)
+
+    def get_us_temp(self):
+        try:
+            return self.us_fitted_spectrum.T
+        except AttributeError:
+            return 0
 
     def get_whole_spectrum(self):
         return self.exp_data.x, self.exp_data.y_whole_spectrum
@@ -307,7 +319,7 @@ class ExpData(ImgData):
 
     def _get_file_base_str(self):
         file_str = ''.join(self.filename.split('.')[0:-1])
-        self._file_base_str = ''.join(file_str.split('_')[0:-1])
+        self._file_base_str = '_'.join(file_str.split('_')[0:-1])
         self._file_ending = self.filename.split('.')[-1]
 
     def get_next_file_names(self):
@@ -317,6 +329,8 @@ class ExpData(ImgData):
         number_str=("{0:"+format_str+'}').format(self._file_number + 1)
         new_file_name_with_leading_zeros = self._file_base_str + '_' + \
                     number_str + '.' + self._file_ending
+        print new_file_name
+        print new_file_name_with_leading_zeros
         return new_file_name, new_file_name_with_leading_zeros
 
     def get_previous_file_names(self):

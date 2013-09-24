@@ -467,7 +467,6 @@ class TRaxROIGraphPanel(wx.Panel):
         xtick_pos = self.data.calculate_ind(xtick_num)
         self.axes.set_xticks(xtick_pos)
         self.axes.set_xticklabels((map(int,xtick_num)))
-       # self.axes.set_xlabel("$\lambda$ $(nm)$")
 
     def update_img(self):
         self.draw_image()
@@ -480,8 +479,7 @@ class TRaxROIGraphPanel(wx.Panel):
         self.update_rects() 
         self.update_lines()
 
-    def update_rects(self):                                    
-        #self.canvas.restore_region(self.img_background)
+    def update_rects(self):
         self.axes.draw_artist(self.us_rect.rect)
         self.axes.draw_artist(self.ds_rect.rect)
         self.canvas.blit(self.axes.bbox)

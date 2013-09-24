@@ -6,7 +6,7 @@ from T_Rax_ROI_selector import TRaxROIController
 import wx
 from wx.lib.pubsub import Publisher as pub
 import os
-
+from epics import caput
 
 
 class TraxMainViewController(object):
@@ -89,12 +89,13 @@ class TraxMainViewController(object):
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
         if len(self._files_added)>0:
             new_file_str=self._files_added[-1]
+            print new_file_str
             if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
                 path=self._exp_working_dir+'\\'+new_file_str
                 self.data.load_exp_data(path)
             self._files_before=self._files_now
             
-    def file_is_esp(self, filename):
+    def file_is_spe(self, filename):
         return filename.endswith('.SPE') or filename.endswith('.spe')
     
     def file_is_raw(self, filename):
@@ -199,6 +200,7 @@ class TraxMainViewController(object):
         self.calib_controls.ds_calib_box.etalon_file_lbl.SetLabel(self.data.get_ds_calib_etalon_file_name().split('\\')[-1])
         self.calib_controls.us_calib_box.etalon_file_lbl.SetLabel(self.data.get_us_calib_etalon_file_name().split('\\')[-1])
         self.set_parameter()
+        self.update_pv_names()
 
     def roi_changed(self, message):
         self.main_view.graph_panel.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
@@ -207,6 +209,15 @@ class TraxMainViewController(object):
         ds_txt_roi = self.data.roi_data.ds_roi.get_list()
         ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
         self.main_view.exp_panel.set_fit_x_limits(ds_txt_roi[2:])
+        self.update_pv_names()
+
+    def update_pv_names(self):
+        caput('13IDD:us_las_temp.VAL', self.data.get_us_temp())
+        caput('13IDD:ds_las_temp.VAL', self.data.get_ds_temp())
+
+        caput('13IDD:up_t_int', str(self.data.get_us_roi_max()))
+        caput('13IDD:dn_t_int', str(self.data.get_ds_roi_max()))
+
 
     def close_window_click(self, event):
         try:
