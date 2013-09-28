@@ -76,6 +76,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         pub.sendMessage("IMG LOADED", None)
 
     def plot_img(self):
+        #self.figure.clf()
         self.axes.cla()
         self.img_data = self.data.get_exp_img_data()
         y_max = len(self.data.get_exp_img_data()) - 1
@@ -99,7 +100,12 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
 
     def update_img(self):
         self.plot_img()
+        #need to reset the ResizeableRectangles like that, because the Garbage Collector is not fast enough to
+        #delete all the rectangles.
+        self.ds_rect.active=False
+        self.us_rect.active=False
         ResizeableRectangle.reset()
+        #----------------------------------------------------
         self.plot_rects()
         self.redraw_figure()
         self.connect_rectangles()
@@ -262,6 +268,7 @@ class MoveableLine:
 class ResizeableRectangle:
     lock = None #only one rect can be animated at a time
     rects = []
+    num = 0
     def __init__(self, parent, axes, canvas, init_rect, color, flag):       
         self.flag = flag
         self.parent = parent
@@ -274,14 +281,15 @@ class ResizeableRectangle:
 
         self.x_border = 25
         self.y_border = 3
-        self.min_width = 100
+        self.min_width = 5
         self.min_height = 1
 
         self.rect = mpl.patches.Rectangle((init_rect.x(),init_rect.y()),init_rect.width(), init_rect.height(), ec=self.color, fill=False, lw=2)
         self.axes.add_artist(self.rect)
 
         ResizeableRectangle.rects.append(self.rect)
-               
+              
+        self.active = True #needed because of garbage collection issues
         self.press = None 
         self.mode = None
         self.is_animated = False
@@ -291,6 +299,9 @@ class ResizeableRectangle:
         self.update_timer = QtCore.QTimer(self.parent)
         self.update_timer.setInterval(40)
         self.parent.connect(self.update_timer,QtCore.SIGNAL('timeout()'), self.send_message)
+
+        ResizeableRectangle.num+=1
+        self.id=ResizeableRectangle.num
 
     def set_roi(self, roi): 
         if self.press == None:
@@ -312,6 +323,7 @@ class ResizeableRectangle:
     def on_press(self, event):
         if event.inaxes != self.rect.axes: return
         if ResizeableRectangle.lock is not None: return
+        if self.active is not True: return
         y_click = event.ydata
         x_click = event.xdata
         y0 = self.rect.get_y()
@@ -327,7 +339,6 @@ class ResizeableRectangle:
                 rect.set_animated(True)
             if not self.is_animated:
                 ResizeableRectangle.lock = self
-                #self.animation_timer.singleShot(50,self.animate)
                 self.animate()
                 self.update_timer.start()
                 self.is_animated=True
@@ -337,7 +348,7 @@ class ResizeableRectangle:
             self.ani._stop()
         except:
             pass
-        self.ani = animation.FuncAnimation(self.axes.figure, self.get_rect, interval=10, frames=24, blit=True)
+        self.ani = animation.FuncAnimation(self.axes.figure, self.get_rect, interval=5, frames=1, blit=True)
 
     def get_rect(self,i):
         return ResizeableRectangle.rects

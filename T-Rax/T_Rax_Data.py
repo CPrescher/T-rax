@@ -117,13 +117,16 @@ class TraxData(object):
         xdata = np.array( self.exp_data.x_whole)
         try:
             for w in wavelength:
-                base_ind = max(max(np.where(xdata <= w)))
-                if base_ind< len(xdata)-1:
-                    result.append(int(np.round((w - xdata[base_ind]) / \
-                        (xdata[base_ind + 1] - xdata[base_ind]) \
-                        + base_ind)))
-                else:
-                    result.append(base_ind)
+                try:
+                    base_ind = max(max(np.where(xdata <= w)))
+                    if base_ind < len(xdata)-1:
+                        result.append(int(np.round((w - xdata[base_ind]) / \
+                            (xdata[base_ind + 1] - xdata[base_ind]) \
+                            + base_ind)))
+                    else:
+                        result.append(base_ind)
+                except:
+                    result.append(0)
             return np.array(result)
         except TypeError:
             base_ind = max(max(np.where(xdata <= wavelength)))
