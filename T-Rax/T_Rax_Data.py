@@ -14,19 +14,20 @@ class TraxData(object):
         self.us_calib_data = None
         self.us_calib_param = CalibParam()
 
-        self._read_roi_param()
+        self.roi_data_manager =  ROIDataManager()
+
         self._create_dummy_img()
         self._load_calib_etalon()
 
     def _read_roi_param(self):
         if os.path.isfile('roi_data.txt'):
             roi_list = np.loadtxt('roi_data.txt',delimiter=',')
-            self.roi_data = ROIData(self, map(int, roi_list[0]),map(int, roi_list[1]))
+            self.roi_data = ROIData(map(int, roi_list[0]),map(int, roi_list[1]))
         else:
-            self.roi_data = ROIData(self, [100,1000,80,90],[100,1000,10,20])
+            self.roi_data = ROIData([100,1000,80,90],[100,1000,10,20])
 
     def _create_dummy_img(self):
-        self.exp_data=DummyImg(self.roi_data)
+        self.exp_data=DummyImg(self.roi_data_manager)
 
     def _load_calib_etalon(self):
         self.load_us_calib_etalon('15A_lamp.txt')
@@ -34,6 +35,7 @@ class TraxData(object):
 
     def load_exp_data(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
+        self.roi_data =self.exp_data.roi_data
         pub.sendMessage("EXP DATA CHANGED", self)
 
     def load_next_exp_file(self):
@@ -54,9 +56,9 @@ class TraxData(object):
     def read_exp_image_file(self, file_name):
         img_file= SPE_File(file_name)
         if img_file.type=='image':
-            return ExpData(img_file, self.roi_data)
+            return ExpData(img_file, self.roi_data_manager)
         elif img_file.type=='spectrum':
-            return ExpSpecData(img_file, self.roi_data)
+            return ExpSpecData(img_file, self.roi_data_manager)
 
 
     def load_ds_calib_data(self, file_name):
@@ -174,7 +176,7 @@ class TraxData(object):
             return [corrected_spectrum, self.ds_fitted_spectrum]
 
     def get_ds_roi_max(self):
-        return self.exp_data.calc_roi_max(self.roi_data.ds_roi)
+        return self.exp_data.calc_roi_max(self.exp_data.roi_data.ds_roi)
 
     def get_ds_temp(self):
         try:
@@ -193,7 +195,7 @@ class TraxData(object):
             return [corrected_spectrum, self.us_fitted_spectrum]
 
     def get_us_roi_max(self):
-        return self.exp_data.calc_roi_max(self.roi_data.us_roi)
+        return self.exp_data.calc_roi_max(self.exp_data.roi_data.us_roi)
 
     def get_us_temp(self):
         try:
@@ -213,11 +215,10 @@ class TraxData(object):
 
 
 class GeneralData(object):
-    def __init__(self, img_file, roi_data):
-        self.roi_data=roi_data
+    def __init__(self, img_file, roi_data_manager):
         self._img_file= img_file
+        self.roi_data=roi_data_manager.get_roi_data(img_file.get_dimension())
         self.read_parameter()
-        self.update_roi()
         self.calc_spectra()
     
     def read_parameter(self):
@@ -227,10 +228,6 @@ class GeneralData(object):
 
     def calc_spectra(self):
         raise NotImplementedError
-
-    def update_roi(self):
-        x_max, y_max = self._img_file.get_dimension()        
-        self.roi_data.set_max_limits(x_max-1, y_max-1)
 
     def get_x(self):
         raise NotImplementedError
@@ -250,7 +247,7 @@ class GeneralData(object):
 class ImgData(GeneralData):
     def calc_spectra(self):
         x = self.x_whole[(self.roi_data.us_roi.x_min):           
-                         (self.roi_data.us_roi.x_max + 1)]
+                         (self.roi_data.us_roi.x_max+1)]
         self.ds_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.ds_roi))
         self.us_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.us_roi))
 
@@ -344,8 +341,8 @@ class ExpData(ImgData):
         return new_file_name, new_file_name_with_leading_zeros
 
 class DummyImg(ExpData):
-    def __init__(self, roi_data):
-        self.roi_data=roi_data
+    def __init__(self, roi_data_manager):
+        self.roi_data=roi_data_manager.get_roi_data([1300,100])
         self.create_img()
         self.filename = 'dummy_img.spe'
 
@@ -510,48 +507,73 @@ class ROI():
     def get_y_limits(self):
         return [self.y_min,self.y_max]
 
-    def get_roi_list(self):
+    def get_roi_as_list(self):
         return [self.x_min, self.x_max, self.y_min, self.y_max]
 
 
 class ROIDataManager():
     def __init__(self):
-        self.img_dimensions = []
-        self.roi_data = []
+        self._img_dimensions_list = []
+        self._roi_data_list = []
+        self._num=0
+        self._current=None
 
-    def exists(self, dimension):
-        pass
+    def _exists(self, dimension):
+        if self._get_dimension_ind(dimension) is not None:
+            return True
+        else:
+            return False
 
-    def add(self, img_dimension, roi_data):
-        self.img_dimensions.append(img_dimension)
-        self.roi_data.append(roi_data)
+    def _add(self, img_dimension, roi_data):
+        self._img_dimensions_list.append(img_dimension)
+        self._roi_data_list.append(roi_data)
+        self._num+=1
 
-    def get(self, dimension):
-        pass
+    def _get_dimension_ind(self,img_dimension):
+        for ind in range(self._num):
+            if self._img_dimensions_list[ind]==img_dimension:
+                self._current = ind
+                return ind
+        self._current=None
+        return None
+
+    def get_roi_data(self, img_dimension):
+        if self._exists(img_dimension):
+            return self._roi_data_list[self._get_dimension_ind(img_dimension)]
+        else:
+            ds_limits = np.array([0.1*(img_dimension[0]-1), 0.9*(img_dimension[0]-1),
+                                    0.8*(img_dimension[1]-1), 0.9*(img_dimension[1]-1)])
+            us_limits = np.array([0.1*(img_dimension[0]-1), 0.9*(img_dimension[0]-1),
+                                    0.1*(img_dimension[1]-1), 0.2*(img_dimension[1]-1)])
+            ds_limits = np.round(ds_limits)
+            us_limits = np.round(us_limits)
+
+            self._add(img_dimension, ROIData(ds_limits, us_limits))
+            return self._roi_data_list[self._get_dimension_ind(img_dimension)]
+
+    def get_current_roi(self):
+        return self._roi_data_list[self._current]
         
 
 class ROIData():
-    def __init__(self, parent, ds_limits, us_limits):
-        self.parent = parent
+    def __init__(self, ds_limits, us_limits):
         self.ds_roi = ROI(ds_limits)
         self.us_roi = ROI(us_limits)
 
     def get_roi_data(self):
-        data = [self.ds_roi.get_roi_list()]
-        data.append(self.us_roi.get_roi_list())
+        data = [self.ds_roi.get_roi_as_list()]
+        data.append(self.us_roi.get_roi_as_list())
         return data
 
     def set_ds_roi(self, ds_limits):
         self.ds_roi = ROI(ds_limits)
         self.us_roi.set_x_limit(ds_limits[:2])
-        self.parent.calc_spectra()
-        pub.sendMessage("ROI CHANGED", self.parent)
+        pub.sendMessage("ROI CHANGED")
 
     def set_us_roi(self, us_limits):
         self.us_roi = ROI(us_limits)
         self.ds_roi.set_x_limit(us_limits[:2])
-        self.parent.calc_spectra()
-        pub.sendMessage("ROI CHANGED", self.parent)
+        pub.sendMessage("ROI CHANGED")
 
     def set_max_x_limits(self, x_max):
         self.ds_roi.set_x_max(x_max)
@@ -565,7 +587,6 @@ class ROIData():
         self.set_max_x_limits(x_max)
         self.set_max_y_limits(y_max)
 
-
     def set_x_limits(self, x_limits):
         self.set_x_min(x_limits[0])
         self.set_x_max(x_limits[1])
@@ -573,14 +594,12 @@ class ROIData():
     def set_x_min(self, x_min):
         self.ds_roi.x_min = x_min
         self.us_roi.x_min = x_min
-        self.parent.calc_spectra()
-        pub.sendMessage("ROI CHANGED", self.parent)
+        pub.sendMessage("ROI CHANGED")
 
     def set_x_max(self, x_max):
         self.ds_roi.x_max = x_max
         self.us_roi.x_max = x_max
-        self.parent.calc_spectra()
-        pub.sendMessage("ROI CHANGED", self.parent)
+        pub.sendMessage("ROI CHANGED")
 
 
 def black_body_function(wavelength, temp, scaling):

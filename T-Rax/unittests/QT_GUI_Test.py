@@ -37,7 +37,7 @@ class Test_QT_GUI_Test(unittest.TestCase):
 
     def test_load_roi_selector_view(self):
         self.controller.load_roi_view()
-        new_ds_roi=[80,90,100,900]
+        new_ds_roi=[100,900,80,90]
         self.controller.data.roi_data.set_ds_roi(new_ds_roi)        
         new_ds_roi[:2]=np.round(self.controller.data.calculate_wavelength(new_ds_roi[:2]))
         self.assertEqual(self.controller.roi_controller.view.get_ds_roi(),

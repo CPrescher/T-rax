@@ -29,7 +29,7 @@ class TRaxMainController(object):
         pass
 
     def set_parameter(self):
-        ds_txt_roi = self.data.roi_data.ds_roi.get_roi_list()
+        ds_txt_roi = self.data.roi_data.ds_roi.get_roi_as_list()
         ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
         #self.exp_controls.set_fit_x_limits(ds_txt_roi[2:])
         
@@ -143,6 +143,7 @@ class TRaxMainController(object):
        #self.set_parameter()
 
     def roi_changed(self, event):
+        self.data.calc_spectra()
         self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())

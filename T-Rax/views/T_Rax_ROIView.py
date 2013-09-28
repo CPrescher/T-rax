@@ -144,8 +144,8 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.ds_rect.set_roi(self.data.roi_data.ds_roi)
 
     def update_txt_roi(self):
-        ds_txt_roi = self.data.roi_data.ds_roi.get_roi_list()
-        us_txt_roi = self.data.roi_data.us_roi.get_roi_list()
+        ds_txt_roi = self.data.roi_data.ds_roi.get_roi_as_list()
+        us_txt_roi = self.data.roi_data.us_roi.get_roi_as_list()
         ds_txt_roi[:2] = self.data.calculate_wavelength(ds_txt_roi[:2])
         us_txt_roi[:2] = self.data.calculate_wavelength(us_txt_roi[:2])
         self.set_ds_txt_roi(ds_txt_roi)
