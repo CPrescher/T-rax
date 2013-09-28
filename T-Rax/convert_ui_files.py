@@ -12,7 +12,7 @@ import os
 #os.chdir(os.getcwd()+folder_name)
 
 
-def convert_ui_files(folder='\QT_Trial'):
+def convert_ui_files(folder='\UIFiles'):
     old_path=os.getcwd()
     new_path=os.getcwd()+folder
     os.chdir(new_path)
@@ -25,9 +25,4 @@ def convert_ui_files(folder='\QT_Trial'):
     os.chdir(old_path)
 
 if __name__=="__main__":
-    for file in os.listdir('.'):
-        if file.endswith(".ui"):
-            file_name=str(file).split('.')[0]
-            cmd='pyuic4 '+file +' > '+file_name+'.py'
-            print cmd
-            os.system(cmd)
+    convert_ui_files()

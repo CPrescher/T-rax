@@ -169,16 +169,16 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.fit_to_txt.setText(str(int(np.round(limits[1]))))
 
     def get_ds_roi(self):
-        return [int(str(self.ds_y_min_txt.text())),
-                int(str(self.ds_y_max_txt.text())),
-                int(str(self.ds_x_min_txt.text())),
-                int(str(self.ds_x_max_txt.text()))]
+        return [int(str(self.ds_x_min_txt.text())),
+                int(str(self.ds_x_max_txt.text())),
+                int(str(self.ds_y_min_txt.text())),
+                int(str(self.ds_y_max_txt.text()))]
 
     def get_us_roi(self):
-        return [int(str(self.us_y_min_txt.text())),
-                int(str(self.us_y_max_txt.text())),
-                int(str(self.us_x_min_txt.text())),
-                int(str(self.us_x_max_txt.text()))]
+        return [int(str(self.us_x_min_txt.text())),
+                int(str(self.us_x_max_txt.text())),
+                int(str(self.us_y_min_txt.text())),
+                int(str(self.us_y_max_txt.text()))]
 
     def get_fit_x_limits(self):
         return [int(str(self.fit_from_txt.text())),

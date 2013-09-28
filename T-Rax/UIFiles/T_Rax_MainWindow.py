@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Fri Sep 27 22:01:05 2013
+# Created: Sat Sep 28 00:50:49 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,13 +26,12 @@ except AttributeError:
 class Ui_T_Rax_MainWindow(object):
     def setupUi(self, T_Rax_MainWindow):
         T_Rax_MainWindow.setObjectName(_fromUtf8("T_Rax_MainWindow"))
-        T_Rax_MainWindow.resize(900, 500)
+        T_Rax_MainWindow.resize(790, 562)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(T_Rax_MainWindow.sizePolicy().hasHeightForWidth())
         T_Rax_MainWindow.setSizePolicy(sizePolicy)
-        T_Rax_MainWindow.setMinimumSize(QtCore.QSize(0, 0))
         T_Rax_MainWindow.setStyleSheet(_fromUtf8("QMainWindow, #T_Rax_MainWindow{\n"
 "    background: rgb(44, 43, 43)\n"
 "}\n"
@@ -41,7 +40,8 @@ class Ui_T_Rax_MainWindow(object):
 "}\n"
 "#navigation_frame {\n"
 "    border: none;\n"
-"    background: qlineargradient(spread:reflect, x1:0, y1:0.5, x2:0, y2:0, stop:0.114428 rgba(21, 134, 31, 255), stop:0.467662 rgba(12, 80, 18, 255),                                      stop:0.726368 rgba(9, 60, 13, 255), stop:1 rgb(30, 30, 30))\n"
+"    background: qlineargradient(spread:reflect, x1:0, y1:0.5, x2:0, y2:0, stop:0.114428 rgba(21, 134, 31, 255), stop:0.467662 rgba(12, 80, 18, 255), \n"
+"    stop:0.726368 rgba(9, 60, 13, 255), stop:1 rgb(30, 30, 30))\n"
 "}\n"
 "\n"
 "\n"
@@ -77,16 +77,12 @@ class Ui_T_Rax_MainWindow(object):
 "    background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(197, 0, 3, 255), stop:1 rgba(0, 0, 0, 255))\n"
 "}\n"
 "\n"
-"\n"
 "#diamond_btn {\n"
 "    background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(27, 0, 134, 255), stop:1 rgba(0, 0, 0, 255))\n"
 "}\n"
-"\n"
-"\n"
 "#raman_btn {\n"
 "    background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(21, 134, 31, 255), stop:1 rgba(0, 0, 0, 255))\n"
-"}\n"
-""))
+"}"))
         self.centralwidget = QtGui.QWidget(T_Rax_MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
@@ -99,48 +95,41 @@ class Ui_T_Rax_MainWindow(object):
         self.navigation_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.navigation_frame.setFrameShadow(QtGui.QFrame.Raised)
         self.navigation_frame.setObjectName(_fromUtf8("navigation_frame"))
-        self.horizontalLayout_10 = QtGui.QHBoxLayout(self.navigation_frame)
-        self.horizontalLayout_10.setContentsMargins(-1, 3, -1, 4)
-        self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
+        self.horizontalLayout = QtGui.QHBoxLayout(self.navigation_frame)
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.temperature_btn = QtGui.QPushButton(self.navigation_frame)
         self.temperature_btn.setObjectName(_fromUtf8("temperature_btn"))
-        self.horizontalLayout_10.addWidget(self.temperature_btn)
+        self.horizontalLayout.addWidget(self.temperature_btn)
         self.ruby_btn = QtGui.QPushButton(self.navigation_frame)
         self.ruby_btn.setObjectName(_fromUtf8("ruby_btn"))
-        self.horizontalLayout_10.addWidget(self.ruby_btn)
+        self.horizontalLayout.addWidget(self.ruby_btn)
         self.diamond_btn = QtGui.QPushButton(self.navigation_frame)
         self.diamond_btn.setObjectName(_fromUtf8("diamond_btn"))
-        self.horizontalLayout_10.addWidget(self.diamond_btn)
+        self.horizontalLayout.addWidget(self.diamond_btn)
         self.raman_btn = QtGui.QPushButton(self.navigation_frame)
         self.raman_btn.setObjectName(_fromUtf8("raman_btn"))
-        self.horizontalLayout_10.addWidget(self.raman_btn)
-        spacerItem = QtGui.QSpacerItem(664, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_10.addItem(spacerItem)
+        self.horizontalLayout.addWidget(self.raman_btn)
+        spacerItem = QtGui.QSpacerItem(265, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout.addWidget(self.navigation_frame)
         self.main_frame = QtGui.QFrame(self.centralwidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.main_frame.sizePolicy().hasHeightForWidth())
-        self.main_frame.setSizePolicy(sizePolicy)
         self.main_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.main_frame.setFrameShadow(QtGui.QFrame.Raised)
         self.main_frame.setObjectName(_fromUtf8("main_frame"))
-        self.horizontalLayout = QtGui.QHBoxLayout(self.main_frame)
-        self.horizontalLayout.setSpacing(0)
-        self.horizontalLayout.setMargin(0)
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.main_frame)
+        self.horizontalLayout_2.setSpacing(0)
+        self.horizontalLayout_2.setMargin(0)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.figure1_frame = QtGui.QFrame(self.main_frame)
-        self.figure1_frame.setMinimumSize(QtCore.QSize(500, 0))
         self.figure1_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.figure1_frame.setFrameShadow(QtGui.QFrame.Raised)
         self.figure1_frame.setObjectName(_fromUtf8("figure1_frame"))
-        self.horizontalLayout.addWidget(self.figure1_frame)
+        self.horizontalLayout_2.addWidget(self.figure1_frame)
         self.figure2_frame = QtGui.QFrame(self.main_frame)
         self.figure2_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.figure2_frame.setFrameShadow(QtGui.QFrame.Raised)
         self.figure2_frame.setObjectName(_fromUtf8("figure2_frame"))
-        self.horizontalLayout.addWidget(self.figure2_frame)
+        self.horizontalLayout_2.addWidget(self.figure2_frame)
         self.verticalLayout.addWidget(self.main_frame)
         T_Rax_MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(T_Rax_MainWindow)

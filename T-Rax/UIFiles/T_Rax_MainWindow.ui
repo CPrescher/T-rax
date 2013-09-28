@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>T-Rax ver 0.2</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow, #T_Rax_MainWindow{
