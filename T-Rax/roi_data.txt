@@ -1,2 +1,55 @@
-253,1240,64,87
-253,1240,4,30
+QMainWindow, #T_Rax_MainWindow{
+    background: rgb(44, 43, 43)
+}
+#centralwidget{
+    background: rgb(30, 30, 30)
+}
+#navigation_frame {
+    border: none;
+    background: qlineargradient(spread:reflect, x1:0, y1:0.5, x2:0, y2:0, stop:0.114428 rgba(21, 134, 31, 255), stop:0.467662 rgba(12, 80, 18, 255), 
+	stop:0.726368 rgba(9, 60, 13, 255), stop:1 rgb(30, 30, 30))
+}
+
+
+QPushButton{
+    color:white;
+    border-color: black;
+    border: 2px solid #F1F1F1;
+    border-radius: 11px;
+    padding: 5px;
+}
+
+QPushButton::hover{
+    border:3px solid #fff;
+    margin: 0.5px;
+}
+
+QPushPutton::press{
+   border: 3px solid #fff;
+margin: 2px;
+}
+
+
+#navigation_frame QPushButton{
+    min-width: 104px;
+    min-height: 20px;
+    font-weight: bold;
+}
+
+#temperature_btn {
+    background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(221, 124, 40, 180), stop:1 rgba(0, 0, 0, 255))
+}
+#ruby_btn {
+    background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(197, 0, 3, 255), stop:1 rgba(0, 0, 0, 255))
+}
+
+
+#diamond_btn {
+    background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(27, 0, 134, 255), stop:1 rgba(0, 0, 0, 255))
+}
+
+
+#raman_btn {
+    background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(21, 134, 31, 255), stop:1 rgba(0, 0, 0, 255))
+}
+))
