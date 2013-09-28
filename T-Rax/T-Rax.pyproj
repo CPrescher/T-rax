@@ -5,8 +5,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>7b93f3b8-989a-4a3a-92b3-4d75d1a84f3c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>run_T-Rax.pyw</StartupFile>
-    <SearchPath>..\T-Rax</SearchPath>
+    <StartupFile>T_Rax_QtController.py</StartupFile>
+    <SearchPath>..\T-Rax;TRaxROISelector</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>T-Rax</Name>
@@ -21,23 +21,48 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="colors.py" />
-    <Compile Include="Helper.py" />
-    <Compile Include="ParkingLot.py" />
-    <Compile Include="playing.py" />
-    <Compile Include="run_T-Rax.pyw" />
+    <Compile Include="Backup_wxPython\Misc\colors.py" />
+    <Compile Include="Backup_wxPython\Misc\Helper.py" />
+    <Compile Include="Playing\ParkingLot.py" />
+    <Compile Include="Playing\playing.py" />
+    <Compile Include="convert_ui_files.py" />
+    <Compile Include="unittests\QT_GUI_Test.py" />
+    <Compile Include="views\T_Rax_ControlWidgets.py" />
+    <Compile Include="T_Rax_QTROISelectorController.py" />
+    <Compile Include="views\T_Rax_ROIView.py" />
+    <Compile Include="UIFiles\T_Rax_ROI_Selector_window.py" />
+    <Compile Include="T_Rax_QtController.py" />
+    <Compile Include="views\T_Rax_MainView.py" />
+    <Compile Include="UIFiles\T_Rax_DiamondControl.py" />
+    <Compile Include="UIFiles\T_Rax_MainWindow.py" />
+    <Compile Include="UIFiles\T_Rax_RubyControl.py" />
+    <Compile Include="UIFiles\T_Rax_TemperatureControl.py" />
+    <Compile Include="UIFiles\__init__.py" />
+    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_boxes.py" />
+    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_controller.py" />
+    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_graph_helper.py" />
+    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_panels.py" />
+    <Compile Include="Backup_wxPython\run_T-Rax.pyw" />
     <Compile Include="SPE_module.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Trax_Test.py" />
-    <Compile Include="T_Rax_Controller.pyw" />
+    <Compile Include="Backup_wxPython\TRaxROISelector\__init__.py" />
+    <Compile Include="Backup_wxPython\T_Rax_Controller.pyw" />
     <Compile Include="T_Rax_Data.py" />
-    <Compile Include="T_Rax_Main_View.py" />
-    <Compile Include="T_Rax_ROI_selector.py" />
-    <Compile Include="spe_file_unit_test.py" />
+    <Compile Include="Backup_wxPython\T_Rax_Main_View.py" />
+    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_selector.py" />
+    <Compile Include="unittests\spe_file_unit_test.py" />
+    <Compile Include="views\__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Backup_wxPython\" />
+    <Folder Include="Backup_wxPython\Misc\" />
+    <Folder Include="Backup_wxPython\TRaxROISelector\" />
+    <Folder Include="controller\" />
+    <Folder Include="views\" />
+    <Folder Include="UIFiles\" />
     <Folder Include="unittests\" />
+    <Folder Include="Playing\" />
     <Folder Include="Temperature Calibration\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
