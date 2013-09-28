@@ -23,7 +23,7 @@ class TraxData(object):
             roi_list = np.loadtxt('roi_data.txt',delimiter=',')
             self.roi_data = ROIData(self, map(int, roi_list[0]),map(int, roi_list[1]))
         else:
-            self.roi_data = ROIData(self, [100,1000,10,20],[100,1000,80,90])
+            self.roi_data = ROIData(self, [100,1000,80,90],[100,1000,10,20])
 
     def _create_dummy_img(self):
         self.exp_data=DummyImg(self.roi_data)

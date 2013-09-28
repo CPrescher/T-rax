@@ -277,11 +277,14 @@
             </item>
             <item row="1" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <property name="spacing">
+               <number>7</number>
+              </property>
               <item>
                <widget class="QLineEdit" name="fit_from_txt">
                 <property name="maximumSize">
                  <size>
-                  <width>50</width>
+                  <width>800</width>
                   <height>16777215</height>
                  </size>
                 </property>
@@ -302,7 +305,7 @@
                <widget class="QLineEdit" name="fit_to_lbl">
                 <property name="maximumSize">
                  <size>
-                  <width>50</width>
+                  <width>800</width>
                   <height>16777215</height>
                  </size>
                 </property>
