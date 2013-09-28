@@ -144,25 +144,25 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.ds_rect.set_roi(self.data.roi_data.ds_roi)
 
     def update_txt_roi(self):
-        ds_txt_roi = self.data.roi_data.ds_roi.get_list()
-        us_txt_roi = self.data.roi_data.us_roi.get_list()
-        ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
-        us_txt_roi[2:] = self.data.calculate_wavelength(us_txt_roi[2:])
+        ds_txt_roi = self.data.roi_data.ds_roi.get_roi_list()
+        us_txt_roi = self.data.roi_data.us_roi.get_roi_list()
+        ds_txt_roi[:2] = self.data.calculate_wavelength(ds_txt_roi[:2])
+        us_txt_roi[:2] = self.data.calculate_wavelength(us_txt_roi[:2])
         self.set_ds_txt_roi(ds_txt_roi)
         self.set_us_txt_roi(us_txt_roi)
-        self.set_fit_limits(ds_txt_roi[2:])
+        self.set_fit_limits(ds_txt_roi[:2])
 
     def set_ds_txt_roi(self, roi):
-        self.ds_x_min_txt.setText(str(int(np.round(roi[2]))))
-        self.ds_x_max_txt.setText(str(int(np.round(roi[3]))))
-        self.ds_y_min_txt.setText(str(int(np.round(roi[0]))))
-        self.ds_y_max_txt.setText(str(int(np.round(roi[1]))))
+        self.ds_x_min_txt.setText(str(int(np.round(roi[0]))))
+        self.ds_x_max_txt.setText(str(int(np.round(roi[1]))))
+        self.ds_y_min_txt.setText(str(int(np.round(roi[2]))))
+        self.ds_y_max_txt.setText(str(int(np.round(roi[3]))))
 
     def set_us_txt_roi(self, roi):
-        self.us_x_min_txt.setText(str(int(np.round(roi[2]))))
-        self.us_x_max_txt.setText(str(int(np.round(roi[3]))))
-        self.us_y_min_txt.setText(str(int(np.round(roi[0]))))
-        self.us_y_max_txt.setText(str(int(np.round(roi[1]))))
+        self.us_x_min_txt.setText(str(int(np.round(roi[0]))))
+        self.us_x_max_txt.setText(str(int(np.round(roi[1]))))
+        self.us_y_min_txt.setText(str(int(np.round(roi[2]))))
+        self.us_y_max_txt.setText(str(int(np.round(roi[3]))))
 
     def set_fit_limits(self, limits):
         self.fit_from_txt.setText(str(int(np.round(limits[0]))))
@@ -417,8 +417,8 @@ class ResizeableRectangle:
     def send_message(self):
         try:
             pub.sendMessage(self.flag + " ROI GRAPH CHANGED", 
-                        [int(self.rect.get_y()),int(self.rect.get_y() + self.rect.get_height()),
-                         int(self.rect.get_x()),int(self.rect.get_x() + self.rect.get_width())])
+                        [int(self.rect.get_x()),int(self.rect.get_x() + self.rect.get_width()),
+                         int(self.rect.get_y()),int(self.rect.get_y() + self.rect.get_height())])
         except AttributeError:
             pass
 

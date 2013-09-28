@@ -39,23 +39,23 @@ class Test_QT_GUI_Test(unittest.TestCase):
         self.controller.load_roi_view()
         new_ds_roi=[80,90,100,900]
         self.controller.data.roi_data.set_ds_roi(new_ds_roi)        
-        new_ds_roi[2:]=np.round(self.controller.data.calculate_wavelength(new_ds_roi[2:]))
+        new_ds_roi[:2]=np.round(self.controller.data.calculate_wavelength(new_ds_roi[:2]))
         self.assertEqual(self.controller.roi_controller.view.get_ds_roi(),
                          new_ds_roi)
-        self.assertEqual(self.controller.roi_controller.view.get_us_roi()[2:],
-                         new_ds_roi[2:])
+        self.assertEqual(self.controller.roi_controller.view.get_us_roi()[:2],
+                         new_ds_roi[:2])
         self.assertEqual(self.controller.roi_controller.view.get_fit_x_limits(),
-                         new_ds_roi[2:])
+                         new_ds_roi[:2])
 
         new_us_roi=[7,13,120,850]
         self.controller.data.roi_data.set_us_roi(new_ds_roi)        
-        new_ds_roi[2:]=np.round(self.controller.data.calculate_wavelength(new_ds_roi[2:]))
+        new_ds_roi[:2]=np.round(self.controller.data.calculate_wavelength(new_ds_roi[:2]))
         self.assertEqual(self.controller.roi_controller.view.get_us_roi(),
                          new_ds_roi)
-        self.assertEqual(self.controller.roi_controller.view.get_ds_roi()[2:],
-                         new_ds_roi[2:])
+        self.assertEqual(self.controller.roi_controller.view.get_ds_roi()[:2],
+                         new_ds_roi[:2])
         self.assertEqual(self.controller.roi_controller.view.get_fit_x_limits(),
-                         new_ds_roi[2:])
+                         new_ds_roi[:2])
 
 if __name__ == '__main__':
     unittest.main()

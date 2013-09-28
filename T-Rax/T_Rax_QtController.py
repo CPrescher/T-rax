@@ -29,7 +29,7 @@ class TRaxMainController(object):
         pass
 
     def set_parameter(self):
-        ds_txt_roi = self.data.roi_data.ds_roi.get_list()
+        ds_txt_roi = self.data.roi_data.ds_roi.get_roi_list()
         ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
         #self.exp_controls.set_fit_x_limits(ds_txt_roi[2:])
         

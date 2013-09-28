@@ -27,6 +27,7 @@
     <Compile Include="Playing\playing.py" />
     <Compile Include="convert_ui_files.py" />
     <Compile Include="unittests\QT_GUI_Test.py" />
+    <Compile Include="unittests\T_Rax_Data_Test.py" />
     <Compile Include="views\T_Rax_ControlWidgets.py" />
     <Compile Include="T_Rax_QTROISelectorController.py" />
     <Compile Include="views\T_Rax_ROIView.py" />

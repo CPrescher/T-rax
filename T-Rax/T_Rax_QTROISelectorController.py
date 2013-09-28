@@ -53,12 +53,12 @@ class TRaxROIController(object):
 
     def us_roi_txt_changed(self):
         us_roi=self.view.get_us_roi()
-        us_roi[2:] = self.data.calculate_ind(us_roi[2:])  
+        us_roi[:2] = self.data.calculate_ind(us_roi[:2])  
         self.data.roi_data.set_us_roi(us_roi)
 
     def ds_roi_txt_changed(self):
         ds_roi=self.view.get_ds_roi()      
-        ds_roi[2:] = self.data.calculate_ind(ds_roi[2:])
+        ds_roi[:2] = self.data.calculate_ind(ds_roi[:2])
         self.data.roi_data.set_ds_roi(ds_roi)
 
     def fit_txt_changed(self):
@@ -90,8 +90,8 @@ class TRaxROIController(object):
         self.data.roi_data.set_us_roi(self.initial_us_row)
 
     def save_roi_data(self):
-        self.initial_ds_row = self.data.roi_data.ds_roi.get_list()
-        self.initial_us_row = self.data.roi_data.us_roi.get_list()
+        self.initial_ds_row = self.data.roi_data.ds_roi.get_roi_list()
+        self.initial_us_row = self.data.roi_data.us_roi.get_roi_list()
 
     def shut_down_window(self):
         self.view.close()

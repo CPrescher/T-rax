@@ -23,7 +23,7 @@ class TraxData(object):
             roi_list = np.loadtxt('roi_data.txt',delimiter=',')
             self.roi_data = ROIData(self, map(int, roi_list[0]),map(int, roi_list[1]))
         else:
-            self.roi_data = ROIData(self, [10,20,100,1000],[80,90,100,1000])
+            self.roi_data = ROIData(self, [100,1000,10,20],[100,1000,80,90])
 
     def _create_dummy_img(self):
         self.exp_data=DummyImg(self.roi_data)
@@ -259,10 +259,13 @@ class ImgData(GeneralData):
         return np.sum(roi_img,0)/np.float(np.size(roi_img,0))
 
     def calc_roi_max(self, roi):
+        print roi.get_roi_list()
         roi_img=self.get_roi_img(roi)
         return np.max(roi_img)
 
     def get_roi_img(self, roi):
+        print np.size(self.img_data,0)
+        print np.size(self.img_data,1)
         return self.img_data[roi.y_min : roi.y_max+1, roi.x_min:roi.x_max+1]
 
     def get_x_limits(self):
@@ -473,10 +476,10 @@ class FitSpectrum(Spectrum):
 
 class ROI():
     def __init__(self, limits):
-        self.y_min = limits[0]
-        self.y_max = limits[1]
-        self.x_min = limits[2]
-        self.x_max = limits[3]
+        self.x_min = limits[0]
+        self.x_max = limits[1]
+        self.y_min = limits[2]
+        self.y_max = limits[3]
 
     def set_x_limit(self, xlimit):
         self.x_min = xlimit[0]
@@ -510,9 +513,25 @@ class ROI():
     def get_y_limits(self):
         return [self.y_min,self.y_max]
 
-    def get_list(self):
-        return [self.y_min, self.y_max, self.x_min, self.x_max]
+    def get_roi_list(self):
+        return [self.x_min, self.x_max, self.y_min, self.y_max]
 
+
+class ROIDataManager():
+    def __init__(self):
+        self.img_dimensions = []
+        self.roi_data = []
+
+    def exists(self, dimension):
+        pass
+
+    def add(self, img_dimension, roi_data):
+        self.img_dimensions.append(img_dimension)
+        self.roi_data.append(roi_data)
+
+    def get(self, dimension):
+        pass
+        
 
 class ROIData():
     def __init__(self, parent, ds_limits, us_limits):
@@ -521,19 +540,19 @@ class ROIData():
         self.us_roi = ROI(us_limits)
 
     def get_roi_data(self):
-        data = [self.ds_roi.get_list()]
-        data.append(self.us_roi.get_list())
+        data = [self.ds_roi.get_roi_list()]
+        data.append(self.us_roi.get_roi_list())
         return data
 
     def set_ds_roi(self, ds_limits):
         self.ds_roi = ROI(ds_limits)
-        self.us_roi.set_x_limit(ds_limits[2:])
+        self.us_roi.set_x_limit(ds_limits[:2])
         self.parent.calc_spectra()
         pub.sendMessage("ROI CHANGED", self.parent)
 
     def set_us_roi(self, us_limits):
         self.us_roi = ROI(us_limits)
-        self.ds_roi.set_x_limit(us_limits[2:])
+        self.ds_roi.set_x_limit(us_limits[:2])
         self.parent.calc_spectra()
         pub.sendMessage("ROI CHANGED", self.parent)
 
