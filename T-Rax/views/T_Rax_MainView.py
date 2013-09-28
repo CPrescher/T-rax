@@ -34,7 +34,11 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.graph_1axes = T_Rax_1axes_graph(self.figure2_frame)
         self.graph_1axes.hide()
 
+    
     def create_widgets(self):
+        self.create_navigation_widgets()
+
+    def create_navigation_widgets(self):
         self.temperature_control_widget = TemperatureControlWidget()
         self.ruby_control_widget = RubyControlWidget()
         self.diamond_control_widget = DiamondControlWidget()
@@ -42,6 +46,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.main_layout.addWidget(self.temperature_control_widget)
         self.main_layout.addWidget(self.ruby_control_widget)        
         self.main_layout.addWidget(self.diamond_control_widget)
+
 
     def navigate_to(self, btn_name):
         self.hide_control_widgets()

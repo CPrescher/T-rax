@@ -48,7 +48,9 @@ class TRaxMainController(object):
         self.create_navigation_signals()
         self.create_exp_file_signals()
         self.create_roi_view_signals()
-        self.create_listeners()
+        self.create_pub_listeners()
+        self.create_axes_listener()
+
 
     def create_navigation_signals(self):
         self.main_view.connect(self.main_view.ruby_btn, SIGNAL('clicked()'), self.ruby_btn_click)
@@ -75,9 +77,13 @@ class TRaxMainController(object):
         self.connect_click_function(self.main_view.ruby_control_widget.roi_setup_btn, self.load_roi_view)
         self.connect_click_function(self.main_view.diamond_control_widget.roi_setup_btn, self.load_roi_view)
 
-    def create_listeners(self):
+    def create_pub_listeners(self):
         pub.subscribe(self.data_changed, "EXP DATA CHANGED")
         pub.subscribe(self.roi_changed, "ROI CHANGED")
+
+    def create_axes_listener(self):
+        self.main_view.graph_1axes.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
+        self.main_view.graph_2axes.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
 
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -135,10 +141,19 @@ class TRaxMainController(object):
        #self.calib_controls.ds_calib_box.etalon_file_lbl.SetLabel(self.data.get_ds_calib_etalon_file_name().split('\\')[-1])
        #self.calib_controls.us_calib_box.etalon_file_lbl.SetLabel(self.data.get_us_calib_etalon_file_name().split('\\')[-1])
        #self.set_parameter()
+
     def roi_changed(self, event):
         self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
+
+    def on_mouse_move_in_graph(self, event):
+        x_coord, y_coord = event.xdata, event.ydata
+        if x_coord <> None:
+           self.main_view.status_coord_lbl.setText('x: %(x).3F y: %(y).3F' \
+                              % {'x':x_coord, 'y':y_coord})
+        else:
+           self.main_view.status_coord_lbl.setText('')
 
 class TRaxTemperatureController():
     def __init__(self, parent, data, view):

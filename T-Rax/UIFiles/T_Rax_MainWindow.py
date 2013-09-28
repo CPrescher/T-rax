@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Sat Sep 28 00:50:49 2013
+# Created: Sat Sep 28 07:46:05 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_T_Rax_MainWindow(object):
     def setupUi(self, T_Rax_MainWindow):
         T_Rax_MainWindow.setObjectName(_fromUtf8("T_Rax_MainWindow"))
-        T_Rax_MainWindow.resize(790, 562)
+        T_Rax_MainWindow.resize(773, 534)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -38,11 +38,24 @@ class Ui_T_Rax_MainWindow(object):
 "#centralwidget{\n"
 "    background: rgb(30, 30, 30)\n"
 "}\n"
+"#status_bar {\n"
+"    background: rgb(44, 43, 43);\n"
+"\n"
+"}\n"
+"\n"
+"QLabel ,QGroupBox{\n"
+"    color: #F1F1F1;\n"
+"    font-weight: bold;\n"
+"    font-size: 12px;\n"
+"}\n"
+"\n"
+"\n"
 "#navigation_frame {\n"
 "    border: none;\n"
 "    background: qlineargradient(spread:reflect, x1:0, y1:0.5, x2:0, y2:0, stop:0.114428 rgba(21, 134, 31, 255), stop:0.467662 rgba(12, 80, 18, 255), \n"
 "    stop:0.726368 rgba(9, 60, 13, 255), stop:1 rgb(30, 30, 30))\n"
 "}\n"
+"\n"
 "\n"
 "\n"
 "QPushButton{\n"
@@ -109,7 +122,7 @@ class Ui_T_Rax_MainWindow(object):
         self.raman_btn = QtGui.QPushButton(self.navigation_frame)
         self.raman_btn.setObjectName(_fromUtf8("raman_btn"))
         self.horizontalLayout.addWidget(self.raman_btn)
-        spacerItem = QtGui.QSpacerItem(265, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(248, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout.addWidget(self.navigation_frame)
         self.main_frame = QtGui.QFrame(self.centralwidget)
@@ -131,10 +144,36 @@ class Ui_T_Rax_MainWindow(object):
         self.figure2_frame.setObjectName(_fromUtf8("figure2_frame"))
         self.horizontalLayout_2.addWidget(self.figure2_frame)
         self.verticalLayout.addWidget(self.main_frame)
+        self.status_bar = QtGui.QFrame(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.status_bar.sizePolicy().hasHeightForWidth())
+        self.status_bar.setSizePolicy(sizePolicy)
+        self.status_bar.setMaximumSize(QtCore.QSize(16777215, 25))
+        self.status_bar.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.status_bar.setFrameShadow(QtGui.QFrame.Raised)
+        self.status_bar.setObjectName(_fromUtf8("status_bar"))
+        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.status_bar)
+        self.horizontalLayout_3.setSpacing(5)
+        self.horizontalLayout_3.setContentsMargins(5, 0, 5, 0)
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.status_coord_lbl = QtGui.QLabel(self.status_bar)
+        self.status_coord_lbl.setText(_fromUtf8(""))
+        self.status_coord_lbl.setObjectName(_fromUtf8("status_coord_lbl"))
+        self.horizontalLayout_3.addWidget(self.status_coord_lbl)
+        spacerItem1 = QtGui.QSpacerItem(743, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem1)
+        self.status_ds_calib_filename_lbl = QtGui.QLabel(self.status_bar)
+        self.status_ds_calib_filename_lbl.setText(_fromUtf8(""))
+        self.status_ds_calib_filename_lbl.setObjectName(_fromUtf8("status_ds_calib_filename_lbl"))
+        self.horizontalLayout_3.addWidget(self.status_ds_calib_filename_lbl)
+        self.status_us_calib_filename_lbl = QtGui.QLabel(self.status_bar)
+        self.status_us_calib_filename_lbl.setText(_fromUtf8(""))
+        self.status_us_calib_filename_lbl.setObjectName(_fromUtf8("status_us_calib_filename_lbl"))
+        self.horizontalLayout_3.addWidget(self.status_us_calib_filename_lbl)
+        self.verticalLayout.addWidget(self.status_bar)
         T_Rax_MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtGui.QStatusBar(T_Rax_MainWindow)
-        self.statusbar.setObjectName(_fromUtf8("statusbar"))
-        T_Rax_MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(T_Rax_MainWindow)
         QtCore.QMetaObject.connectSlotsByName(T_Rax_MainWindow)

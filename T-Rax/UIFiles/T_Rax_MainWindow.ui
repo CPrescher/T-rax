@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>790</width>
-    <height>562</height>
+    <width>773</width>
+    <height>534</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,11 +26,24 @@
 #centralwidget{
     background: rgb(30, 30, 30)
 }
+#status_bar {
+	background: rgb(44, 43, 43);
+
+}
+
+QLabel ,QGroupBox{
+	color: #F1F1F1;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+
 #navigation_frame {
     border: none;
     background: qlineargradient(spread:reflect, x1:0, y1:0.5, x2:0, y2:0, stop:0.114428 rgba(21, 134, 31, 255), stop:0.467662 rgba(12, 80, 18, 255), 
 	stop:0.726368 rgba(9, 60, 13, 255), stop:1 rgb(30, 30, 30))
 }
+
 
 
 QPushButton{
@@ -136,7 +149,7 @@ margin: 2px;
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>265</width>
+           <width>248</width>
            <height>20</height>
           </size>
          </property>
@@ -183,9 +196,81 @@ margin: 2px;
       </layout>
      </widget>
     </item>
+    <item>
+     <widget class="QFrame" name="status_bar">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="status_coord_lbl">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>743</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="status_ds_calib_filename_lbl">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="status_us_calib_filename_lbl">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

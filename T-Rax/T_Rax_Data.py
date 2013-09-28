@@ -259,13 +259,10 @@ class ImgData(GeneralData):
         return np.sum(roi_img,0)/np.float(np.size(roi_img,0))
 
     def calc_roi_max(self, roi):
-        print roi.get_roi_list()
         roi_img=self.get_roi_img(roi)
         return np.max(roi_img)
 
     def get_roi_img(self, roi):
-        print np.size(self.img_data,0)
-        print np.size(self.img_data,1)
         return self.img_data[roi.y_min : roi.y_max+1, roi.x_min:roi.x_max+1]
 
     def get_x_limits(self):
