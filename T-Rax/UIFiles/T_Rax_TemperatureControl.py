@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
-# Created: Mon Sep 30 12:15:48 2013
+# Created: Mon Sep 30 13:53:31 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -166,6 +166,7 @@ class Ui_temperature_control_widget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.exp_filename_lbl.sizePolicy().hasHeightForWidth())
         self.exp_filename_lbl.setSizePolicy(sizePolicy)
+        self.exp_filename_lbl.setText(_fromUtf8(""))
         self.exp_filename_lbl.setObjectName(_fromUtf8("exp_filename_lbl"))
         self.gridLayout.addWidget(self.exp_filename_lbl, 0, 1, 1, 1)
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -188,6 +189,7 @@ class Ui_temperature_control_widget(object):
         self.auto_process_cb.setObjectName(_fromUtf8("auto_process_cb"))
         self.gridLayout.addWidget(self.auto_process_cb, 1, 1, 1, 1)
         self.exp_folder_name_lbl = QtGui.QLabel(self.groupBox)
+        self.exp_folder_name_lbl.setText(_fromUtf8(""))
         self.exp_folder_name_lbl.setObjectName(_fromUtf8("exp_folder_name_lbl"))
         self.gridLayout.addWidget(self.exp_folder_name_lbl, 2, 0, 1, 2)
         self.horizontalLayout_2.addLayout(self.gridLayout)
@@ -237,6 +239,10 @@ class Ui_temperature_control_widget(object):
         self.verticalLayout_2.addWidget(self.groupBox_2)
         spacerItem = QtGui.QSpacerItem(20, 118, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
+        self.epics_connection_cb = QtGui.QCheckBox(self.experiment_tab)
+        self.epics_connection_cb.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.epics_connection_cb.setObjectName(_fromUtf8("epics_connection_cb"))
+        self.verticalLayout_2.addWidget(self.epics_connection_cb)
         self.tab_control.addTab(self.experiment_tab, _fromUtf8(""))
         self.calibration_tab = QtGui.QWidget()
         self.calibration_tab.setObjectName(_fromUtf8("calibration_tab"))
@@ -342,24 +348,23 @@ class Ui_temperature_control_widget(object):
         self.verticalLayout_4.addWidget(self.tab_control)
 
         self.retranslateUi(temperature_control_widget)
-        self.tab_control.setCurrentIndex(1)
+        self.tab_control.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(temperature_control_widget)
 
     def retranslateUi(self, temperature_control_widget):
         temperature_control_widget.setWindowTitle(_translate("temperature_control_widget", "Form", None))
         self.groupBox.setTitle(_translate("temperature_control_widget", "Experiment", None))
         self.load_exp_data_btn.setText(_translate("temperature_control_widget", "Load Data", None))
-        self.exp_filename_lbl.setText(_translate("temperature_control_widget", "temper_012.spe", None))
         self.load_previous_exp_data_btn.setText(_translate("temperature_control_widget", "<--", None))
         self.load_next_exp_data_btn.setText(_translate("temperature_control_widget", "-->", None))
         self.auto_process_cb.setText(_translate("temperature_control_widget", "autoprocess", None))
-        self.exp_folder_name_lbl.setText(_translate("temperature_control_widget", "sample_files_bliblablub", None))
         self.roi_setup_btn.setText(_translate("temperature_control_widget", "ROI Setup", None))
         self.groupBox_2.setTitle(_translate("temperature_control_widget", "Fit Limits", None))
         self.label_3.setText(_translate("temperature_control_widget", "From", None))
         self.label_4.setText(_translate("temperature_control_widget", "To", None))
         self.label_5.setText(_translate("temperature_control_widget", "nm", None))
         self.label_6.setText(_translate("temperature_control_widget", "nm", None))
+        self.epics_connection_cb.setText(_translate("temperature_control_widget", "Connected to Epics", None))
         self.tab_control.setTabText(self.tab_control.indexOf(self.experiment_tab), _translate("temperature_control_widget", "Experiment", None))
         self.upstream_calib_box.setTitle(_translate("temperature_control_widget", "Upstream", None))
         self.us_calib_filename_lbl.setText(_translate("temperature_control_widget", "Select File...", None))

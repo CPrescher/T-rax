@@ -57,7 +57,7 @@ class Test_QT_GUI_Test(unittest.TestCase):
         self.assertEqual(self.controller.roi_controller.view.get_fit_x_limits(),
                          new_ds_roi[:2])
 
-    def test_temperatre_calibration_tab(self):
+    def test_temperature_calibration_tab(self):
         self.controller.temperature_controller.load_ds_calib_data('D:/Programming/VS Projects/T-Rax/T-Rax/unittests/unittest files/'+ \
                                             'dn_15.SPE')
         self.controller.temperature_controller.load_us_calib_data('D:/Programming/VS Projects/T-Rax/T-Rax/unittests/unittest files/'+ \

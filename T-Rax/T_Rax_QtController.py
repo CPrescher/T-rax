@@ -9,6 +9,7 @@ from views.T_Rax_MainView import TRaxMainView
 from T_Rax_QTROISelectorController import TRaxROIController
 from convert_ui_files import convert_ui_files
 from T_Rax_Data import TraxData
+from epics import caput, PV
 
 
 
@@ -100,10 +101,13 @@ class TRaxMainController(object):
 
     def closeEvent(self, event):
         self.save_directories()
-        self.roi_controller.view.close()
+        self.temperature_controller.roi_controller.view.close()
         self.main_view.close()
         event.accept()
-        
+'''
+
+********************************************************************************************************
+'''     
 
 class TRaxTemperatureController():
     def __init__(self, parent, data, main_view):
@@ -120,6 +124,9 @@ class TRaxTemperatureController():
         self.create_calibration_signals()
         self.create_temperature_control_signals()
         self.create_auto_process_signal()
+
+        self.main_view.temperature_control_widget.epics_connection_cb.clicked.connect(self.epics_connection_cb_clicked)
+        self.epics_is_connected=False
 
     def create_temperature_pub_listeners(self):
         pub.subscribe(self.data_changed, "EXP DATA CHANGED")
@@ -148,14 +155,12 @@ class TRaxTemperatureController():
         self.main_view.connect(self.autoprocess_timer,QtCore.SIGNAL('timeout()'), self.check_files)
     
     def create_exp_file_signals(self):
-        self.connect_click_function(self.main_view.diamond_control_widget.load_exp_data_btn, self.load_exp_data)        
-        self.connect_click_function(self.main_view.diamond_control_widget.load_next_exp_data_btn, self.load_next_exp_data)        
-        self.connect_click_function(self.main_view.diamond_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
+        self.connect_click_function(self.main_view.temperature_control_widget.load_exp_data_btn, self.load_exp_data)        
+        self.connect_click_function(self.main_view.temperature_control_widget.load_next_exp_data_btn, self.load_next_exp_data)        
+        self.connect_click_function(self.main_view.temperature_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
 
     def create_roi_view_signals(self):
         self.connect_click_function(self.main_view.temperature_control_widget.roi_setup_btn, self.load_roi_view)
-        self.connect_click_function(self.main_view.ruby_control_widget.roi_setup_btn, self.load_roi_view)
-        self.connect_click_function(self.main_view.diamond_control_widget.roi_setup_btn, self.load_roi_view)
     
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -183,7 +188,6 @@ class TRaxTemperatureController():
             self.roi_controller = TRaxROIController(self.data, parent=self.main_view)
             self.roi_controller.show()
 
-
     def data_changed(self, event):
         self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
@@ -194,6 +198,7 @@ class TRaxTemperatureController():
                                            self.data.get_us_calib_file_name().replace('\\','/').split('/')[-1])
         self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calib_etalon_file_name().replace('\\','/').split('/')[-1])
         self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calib_etalon_file_name().replace('\\','/').split('/')[-1])
+        self.update_pv_names()
         self.parent.set_parameter()
 
     def roi_changed(self, event):
@@ -202,6 +207,19 @@ class TRaxTemperatureController():
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
+        self.update_pv_names()
+
+    def update_pv_names(self):
+        if self.epics_is_connected:
+            #self.pv_us_temperature.put(self.data.get_us_temp())
+            #self.pv_ds_temperature.put(self.data.get_ds_temp())
+            #self.pv_us_int.put(self.data.get_us_roi_max())
+            #self.pv_ds_int.put(self.data.get_ds_roi_max())
+            caput('13IDD:us_las_temp.VAL', self.data.get_us_temp())
+            caput('13IDD:ds_las_temp.VAL', self.data.get_ds_temp())
+
+            caput('13IDD:up_t_int', str(self.data.get_us_roi_max()))
+            caput('13IDD:dn_t_int', str(self.data.get_ds_roi_max()))
     
     def load_ds_calib_data(self, filename=None):
         if filename is None:
@@ -270,8 +288,18 @@ class TRaxTemperatureController():
             #checks if file contains "-raw" string at the end
             return filename.split('-')[-1].split('.')[0] == 'raw'
         except:
-            return false         
-
+            return false        
+        
+    def epics_connection_cb_clicked(self):
+        if self.main_view.temperature_control_widget.epics_connection_cb.isChecked():
+            self.pv_us_temperature=PV('13IDD:us_las_temp.VAL')
+            self.pv_ds_temperature=PV('13IDD:ds_las_temp.VAL')
+            self.pv_us_int = PV('13IDD:up_t_int')
+            self.pv_ds_int = PV('13IDD:dn_t_int')
+            self.epics_is_connected=True
+            self.update_pv_names()
+        else:
+            self.epics_is_connected=False
 
     
 

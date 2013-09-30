@@ -138,7 +138,7 @@
    <item>
     <widget class="QTabWidget" name="tab_control">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="experiment_tab">
       <attribute name="title">
@@ -181,7 +181,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>temper_012.spe</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -231,7 +231,7 @@
             <item row="2" column="0" colspan="2">
              <widget class="QLabel" name="exp_folder_name_lbl">
               <property name="text">
-               <string>sample_files_bliblablub</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -349,6 +349,16 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="epics_connection_cb">
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string>Connected to Epics</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
