@@ -52,6 +52,8 @@ class TRaxMainController(object):
         self.create_axes_listener()
         
         self.create_temperature_modus_signals()
+        self.main_view.closeEvent=self.closeEvent
+
 
     
     def create_temperature_modus_signals(self):
@@ -217,6 +219,21 @@ class TRaxMainController(object):
                               % {'x':x_coord, 'y':y_coord})
         else:
            self.main_view.status_coord_lbl.setText('')
+
+    def save_directories(self):
+        fid = open('parameters.txt', 'w')
+        output_str = \
+            'Working directory: ' + self._exp_working_dir + '\n' + \
+            'Calibration directory: ' + self._calib_working_dir
+        fid.write(output_str)
+        fid.close()
+
+    def closeEvent(self, event):
+        self.save_directories()
+        self.roi_controller.view.close()
+        self.main_view.close()
+        event.accept()
+        
 
 class TRaxTemperatureController():
     def __init__(self, parent, data, view):
