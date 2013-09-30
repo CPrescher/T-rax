@@ -138,7 +138,7 @@
    <item>
     <widget class="QTabWidget" name="tab_control">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="experiment_tab">
       <attribute name="title">
@@ -387,21 +387,21 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QRadioButton" name="radioButton">
+             <widget class="QRadioButton" name="us_temperature_rb">
               <property name="text">
                <string>Temperature</string>
               </property>
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="QLabel" name="label_8">
+             <widget class="QLabel" name="us_etalon_lbl">
               <property name="text">
                <string>15A Lamp</string>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QRadioButton" name="radioButton_2">
+             <widget class="QRadioButton" name="us_etalon_rb">
               <property name="text">
                <string>Etalon Spectrum</string>
               </property>
@@ -410,7 +410,7 @@
             <item row="2" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
-               <widget class="QLineEdit" name="lineEdit_3">
+               <widget class="QLineEdit" name="us_temperature_txt">
                 <property name="text">
                  <string>2000</string>
                 </property>
@@ -444,7 +444,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_6">
+               <widget class="QPushButton" name="us_etalon_btn">
                 <property name="maximumSize">
                  <size>
                   <width>50</width>
@@ -493,21 +493,21 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QRadioButton" name="radioButton_3">
+             <widget class="QRadioButton" name="ds_temperature_rb">
               <property name="text">
                <string>Temperature</string>
               </property>
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="QLabel" name="label_10">
+             <widget class="QLabel" name="ds_etalon_lbl">
               <property name="text">
                <string>15A Lamp</string>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QRadioButton" name="radioButton_4">
+             <widget class="QRadioButton" name="ds_etalon_rb">
               <property name="text">
                <string>Etalon Spectrum</string>
               </property>
@@ -516,7 +516,7 @@
             <item row="2" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
-               <widget class="QLineEdit" name="lineEdit_4">
+               <widget class="QLineEdit" name="ds_temperature_txt">
                 <property name="text">
                  <string>2000</string>
                 </property>
@@ -550,7 +550,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_8">
+               <widget class="QPushButton" name="ds_etalon_btn">
                 <property name="maximumSize">
                  <size>
                   <width>50</width>

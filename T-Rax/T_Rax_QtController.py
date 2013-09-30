@@ -3,10 +3,13 @@ import os
 from wx.lib.pubsub import Publisher as pub
 from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL
+import numpy as np
+
 from views.T_Rax_MainView import TRaxMainView
 from T_Rax_QTROISelectorController import TRaxROIController
 from convert_ui_files import convert_ui_files
 from T_Rax_Data import TraxData
+
 
 
 class TRaxMainController(object):
@@ -31,7 +34,6 @@ class TRaxMainController(object):
     def set_parameter(self):
         ds_txt_roi = self.data.roi_data.ds_roi.get_roi_as_list()
         ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
-        #self.exp_controls.set_fit_x_limits(ds_txt_roi[2:])
         
     def load_parameter(self):
        try:
@@ -43,15 +45,49 @@ class TRaxMainController(object):
             self._exp_working_dir = os.getcwd()
             self._calib_working_dir = os.getcwd()
 
-
     def create_signals(self):
         self.create_navigation_signals()
         self.create_exp_file_signals()
         self.create_roi_view_signals()
-        self.create_temperature_control_signals()
-        self.create_pub_listeners()
         self.create_axes_listener()
+        
+        self.create_temperature_modus_signals()
 
+    
+    def create_temperature_modus_signals(self):
+        self.create_temperature_pub_listeners()
+        self.create_calibration_signals()
+        self.create_temperature_control_signals()
+
+    def create_calibration_signals(self):
+        self.connect_click_function(self.main_view.temperature_control_widget.load_ds_calib_data_btn,
+                                    self.load_ds_calib_data)
+        self.connect_click_function(self.main_view.temperature_control_widget.load_us_calib_data_btn,
+                                    self.load_us_calib_data)
+        self.main_view.temperature_control_widget.ds_temperature_rb.toggled.connect(self.ds_temperature_rb_clicked)
+        self.main_view.temperature_control_widget.us_temperature_rb.toggled.connect(self.us_temperature_rb_clicked)
+        self.main_view.temperature_control_widget.ds_etalon_rb.toggled.connect(self.ds_etalon_rb_clicked)
+        self.main_view.temperature_control_widget.us_etalon_rb.toggled.connect(self.us_etalon_rb_clicked)
+        self.main_view.temperature_control_widget.ds_temperature_txt.editingFinished.connect(self.ds_temperature_changed)
+        self.main_view.temperature_control_widget.us_temperature_txt.editingFinished.connect(self.us_temperature_changed)
+
+    def ds_temperature_rb_clicked(self):
+        self.data.set_ds_calib_modus(0)
+
+    def us_temperature_rb_clicked(self):
+        self.data.set_us_calib_modus(0)
+
+    def ds_etalon_rb_clicked(self):
+        self.data.set_ds_calib_modus(1)
+    
+    def us_etalon_rb_clicked(self):
+        self.data.set_us_calib_modus(1)
+
+    def ds_temperature_changed(self):
+        self.data.set_ds_calib_temp(np.double(self.main_view.temperature_control_widget.ds_temperature_txt.text()))
+    
+    def us_temperature_changed(self):
+        self.data.set_us_calib_temp(np.double(self.main_view.temperature_control_widget.us_temperature_txt.text()))
 
     def create_navigation_signals(self):
         self.main_view.connect(self.main_view.ruby_btn, SIGNAL('clicked()'), self.ruby_btn_click)
@@ -82,7 +118,7 @@ class TRaxMainController(object):
         self.main_view.temperature_control_widget.fit_from_txt.editingFinished.connect(self.fit_txt_changed)
         self.main_view.temperature_control_widget.fit_to_txt.editingFinished.connect(self.fit_txt_changed)
 
-    def create_pub_listeners(self):
+    def create_temperature_pub_listeners(self):
         pub.subscribe(self.data_changed, "EXP DATA CHANGED")
         pub.subscribe(self.roi_changed, "ROI CHANGED")
 
@@ -95,20 +131,38 @@ class TRaxMainController(object):
 
     def load_exp_data(self, filename=None):
         if filename is None:
-            filename= str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Experiment SPE", 
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Experiment SPE", 
                                           directory = self._exp_working_dir))
 
         if filename is not '':
             self._exp_working_dir = '/'.join(str(filename).split('/')[0:-1])
             self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
             self.data.load_exp_data(filename)
-            self.set_parameter()
 
     def load_next_exp_data(self):
         self.data.load_next_exp_file()
 
     def load_previous_exp_data(self):
         self.data.load_previous_exp_file()
+
+    def load_ds_calib_data(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Downstream calibration SPE", 
+                                          directory = self._calib_working_dir))
+        
+        if filename is not '':
+            self._calib_working_dir = '/'.join(str(filename).split('/')[0:-1])
+            self.data.load_ds_calib_data(filename)
+
+    def load_us_calib_data(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Upstream calibration SPE", 
+                                          directory = self._calib_working_dir))
+        
+        if filename is not '':
+            self._calib_working_dir = '/'.join(str(filename).split('/')[0:-1])
+            self.data.load_us_calib_data(filename)
+
 
     def load_roi_view(self):
         try:
@@ -127,7 +181,7 @@ class TRaxMainController(object):
 
     def diamond_btn_click(self):
         self.main_view.navigate_to('diamond_btn')
-        self.mode= "diamond"
+        self.mode = "diamond"
 
     def raman_btn_click(self):
         self.main_view.update_navigation_bar('rgba(21, 134, 31, 255)', 'raman_btn')
@@ -139,17 +193,14 @@ class TRaxMainController(object):
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_exp_filename(self.data.get_exp_file_name().split('/')[-1])
         self.main_view.set_exp_foldername('/'.join(self.data.get_exp_file_name().split('/')[-3:-1]))
-        self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().split('\\')[-1],
-                                           self.data.get_us_calib_file_name().split('\\')[-1])
-       #self.calib_controls.ds_calib_box.file_lbl.SetLabel(self.data.get_ds_calib_file_name().split('\\')[-1])
-       #self.calib_controls.us_calib_box.file_lbl.SetLabel(self.data.get_us_calib_file_name().split('\\')[-1])
-       #self.calib_controls.ds_calib_box.etalon_file_lbl.SetLabel(self.data.get_ds_calib_etalon_file_name().split('\\')[-1])
-       #self.calib_controls.us_calib_box.etalon_file_lbl.SetLabel(self.data.get_us_calib_etalon_file_name().split('\\')[-1])
-       #self.set_parameter()
-
+        self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().split('/')[-1],
+                                           self.data.get_us_calib_file_name().split('/')[-1])
+        self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calib_etalon_file_name().split('/')[-1])
+        self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calib_etalon_file_name().split('/')[-1])
+        self.set_parameter()
 
     def fit_txt_changed(self):
-        limits=self.main_view.temperature_control_widget.get_fit_limits()
+        limits = self.main_view.temperature_control_widget.get_fit_limits()
         self.data.set_x_roi_limits_to(limits)
 
     def roi_changed(self, event):
@@ -175,9 +226,9 @@ class TRaxTemperatureController():
 
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     #convert_ui_files()
-    app=QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     controller = TRaxMainController()
     controller.main_view.show()
     app.exec_()

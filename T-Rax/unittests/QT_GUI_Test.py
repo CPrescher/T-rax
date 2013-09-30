@@ -57,5 +57,18 @@ class Test_QT_GUI_Test(unittest.TestCase):
         self.assertEqual(self.controller.roi_controller.view.get_fit_x_limits(),
                          new_ds_roi[:2])
 
+    def test_temperatre_calibration_tab(self):
+        self.controller.load_ds_calib_data('D:/Programming/VS Projects/T-Rax/T-Rax/unittests/unittest files/'+ \
+                                            'dn_15.SPE')
+        self.controller.load_us_calib_data('D:/Programming/VS Projects/T-Rax/T-Rax/unittests/unittest files/'+ \
+                                            'up_15.SPE')
+        self.assertEqual(self.controller.main_view.temperature_control_widget.ds_calib_filename_lbl.text(), 'dn_15.SPE')
+        self.assertEqual(self.controller.main_view.temperature_control_widget.us_calib_filename_lbl.text(), 'up_15.SPE')
+        self.assertEqual(self.controller.main_view.status_ds_calib_filename_lbl.text(), 'DS calibration: dn_15.SPE')
+        self.assertEqual(self.controller.main_view.status_us_calib_filename_lbl.text(), 'US calibration: up_15.SPE')
+
+        self.assertEqual(self.controller.main_view.temperature_control_widget.ds_etalon_lbl.text(),'15A_lamp.txt')
+        self.assertEqual(self.controller.main_view.temperature_control_widget.us_etalon_lbl.text(),'15A_lamp.txt')
+
 if __name__ == '__main__':
     unittest.main()

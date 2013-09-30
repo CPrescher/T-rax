@@ -83,6 +83,13 @@ margin: 2px;
 }
 #raman_btn {
     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(21, 134, 31, 255), stop:1 rgba(0, 0, 0, 255))
+}
+
+#status_ds_calib_filename_lbl{  
+	color: #F1F1F1;  
+ }  
+ #status_us_calib_filename_lbl{  
+	color: #F1F1F1;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -258,6 +265,22 @@ margin: 2px;
           <string/>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>15</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
         <widget class="QLabel" name="status_us_calib_filename_lbl">

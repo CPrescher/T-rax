@@ -9,6 +9,11 @@ class TemperatureControlWidget(QtGui.QWidget, Ui_temperature_control_widget):
     def __init__(self, parent = None):
         super(TemperatureControlWidget, self).__init__(parent)
         self.setupUi(self)
+        self.set_initial_values()
+
+    def set_initial_values(self):
+        self.ds_etalon_rb.toggle()
+        self.us_etalon_rb.toggle()
 
     def set_fit_limits(self, limits):
         self.fit_from_txt.setText(str(int(np.round(limits[0]))))

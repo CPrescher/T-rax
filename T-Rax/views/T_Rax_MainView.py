@@ -82,6 +82,8 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
     def set_calib_filenames(self, ds_filename, us_filename):
         self.temperature_control_widget.us_calib_filename_lbl.setText(us_filename)
         self.temperature_control_widget.ds_calib_filename_lbl.setText(ds_filename)
+        self.status_ds_calib_filename_lbl.setText('DS calibration: '+ds_filename.split('/')[-1])
+        self.status_us_calib_filename_lbl.setText('US calibration: '+us_filename.split('/')[-1])
 
     def hide_control_widgets(self):
         self.temperature_control_widget.hide()
@@ -138,12 +140,12 @@ class T_Rax_2axes_graph():
         self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0), weight = 'bold', va='bottom') 
 
     def create_axes_lines(self, axes):
-        fit_line, = axes.plot([], [], 'r-',  lw=3)
         data_line, = axes.plot([], [], '-', color = (0.7,0.9,0.9), lw=1)
+        fit_line, = axes.plot([], [], 'r-',  lw=3)
         temp_txt = axes.text(0,0, '', size=20, ha='left', va='top')
         int_txt = axes.text(0,0,'',size=13, color = (0.04,0.76,0.17), ha='right')
         warning_txt = axes.text(0,0,'', size=25, color = 'r', va='center', ha='center', weight = 'bold') 
-        calib_file_txt = axes.text(0,0, '', size=9, color =  (0.04,0.76,0.17), ha='left', va='top', weight = 'bold')
+        calib_file_txt = axes.text(0,0, '', size=9, color =  'r', ha='left', va='top', weight = 'bold')
 
         axes.yaxis.set_visible(False)
         axes.set_xlabel('$\lambda$ $(nm)$', size=11)
@@ -215,15 +217,19 @@ class T_Rax_2axes_graph():
             self.us_warning_txt.set_text('')
 
         #Calibration files:
-        str = ds_calib_fname.split('\\')[-1]
-        self.ds_calib_file_txt.set_text(str)
-        self.ds_calib_file_txt.set_x(min(ds_exp_spectrum.x) + 0.03 * ds_exp_spectrum.get_x_range())
-        self.ds_calib_file_txt.set_y(min(ds_exp_spectrum.y) + 0.96 * ds_exp_spectrum.get_y_range() * 1.05)
+        if ds_calib_fname == 'Select File...':
+            self.ds_calib_file_txt.set_text('Load calibration file!')
+            self.ds_calib_file_txt.set_x(min(ds_exp_spectrum.x) + 0.03 * ds_exp_spectrum.get_x_range())
+            self.ds_calib_file_txt.set_y(min(ds_exp_spectrum.y) + 0.96 * ds_exp_spectrum.get_y_range() * 1.05)
+        else:
+            self.ds_calib_file_txt.set_text('')
 
-        str = us_calib_fname.split('\\')[-1]
-        self.us_calib_file_txt.set_text(str)
-        self.us_calib_file_txt.set_x(min(us_exp_spectrum.x) + 0.03 * us_exp_spectrum.get_x_range())
-        self.us_calib_file_txt.set_y(min(us_exp_spectrum.y) + 0.96 * us_exp_spectrum.get_y_range() * 1.05)
+        if us_calib_fname == 'Select File...':
+            self.us_calib_file_txt.set_text('Load calibration file!')
+            self.us_calib_file_txt.set_x(min(us_exp_spectrum.x) + 0.03 * us_exp_spectrum.get_x_range())
+            self.us_calib_file_txt.set_y(min(us_exp_spectrum.y) + 0.96 * us_exp_spectrum.get_y_range() * 1.05)
+        else:
+            self.us_calib_file_txt.set_text('')
 
         self.canvas.draw()
 

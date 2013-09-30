@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Mon Sep 30 09:21:28 2013
+# Created: Mon Sep 30 11:25:45 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_T_Rax_MainWindow(object):
     def setupUi(self, T_Rax_MainWindow):
         T_Rax_MainWindow.setObjectName(_fromUtf8("T_Rax_MainWindow"))
-        T_Rax_MainWindow.resize(773, 534)
+        T_Rax_MainWindow.resize(901, 446)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -95,6 +95,13 @@ class Ui_T_Rax_MainWindow(object):
 "}\n"
 "#raman_btn {\n"
 "    background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(21, 134, 31, 255), stop:1 rgba(0, 0, 0, 255))\n"
+"}\n"
+"\n"
+"#status_ds_calib_filename_lbl{  \n"
+"    color: #F1F1F1;  \n"
+" }  \n"
+" #status_us_calib_filename_lbl{  \n"
+"    color: #F1F1F1;\n"
 "}"))
         self.centralwidget = QtGui.QWidget(T_Rax_MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -168,6 +175,8 @@ class Ui_T_Rax_MainWindow(object):
         self.status_ds_calib_filename_lbl.setText(_fromUtf8(""))
         self.status_ds_calib_filename_lbl.setObjectName(_fromUtf8("status_ds_calib_filename_lbl"))
         self.horizontalLayout_3.addWidget(self.status_ds_calib_filename_lbl)
+        spacerItem2 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem2)
         self.status_us_calib_filename_lbl = QtGui.QLabel(self.status_bar)
         self.status_us_calib_filename_lbl.setText(_fromUtf8(""))
         self.status_us_calib_filename_lbl.setObjectName(_fromUtf8("status_us_calib_filename_lbl"))
