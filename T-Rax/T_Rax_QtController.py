@@ -114,7 +114,7 @@ class TRaxMainController(object):
         try:
             self.roi_controller.show()
         except AttributeError:
-            self.roi_controller = TRaxROIController(self.data)
+            self.roi_controller = TRaxROIController(self.data, parent=self.main_view)
             self.roi_controller.show()
 
     def temperature_btn_click(self):

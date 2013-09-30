@@ -22,13 +22,16 @@ import numpy as np
 
 class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def __init__(self, data, parent=None):
-        super(TRaxROIView, self).__init__(parent)
+        super(TRaxROIView, self).__init__(None)
         self.data = data
         self.setupUi(self)   
+        self.setWindowTitle('T-rax ver 0.2 ROI Selector')
         self.set_validator()     
         self.create_graph()
         self.draw_image()
         self.resizeEvent = self.resize_graph
+        self.resize(900,250)
+        self.move(parent.x(), parent.y()+parent.height()+50)
     
     def set_validator(self):
         self.set_ds_validator()
@@ -73,10 +76,10 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.redraw_figure()
         self.connect_rectangles()
         self.mode = 'IMG'
+        self.fitting_param_roi.hide()
         pub.sendMessage("IMG LOADED", None)
 
     def plot_img(self):
-        #self.figure.clf()
         self.axes.cla()
         self.img_data = self.data.get_exp_img_data()
         y_max = len(self.data.get_exp_img_data()) - 1

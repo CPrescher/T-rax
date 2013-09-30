@@ -8,6 +8,7 @@ from T_Rax_Data import TraxData
 
 class TRaxROIController(object):
     def __init__(self, data, parent=None):
+        self.parent=parent
         self.view = TRaxROIView(data,parent)
         self.data = data
         self.create_signals()
@@ -100,6 +101,8 @@ class TRaxROIController(object):
         self.save_roi_data()
         self.view.show()
         self.view.activateWindow()
+        self.view.move(self.parent.x(), 
+                       self.parent.y()+self.parent.height()+50)
 
 
 if __name__=="__main__":

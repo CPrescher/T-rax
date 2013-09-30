@@ -28,6 +28,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.create_graphs()
         self.create_widgets()
         self.hide_control_widgets()
+        self.resize(900,450)
 
     def create_graphs(self):
         self.graph_2axes = T_Rax_2axes_graph(self.figure1_frame)
