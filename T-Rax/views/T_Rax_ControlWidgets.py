@@ -10,10 +10,17 @@ class TemperatureControlWidget(QtGui.QWidget, Ui_temperature_control_widget):
         super(TemperatureControlWidget, self).__init__(parent)
         self.setupUi(self)
         self.set_initial_values()
+        self.set_validator()
 
     def set_initial_values(self):
         self.ds_etalon_rb.toggle()
         self.us_etalon_rb.toggle()
+
+    def set_validator(self):
+        self.us_temperature_txt.setValidator(QtGui.QDoubleValidator())
+        self.ds_temperature_txt.setValidator(QtGui.QDoubleValidator())
+        self.fit_from_txt.setValidator(QtGui.QIntValidator())
+        self.fit_to_txt.setValidator(QtGui.QIntValidator())
 
     def set_fit_limits(self, limits):
         self.fit_from_txt.setText(str(int(np.round(limits[0]))))

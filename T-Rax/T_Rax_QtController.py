@@ -1,7 +1,7 @@
 import sys
 import os
 from wx.lib.pubsub import Publisher as pub
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import SIGNAL
 import numpy as np
 
@@ -53,7 +53,38 @@ class TRaxMainController(object):
         
         self.create_temperature_modus_signals()
         self.main_view.closeEvent=self.closeEvent
+        self.main_view.temperature_control_widget.auto_process_cb.clicked.connect(self.auto_process_cb_click)
+        self.autoprocess_timer = QtCore.QTimer(self.main_view)
+        self.autoprocess_timer.setInterval(100)
+        self.main_view.connect(self.autoprocess_timer,QtCore.SIGNAL('timeout()'), self.check_files)
 
+    def auto_process_cb_click(self):
+        if self.main_view.temperature_control_widget.auto_process_cb.isChecked():
+            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)])
+            self.autoprocess_timer.start()
+        else:
+            self.autoprocess_timer.stop()
+
+    def check_files(self):
+        self._files_now = dict([(f,None) for f in os.listdir(self._exp_working_dir)])
+        self._files_added = [f for f in self._files_now if not f in self._files_before]
+        self._files_removed = [f for f in self._files_before if not f in self._files_now]
+        if len(self._files_added) > 0:
+            new_file_str = self._files_added[-1]
+            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+                path = self._exp_working_dir + '\\' + new_file_str
+                self.data.load_exp_data(path)
+            self._files_before = self._files_now
+            
+    def file_is_spe(self, filename):
+        return filename.endswith('.SPE') or filename.endswith('.spe')
+    
+    def file_is_raw(self, filename):
+        try:
+            #checks if file contains "-raw" string at the end
+            return filename.split('-')[-1].split('.')[0] == 'raw'
+        except:
+            return false         
 
     
     def create_temperature_modus_signals(self):
@@ -137,7 +168,7 @@ class TRaxMainController(object):
                                           directory = self._exp_working_dir))
 
         if filename is not '':
-            self._exp_working_dir = '/'.join(str(filename).split('/')[0:-1])
+            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])
             self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
             self.data.load_exp_data(filename)
 
@@ -153,7 +184,7 @@ class TRaxMainController(object):
                                           directory = self._calib_working_dir))
         
         if filename is not '':
-            self._calib_working_dir = '/'.join(str(filename).split('/')[0:-1])
+            self._calib_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])
             self.data.load_ds_calib_data(filename)
 
     def load_us_calib_data(self, filename=None):
@@ -162,7 +193,7 @@ class TRaxMainController(object):
                                           directory = self._calib_working_dir))
         
         if filename is not '':
-            self._calib_working_dir = '/'.join(str(filename).split('/')[0:-1])
+            self._calib_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])
             self.data.load_us_calib_data(filename)
 
 
@@ -193,12 +224,12 @@ class TRaxMainController(object):
         self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
-        self.main_view.set_exp_filename(self.data.get_exp_file_name().split('/')[-1])
-        self.main_view.set_exp_foldername('/'.join(self.data.get_exp_file_name().split('/')[-3:-1]))
-        self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().split('/')[-1],
-                                           self.data.get_us_calib_file_name().split('/')[-1])
-        self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calib_etalon_file_name().split('/')[-1])
-        self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calib_etalon_file_name().split('/')[-1])
+        self.main_view.set_exp_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.set_exp_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+        self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
+                                           self.data.get_us_calib_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calib_etalon_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calib_etalon_file_name().replace('\\','/').split('/')[-1])
         self.set_parameter()
 
     def fit_txt_changed(self):

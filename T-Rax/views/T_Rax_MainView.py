@@ -82,8 +82,8 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
     def set_calib_filenames(self, ds_filename, us_filename):
         self.temperature_control_widget.us_calib_filename_lbl.setText(us_filename)
         self.temperature_control_widget.ds_calib_filename_lbl.setText(ds_filename)
-        self.status_ds_calib_filename_lbl.setText('DS calibration: '+ds_filename.split('/')[-1])
-        self.status_us_calib_filename_lbl.setText('US calibration: '+us_filename.split('/')[-1])
+        self.status_ds_calib_filename_lbl.setText('DS calibration: '+ds_filename.replace('\\','/').split('/')[-1])
+        self.status_us_calib_filename_lbl.setText('US calibration: '+us_filename.replace('\\','/').split('/')[-1])
 
     def hide_control_widgets(self):
         self.temperature_control_widget.hide()

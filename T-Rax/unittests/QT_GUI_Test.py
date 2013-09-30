@@ -21,18 +21,18 @@ class Test_QT_GUI_Test(unittest.TestCase):
         self.assertEqual(self.controller.data.exp_data.filename, filename1)
         
         self.assertEqual(str(self.controller.main_view.temperature_control_widget.exp_filename_lbl.text()),
-                         filename1.split('/')[-1])
+                         filename1.replace('\\','/').split('/')[-1])
         self.assertEqual(str(self.controller.main_view.ruby_control_widget.exp_filename_lbl.text()),
-                         filename1.split('/')[-1])
+                         filename1.replace('\\','/').split('/')[-1])
         self.assertEqual(str(self.controller.main_view.diamond_control_widget.exp_filename_lbl.text()),
-                         filename1.split('/')[-1])
+                         filename1.replace('\\','/').split('/')[-1])
 
         self.assertEqual(str(self.controller.main_view.temperature_control_widget.exp_folder_name_lbl.text()),
-                         '/'.join(filename1.split('/')[-3:-1]))
+                         '/'.join(filename1.replace('\\','/').split('/')[-3:-1]))
         self.assertEqual(str(self.controller.main_view.ruby_control_widget.exp_folder_name_lbl.text()),
-                         '/'.join(filename1.split('/')[-3:-1]))
+                         '/'.join(filename1.replace('\\','/').split('/')[-3:-1]))
         self.assertEqual(str(self.controller.main_view.diamond_control_widget.exp_folder_name_lbl.text()),
-                         '/'.join(filename1.split('/')[-3:-1]))
+                         '/'.join(filename1.replace('\\','/').split('/')[-3:-1]))
 
 
     def test_load_roi_selector_view(self):
