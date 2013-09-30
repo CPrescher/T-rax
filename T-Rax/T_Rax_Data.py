@@ -215,6 +215,13 @@ class TraxData(object):
     def get_x_limits(self):
         return self.exp_data.get_x_limits()
 
+    def get_x_roi_limits(self):
+        return self.calculate_wavelength(self.exp_data.roi_data.get_x_limits())
+
+    def set_x_roi_limits_to(self, limits):
+        limits_ind=self.calculate_ind(limits)
+        self.roi_data.set_x_limits(limits_ind)
+
 
 
 class GeneralData(object):
@@ -593,6 +600,9 @@ class ROIData():
     def set_x_limits(self, x_limits):
         self.set_x_min(x_limits[0])
         self.set_x_max(x_limits[1])
+
+    def get_x_limits(self):
+        return [self.ds_roi.x_min, self.ds_roi.x_max]
 
     def set_x_min(self, x_min):
         self.ds_roi.x_min = x_min

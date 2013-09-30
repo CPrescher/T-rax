@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
-# Created: Sat Sep 28 09:19:18 2013
+# Created: Mon Sep 30 09:21:29 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -214,6 +214,7 @@ class Ui_temperature_control_widget(object):
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
         self.fit_from_txt = QtGui.QLineEdit(self.groupBox_2)
         self.fit_from_txt.setMaximumSize(QtCore.QSize(800, 16777215))
+        self.fit_from_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.fit_from_txt.setObjectName(_fromUtf8("fit_from_txt"))
         self.horizontalLayout_4.addWidget(self.fit_from_txt)
         self.label_5 = QtGui.QLabel(self.groupBox_2)
@@ -222,11 +223,12 @@ class Ui_temperature_control_widget(object):
         self.gridLayout_2.addLayout(self.horizontalLayout_4, 1, 0, 1, 1)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        self.fit_to_lbl = QtGui.QLineEdit(self.groupBox_2)
-        self.fit_to_lbl.setMaximumSize(QtCore.QSize(800, 16777215))
-        self.fit_to_lbl.setBaseSize(QtCore.QSize(50, 0))
-        self.fit_to_lbl.setObjectName(_fromUtf8("fit_to_lbl"))
-        self.horizontalLayout_3.addWidget(self.fit_to_lbl)
+        self.fit_to_txt = QtGui.QLineEdit(self.groupBox_2)
+        self.fit_to_txt.setMaximumSize(QtCore.QSize(800, 16777215))
+        self.fit_to_txt.setBaseSize(QtCore.QSize(50, 0))
+        self.fit_to_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.fit_to_txt.setObjectName(_fromUtf8("fit_to_txt"))
+        self.horizontalLayout_3.addWidget(self.fit_to_txt)
         self.label_6 = QtGui.QLabel(self.groupBox_2)
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.horizontalLayout_3.addWidget(self.label_6)

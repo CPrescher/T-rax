@@ -48,6 +48,7 @@ class TRaxMainController(object):
         self.create_navigation_signals()
         self.create_exp_file_signals()
         self.create_roi_view_signals()
+        self.create_temperature_control_signals()
         self.create_pub_listeners()
         self.create_axes_listener()
 
@@ -76,6 +77,10 @@ class TRaxMainController(object):
         self.connect_click_function(self.main_view.temperature_control_widget.roi_setup_btn, self.load_roi_view)
         self.connect_click_function(self.main_view.ruby_control_widget.roi_setup_btn, self.load_roi_view)
         self.connect_click_function(self.main_view.diamond_control_widget.roi_setup_btn, self.load_roi_view)
+
+    def create_temperature_control_signals(self):
+        self.main_view.temperature_control_widget.fit_from_txt.editingFinished.connect(self.fit_txt_changed)
+        self.main_view.temperature_control_widget.fit_to_txt.editingFinished.connect(self.fit_txt_changed)
 
     def create_pub_listeners(self):
         pub.subscribe(self.data_changed, "EXP DATA CHANGED")
@@ -142,11 +147,17 @@ class TRaxMainController(object):
        #self.calib_controls.us_calib_box.etalon_file_lbl.SetLabel(self.data.get_us_calib_etalon_file_name().split('\\')[-1])
        #self.set_parameter()
 
+
+    def fit_txt_changed(self):
+        limits=self.main_view.temperature_control_widget.get_fit_limits()
+        self.data.set_x_roi_limits_to(limits)
+
     def roi_changed(self, event):
         self.data.calc_spectra()
         self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
+        self.main_view.set_fit_limits(self.data.get_x_roi_limits())
 
     def on_mouse_move_in_graph(self, event):
         x_coord, y_coord = event.xdata, event.ydata
