@@ -58,9 +58,9 @@ class Test_QT_GUI_Test(unittest.TestCase):
                          new_ds_roi[:2])
 
     def test_temperatre_calibration_tab(self):
-        self.controller.load_ds_calib_data('D:/Programming/VS Projects/T-Rax/T-Rax/unittests/unittest files/'+ \
+        self.controller.temperature_controller.load_ds_calib_data('D:/Programming/VS Projects/T-Rax/T-Rax/unittests/unittest files/'+ \
                                             'dn_15.SPE')
-        self.controller.load_us_calib_data('D:/Programming/VS Projects/T-Rax/T-Rax/unittests/unittest files/'+ \
+        self.controller.temperature_controller.load_us_calib_data('D:/Programming/VS Projects/T-Rax/T-Rax/unittests/unittest files/'+ \
                                             'up_15.SPE')
         self.assertEqual(self.controller.main_view.temperature_control_widget.ds_calib_filename_lbl.text(), 'dn_15.SPE')
         self.assertEqual(self.controller.main_view.temperature_control_widget.us_calib_filename_lbl.text(), 'up_15.SPE')

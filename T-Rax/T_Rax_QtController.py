@@ -25,10 +25,10 @@ class TRaxMainController(object):
         self.load_parameter()
         self.temperature_btn_click()
 
-        self.load_exp_data('D:/Programming/VS Projects/T-Rax/T-Rax/sample files/Test 2013-09-24/temper_011.spe')
+        self.temperature_controller.load_exp_data('D:/Programming/VS Projects/T-Rax/T-Rax/sample files/Test 2013-09-24/temper_011.spe')
         self.main_view.show()
-        self.load_roi_view()
-        self.load_next_exp_data()
+        self.temperature_controller.load_roi_view()
+        self.temperature_controller.load_next_exp_data()
 
     def create_sub_controller(self):
         self.temperature_controller = TRaxTemperatureController(self,self.data,self.main_view)
@@ -40,19 +40,17 @@ class TRaxMainController(object):
     def load_parameter(self):
        try:
             fid = open('parameters.txt', 'r')
-            self._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
+            self.temperature_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             self.temperature_controller._calib_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             fid.close()
        except IOError:
-            self._exp_working_dir = os.getcwd()
+            self.temperature_controller._exp_working_dir = os.getcwd()
             self.temperature_controller._calib_working_dir = os.getcwd()
 
     def create_signals(self):
         self.create_navigation_signals()
-        self.create_exp_file_signals()
-        self.create_roi_view_signals()
         self.create_axes_listener()
-        self.main_view.closeEvent=self.closeEvent  
+        self.main_view.closeEvent = self.closeEvent  
 
     def create_navigation_signals(self):
         self.main_view.connect(self.main_view.ruby_btn, SIGNAL('clicked()'), self.ruby_btn_click)
@@ -61,53 +59,12 @@ class TRaxMainController(object):
         self.main_view.connect(self.main_view.temperature_btn, SIGNAL('clicked()'), self.temperature_btn_click)
         self.main_view.main_frame.resizeEvent = self.main_view.resize_graphs
 
-    def create_exp_file_signals(self):
-        self.connect_click_function(self.main_view.diamond_control_widget.load_exp_data_btn, self.load_exp_data)
-        self.connect_click_function(self.main_view.ruby_control_widget.load_exp_data_btn, self.load_exp_data)
-        self.connect_click_function(self.main_view.temperature_control_widget.load_exp_data_btn, self.load_exp_data)
-        
-        self.connect_click_function(self.main_view.diamond_control_widget.load_next_exp_data_btn, self.load_next_exp_data)
-        self.connect_click_function(self.main_view.ruby_control_widget.load_next_exp_data_btn, self.load_next_exp_data)
-        self.connect_click_function(self.main_view.temperature_control_widget.load_next_exp_data_btn, self.load_next_exp_data)
-        
-        self.connect_click_function(self.main_view.diamond_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
-        self.connect_click_function(self.main_view.ruby_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
-        self.connect_click_function(self.main_view.temperature_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
-
-    def create_roi_view_signals(self):
-        self.connect_click_function(self.main_view.temperature_control_widget.roi_setup_btn, self.load_roi_view)
-        self.connect_click_function(self.main_view.ruby_control_widget.roi_setup_btn, self.load_roi_view)
-        self.connect_click_function(self.main_view.diamond_control_widget.roi_setup_btn, self.load_roi_view)
-
     def create_axes_listener(self):
         self.main_view.graph_1axes.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
         self.main_view.graph_2axes.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
 
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
-
-    def load_exp_data(self, filename=None):
-        if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Experiment SPE", 
-                                          directory = self._exp_working_dir))
-
-        if filename is not '':
-            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])
-            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
-            self.data.load_exp_data(filename)
-
-    def load_next_exp_data(self):
-        self.data.load_next_exp_file()
-
-    def load_previous_exp_data(self):
-        self.data.load_previous_exp_file()
-
-    def load_roi_view(self):
-        try:
-            self.roi_controller.show()
-        except AttributeError:
-            self.roi_controller = TRaxROIController(self.data, parent=self.main_view)
-            self.roi_controller.show()
 
     def temperature_btn_click(self):
         self.main_view.navigate_to('temperature_btn')
@@ -136,7 +93,7 @@ class TRaxMainController(object):
     def save_directories(self):
         fid = open('parameters.txt', 'w')
         output_str = \
-            'Working directory: ' + self._exp_working_dir + '\n' + \
+            'Working directory: ' + self.temperature_controller._exp_working_dir + '\n' + \
             'Calibration directory: ' + self.temperature_controller._calib_working_dir
         fid.write(output_str)
         fid.close()
@@ -150,12 +107,15 @@ class TRaxMainController(object):
 
 class TRaxTemperatureController():
     def __init__(self, parent, data, main_view):
-        self.parent=parent
-        self.data=data
-        self.main_view=main_view
+        self.parent = parent
+        self.data = data
+        self.main_view = main_view
         self.create_signals()
 
     def create_signals(self):
+        self.create_exp_file_signals()
+        self.create_roi_view_signals()
+
         self.create_temperature_pub_listeners()
         self.create_calibration_signals()
         self.create_temperature_control_signals()
@@ -186,9 +146,43 @@ class TRaxTemperatureController():
         self.autoprocess_timer = QtCore.QTimer(self.main_view)
         self.autoprocess_timer.setInterval(100)
         self.main_view.connect(self.autoprocess_timer,QtCore.SIGNAL('timeout()'), self.check_files)
+    
+    def create_exp_file_signals(self):
+        self.connect_click_function(self.main_view.diamond_control_widget.load_exp_data_btn, self.load_exp_data)        
+        self.connect_click_function(self.main_view.diamond_control_widget.load_next_exp_data_btn, self.load_next_exp_data)        
+        self.connect_click_function(self.main_view.diamond_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
 
+    def create_roi_view_signals(self):
+        self.connect_click_function(self.main_view.temperature_control_widget.roi_setup_btn, self.load_roi_view)
+        self.connect_click_function(self.main_view.ruby_control_widget.roi_setup_btn, self.load_roi_view)
+        self.connect_click_function(self.main_view.diamond_control_widget.roi_setup_btn, self.load_roi_view)
+    
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
+
+    def load_exp_data(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Experiment SPE", 
+                                          directory = self._exp_working_dir))
+
+        if filename is not '':
+            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])+'/'
+            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
+            self.data.load_exp_data(filename)
+
+    def load_next_exp_data(self):
+        self.data.load_next_exp_file()
+
+    def load_previous_exp_data(self):
+        self.data.load_previous_exp_file()
+
+    def load_roi_view(self):
+        try:
+            self.roi_controller.show()
+        except AttributeError:
+            self.roi_controller = TRaxROIController(self.data, parent=self.main_view)
+            self.roi_controller.show()
+
 
     def data_changed(self, event):
         self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
@@ -215,7 +209,7 @@ class TRaxTemperatureController():
                                           directory = self._calib_working_dir))
         
         if filename is not '':
-            self._calib_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])+'/'
+            self._calib_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
             self.data.load_ds_calib_data(filename)
 
     def load_us_calib_data(self, filename=None):
@@ -224,7 +218,7 @@ class TRaxTemperatureController():
                                           directory = self._calib_working_dir))
         
         if filename is not '':
-            self._calib_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])+'/'
+            self._calib_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
             self.data.load_us_calib_data(filename)
 
     def ds_temperature_rb_clicked(self):
