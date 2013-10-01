@@ -172,7 +172,7 @@ class TraxData(object):
         return self.exp_data.get_ds_spectrum()
              
     def get_ds_spectrum(self):
-        if self.ds_calib_data == None:
+        if not self.exp_data_ds_calibration_data_same_dimension():
             return self.exp_data.ds_spectrum
         else:
             x=self.exp_data.ds_spectrum.x
@@ -180,6 +180,18 @@ class TraxData(object):
                                                 self.ds_calib_param.get_calibrated_spec(x))
             self.ds_fitted_spectrum = FitSpectrum(corrected_spectrum)
             return [corrected_spectrum, self.ds_fitted_spectrum]
+
+    def exp_data_ds_calibration_data_same_dimension(self):
+        try:
+            return self.exp_data.get_img_dimension()==self.ds_calib_data.get_img_dimension()
+        except:
+            return False
+
+    def exp_data_us_calibration_data_same_dimension(self):
+        try:
+            return self.exp_data.get_img_dimension()==self.us_calib_data.get_img_dimension()
+        except:
+            return False
 
     def get_ds_roi_max(self):
         return self.exp_data.calc_roi_max(self.exp_data.roi_data.ds_roi)
@@ -191,7 +203,7 @@ class TraxData(object):
             return 0
 
     def get_us_spectrum(self):
-        if self.us_calib_data == None:
+        if not self.exp_data_us_calibration_data_same_dimension():
             return self.exp_data.us_spectrum
         else:
             x=self.exp_data.us_spectrum.x
@@ -257,6 +269,9 @@ class GeneralData(object):
     def get_us_spectrum(self):
         raise NotImplementedError
 
+    def get_img_dimension(self):
+        return self._img_file.get_dimension()
+
 class ImgData(GeneralData):
     def calc_spectra(self):
         x = self.x_whole[(self.roi_data.us_roi.x_min):           
@@ -307,6 +322,7 @@ class ExpData(ImgData):
 
     def calc_corrected_ds_spectrum(self, calib_img_spectrum, calib_spectrum):
         response_function = calib_img_spectrum.y / calib_spectrum
+        response_function[np.where(response_function==0)]=np.NaN
         corrected_exp_y = self.ds_spectrum.y / response_function
         corrected_exp_y = corrected_exp_y/max(corrected_exp_y)*max(self.ds_spectrum.y)
         self.ds_corrected_spectrum = Spectrum(self.ds_spectrum.x, corrected_exp_y)
@@ -314,6 +330,7 @@ class ExpData(ImgData):
 
     def calc_corrected_us_spectrum(self, calib_img_spectrum, calib_spectrum):
         response_function = calib_img_spectrum.y / calib_spectrum
+        response_function[np.where(response_function==0)]=np.NaN
         corrected_exp_y = self.us_spectrum.y / response_function
         corrected_exp_y = corrected_exp_y/max(corrected_exp_y)*max(self.us_spectrum.y)
         self.us_corrected_spectrum = Spectrum(self.us_spectrum.x, corrected_exp_y)
@@ -380,6 +397,9 @@ class DummyImg(ExpData):
         self.img_data=Z+np.random.normal(0,.1*max(black1),(len(y),len(x)))
         self.x_whole = x
         self.calc_spectra()
+
+    def get_img_dimension(self):
+        return (1300,100)
         
 
 
@@ -560,9 +580,9 @@ class ROIDataManager():
         if self._exists(img_dimension):
             return self._roi_data_list[self._get_dimension_ind(img_dimension)]
         else:
-            ds_limits = np.array([0.1*(img_dimension[0]-1), 0.9*(img_dimension[0]-1),
+            ds_limits = np.array([0.25*(img_dimension[0]-1), 0.75*(img_dimension[0]-1),
                                     0.8*(img_dimension[1]-1), 0.9*(img_dimension[1]-1)])
-            us_limits = np.array([0.1*(img_dimension[0]-1), 0.9*(img_dimension[0]-1),
+            us_limits = np.array([0.25*(img_dimension[0]-1), 0.75*(img_dimension[0]-1),
                                     0.1*(img_dimension[1]-1), 0.2*(img_dimension[1]-1)])
             ds_limits = np.round(ds_limits)
             us_limits = np.round(us_limits)

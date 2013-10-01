@@ -22,7 +22,7 @@ class TRaxMainController(object):
         self.create_signals()
         self.create_sub_controller()
         self.load_parameter()
-        self.ruby_btn_click()
+        self.temperature_btn_click()
         self.main_view.show()
 
     def create_sub_controller(self):
@@ -34,15 +34,12 @@ class TRaxMainController(object):
             fid = open('parameters.txt', 'r')
             self.temperature_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             self.temperature_controller._calib_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
-            
             self.ruby_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
-            self.ruby_controller._calib_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             fid.close()
        except IOError:
             self.temperature_controller._exp_working_dir = os.getcwd()
             self.temperature_controller._calib_working_dir = os.getcwd(),
             self.ruby_controller._exp_working_dir = os.getcwd()
-            self.ruby_controller._calib_working_dir = os.getcwd()
 
     def create_signals(self):
         self.create_navigation_signals()
@@ -58,7 +55,7 @@ class TRaxMainController(object):
 
     def create_axes_listener(self):
         self.main_view.graph_1axes.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
-        self.main_view.graph_2axes.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
+        self.main_view.temperature_control_graph.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
 
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -90,8 +87,9 @@ class TRaxMainController(object):
     def save_directories(self):
         fid = open('parameters.txt', 'w')
         output_str = \
-            'Working directory: ' + self.temperature_controller._exp_working_dir + '\n' + \
-            'Calibration directory: ' + self.temperature_controller._calib_working_dir
+            'Temperature Working directory: ' + self.temperature_controller._exp_working_dir + '\n' + \
+            'Temperature Calibration directory: ' + self.temperature_controller._calib_working_dir +'\n'+\
+            'Ruby Working directory: ' + self.ruby_controller._exp_working_dir
         fid.write(output_str)
         fid.close()
 
@@ -195,7 +193,7 @@ class TRaxTemperatureController():
             self.roi_controller.show()
 
     def data_changed(self, event):
-        self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
+        self.main_view.temperature_control_graph.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_temperature_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
@@ -208,7 +206,7 @@ class TRaxTemperatureController():
 
     def roi_changed(self, event):
         self.data.calc_spectra()
-        self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
+        self.main_view.temperature_control_graph.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())

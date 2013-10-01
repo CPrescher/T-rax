@@ -77,6 +77,7 @@ class TRaxROIControllerSingle(object):
         self.view.activateWindow()
         self.view.move(self.parent.x(), 
                        self.parent.y()+self.parent.height()+50)
+        self.view.resize(self.parent.size().width(),self.view.size().height())
 
 
 if __name__=="__main__":

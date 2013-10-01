@@ -4,7 +4,7 @@ import os.path
 import numpy as np
 import random
 import scipy.interpolate as ip
-from scipy.optimize import curve_fit
+from scipy.optimize import minimize
 
 from T_Rax_Data import ROI, Spectrum, black_body_function, gauss_curve_function
 
@@ -149,12 +149,10 @@ class TraxRubyData(object):
         k=0.46299
         l=0.0060823
         m=0.0000010264
-
         if self.ruby_condition =='hydrostatic':
            B=7.665
         if self.ruby_condition == 'non-hydrostatic':
            B=5
-
         A_temperature_corrected=A + (k*(self.temperature - 298))
         lambda0_temperature_corrected=self.ruby_reference_pos + \
             (l*(self.temperature - 298)) + (m*((self.temperature - 298)**2))
@@ -163,26 +161,56 @@ class TraxRubyData(object):
         return P
 
     def fit_spectrum(self):
-        param, cov = curve_fit(self.fitting_function, self.get_spectrum().x, self.get_spectrum().y,
-                               p0=self.create_p0())
-        self.set_click_pos(np.max(param[2:4]))
+        x0=self.create_p0()
+        bounds=self.create_limits()
+        res = minimize(self.fitting_function, self.create_p0(), method='L-BFGS-B',
+                              bounds=self.create_limits())
+        self.set_click_pos(np.max(res.x[2:4]))
         fit_x =np.linspace(np.min(self.get_spectrum().x), np.max(self.get_spectrum().x),1000)
-        self.fitted_spectrum=Spectrum(fit_x, self.fitting_function(fit_x,\
-                                                                param[0],param[1],param[2],\
-                                                                param[3],param[4],param[5],\
-                                                                param[6],param[7]))
+        self.fitted_spectrum=Spectrum(fit_x, self.fitting_function_helper(fit_x,\
+                                                               res.x[0],res.x[1],res.x[2],\
+                                                               res.x[3],res.x[4],res.x[5],\
+                                                               res.x[6],res.x[7],res.x[8],\
+                                                               res.x[9]))
+        #self.fitted_spectrum=Spectrum(fit_x, pseudo_voigt_curve(fit_x, res.x[0],res.x[4],res.x[6],res.x[2]))
         pub.sendMessage("RUBY POS CHANGED", self)
 
     def create_p0(self):
         intensities=[np.max(self.get_spectrum().y),np.max(self.get_spectrum().y)*0.5]
-        positions=[self.click_pos,self.click_pos-2]
-        fwhm =[1,1]
+        positions=[self.click_pos,self.click_pos-1.5]
+        hwhm =[0.1,0.1]
+        n =[1,1]
         constants=[np.min(self.get_spectrum().y),0]
-        return intensities+positions+fwhm+constants
+        return intensities+positions+hwhm+n+constants
 
-    def fitting_function(self,x,int1, int2, pos1,pos2,fwhm1,fwhm2,a,b):
-        y=lorentz_curve(x,int1,fwhm1, pos1)
-        y+=lorentz_curve(x,int2,fwhm2, pos2)
+    def create_limits(self):
+        intensities=[[0,None],[0,None]]
+        positions=[[690,850],[690,850]]
+        hwhm = [[0,5],[0,5]]
+        n=[[0,1],[0,1]]
+        constants=[[None,None],[None,None]]
+        return intensities+positions+hwhm+n+constants
+    
+    def fitting_function(self, param):
+        x=self.get_spectrum().x
+        y=self.get_spectrum().y
+        int1=param[0] 
+        int2=param[1] 
+        pos1=param[2]
+        pos2=param[3]
+        hwhm1=param[4]
+        hwhm2=param[5]
+        n1=param[6]
+        n2=param[7]
+        a=param[8]
+        b=param[9]
+        fit_y=self.fitting_function_helper(x,int1, int2, pos1,pos2,hwhm1, hwhm2,n1,n2,a,b)
+        return np.sum((fit_y-y)**2)
+
+
+    def fitting_function_helper(self,x,int1, int2, pos1,pos2,hwhm1, hwhm2,n1,n2,a,b):
+        y=pseudo_voigt_curve(x,int1,hwhm1,n1,pos1)
+        y+=pseudo_voigt_curve(x,int2,hwhm2,n2,pos2)
         y+=a+b/100.*x
         return y
                         
@@ -272,9 +300,9 @@ class DummyImg(ExpRubyData):
         T1=random.randrange(1700,3000,1)
         T2=T1+ random.randrange(-200,200,1)
 
-        lorenz1 = lorentz_curve(x,4,1,700)+lorentz_curve(x,3,1,695)
+        lorenz1 = lorentz_curve(x,4,0.5,700)+lorentz_curve(x,3,0.5,698)
         gauss1 = gauss_curve_function(y,2,80,3)
-        lorenz2 = lorentz_curve(x,4,1,700)+lorentz_curve(x,3,1,695)
+        lorenz2 = lorentz_curve(x,4,0.5,700)+lorentz_curve(x,3,0.5,698)
         gauss2 = gauss_curve_function(y,2,15,3)
 
         for x_ind in xrange(len(x)):
@@ -326,5 +354,12 @@ class ROIRubyManager():
         return self._roi_data_list[self._current]
 
 
-def lorentz_curve(x, int, fwhm, center):
-    return int/np.pi * (fwhm/((x-center)**2+fwhm**2))
+def lorentz_curve(x, int, hwhm, center):
+    return int* (hwhm**2/((x-center)**2+hwhm**2))
+
+def gauss_curve(x,int,hwhm,center):
+    return int*np.exp(-(x-float(center))**2/(2*hwhm**2))
+
+def pseudo_voigt_curve(x,int,hwhm,n, center):
+    return n*lorentz_curve(x,int,hwhm,center)+\
+           (1-n)*gauss_curve(x,int,hwhm,center)

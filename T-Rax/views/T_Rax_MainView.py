@@ -31,7 +31,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.resize(900,450)
 
     def create_graphs(self):
-        self.graph_2axes = T_Rax_2axes_graph(self.figure1_frame)
+        self.temperature_control_graph = T_Rax_2axes_graph(self.figure1_frame)
         self.graph_1axes = T_Rax_1axes_graph(self.figure2_frame)
         self.graph_1axes.hide()
 
@@ -57,14 +57,14 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
             self.status_ds_calib_filename_lbl.show()
             self.status_us_calib_filename_lbl.show()
             self.graph_1axes.hide()
-            self.graph_2axes.show()
+            self.temperature_control_graph.show()
 
         elif btn_name == 'ruby_btn':
             self.update_navigation_bar('rgba(197, 0, 3, 255)', 'ruby_btn')
             self.ruby_control_widget.show()            
             self.status_ds_calib_filename_lbl.hide()
             self.status_us_calib_filename_lbl.hide()
-            self.graph_2axes.hide()            
+            self.temperature_control_graph.hide()            
             self.graph_1axes.show()
 
         elif btn_name == 'diamond_btn':
@@ -72,7 +72,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
             self.diamond_control_widget.show()
             self.status_ds_calib_filename_lbl.hide()
             self.status_us_calib_filename_lbl.hide()
-            self.graph_2axes.hide()
+            self.temperature_control_graph.hide()
             self.graph_1axes.show()
 
     def set_temperature_filename(self, filename):      
@@ -106,7 +106,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
     
     def resize_graphs(self, event):
         self.graph_1axes.resize_graph(self.figure2_frame.size())
-        self.graph_2axes.resize_graph(self.figure1_frame.size())
+        self.temperature_control_graph.resize_graph(self.figure1_frame.size())
 
 
     def update_navigation_bar(self, new_color, sender):
@@ -159,7 +159,7 @@ class T_Rax_2axes_graph():
         temp_txt = axes.text(0,0, '', size=20, ha='left', va='top')
         int_txt = axes.text(0,0,'',size=13, color = (0.04,0.76,0.17), ha='right')
         warning_txt = axes.text(0,0,'', size=25, color = 'r', va='center', ha='center', weight = 'bold') 
-        calib_file_txt = axes.text(0,0, '', size=9, color =  'r', ha='left', va='top', weight = 'bold')
+        calib_file_txt = axes.text(0,0, '', size=9, color =  'r', ha='left', va='top')
 
         axes.yaxis.set_visible(False)
         axes.set_xlabel('$\lambda$ $(nm)$', size=11)
@@ -231,15 +231,15 @@ class T_Rax_2axes_graph():
             self.us_warning_txt.set_text('')
 
         #Calibration files:
-        if ds_calib_fname == 'Select File...':
-            self.ds_calib_file_txt.set_text('Load calibration file!')
+        if ds_fit_spectrum == None:
+            self.ds_calib_file_txt.set_text('Load calibration with correct dimensions!')
             self.ds_calib_file_txt.set_x(min(ds_exp_spectrum.x) + 0.03 * ds_exp_spectrum.get_x_range())
             self.ds_calib_file_txt.set_y(min(ds_exp_spectrum.y) + 0.96 * ds_exp_spectrum.get_y_range() * 1.05)
         else:
             self.ds_calib_file_txt.set_text('')
 
-        if us_calib_fname == 'Select File...':
-            self.us_calib_file_txt.set_text('Load calibration file!')
+        if us_fit_spectrum == None:
+            self.us_calib_file_txt.set_text('Load calibration with correct dimensions!')
             self.us_calib_file_txt.set_x(min(us_exp_spectrum.x) + 0.03 * us_exp_spectrum.get_x_range())
             self.us_calib_file_txt.set_y(min(us_exp_spectrum.y) + 0.96 * us_exp_spectrum.get_y_range() * 1.05)
         else:
