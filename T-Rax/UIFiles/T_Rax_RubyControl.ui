@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>251</width>
-    <height>423</height>
+    <width>263</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>251</width>
+    <width>263</width>
     <height>16777215</height>
    </size>
   </property>
@@ -141,7 +141,10 @@ QComboBox:on { /* shift the text when the popup opens */
  }  
 </string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
@@ -249,9 +252,9 @@ QComboBox:on { /* shift the text when the popup opens */
      <property name="title">
       <string>Pressure</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QFormLayout" name="formLayout">
         <item row="0" column="0">
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -267,6 +270,12 @@ QComboBox:on { /* shift the text when the popup opens */
         </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="conditions_cb">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>26</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
             <width>250</width>
@@ -354,6 +363,59 @@ QComboBox:on { /* shift the text when the popup opens */
          </layout>
         </item>
         <item row="2" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Temperature:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="temperature_txt">
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>300</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>K</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Measured:</string>
@@ -363,10 +425,16 @@ QComboBox:on { /* shift the text when the popup opens */
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
            <widget class="QLabel" name="measured_pos_lbl">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>18</height>
+             </size>
+            </property>
             <property name="text">
              <string>705</string>
             </property>
@@ -396,7 +464,7 @@ QComboBox:on { /* shift the text when the popup opens */
           </item>
          </layout>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
            <string>Pressure:</string>
@@ -406,13 +474,19 @@ QComboBox:on { /* shift the text when the popup opens */
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <property name="spacing">
            <number>7</number>
           </property>
           <item>
            <widget class="QLabel" name="pressure_lbl">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>18</height>
+             </size>
+            </property>
             <property name="text">
              <string>150</string>
             </property>
@@ -439,16 +513,6 @@ QComboBox:on { /* shift the text when the popup opens */
        </layout>
       </item>
      </layout>
-     <zorder>conditions_cb</zorder>
-     <zorder>label</zorder>
-     <zorder>label_2</zorder>
-     <zorder>label_3</zorder>
-     <zorder>measured_pos_lbl</zorder>
-     <zorder>horizontalSpacer</zorder>
-     <zorder>layoutWidget</zorder>
-     <zorder>reference_pos_txt</zorder>
-     <zorder>layoutWidget_2</zorder>
-     <zorder>label_8</zorder>
     </widget>
    </item>
    <item>

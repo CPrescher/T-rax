@@ -321,6 +321,7 @@ class TRaxRubyController():
         self.create_roi_view_signals()
         self.create_temperature_pub_listeners()
         self.create_auto_process_signal()
+        self.create_txt_signals()
         self.create_axes_click_signal()
 
     def create_temperature_pub_listeners(self):
@@ -350,6 +351,10 @@ class TRaxRubyController():
         self.main_view.graph_1axes.canvas.mpl_connect('button_release_event', self.axes_release)
         self.main_view.graph_1axes.canvas.mpl_connect('motion_notify_event', self.axes_move)
         self.main_view.graph_1axes.canvas.mpl_connect('scroll_event', self.axes_mouse_scroll)
+
+    def create_txt_signals(self):
+        self.main_view.ruby_control_widget.reference_pos_txt.editingFinished.connect(self.reference_txt_changed)
+        self.main_view.ruby_control_widget.temperature_txt.editingFinished.connect(self.temperature_txt_changed)
     
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -432,6 +437,13 @@ class TRaxRubyController():
         self.data.set_x_roi_limits_to(new_xlim)
         pub.sendMessage("RUBY ROI CHANGED")
         self.main_view.graph_1axes.redraw_figure()
+
+
+    def reference_txt_changed(self):
+        self.data.set_click_pos(np.double(self.main_view.ruby_control_widget.reference_pos_txt.text()))
+
+    def temperature_txt_changed(self):
+        self.data.set_temperature(np.double(self.main_view.ruby_control_widget.temperature_txt.text()))
     
     def auto_process_cb_click(self):
         if self.main_view.ruby_control_widget.auto_process_cb.isChecked():

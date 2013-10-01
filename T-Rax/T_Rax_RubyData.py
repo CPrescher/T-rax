@@ -15,6 +15,8 @@ class TraxRubyData(object):
         self._create_dummy_img()
         self.click_pos=694.15
         self.ruby_reference_pos=694.15
+        self.temperature=300
+        self.ruby_condition = 'hydrostatic'
 
     def _create_dummy_img(self):
         self.exp_data=DummyImg(self.roi_data_manager)
@@ -130,13 +132,36 @@ class TraxRubyData(object):
 
     def set_ruby_reference_pos(self, pos):
         self.ruby_reference_pos=pos
+        pub.sendMessage("RUBY POS CHANGED", self)
+
+    def set_temperature(self, temperature):
+        self.temperature = temperature
+        pub.sendMessage("RUBY POS CHANGED", self)
+
+   #def get_pressure(self):
+   #    A=19.04
+   #    B=7.665
+   #    delta_pos=self.click_pos-self.ruby_reference_pos
+   #    P_in_Mbar=A/B*((1+delta_pos/self.ruby_reference_pos)**B-1)
+   #    return P_in_Mbar*100
 
     def get_pressure(self):
-        A=19.04
-        B=7.665
-        delta_pos=self.click_pos-self.ruby_reference_pos
-        P_in_Mbar=A/B*((1+delta_pos/self.ruby_reference_pos)**B-1)
-        return P_in_Mbar*100
+        A=1904
+        k=0.46299
+        l=0.0060823
+        m=0.0000010264
+
+        if self.ruby_condition =='hydrostatic':
+           B=7.665
+        if self.ruby_condition == 'non-hydrostatic':
+           B=5
+
+        A_temperature_corrected=A + (k*(self.temperature - 298))
+        lambda0_temperature_corrected=self.ruby_reference_pos + \
+            (l*(self.temperature - 298)) + (m*((self.temperature - 298)**2))
+        ratio=(self.click_pos/lambda0_temperature_corrected)**B
+        P=(A_temperature_corrected/B)*ratio - (A_temperature_corrected/B)
+        return P
 
 
 

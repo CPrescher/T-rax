@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
-# Created: Mon Sep 30 17:32:39 2013
+# Created: Mon Sep 30 21:26:59 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
