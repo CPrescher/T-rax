@@ -18,6 +18,8 @@ class TraxData(object):
 
         self._create_dummy_img()
         self._load_calib_etalon()
+        pub.sendMessage("EXP DATA CHANGED", self)
+        pub.sendMessage("ROI CHANGED", self)
 
     def _read_roi_param(self):
         if os.path.isfile('roi_data.txt'):
@@ -28,6 +30,7 @@ class TraxData(object):
 
     def _create_dummy_img(self):
         self.exp_data=DummyImg(self.roi_data_manager)
+        self.roi_data =self.exp_data.roi_data
 
     def _load_calib_etalon(self):
         self.load_us_calib_etalon('15A_lamp.txt')
@@ -519,6 +522,12 @@ class ROI():
 
     def get_roi_as_list(self):
         return [self.x_min, self.x_max, self.y_min, self.y_max]
+
+    def set_roi(self, limits):
+        self.x_min = limits[0]
+        self.x_max = limits[1]
+        self.y_min = limits[2]
+        self.y_max = limits[3]
 
 
 class ROIDataManager():

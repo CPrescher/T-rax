@@ -7,7 +7,7 @@ from views.T_Rax_ControlWidgets import DiamondControlWidget, RubyControlWidget, 
 import numpy as np
 
 import matplotlib as mpl
-mpl.rcParams['font.size'] = 12
+mpl.rcParams['font.size'] = 10
 mpl.rcParams['lines.linewidth'] = 0.5
 mpl.rcParams['lines.color'] = 'g'
 mpl.rcParams['text.color'] = 'white'
@@ -53,30 +53,44 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.hide_control_widgets()
         if btn_name == 'temperature_btn':
             self.update_navigation_bar('rgba(221, 124, 40, 255)', 'temperature_btn')
-            self.temperature_control_widget.show()
+            self.temperature_control_widget.show()   
+            self.status_ds_calib_filename_lbl.show()
+            self.status_us_calib_filename_lbl.show()
             self.graph_1axes.hide()
             self.graph_2axes.show()
 
         elif btn_name == 'ruby_btn':
             self.update_navigation_bar('rgba(197, 0, 3, 255)', 'ruby_btn')
-            self.ruby_control_widget.show()
+            self.ruby_control_widget.show()            
+            self.status_ds_calib_filename_lbl.hide()
+            self.status_us_calib_filename_lbl.hide()
             self.graph_2axes.hide()            
             self.graph_1axes.show()
 
         elif btn_name == 'diamond_btn':
             self.update_navigation_bar('rgba(27, 0, 134, 255)', 'diamond_btn')
             self.diamond_control_widget.show()
+            self.status_ds_calib_filename_lbl.hide()
+            self.status_us_calib_filename_lbl.hide()
             self.graph_2axes.hide()
             self.graph_1axes.show()
 
-    def set_exp_filename(self, filename):      
+    def set_temperature_filename(self, filename):      
         self.temperature_control_widget.exp_filename_lbl.setText(filename)
+
+    def set_ruby_filename(self, filename):
         self.ruby_control_widget.exp_filename_lbl.setText(filename)
+
+    def set_diamond_filename(self, filename):
         self.diamond_control_widget.exp_filename_lbl.setText(filename)
 
-    def set_exp_foldername(self, folder_name):      
+    def set_temperature_foldername(self, folder_name):    
         self.temperature_control_widget.exp_folder_name_lbl.setText(folder_name)
+
+    def set_ruby_foldername(self, folder_name):
         self.ruby_control_widget.exp_folder_name_lbl.setText(folder_name)
+
+    def set_diamond_foldername(self, folder_name):
         self.diamond_control_widget.exp_folder_name_lbl.setText(folder_name)
 
     def set_calib_filenames(self, ds_filename, us_filename):
@@ -258,20 +272,33 @@ class T_Rax_1axes_graph():
         self.canvas = FigureCanvas(self.figure)
         self.canvas.setParent(self._parent)
 
-        graph_layout = QtGui.QVBoxLayout(self._parent)        
+        graph_layout = QtGui.QVBoxLayout(self._parent)
         graph_layout.setContentsMargins(0,0,0,0)
+        graph_layout.setSpacing(0)
         graph_layout.setMargin(0)
         graph_layout.addWidget(self.canvas)
+        self.canvas.setSizePolicy( QtGui.QSizePolicy.Expanding,
+                                   QtGui.QSizePolicy.Expanding)
+        self.canvas.updateGeometry()
 
         self.axes = self.figure.add_subplot(111)
         self.create_graph()
         self._hidden = False
 
     def create_graph(self):
-        x=np.linspace(0,20,100)
-        y=np.cos(x)
-        self.line = self.axes.plot(x,y,'w-', lw=3)
-    
+        self.data_line, = self.axes.plot([],[],'-', color = (0.7,0.9,0.9), lw=1)
+        self.fit_line, = self.axes.plot([],[], '-', color = 'red', lw=1)
+        self.pos_line, = self.axes.plot([],[], '-', color = 'white', lw=2)
+        
+        self.axes.set_xlabel('$\lambda$ $(nm)$', size=11)
+
+    def update_graph(self, spectrum, click_pos):
+        self.data_line.set_data(spectrum.get_data())
+        self.pos_line.set_data([[click_pos, click_pos],[spectrum.get_y_plot_limits()]])
+        self.axes.set_xlim(spectrum.get_x_plot_limits())
+        self.axes.set_ylim(spectrum.get_y_plot_limits())
+        self.redraw_figure()
+
     def hide(self):
         self._parent.hide()
         self._hidden = True

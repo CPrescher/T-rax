@@ -10,7 +10,8 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib import animation
 import matplotlib as mpl
-mpl.rcParams['font.size'] = 12
+
+mpl.rcParams['font.size'] = 10
 mpl.rcParams['lines.linewidth'] = 0.5
 mpl.rcParams['lines.color'] = 'g'
 mpl.rcParams['text.color'] = 'white'

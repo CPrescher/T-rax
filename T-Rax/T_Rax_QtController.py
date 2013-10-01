@@ -7,8 +7,10 @@ import numpy as np
 
 from views.T_Rax_MainView import TRaxMainView
 from T_Rax_QTROISelectorController import TRaxROIController
+from T_Rax_QTROISelectorSingleController import TRaxROIControllerSingle
 from convert_ui_files import convert_ui_files
 from T_Rax_Data import TraxData
+from T_Rax_RubyData import TraxRubyData
 from epics import caput, PV
 
 
@@ -16,37 +18,31 @@ from epics import caput, PV
 class TRaxMainController(object):
     def __init__(self):
         self.main_view = TRaxMainView()
-        self.data = TraxData()
-
+        
         self.create_signals()
         self.create_sub_controller()
-        self.mode = "temperature"
-        
-        self.main_view.navigate_to(self.mode)
         self.load_parameter()
-        self.temperature_btn_click()
-
-        self.temperature_controller.load_exp_data('D:/Programming/VS Projects/T-Rax/T-Rax/sample files/Test 2013-09-24/temper_011.spe')
+        self.ruby_btn_click()
         self.main_view.show()
-        self.temperature_controller.load_roi_view()
-        self.temperature_controller.load_next_exp_data()
 
     def create_sub_controller(self):
-        self.temperature_controller = TRaxTemperatureController(self,self.data,self.main_view)
-
-    def set_parameter(self):
-        ds_txt_roi = self.data.roi_data.ds_roi.get_roi_as_list()
-        ds_txt_roi[2:] = self.data.calculate_wavelength(ds_txt_roi[2:])
+        self.temperature_controller = TRaxTemperatureController(self,self.main_view)
+        self.ruby_controller = TRaxRubyController(self, self.main_view)
         
     def load_parameter(self):
        try:
             fid = open('parameters.txt', 'r')
             self.temperature_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             self.temperature_controller._calib_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
+            
+            self.ruby_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
+            self.ruby_controller._calib_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             fid.close()
        except IOError:
             self.temperature_controller._exp_working_dir = os.getcwd()
-            self.temperature_controller._calib_working_dir = os.getcwd()
+            self.temperature_controller._calib_working_dir = os.getcwd(),
+            self.ruby_controller._exp_working_dir = os.getcwd()
+            self.ruby_controller._calib_working_dir = os.getcwd()
 
     def create_signals(self):
         self.create_navigation_signals()
@@ -101,7 +97,14 @@ class TRaxMainController(object):
 
     def closeEvent(self, event):
         self.save_directories()
-        self.temperature_controller.roi_controller.view.close()
+        try:
+            self.temperature_controller.roi_controller.view.close()
+        except:
+            pass
+        try:
+            self.ruby_controller.roi_controller.view.close()
+        except:
+            pass
         self.main_view.close()
         event.accept()
 '''
@@ -110,11 +113,14 @@ class TRaxMainController(object):
 '''     
 
 class TRaxTemperatureController():
-    def __init__(self, parent, data, main_view):
+    def __init__(self, parent, main_view):
         self.parent = parent
-        self.data = data
+        self.data = TraxData()
         self.main_view = main_view
         self.create_signals()
+        
+        pub.sendMessage("EXP DATA CHANGED", self)
+        pub.sendMessage("ROI CHANGED")
 
     def create_signals(self):
         self.create_exp_file_signals()
@@ -192,14 +198,13 @@ class TRaxTemperatureController():
         self.main_view.graph_2axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
-        self.main_view.set_exp_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
-        self.main_view.set_exp_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+        self.main_view.set_temperature_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.set_temperature_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
         self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
                                            self.data.get_us_calib_file_name().replace('\\','/').split('/')[-1])
         self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calib_etalon_file_name().replace('\\','/').split('/')[-1])
         self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calib_etalon_file_name().replace('\\','/').split('/')[-1])
         self.update_pv_names()
-        self.parent.set_parameter()
 
     def roi_changed(self, event):
         self.data.calc_spectra()
@@ -301,8 +306,162 @@ class TRaxTemperatureController():
         else:
             self.epics_is_connected=False
 
-    
+class TRaxRubyController():
+    def __init__(self, parent, main_view):
+        self.parent = parent
+        self.data = TraxRubyData()
+        
+        self.main_view = main_view
+        self.create_signals()
+        
+        pub.sendMessage("EXP RUBY DATA CHANGED", self)
 
+    def create_signals(self):
+        self.create_exp_file_signals()
+        self.create_roi_view_signals()
+        self.create_temperature_pub_listeners()
+        self.create_auto_process_signal()
+        self.create_axes_click_signal()
+
+    def create_temperature_pub_listeners(self):
+        pub.subscribe(self.data_changed, "EXP RUBY DATA CHANGED")
+        pub.subscribe(self.roi_changed, "RUBY ROI CHANGED")
+        pub.subscribe(self.ruby_pos_changed, "RUBY POS CHANGED")
+
+    def create_auto_process_signal(self):
+        self.main_view.ruby_control_widget.auto_process_cb.clicked.connect(self.auto_process_cb_click)
+        self.autoprocess_timer = QtCore.QTimer(self.main_view)
+        self.autoprocess_timer.setInterval(100)
+        self.main_view.connect(self.autoprocess_timer,QtCore.SIGNAL('timeout()'), self.check_files)
+    
+    def create_exp_file_signals(self):
+        self.connect_click_function(self.main_view.ruby_control_widget.load_exp_data_btn, self.load_ruby_data)        
+        self.connect_click_function(self.main_view.ruby_control_widget.load_next_exp_data_btn, self.load_next_exp_data)        
+        self.connect_click_function(self.main_view.ruby_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
+
+    def create_roi_view_signals(self):
+        self.connect_click_function(self.main_view.ruby_control_widget.roi_setup_btn, self.load_roi_view)
+
+    def create_axes_click_signal(self):
+        self.pos_update_timer = QtCore.QTimer(self.main_view)
+        self.pos_update_timer.setInterval(5)
+        self.main_view.connect(self.pos_update_timer, QtCore.SIGNAL('timeout()'),self.update_ruby_pos)
+        self.main_view.graph_1axes.canvas.mpl_connect('button_press_event', self.axes_click)
+        self.main_view.graph_1axes.canvas.mpl_connect('button_release_event', self.axes_release)
+        self.main_view.graph_1axes.canvas.mpl_connect('motion_notify_event', self.axes_move)
+        self.main_view.graph_1axes.canvas.mpl_connect('scroll_event', self.axes_mouse_scroll)
+    
+    def connect_click_function(self, emitter, function):
+        self.main_view.connect(emitter, SIGNAL('clicked()'), function)
+
+    def load_ruby_data(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Experiment SPE", 
+                                          directory = self._exp_working_dir))
+
+        if filename is not '':
+            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])+'/'
+            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
+            self.data.load_ruby_data(filename)
+
+    def load_next_exp_data(self):
+        self.data.load_next_ruby_file()
+
+    def load_previous_exp_data(self):
+        self.data.load_previous_ruby_file()
+
+    def load_roi_view(self):
+        try:
+            self.roi_controller.show()
+        except AttributeError:
+            self.roi_controller = TRaxROIControllerSingle(self.data, parent=self.main_view)
+            self.roi_controller.show()
+
+    def data_changed(self, event):
+        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos)
+        self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+
+    def roi_changed(self, event):
+        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos)
+        self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+
+    def ruby_pos_changed(self, event):
+        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos)
+
+    def axes_click(self,event):
+        if event.button==1:
+            self._axes_mouse_x=event.xdata
+            self.pos_update_timer.start()
+        else:
+            self.data.set_x_roi_limits_to(self.data.get_x_limits())
+            pub.sendMessage("RUBY ROI CHANGED")
+
+    def axes_move(self,event):
+        self._axes_mouse_x=event.xdata
+
+    def axes_release(self,event):
+        self.pos_update_timer.stop()
+    
+    def update_ruby_pos(self):
+        x_coord=self._axes_mouse_x
+        if x_coord is not None:
+            self.data.set_click_pos(x_coord)
+            self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f'%x_coord)
+            self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+
+    def axes_mouse_scroll(self,event):
+        curr_xlim = self.main_view.graph_1axes.axes.get_xlim()
+        base_scale=1.5
+        if event.button == 'up':
+            #zoom in
+            scale_factor = 1/base_scale
+        elif event.button == 'down':
+            #zoom out
+            scale_factor = base_scale
+        else:
+            scale_factor = 1
+            print event.button
+
+        new_width = (curr_xlim[1]-curr_xlim[0])*scale_factor
+
+        relx = (curr_xlim[1]-event.xdata)/(curr_xlim[1]-curr_xlim[0])
+        new_xlim=([event.xdata-new_width*(1-relx), event.xdata+new_width*(relx)])
+        self.main_view.graph_1axes.axes.set_xlim(new_xlim)
+        self.data.set_x_roi_limits_to(new_xlim)
+        pub.sendMessage("RUBY ROI CHANGED")
+        self.main_view.graph_1axes.redraw_figure()
+    
+    def auto_process_cb_click(self):
+        if self.main_view.ruby_control_widget.auto_process_cb.isChecked():
+            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)])
+            self.autoprocess_timer.start()
+        else:
+            self.autoprocess_timer.stop()
+
+    def check_files(self):
+        self._files_now = dict([(f,None) for f in os.listdir(self._exp_working_dir)])
+        self._files_added = [f for f in self._files_now if not f in self._files_before]
+        self._files_removed = [f for f in self._files_before if not f in self._files_now]
+        if len(self._files_added) > 0:
+            new_file_str = self._files_added[-1]
+            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+                path = self._exp_working_dir + '\\' + new_file_str
+                self.data.load_ruby_data(path)
+            self._files_before = self._files_now
+            
+    def file_is_spe(self, filename):
+        return filename.endswith('.SPE') or filename.endswith('.spe')
+    
+    def file_is_raw(self, filename):
+        try:
+            #checks if file contains "-raw" string at the end
+            return filename.split('-')[-1].split('.')[0] == 'raw'
+        except:
+            return false
+
+    
 
 if __name__ == "__main__":
     #convert_ui_files()

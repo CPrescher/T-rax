@@ -26,6 +26,10 @@
     <Compile Include="Playing\ParkingLot.py" />
     <Compile Include="Playing\playing.py" />
     <Compile Include="convert_ui_files.py" />
+    <Compile Include="run_T-Rax.pyw" />
+    <Compile Include="T_Rax_QTROISelectorSingleController.py" />
+    <Compile Include="T_Rax_RubyData.py" />
+    <Compile Include="UIFiles\T_Rax_ROI_Single_Selector.py" />
     <Compile Include="unittests\QT_GUI_Test.py" />
     <Compile Include="unittests\T_Rax_Data_Test.py" />
     <Compile Include="views\T_Rax_ControlWidgets.py" />
@@ -53,6 +57,7 @@
     <Compile Include="Backup_wxPython\T_Rax_Main_View.py" />
     <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_selector.py" />
     <Compile Include="unittests\spe_file_unit_test.py" />
+    <Compile Include="views\T_Rax_ROIViewSingle.py" />
     <Compile Include="views\__init__.py" />
   </ItemGroup>
   <ItemGroup>

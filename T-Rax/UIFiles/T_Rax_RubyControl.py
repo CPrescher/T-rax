@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_RubyControl.ui'
 #
-# Created: Mon Sep 30 13:53:31 2013
+# Created: Mon Sep 30 17:32:38 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,7 @@ class Ui_ruby_control_widget(object):
     def setupUi(self, ruby_control_widget):
         ruby_control_widget.setObjectName(_fromUtf8("ruby_control_widget"))
         ruby_control_widget.resize(251, 423)
+        ruby_control_widget.setMaximumSize(QtCore.QSize(251, 16777215))
         ruby_control_widget.setStyleSheet(_fromUtf8(" #ruby_control_widget, #temperature_control_widget, #diamond_control_widget, QTabWidget::pane, QTabWidget::tab-bar,  \n"
 " #experiment_tab, #calibration_tab{  \n"
 "     background: #1E1E1E;      \n"
@@ -51,6 +52,7 @@ class Ui_ruby_control_widget(object):
 "    border-radius:5px;\n"
 "    font-weight: normal;\n"
 "    padding: 4px;\n"
+"    padding-left: 8px;\n"
 "    text-align: right;\n"
 "}\n"
 "QComboBox:on { /* shift the text when the popup opens */\n"
@@ -215,13 +217,17 @@ class Ui_ruby_control_widget(object):
         self.conditions_cb.addItem(_fromUtf8(""))
         self.gridLayout_2.addWidget(self.conditions_cb, 0, 1, 1, 1)
         self.label = QtGui.QLabel(self.groupBox_2)
+        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setSpacing(7)
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem1)
         self.reference_pos_txt = QtGui.QLineEdit(self.groupBox_2)
-        self.reference_pos_txt.setMaximumSize(QtCore.QSize(800, 16777215))
+        self.reference_pos_txt.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.reference_pos_txt.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.reference_pos_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.reference_pos_txt.setObjectName(_fromUtf8("reference_pos_txt"))
         self.horizontalLayout_4.addWidget(self.reference_pos_txt)
@@ -232,6 +238,7 @@ class Ui_ruby_control_widget(object):
         self.horizontalLayout_4.addWidget(self.label_5)
         self.gridLayout_2.addLayout(self.horizontalLayout_4, 1, 1, 1, 1)
         self.label_2 = QtGui.QLabel(self.groupBox_2)
+        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout_2.addWidget(self.label_2, 2, 0, 1, 1)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
@@ -247,6 +254,7 @@ class Ui_ruby_control_widget(object):
         self.horizontalLayout_3.addWidget(self.label_8)
         self.gridLayout_2.addLayout(self.horizontalLayout_3, 2, 1, 1, 1)
         self.label_3 = QtGui.QLabel(self.groupBox_2)
+        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.gridLayout_2.addWidget(self.label_3, 3, 0, 1, 1)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -264,10 +272,11 @@ class Ui_ruby_control_widget(object):
         self.horizontalLayout_6.addLayout(self.gridLayout_2)
         self.verticalLayout.addWidget(self.groupBox_2)
         self.fit_ruby_btn = QtGui.QPushButton(ruby_control_widget)
+        self.fit_ruby_btn.setMaximumSize(QtCore.QSize(250, 16777215))
         self.fit_ruby_btn.setObjectName(_fromUtf8("fit_ruby_btn"))
         self.verticalLayout.addWidget(self.fit_ruby_btn)
-        spacerItem1 = QtGui.QSpacerItem(20, 51, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem1)
+        spacerItem2 = QtGui.QSpacerItem(20, 49, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem2)
 
         self.retranslateUi(ruby_control_widget)
         QtCore.QMetaObject.connectSlotsByName(ruby_control_widget)
