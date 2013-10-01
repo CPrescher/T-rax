@@ -292,8 +292,9 @@ class T_Rax_1axes_graph():
         
         self.axes.set_xlabel('$\lambda$ $(nm)$', size=11)
 
-    def update_graph(self, spectrum, click_pos):
+    def update_graph(self, spectrum, click_pos, fit_spectrum):
         self.data_line.set_data(spectrum.get_data())
+        self.fit_line.set_data(fit_spectrum.get_data())
         self.pos_line.set_data([[click_pos, click_pos],[spectrum.get_y_plot_limits()]])
         self.axes.set_xlim(spectrum.get_x_plot_limits())
         self.axes.set_ylim(spectrum.get_y_plot_limits())

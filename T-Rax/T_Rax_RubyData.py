@@ -20,11 +20,13 @@ class TraxRubyData(object):
 
     def _create_dummy_img(self):
         self.exp_data=DummyImg(self.roi_data_manager)
+        self.fitted_spectrum=Spectrum([],[])
         self.roi = self.exp_data.roi
 
     def load_ruby_data(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
         self.roi = self.exp_data.roi
+        self.fitted_spectrum=Spectrum([],[])
         pub.sendMessage("EXP RUBY DATA CHANGED", self)
 
     def load_next_ruby_file(self):
@@ -160,6 +162,33 @@ class TraxRubyData(object):
         P=(A_temperature_corrected/B)*ratio - (A_temperature_corrected/B)
         return P
 
+    def fit_spectrum(self):
+        param, cov = curve_fit(self.fitting_function, self.get_spectrum().x, self.get_spectrum().y,
+                               p0=self.create_p0())
+        self.set_click_pos(np.max(param[2:4]))
+        fit_x =np.linspace(np.min(self.get_spectrum().x), np.max(self.get_spectrum().x),1000)
+        self.fitted_spectrum=Spectrum(fit_x, self.fitting_function(fit_x,\
+                                                                param[0],param[1],param[2],\
+                                                                param[3],param[4],param[5],\
+                                                                param[6],param[7]))
+        pub.sendMessage("RUBY POS CHANGED", self)
+
+    def create_p0(self):
+        intensities=[np.max(self.get_spectrum().y),np.max(self.get_spectrum().y)*0.5]
+        positions=[self.click_pos,self.click_pos-2]
+        fwhm =[1,1]
+        constants=[np.min(self.get_spectrum().y),0]
+        return intensities+positions+fwhm+constants
+
+    def fitting_function(self,x,int1, int2, pos1,pos2,fwhm1,fwhm2,a,b):
+        y=lorentz_curve(x,int1,fwhm1, pos1)
+        y+=lorentz_curve(x,int2,fwhm2, pos2)
+        y+=a+b/100.*x
+        return y
+                        
+
+    def get_fitted_spectrum(self):
+        return self.fitted_spectrum
 
 
 

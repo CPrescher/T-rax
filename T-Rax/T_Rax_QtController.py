@@ -356,6 +356,7 @@ class TRaxRubyController():
         self.main_view.ruby_control_widget.reference_pos_txt.editingFinished.connect(self.reference_txt_changed)
         self.main_view.ruby_control_widget.temperature_txt.editingFinished.connect(self.temperature_txt_changed)
         self.main_view.ruby_control_widget.conditions_cb.currentIndexChanged.connect(self.condition_cb_changed)
+        self.connect_click_function(self.main_view.ruby_control_widget.fit_ruby_btn,self.fit_ruby_btn_click)
     
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -384,17 +385,17 @@ class TRaxRubyController():
             self.roi_controller.show()
 
     def data_changed(self, event):
-        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos)
+        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
         self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
 
     def roi_changed(self, event):
-        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos)
+        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
         self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
 
     def ruby_pos_changed(self, event):
-        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos)
+        self.main_view.graph_1axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
 
     def axes_click(self,event):
         if event.button==1:
@@ -458,7 +459,12 @@ class TRaxRubyController():
         elif ind==1:
             self.data.set_ruby_condition('non-hydrostatic')
         self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
-    
+
+    def fit_ruby_btn_click(self):
+        self.data.fit_spectrum()
+        self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f'%self.data.click_pos)
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+            
     def auto_process_cb_click(self):
         if self.main_view.ruby_control_widget.auto_process_cb.isChecked():
             self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)])
