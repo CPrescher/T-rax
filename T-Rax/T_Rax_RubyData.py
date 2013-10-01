@@ -137,13 +137,10 @@ class TraxRubyData(object):
     def set_temperature(self, temperature):
         self.temperature = temperature
         pub.sendMessage("RUBY POS CHANGED", self)
-
-   #def get_pressure(self):
-   #    A=19.04
-   #    B=7.665
-   #    delta_pos=self.click_pos-self.ruby_reference_pos
-   #    P_in_Mbar=A/B*((1+delta_pos/self.ruby_reference_pos)**B-1)
-   #    return P_in_Mbar*100
+    
+    def set_ruby_condition(self, condition):
+        self.ruby_condition=condition
+        pub.sendMessage("RUBY POS CHANGED", self)
 
     def get_pressure(self):
         A=1904

@@ -321,7 +321,7 @@ class TRaxRubyController():
         self.create_roi_view_signals()
         self.create_temperature_pub_listeners()
         self.create_auto_process_signal()
-        self.create_txt_signals()
+        self.create_pressure_signals()
         self.create_axes_click_signal()
 
     def create_temperature_pub_listeners(self):
@@ -346,15 +346,16 @@ class TRaxRubyController():
     def create_axes_click_signal(self):
         self.pos_update_timer = QtCore.QTimer(self.main_view)
         self.pos_update_timer.setInterval(5)
-        self.main_view.connect(self.pos_update_timer, QtCore.SIGNAL('timeout()'),self.update_ruby_pos)
+        self.main_view.connect(self.pos_update_timer, QtCore.SIGNAL('timeout()'),self.update_ruby_mouse_move_pos)
         self.main_view.graph_1axes.canvas.mpl_connect('button_press_event', self.axes_click)
         self.main_view.graph_1axes.canvas.mpl_connect('button_release_event', self.axes_release)
         self.main_view.graph_1axes.canvas.mpl_connect('motion_notify_event', self.axes_move)
         self.main_view.graph_1axes.canvas.mpl_connect('scroll_event', self.axes_mouse_scroll)
 
-    def create_txt_signals(self):
+    def create_pressure_signals(self):
         self.main_view.ruby_control_widget.reference_pos_txt.editingFinished.connect(self.reference_txt_changed)
         self.main_view.ruby_control_widget.temperature_txt.editingFinished.connect(self.temperature_txt_changed)
+        self.main_view.ruby_control_widget.conditions_cb.currentIndexChanged.connect(self.condition_cb_changed)
     
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -409,12 +410,15 @@ class TRaxRubyController():
     def axes_release(self,event):
         self.pos_update_timer.stop()
     
-    def update_ruby_pos(self):
+    def update_ruby_mouse_move_pos(self):
         x_coord=self._axes_mouse_x
         if x_coord is not None:
-            self.data.set_click_pos(x_coord)
-            self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f'%x_coord)
-            self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+            self.update_ruby_pos(x_coord)
+
+    def update_ruby_pos(self,x_coord):
+        self.data.set_click_pos(x_coord)
+        self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f'%x_coord)
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
 
     def axes_mouse_scroll(self,event):
         curr_xlim = self.main_view.graph_1axes.axes.get_xlim()
@@ -440,10 +444,20 @@ class TRaxRubyController():
 
 
     def reference_txt_changed(self):
-        self.data.set_click_pos(np.double(self.main_view.ruby_control_widget.reference_pos_txt.text()))
+        self.data.set_ruby_reference_pos(np.double(self.main_view.ruby_control_widget.reference_pos_txt.text()))
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
 
     def temperature_txt_changed(self):
         self.data.set_temperature(np.double(self.main_view.ruby_control_widget.temperature_txt.text()))
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+
+    def condition_cb_changed(self):
+        ind=self.main_view.ruby_control_widget.conditions_cb.currentIndex()
+        if ind==0:
+            self.data.set_ruby_condition('hydrostatic')
+        elif ind==1:
+            self.data.set_ruby_condition('non-hydrostatic')
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
     
     def auto_process_cb_click(self):
         if self.main_view.ruby_control_widget.auto_process_cb.isChecked():
