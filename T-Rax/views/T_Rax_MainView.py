@@ -286,8 +286,8 @@ class T_Rax_1axes_graph():
         self._hidden = False
 
     def create_graph(self):
-        self.data_line, = self.axes.plot([],[],'-', color = (0.7,0.9,0.9), lw=1)
-        self.fit_line, = self.axes.plot([],[], '-', color = 'red', lw=1)
+        self.data_line, = self.axes.plot([],[],'-', color = (0.7,0.9,0.9), lw=2)
+        self.fit_line, = self.axes.plot([],[], '-', color = 'red', lw=2)
         self.pos_line, = self.axes.plot([],[], '-', color = 'white', lw=2)
         
         self.axes.set_xlabel('$\lambda$ $(nm)$', size=11)
