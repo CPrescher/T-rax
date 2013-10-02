@@ -117,9 +117,13 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             self.us_rect.active=False
             ResizeableRectangle.reset()
         except:
+            pass
+        try:
             self.min_line.active=False
             self.max_line.active=False
             MoveableLine.reset()
+        except:
+            pass
         try:
             self.plot_img()
             self.plot_rects()
@@ -164,7 +168,6 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def connect_lines(self):
         self.min_line.connect()
         self.max_line.connect()
-
 
     def create_wavelength_x_axis(self):
         xlimits = self.data.get_x_limits()

@@ -210,6 +210,7 @@ class TRaxTemperatureController():
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_temperature_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
+        print self.data.get_exp_file_name()
         self.main_view.set_temperature_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
         self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
                                            self.data.get_us_calib_file_name().replace('\\','/').split('/')[-1])
