@@ -21,13 +21,6 @@ class TraxData(object):
         pub.sendMessage("EXP DATA CHANGED", self)
         pub.sendMessage("ROI CHANGED", self)
 
-    def _read_roi_param(self):
-        if os.path.isfile('roi_data.txt'):
-            roi_list = np.loadtxt('roi_data.txt',delimiter=',')
-            self.roi_data = ROIData(map(int, roi_list[0]),map(int, roi_list[1]))
-        else:
-            self.roi_data = ROIData([100,1000,80,90],[100,1000,10,20])
-
     def _create_dummy_img(self):
         self.exp_data=DummyImg(self.roi_data_manager)
         self.roi_data =self.exp_data.roi_data
@@ -76,6 +69,12 @@ class TraxData(object):
     def set_ds_calib_temp(self, val):
         self.ds_calib_param.set_temp(val)
         pub.sendMessage("EXP DATA CHANGED", self)
+
+    def get_ds_calib_modus(self):
+        return self.ds_calib_param.modus
+
+    def get_us_calib_modus(self):
+        return self.us_calib_param.modus
 
     def load_ds_calib_etalon(self, fname):
         self.ds_calib_param.load_etalon_spec(fname)
@@ -165,6 +164,12 @@ class TraxData(object):
     def get_us_calib_etalon_file_name(self):
         return self.us_calib_param.get_etalon_fname()
 
+    def get_ds_calib_temperature(self):
+        return self.ds_calib_param.temp
+
+    def get_us_calib_temperature(self):
+        return self.us_calib_param.temp
+
     def get_exp_img_data(self):
         return self.exp_data.get_img_data()
 
@@ -221,6 +226,12 @@ class TraxData(object):
         except AttributeError:
             return 0
 
+    def get_ds_roi(self):
+        return self.roi_data.ds_roi.get_roi_as_list()
+
+    def get_us_roi(self):
+        return self.roi_data.us_roi.get_roi_as_list()
+
     def get_whole_spectrum(self):
         return self.exp_data.x, self.exp_data.y_whole_spectrum
 
@@ -236,6 +247,26 @@ class TraxData(object):
     def set_x_roi_limits_to(self, limits):
         limits_ind=self.calculate_ind(limits)
         self.roi_data.set_x_limits(limits_ind)
+
+    def get_settings(self):
+        return TraxTemperatureSettings(self)
+
+    def load_settings(self, settings):
+        if not settings.ds_calib_file_name == 'Select File...':
+            self.load_ds_calib_data(settings.ds_calib_file_name)
+        if not settings.us_calib_file_name == 'Select File...':
+            self.load_us_calib_data(settings.us_calib_file_name)
+        self.load_ds_calib_etalon(settings.ds_etalon_file_name)
+        self.load_us_calib_etalon(settings.us_etalon_file_name)
+        self.set_ds_calib_modus(settings.ds_modus)
+        self.set_us_calib_modus(settings.us_modus)
+        self.set_ds_calib_temp(settings.ds_temperature)
+        self.set_us_calib_temp(settings.us_temperature)
+        self.roi_data_manager._add(settings.img_dimension, ROIData(settings.ds_roi,settings.us_roi))
+        self.roi_data = self.roi_data_manager.get_roi_data(settings.img_dimension)
+        self.exp_data.roi_data = self.roi_data
+        pub.sendMessage("EXP DATA CHANGED", self)
+
 
 
 
@@ -566,9 +597,13 @@ class ROIDataManager():
             return False
 
     def _add(self, img_dimension, roi_data):
-        self._img_dimensions_list.append(img_dimension)
-        self._roi_data_list.append(roi_data)
-        self._num+=1
+        if self._exists(img_dimension):
+             ind=self._get_dimension_ind(img_dimension)
+             self._roi_data_list[ind]=roi_data
+        else:
+             self._img_dimensions_list.append(img_dimension)
+             self._roi_data_list.append(roi_data)
+             self._num+=1
 
     def _get_dimension_ind(self,img_dimension):
         for ind in range(self._num):
@@ -655,3 +690,23 @@ def black_body_function(wavelength, temp, scaling):
 
 def gauss_curve_function(x, scaling, center, sigma):
     return scaling*np.exp(-(x-float(center))**2/(2*sigma**2))
+
+
+class TraxTemperatureSettings():
+    def __init__(self, data):
+        self.ds_calib_file_name = data.get_ds_calib_file_name()
+        self.us_calib_file_name = data.get_us_calib_file_name()
+
+        self.ds_etalon_file_name = data.get_ds_calib_etalon_file_name()
+        self.us_etalon_file_name = data.get_us_calib_etalon_file_name()
+
+        self.ds_modus = data.get_ds_calib_modus()
+        self.us_modus = data.get_ds_calib_modus()
+
+        self.ds_temperature = data.get_ds_calib_temperature()
+        self.us_temperature = data.get_us_calib_temperature()
+
+        self.ds_roi = data.get_ds_roi()
+        self.us_roi = data.get_us_roi()
+
+        self.img_dimension = data.exp_data.get_img_dimension()

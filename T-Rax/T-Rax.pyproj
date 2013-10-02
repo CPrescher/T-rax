@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>7b93f3b8-989a-4a3a-92b3-4d75d1a84f3c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>T_Rax_QtController.py</StartupFile>
+    <StartupFile>unittests\T_Rax_Data_Test.py</StartupFile>
     <SearchPath>..\T-Rax;TRaxROISelector</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>

@@ -1,5 +1,6 @@
 import sys
 import os
+import pickle
 from wx.lib.pubsub import Publisher as pub
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import SIGNAL
@@ -138,6 +139,8 @@ class TRaxTemperatureController():
         self.create_temperature_control_signals()
         self.create_auto_process_signal()
 
+        self.create_settings_signals()
+
         self.main_view.temperature_control_widget.epics_connection_cb.clicked.connect(self.epics_connection_cb_clicked)
         self.epics_is_connected=False
 
@@ -176,6 +179,9 @@ class TRaxTemperatureController():
 
     def create_roi_view_signals(self):
         self.connect_click_function(self.main_view.temperature_control_widget.roi_setup_btn, self.load_roi_view)
+
+    def create_settings_signals(self):
+        self.connect_click_function(self.main_view.temperature_control_widget.save_settings_btn, self.save_settings_btn_click)
     
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -324,6 +330,13 @@ class TRaxTemperatureController():
             return filename.split('-')[-1].split('.')[0] == 'raw'
         except:
             return false        
+
+
+    def save_settings_btn_click(self):
+        pickle.dump(self.data.get_settings(),open('settings/test_2.tra','wb'))
+
+    def load_setting_btn_click(self, filename=None):
+        self.data.load_settings(pickle.load(open('settings/test_2.tra','rb')))
         
     def epics_connection_cb_clicked(self):
         if self.main_view.temperature_control_widget.epics_connection_cb.isChecked():
