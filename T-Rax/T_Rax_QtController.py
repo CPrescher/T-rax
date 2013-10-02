@@ -145,6 +145,8 @@ class TRaxTemperatureController():
         self.main_view.temperature_control_widget.us_temperature_rb.toggled.connect(self.us_temperature_rb_clicked)
         self.main_view.temperature_control_widget.ds_etalon_rb.toggled.connect(self.ds_etalon_rb_clicked)
         self.main_view.temperature_control_widget.us_etalon_rb.toggled.connect(self.us_etalon_rb_clicked)
+        self.connect_click_function(self.main_view.temperature_control_widget.ds_etalon_btn,self.ds_etalon_btn_clicked)
+        self.connect_click_function(self.main_view.temperature_control_widget.us_etalon_btn,self.us_etalon_btn_clicked)
         self.main_view.temperature_control_widget.ds_temperature_txt.editingFinished.connect(self.ds_temperature_changed)
         self.main_view.temperature_control_widget.us_temperature_txt.editingFinished.connect(self.us_temperature_changed)
 
@@ -253,6 +255,22 @@ class TRaxTemperatureController():
     
     def us_etalon_rb_clicked(self):
         self.data.set_us_calib_modus(1)
+
+    def ds_etalon_btn_clicked(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Downstream Etalaon Spectrum", 
+                                          directory = self._calib_working_dir))
+        
+        if filename is not '':
+            self.data.load_ds_calib_etalon(filename)
+
+    def us_etalon_btn_clicked(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Upstream Etalaon Spectrum", 
+                                          directory = self._calib_working_dir))
+        
+        if filename is not '':
+            self.data.load_us_calib_etalon(filename)
 
     def ds_temperature_changed(self):
         self.data.set_ds_calib_temp(np.double(self.main_view.temperature_control_widget.ds_temperature_txt.text()))
