@@ -126,8 +126,6 @@ class TRaxTemperatureController():
         self.data = TraxData()
         self.main_view = main_view
         self.create_signals()
-        self.load_exp_data('D:\Programming\VS Projects\T-Rax\T-Rax\sample files\IR files\lamp_6p5A.SPE')
-        
         pub.sendMessage("EXP DATA CHANGED", self)
         pub.sendMessage("ROI CHANGED")
 
@@ -310,10 +308,12 @@ class TRaxTemperatureController():
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
         if len(self._files_added) > 0:
             new_file_str = self._files_added[-1]
-            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
-                path = self._exp_working_dir + '\\' + new_file_str
-                self.data.load_exp_data(path)
-            self._files_before = self._files_now
+            file_info = os.stat(self._exp_working_dir+new_file_str)
+            if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
+                if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+                    path = self._exp_working_dir + new_file_str
+                    self.data.load_exp_data(path)
+                self._files_before = self._files_now
             
     def file_is_spe(self, filename):
         return filename.endswith('.SPE') or filename.endswith('.spe')
@@ -508,10 +508,12 @@ class TRaxRubyController():
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
         if len(self._files_added) > 0:
             new_file_str = self._files_added[-1]
-            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
-                path = self._exp_working_dir + '\\' + new_file_str
-                self.data.load_ruby_data(path)
-            self._files_before = self._files_now
+            file_info = os.stat(self._exp_working_dir+new_file_str)
+            if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
+                if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+                    path = self._exp_working_dir + new_file_str
+                    self.data.load_ruby_data(path)
+                self._files_before = self._files_now
             
     def file_is_spe(self, filename):
         return filename.endswith('.SPE') or filename.endswith('.spe')

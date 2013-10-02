@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_ROI_Single_Selector.ui'
 #
-# Created: Wed Oct 02 10:44:19 2013
+# Created: Wed Oct 02 14:54:33 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
