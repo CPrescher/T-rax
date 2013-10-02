@@ -457,7 +457,7 @@ QGroupBox::title {
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="fitting_param_roi">
+       <widget class="QGroupBox" name="fitting_roi_box">
         <property name="minimumSize">
          <size>
           <width>180</width>

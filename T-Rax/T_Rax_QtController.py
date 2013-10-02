@@ -44,6 +44,7 @@ class TRaxMainController(object):
     def create_signals(self):
         self.create_navigation_signals()
         self.create_axes_listener()
+        self.create_error_listener()
         self.main_view.closeEvent = self.closeEvent  
 
     def create_navigation_signals(self):
@@ -56,6 +57,9 @@ class TRaxMainController(object):
     def create_axes_listener(self):
         self.main_view.graph_1axes.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
         self.main_view.temperature_control_graph.canvas.mpl_connect('motion_notify_event', self.on_mouse_move_in_graph)
+
+    def create_error_listener(self):
+        pub.subscribe(self.interpolation_error, "INTERPOLATION RANGE ERROR")
 
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -83,6 +87,12 @@ class TRaxMainController(object):
                               % {'x':x_coord, 'y':y_coord})
         else:
            self.main_view.status_coord_lbl.setText('')
+
+
+    def interpolation_error(self, event):
+        error_message=QtGui.QMessageBox.warning(None, 'Interpolation Error',
+                                                'Etalon spectrum file has not the right range. Please select either standard temperature or load another etalon file.',
+                                                QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
     def save_directories(self):
         fid = open('parameters.txt', 'w')
@@ -116,6 +126,7 @@ class TRaxTemperatureController():
         self.data = TraxData()
         self.main_view = main_view
         self.create_signals()
+        self.load_exp_data('D:\Programming\VS Projects\T-Rax\T-Rax\sample files\IR files\lamp_6p5A.SPE')
         
         pub.sendMessage("EXP DATA CHANGED", self)
         pub.sendMessage("ROI CHANGED")
@@ -204,6 +215,7 @@ class TRaxTemperatureController():
                                            self.data.get_us_calib_file_name().replace('\\','/').split('/')[-1])
         self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calib_etalon_file_name().replace('\\','/').split('/')[-1])
         self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calib_etalon_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.set_fit_limits(self.data.get_x_roi_limits())
         self.update_pv_names()
 
     def roi_changed(self, event):
@@ -291,6 +303,7 @@ class TRaxTemperatureController():
             self.autoprocess_timer.stop()
 
     def check_files(self):
+        print self._exp_working_dir
         self._files_now = dict([(f,None) for f in os.listdir(self._exp_working_dir)])
         self._files_added = [f for f in self._files_now if not f in self._files_before]
         self._files_removed = [f for f in self._files_before if not f in self._files_now]

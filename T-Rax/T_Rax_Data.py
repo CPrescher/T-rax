@@ -455,9 +455,11 @@ class CalibParam(object):
             y=black_body_function(wavelength, self.temp, 1)
             return y/max(y)
         elif self.modus==1:
-            return self.etalon_spectrum_func(wavelength)
-        elif self.modus==2:
-            return np.polynomial.polynomial.polyval(wavelength, self.polynom)
+            try:
+                return self.etalon_spectrum_func(wavelength)
+            except:
+                pub.sendMessage("INTERPOLATION RANGE ERROR", self)
+                return np.ones(np.size(wavelength))
 
     def get_etalon_fname(self):
         return self.etalon_file_name

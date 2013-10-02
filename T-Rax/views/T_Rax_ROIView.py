@@ -1,4 +1,4 @@
-from UIFiles.T_Rax_ROI_Selector_window import Ui_roi_selector_main_widget
+from UIFiles.T_Rax_ROI_Selector import Ui_roi_selector_main_widget
 from T_Rax_Data import TraxData, ROI
 from PyQt4 import QtGui, QtCore
 import sys
@@ -72,13 +72,20 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.old_size = 0,0
 
     def draw_image(self):
-        self.plot_img()
-        self.plot_rects()
-        self.redraw_figure()
-        self.connect_rectangles()
-        self.mode = 'IMG'
-        self.fitting_param_roi.hide()
-        pub.sendMessage("IMG LOADED", None)
+        try:
+            self.plot_img()
+            self.plot_rects()
+            self.redraw_figure()
+            self.connect_rectangles()
+            self.mode = 'IMG'
+            pub.sendMessage("IMG LOADED", None)
+        except NotImplementedError, e:
+            self.plot_graph()
+            self.plot_lines()
+            self.redraw_figure()
+            self.connect_lines()
+            self.mode='GRAPH'
+            pub.sendMessage('GRAPH LOADED', None)
 
     def plot_img(self):
         self.axes.cla()
@@ -103,16 +110,30 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.ds_rect = self.create_rectangle(self.data.roi_data.ds_roi, colors.DOWNSTREAM_COLOR_NORM, 'DS')    
 
     def update_img(self):
-        self.plot_img()
         #need to reset the ResizeableRectangles like that, because the Garbage Collector is not fast enough to
         #delete all the rectangles.
-        self.ds_rect.active=False
-        self.us_rect.active=False
-        ResizeableRectangle.reset()
-        #----------------------------------------------------
-        self.plot_rects()
-        self.redraw_figure()
-        self.connect_rectangles()
+        try:
+            self.ds_rect.active=False
+            self.us_rect.active=False
+            ResizeableRectangle.reset()
+        except:
+            self.min_line.active=False
+            self.max_line.active=False
+            MoveableLine.reset()
+        try:
+            self.plot_img()
+            self.plot_rects()
+            self.redraw_figure()
+            self.connect_rectangles()
+            self.mode = 'IMG'
+            pub.sendMessage("IMG LOADED", None)
+        except NotImplementedError, e:
+            self.plot_graph()
+            self.plot_lines()
+            self.redraw_figure()
+            self.connect_lines()
+            self.mode='GRAPH'
+            pub.sendMessage('GRAPH LOADED', None)
         
 
     def create_rectangle(self, roi, color, flag):
@@ -121,6 +142,29 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def connect_rectangles(self):
         self.us_rect.connect()
         self.ds_rect.connect()
+
+    def plot_graph(self):
+        self.graph_spec = self.data.get_exp_graph_data()
+        self.axes.set_xlim(self.graph_spec.get_x_plot_limits())
+        self.axes.set_ylim(self.graph_spec.get_y_plot_limits())
+        self.graph = self.axes.plot(self.graph_spec.x, self.graph_spec.y, 'c-', lw=1)
+
+    def plot_lines(self):
+        x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
+        axes_xlim = self.axes.get_xlim()
+        self.min_line = self.create_line(x_limits[0], [axes_xlim[0], x_limits[1] - 1],"MIN")
+        self.max_line = self.create_line(x_limits[1], [x_limits[0] + 1, axes_xlim[1]],"MAX")
+
+    def create_line(self, pos, limits, flag):
+        return MoveableLine(self, self.axes, self.canvas,pos, limits, flag)
+
+    def update_lines(self):
+        self.redraw_figure()
+
+    def connect_lines(self):
+        self.min_line.connect()
+        self.max_line.connect()
+
 
     def create_wavelength_x_axis(self):
         xlimits = self.data.get_x_limits()
@@ -150,8 +194,13 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.redraw_figure()
 
     def update_graph_roi(self):
-        self.us_rect.set_roi(self.data.roi_data.us_roi)
-        self.ds_rect.set_roi(self.data.roi_data.ds_roi)
+        try:
+            self.us_rect.set_roi(self.data.roi_data.us_roi)
+            self.ds_rect.set_roi(self.data.roi_data.ds_roi)
+        except:
+            self.min_line.set_roi(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_min))
+            self.max_line.set_roi(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_max))
+            self.redraw_figure()
 
     def update_txt_roi(self):
         ds_txt_roi = self.data.roi_data.ds_roi.get_roi_as_list()
@@ -197,6 +246,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
 
 class MoveableLine:
     lock = None # only one can be animated at a time
+    lines=[]
     def __init__(self, parent, axes, canvas, pos, limit, flag):
         self.flag = flag
         self.parent = parent
@@ -212,6 +262,15 @@ class MoveableLine:
         self.limit = limit
         self.press = None
         self.mode = None
+        self.active = True
+
+        MoveableLine.lines.append(self.line)
+        
+        self.is_animated = False
+        self.animation_timer=QtCore.QTimer(self.parent)
+        self.update_timer = QtCore.QTimer(self.parent)
+        self.update_timer.setInterval(40)
+        self.parent.connect(self.update_timer,QtCore.SIGNAL('timeout()'), self.send_message)
 
     def set_roi(self, pos):
         if self.press == None:
@@ -230,14 +289,30 @@ class MoveableLine:
 
     def on_press(self, event):
         if event.inaxes != self.line.axes: return
-        if ResizeableRectangle.lock is not None: return
+        if MoveableLine.lock is not None: return
+        if self.active is not True: return
         x_click = event.xdata
         x0 = self.line.get_xdata()[0]
 
         if x_click >= x0 - self.x_border and x_click <= x0 + self.x_border:
             self.press = x0, x_click
             MoveableLine.lock = self
-            #self.line.set_animated(True)
+            self.line.set_animated(True)
+            if not self.is_animated:
+                ResizeableRectangle.lock = self
+                self.animate()
+                self.update_timer.start()
+                self.is_animated=True
+    
+    def animate(self):
+        try: 
+            self.ani._stop()
+        except:
+            pass
+        self.ani = animation.FuncAnimation(self.axes.figure, self.get_lines, interval=5, frames=1, blit=True)
+
+    def get_lines(self,i):
+        return MoveableLine.lines
 
     def on_motion(self, event):
         'on motion we will move the rect if the mouse is over us'
@@ -247,7 +322,7 @@ class MoveableLine:
         x_click = event.xdata
         x0, xpress = self.press
         dx = event.xdata - xpress
-        x_new_pos = int(x0 + dx)
+        x_new_pos = x_click
 
         if x_new_pos >= self.limit[0] and x_new_pos <= self.limit[1]:
             self.line.set_xdata([x_new_pos,x_new_pos])
@@ -255,24 +330,40 @@ class MoveableLine:
             self.line.set_xdata([self.limit[0], self.limit[0]])
         elif x_new_pos > self.limit[1]:
             self.line.set_xdata([self.limit[1], self.limit[1]])
-        self.send_message()
-        self.parent.update_lines()
 
     def send_message(self):
-        pub.sendMessage(self.flag + " ROI LINE CHANGED", self.line.get_xdata()[0])
+        try:
+            pub.sendMessage(self.flag + " ROI LINE CHANGED", self.line.get_xdata()[0])
+        except AttributeError:
+            pass
 
     def on_release(self, event):
+        for line in MoveableLine.lines:
+            line.set_animated(False)
+
+        try:
+            self.ani._stop()
+            self.ani._draw_next_frame(self.get_lines, True)
+            self.update_timer.stop()
+            self.send_message()
+        except:
+            pass
+        
         self.press = None
-        #self.line.set_animated(False)
-        MoveableLine.lock = None
+        self.mode = None
+        MoveableLine.lock = None      
+        self.is_animated=False
 
     def set_limit(self,limit):
         self.limit = limit
 
+    @classmethod
+    def reset(cls):
+        cls.lines = []
+
 class ResizeableRectangle:
     lock = None #only one rect can be animated at a time
     rects = []
-    num = 0
     def __init__(self, parent, axes, canvas, init_rect, color, flag):       
         self.flag = flag
         self.parent = parent
@@ -303,9 +394,6 @@ class ResizeableRectangle:
         self.update_timer = QtCore.QTimer(self.parent)
         self.update_timer.setInterval(40)
         self.parent.connect(self.update_timer,QtCore.SIGNAL('timeout()'), self.send_message)
-
-        ResizeableRectangle.num+=1
-        self.id=ResizeableRectangle.num
 
     def set_roi(self, roi): 
         if self.press == None:

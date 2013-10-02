@@ -47,9 +47,13 @@ class TRaxROIController(object):
     def create_pub_signals(self):
         pub.subscribe(self.ds_roi_graph_changed, "DS ROI GRAPH CHANGED")
         pub.subscribe(self.us_roi_graph_changed, "US ROI GRAPH CHANGED")
+        
+        pub.subscribe(self.min_roi_line_changed, "MIN ROI LINE CHANGED")
+        pub.subscribe(self.max_roi_line_changed, "MAX ROI LINE CHANGED")
+
         pub.subscribe(self.roi_changed, "ROI CHANGED")
-        #pub.subscribe(self.img_loaded, "IMG LOADED")
-        #pub.subscribe(self.graph_loaded, "GRAPH LOADED")
+        pub.subscribe(self.img_loaded, "IMG LOADED")
+        pub.subscribe(self.graph_loaded, "GRAPH LOADED")
         pub.subscribe(self.exp_data_changed, "EXP DATA CHANGED")
 
     def us_roi_txt_changed(self):
@@ -76,6 +80,16 @@ class TRaxROIController(object):
     def us_roi_graph_changed(self, event):
         self.data.roi_data.set_us_roi(event.data)
 
+    def min_roi_line_changed(self,event):
+        new_x_min = self.data.calculate_ind(event.data)
+        self.data.roi_data.set_x_min(new_x_min)
+        self.view.graph_panel.update_line_limits()
+
+    def max_roi_line_changed(self,event):
+        new_x_max = self.data.calculate_ind(event.data)
+        self.data.roi_data.set_x_max(new_x_max)
+        self.view.graph_panel.update_line_limits()
+
     def exp_data_changed(self, event):
         self.view.update_img()
 
@@ -97,6 +111,18 @@ class TRaxROIController(object):
     def shut_down_window(self):
         self.view.close()
 
+    def img_loaded(self, event=None):
+        self.mode = 'IMAGE'
+        self.view.downstream_roi_box.show()
+        self.view.upstream_roi_box.show()
+        self.view.fitting_roi_box.hide()
+
+    def graph_loaded(self, event=None):
+        self.mode = 'GRAPH'
+        self.view.downstream_roi_box.hide()
+        self.view.upstream_roi_box.hide()
+        self.view.fitting_roi_box.show()
+
     def show(self):
         self.save_roi_data()
         self.view.show()
@@ -104,6 +130,10 @@ class TRaxROIController(object):
         self.view.move(self.parent.x(), 
                        self.parent.y()+self.parent.height()+50)
         self.view.resize(self.parent.size().width(),self.view.size().height())
+        if self.mode =='IMAGE':
+            self.img_loaded()
+        else:
+            self.graph_loaded()
 
 
 if __name__=="__main__":
