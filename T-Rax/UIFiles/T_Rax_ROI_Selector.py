@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_ROI_Selector.ui'
 #
-# Created: Wed Oct 02 14:54:33 2013
+# Created: Wed Oct 02 15:30:18 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -73,11 +73,11 @@ class Ui_roi_selector_main_widget(object):
 "     left: 20px;\n"
 "}\n"
 "\n"
-"#upstream_roi_box{\n"
+"#downstream_roi_box{\n"
 "    color:  rgba(255,255,0,255);\n"
 "    border: 2px solid rgba(255,255,0,255);\n"
 "}\n"
-"#downstream_roi_box {\n"
+"#upstream_roi_box {\n"
 "    color: rgba(255,140,0,255);\n"
 "    border: 2px solid rgba(255,140,0,255);\n"
 "}\n"

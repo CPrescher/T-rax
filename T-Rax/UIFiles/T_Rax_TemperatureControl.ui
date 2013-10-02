@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>269</width>
-    <height>425</height>
+    <height>444</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -30,7 +30,7 @@
      padding-left: 5px;  
  }  
    
- QLabel , QCheckBox, QGroupBox, QRadioButton  {  
+ QLabel , QCheckBox, QGroupBox, QRadioButton, QComboBox  {  
      color: #F1F1F1;  
      font-weight: bold;  
  }  
@@ -46,6 +46,17 @@
      background: #F1F1F1;  
      color: black;  
  }  
+
+
+QComboBox {
+	background: #2D2D30;
+	border-radius:5px;
+	font-weight: normal;
+	padding: 4px;
+	padding-left: 8px;
+	text-align: right;
+	margin:3px;
+}
    
  QPushButton{  
      color:white;  
@@ -331,6 +342,54 @@
                </widget>
               </item>
              </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Settings</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QComboBox" name="settings_cb">
+            <item>
+             <property name="text">
+              <string>user_specified</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="QPushButton" name="load_settings_btn">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Load</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="save_settings_btn">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Save</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

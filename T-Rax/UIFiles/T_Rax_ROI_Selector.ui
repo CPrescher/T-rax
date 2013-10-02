@@ -60,11 +60,11 @@ QGroupBox::title {
      left: 20px;
 }
 
-#upstream_roi_box{
+#downstream_roi_box{
 	color:  rgba(255,255,0,255);
 	border: 2px solid rgba(255,255,0,255);
 }
-#downstream_roi_box {
+#upstream_roi_box {
 	color: rgba(255,140,0,255);
 	border: 2px solid rgba(255,140,0,255);
 }
