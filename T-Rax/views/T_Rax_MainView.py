@@ -24,6 +24,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         super(TRaxMainView, self).__init__(parent)
         self.setupUi(self)
         self.main_layout = self.main_frame.layout()
+        self.setWindowIcon(QtGui.QIcon('icons/first_version.png'))
         
         self.create_graphs()
         self.create_widgets()

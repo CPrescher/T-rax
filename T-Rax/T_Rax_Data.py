@@ -57,18 +57,21 @@ class TraxData(object):
             return ExpSpecData(img_file, self.roi_data_manager)
 
 
-    def load_ds_calib_data(self, file_name):
+    def load_ds_calib_data(self, file_name, send_message=True):
         self.ds_calib_data = self.read_exp_image_file(file_name)
         self.calc_spectra()
-        pub.sendMessage("EXP DATA CHANGED", self)
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED", self)
 
-    def set_ds_calib_modus(self, modus):
+    def set_ds_calib_modus(self, modus, send_message=True):
         self.ds_calib_param.set_modus(modus)
-        pub.sendMessage("EXP DATA CHANGED", self)
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED", self)
 
-    def set_ds_calib_temp(self, val):
-        self.ds_calib_param.set_temp(val)
-        pub.sendMessage("EXP DATA CHANGED", self)
+    def set_ds_calib_temp(self, val,send_message=True):
+        self.ds_calib_param.set_temp(val) 
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED", self)
 
     def get_ds_calib_modus(self):
         return self.ds_calib_param.modus
@@ -76,34 +79,31 @@ class TraxData(object):
     def get_us_calib_modus(self):
         return self.us_calib_param.modus
 
-    def load_ds_calib_etalon(self, fname):
+    def load_ds_calib_etalon(self, fname, send_message=True):
         self.ds_calib_param.load_etalon_spec(fname)
-        pub.sendMessage("EXP DATA CHANGED", self)
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED", self)
 
-    def set_ds_calib_polynom(self, polynom):
-        self.ds_calib_param.set_polynom(polynom)
-        pub.sendMessage("EXP DATA CHANGED", self)
-
-    def load_us_calib_data(self, file_name):
+    def load_us_calib_data(self, file_name,send_message=True):
         self.us_calib_data = self.read_exp_image_file(file_name)
         self.calc_spectra()
-        pub.sendMessage("EXP DATA CHANGED", self)
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED", self)
 
-    def set_us_calib_modus(self, modus):
+    def set_us_calib_modus(self, modus,sendMessage=True):
         self.us_calib_param.set_modus(modus)
-        pub.sendMessage("EXP DATA CHANGED", self)
+        if sendMessage:
+            pub.sendMessage("EXP DATA CHANGED", self)
 
-    def set_us_calib_temp(self, val):
+    def set_us_calib_temp(self, val,send_message=True ):
         self.us_calib_param.set_temp(val)
-        pub.sendMessage("EXP DATA CHANGED", self)
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED", self)
 
-    def load_us_calib_etalon(self, fname):
+    def load_us_calib_etalon(self, fname, send_message=True):
         self.us_calib_param.load_etalon_spec(fname)
-        pub.sendMessage("EXP DATA CHANGED", self)
-
-    def set_us_calib_polynom(self, polynom):
-        self.us_calib_param.set_polynom(polynom)
-        pub.sendMessage("EXP DATA CHANGED", self)
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED", self)
 
     def calculate_wavelength(self,channel):
         if isinstance(channel,list):
@@ -254,17 +254,22 @@ class TraxData(object):
     def load_settings(self, settings):
         if not settings.ds_calib_file_name == 'Select File...':
             self.load_ds_calib_data(settings.ds_calib_file_name)
+        else:
+            self.ds_calib_data = None
         if not settings.us_calib_file_name == 'Select File...':
             self.load_us_calib_data(settings.us_calib_file_name)
-        self.load_ds_calib_etalon(settings.ds_etalon_file_name)
-        self.load_us_calib_etalon(settings.us_etalon_file_name)
-        self.set_ds_calib_modus(settings.ds_modus)
-        self.set_us_calib_modus(settings.us_modus)
-        self.set_ds_calib_temp(settings.ds_temperature)
-        self.set_us_calib_temp(settings.us_temperature)
+        else:
+            self.us_calib_data = None
+        self.load_ds_calib_etalon(settings.ds_etalon_file_name, False)
+        self.load_us_calib_etalon(settings.us_etalon_file_name, False)
         self.roi_data_manager._add(settings.img_dimension, ROIData(settings.ds_roi,settings.us_roi))
         self.roi_data = self.roi_data_manager.get_roi_data(settings.img_dimension)
         self.exp_data.roi_data = self.roi_data
+        self.set_ds_calib_modus(settings.ds_modus, False)
+        self.set_us_calib_modus(settings.us_modus, False)
+        self.set_ds_calib_temp(settings.ds_temperature, False)
+        self.set_us_calib_temp(settings.us_temperature, False)
+        self.calc_spectra()
         pub.sendMessage("EXP DATA CHANGED", self)
 
 

@@ -149,7 +149,7 @@ QComboBox {
    <item>
     <widget class="QTabWidget" name="tab_control">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="experiment_tab">
       <attribute name="title">
@@ -349,7 +349,7 @@ QComboBox {
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="settings_box">
          <property name="title">
           <string>Settings</string>
          </property>

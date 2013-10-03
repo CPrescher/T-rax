@@ -1,5 +1,6 @@
 ﻿import unittest
 import sys
+import os
 import numpy as np
 from PyQt4 import QtGui
 from T_Rax_QtController import TRaxMainController
@@ -69,6 +70,21 @@ class Test_QT_GUI_Test(unittest.TestCase):
 
         self.assertEqual(self.controller.main_view.temperature_control_widget.ds_etalon_lbl.text(),'15A_lamp.txt')
         self.assertEqual(self.controller.main_view.temperature_control_widget.us_etalon_lbl.text(),'15A_lamp.txt')
+
+    def test_settings(self):
+        self.controller.temperature_controller.save_settings_btn_click(os.getcwd()+'/unittest files/setting1.trs')
+        self.controller.temperature_controller.load_settings_btn_click(os.getcwd()+'/unittest files/setting1.trs')
+
+        self.controller.temperature_controller.load_ds_calib_data(os.getcwd()+'/unittest files/dn_15.SPE')
+        self.controller.temperature_controller.load_us_calib_data(os.getcwd()+'/unittest files/up_15.SPE')
+        self.controller.temperature_controller.save_settings_btn_click(os.getcwd()+'/unittest files/setting2.trs')
+        self.controller.temperature_controller.load_settings_btn_click(os.getcwd()+'/unittest files/setting1.trs')
+        self.assertEqual(str(self.controller.main_view.temperature_control_widget.ds_calib_filename_lbl.text()),
+                        'Select File...')
+        
+        self.controller.temperature_controller.load_settings_btn_click(os.getcwd()+'/unittest files/setting2.trs')
+        self.assertEqual(str(self.controller.main_view.temperature_control_widget.ds_calib_filename_lbl.text()),
+                        'dn_15.SPE')
 
 if __name__ == '__main__':
     unittest.main()

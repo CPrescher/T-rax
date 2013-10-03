@@ -42,6 +42,9 @@ class TRaxMainController(object):
             self.temperature_controller._calib_working_dir = os.getcwd(),
             self.ruby_controller._exp_working_dir = os.getcwd()
 
+  
+
+
     def create_signals(self):
         self.create_navigation_signals()
         self.create_axes_listener()
@@ -127,6 +130,7 @@ class TRaxTemperatureController():
         self.data = TraxData()
         self.main_view = main_view
         self.create_signals()
+        self.load_settings()
         pub.sendMessage("EXP DATA CHANGED", self)
         pub.sendMessage("ROI CHANGED")
 
@@ -138,11 +142,22 @@ class TRaxTemperatureController():
         self.create_calibration_signals()
         self.create_temperature_control_signals()
         self.create_auto_process_signal()
-
         self.create_settings_signals()
 
         self.main_view.temperature_control_widget.epics_connection_cb.clicked.connect(self.epics_connection_cb_clicked)
         self.epics_is_connected=False
+
+    def load_settings(self):
+        self._settings_files_list=[]
+        self._settings_file_names_list=[]
+        for file in os.listdir(os.getcwd()+'/settings/'):
+            if file.endswith('.trs'):
+                self._settings_files_list.append(file)
+                self._settings_file_names_list.append(file.split('.')[:-1][0])
+        self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
+        self.main_view.temperature_control_widget.settings_cb.clear()
+        self.main_view.temperature_control_widget.settings_cb.addItems(self._settings_file_names_list)
+        self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
 
     def create_temperature_pub_listeners(self):
         pub.subscribe(self.data_changed, "EXP DATA CHANGED")
@@ -182,6 +197,8 @@ class TRaxTemperatureController():
 
     def create_settings_signals(self):
         self.connect_click_function(self.main_view.temperature_control_widget.save_settings_btn, self.save_settings_btn_click)
+        self.connect_click_function(self.main_view.temperature_control_widget.load_settings_btn, self.load_settings_btn_click)
+        self.main_view.temperature_control_widget.settings_cb.currentIndexChanged.connect(self.settings_cb_changed)
     
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -210,11 +227,11 @@ class TRaxTemperatureController():
             self.roi_controller.show()
 
     def data_changed(self, event):
+        print 'data changed'
         self.main_view.temperature_control_graph.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_temperature_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
-        print self.data.get_exp_file_name()
         self.main_view.set_temperature_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
         self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
                                            self.data.get_us_calib_file_name().replace('\\','/').split('/')[-1])
@@ -308,7 +325,6 @@ class TRaxTemperatureController():
             self.autoprocess_timer.stop()
 
     def check_files(self):
-        print self._exp_working_dir
         self._files_now = dict([(f,None) for f in os.listdir(self._exp_working_dir)])
         self._files_added = [f for f in self._files_now if not f in self._files_before]
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
@@ -332,12 +348,40 @@ class TRaxTemperatureController():
             return false        
 
 
-    def save_settings_btn_click(self):
-        pickle.dump(self.data.get_settings(),open('settings/test_2.tra','wb'))
-
-    def load_setting_btn_click(self, filename=None):
-        self.data.load_settings(pickle.load(open('settings/test_2.tra','rb')))
+    def save_settings_btn_click(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getSaveFileName(self.main_view, caption="Save Current Settings", 
+                                          directory = os.getcwd()+'/settings/', filter='*.trs'))
         
+        if filename is not '':
+            pickle.dump(self.data.get_settings(),open(filename,'wb'))
+            self.load_settings()
+
+    def load_settings_btn_click(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load new Settings", 
+                                          directory = os.getcwd()+'/settings/', filter='*.trs'))
+        
+        if filename is not '':
+            settings=pickle.load(open(filename,'rb'))
+            self.main_view.temperature_control_widget.ds_temperature_txt.setText(str(int(settings.ds_temperature)))
+            self.main_view.temperature_control_widget.us_temperature_txt.setText(str(int(settings.us_temperature)))
+            if settings.ds_modus==0:
+                self.main_view.temperature_control_widget.ds_temperature_rb.toggle()
+            else:
+                self.main_view.temperature_control_widget.ds_etalon_rb.toggle()
+            if settings.ds_modus==0:
+                self.main_view.temperature_control_widget.us_temperature_rb.toggle()
+            else:
+                self.main_view.temperature_control_widget.us_etalon_rb.toggle()
+            self.data.load_settings(settings)
+
+    def settings_cb_changed(self):
+        current_index=self.main_view.temperature_control_widget.settings_cb.currentIndex()
+        new_file_name = os.getcwd()+'/settings/'+self._settings_files_list[current_index]
+        self.load_settings_btn_click(new_file_name)
+            
+
     def epics_connection_cb_clicked(self):
         if self.main_view.temperature_control_widget.epics_connection_cb.isChecked():
             self.pv_us_temperature=PV('13IDD:us_las_temp.VAL')

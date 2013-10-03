@@ -31,8 +31,9 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.create_graph()
         self.draw_image()
         self.resizeEvent = self.resize_graph
-        self.resize(900,250)
+        self.setWindowFlags(QtCore.Qt.Tool)
         self.move(parent.x(), parent.y()+parent.height()+50)
+        self.resize(parent.size().width(),150)
     
     def set_validator(self):
         self.set_ds_validator()

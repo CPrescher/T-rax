@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>263</width>
-    <height>611</height>
+    <height>393</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -46,12 +46,8 @@ QComboBox {
 	padding: 4px;
 	padding-left: 8px;
 	text-align: right;
+	margin:3px;
 }
-QComboBox:on { /* shift the text when the popup opens */
-     padding-top: 3px;
-     padding-left: 4px;
- }   
-
 
  QLineEdit{  
      border-radius: 5px;  

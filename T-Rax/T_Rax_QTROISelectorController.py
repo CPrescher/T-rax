@@ -14,7 +14,7 @@ class TRaxROIController(object):
         self.create_signals()
         self.view.update_txt_roi()
         self.save_roi_data()
-        self.mode = "temperature"
+        self.mode = "IMAGE"
 
 
     def create_signals(self):
@@ -127,13 +127,14 @@ class TRaxROIController(object):
         self.save_roi_data()
         self.view.show()
         self.view.activateWindow()
+        self.view.layout()
+        if self.mode =='IMAGE':
+            self.img_loaded()
+        elif self.mode =='GRAPH':
+            self.graph_loaded()
         self.view.move(self.parent.x(), 
                        self.parent.y()+self.parent.height()+50)
         self.view.resize(self.parent.size().width(),self.view.size().height())
-        if self.mode =='IMAGE':
-            self.img_loaded()
-        else:
-            self.graph_loaded()
 
 
 if __name__=="__main__":
