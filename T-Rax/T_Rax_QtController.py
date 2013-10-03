@@ -382,6 +382,13 @@ class TRaxTemperatureController():
             else:
                 self.main_view.temperature_control_widget.us_etalon_rb.toggle()
             self.data.load_settings(settings)
+            try:
+                ind= self.main_view.temperature_control_widget.settings_cb.findText(filename.replace('\\','/').split('/')[-1].split('.')[:-1][0])
+                self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
+                self.main_view.temperature_control_widget.settings_cb.setCurrentIndex(ind)
+                self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
+            except:
+                pass
                     
 
 
