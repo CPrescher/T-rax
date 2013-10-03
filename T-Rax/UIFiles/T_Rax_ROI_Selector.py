@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_ROI_Selector.ui'
 #
-# Created: Wed Oct 02 17:39:30 2013
+# Created: Thu Oct 03 11:08:21 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,7 @@ class Ui_roi_selector_main_widget(object):
     def setupUi(self, roi_selector_main_widget):
         roi_selector_main_widget.setObjectName(_fromUtf8("roi_selector_main_widget"))
         roi_selector_main_widget.resize(945, 484)
+        roi_selector_main_widget.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         roi_selector_main_widget.setStyleSheet(_fromUtf8("#roi_selector_main_widget{\n"
 "    background: #1E1E1E;    \n"
 "}\n"

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_RubyControl.ui'
 #
-# Created: Wed Oct 02 17:39:30 2013
+# Created: Thu Oct 03 11:08:22 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_ruby_control_widget(object):
     def setupUi(self, ruby_control_widget):
         ruby_control_widget.setObjectName(_fromUtf8("ruby_control_widget"))
-        ruby_control_widget.resize(263, 611)
+        ruby_control_widget.resize(263, 393)
         ruby_control_widget.setMaximumSize(QtCore.QSize(263, 16777215))
         ruby_control_widget.setStyleSheet(_fromUtf8(" #ruby_control_widget, #temperature_control_widget, #diamond_control_widget, QTabWidget::pane, QTabWidget::tab-bar,  \n"
 " #experiment_tab, #calibration_tab{  \n"
@@ -54,12 +54,8 @@ class Ui_ruby_control_widget(object):
 "    padding: 4px;\n"
 "    padding-left: 8px;\n"
 "    text-align: right;\n"
+"    margin:3px;\n"
 "}\n"
-"QComboBox:on { /* shift the text when the popup opens */\n"
-"     padding-top: 3px;\n"
-"     padding-left: 4px;\n"
-" }   \n"
-"\n"
 "\n"
 " QLineEdit{  \n"
 "     border-radius: 5px;  \n"

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
-# Created: Wed Oct 02 17:39:30 2013
+# Created: Thu Oct 03 11:08:22 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -64,6 +64,14 @@ class Ui_temperature_control_widget(object):
 "    padding-left: 8px;\n"
 "    text-align: right;\n"
 "    margin:3px;\n"
+"}\n"
+"QComboBox QAbstractItemView{\n"
+"    background: #2D2D30;\n"
+"    margin-left: 10px;\n"
+"    color: #F1F1F1;\n"
+"    selection-background-color: rgba(221, 124, 40, 120);\n"
+"    border-radius: 5px;\n"
+"\n"
 "}\n"
 "   \n"
 " QPushButton{  \n"
@@ -248,26 +256,26 @@ class Ui_temperature_control_widget(object):
         self.gridLayout_2.addLayout(self.horizontalLayout_3, 1, 1, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_2)
         self.verticalLayout_2.addWidget(self.groupBox_2)
-        self.groupBox_3 = QtGui.QGroupBox(self.experiment_tab)
-        self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
-        self.verticalLayout_7 = QtGui.QVBoxLayout(self.groupBox_3)
+        self.settings_box = QtGui.QGroupBox(self.experiment_tab)
+        self.settings_box.setObjectName(_fromUtf8("settings_box"))
+        self.verticalLayout_7 = QtGui.QVBoxLayout(self.settings_box)
         self.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
-        self.settings_cb = QtGui.QComboBox(self.groupBox_3)
+        self.settings_cb = QtGui.QComboBox(self.settings_box)
         self.settings_cb.setObjectName(_fromUtf8("settings_cb"))
         self.settings_cb.addItem(_fromUtf8(""))
         self.verticalLayout_7.addWidget(self.settings_cb)
         self.horizontalLayout_9 = QtGui.QHBoxLayout()
         self.horizontalLayout_9.setObjectName(_fromUtf8("horizontalLayout_9"))
-        self.load_settings_btn = QtGui.QPushButton(self.groupBox_3)
+        self.load_settings_btn = QtGui.QPushButton(self.settings_box)
         self.load_settings_btn.setMaximumSize(QtCore.QSize(16777215, 30))
         self.load_settings_btn.setObjectName(_fromUtf8("load_settings_btn"))
         self.horizontalLayout_9.addWidget(self.load_settings_btn)
-        self.save_settings_btn = QtGui.QPushButton(self.groupBox_3)
+        self.save_settings_btn = QtGui.QPushButton(self.settings_box)
         self.save_settings_btn.setMaximumSize(QtCore.QSize(16777215, 30))
         self.save_settings_btn.setObjectName(_fromUtf8("save_settings_btn"))
         self.horizontalLayout_9.addWidget(self.save_settings_btn)
         self.verticalLayout_7.addLayout(self.horizontalLayout_9)
-        self.verticalLayout_2.addWidget(self.groupBox_3)
+        self.verticalLayout_2.addWidget(self.settings_box)
         spacerItem = QtGui.QSpacerItem(20, 118, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.epics_connection_cb = QtGui.QCheckBox(self.experiment_tab)
@@ -395,7 +403,7 @@ class Ui_temperature_control_widget(object):
         self.label_4.setText(_translate("temperature_control_widget", "To", None))
         self.label_5.setText(_translate("temperature_control_widget", "nm", None))
         self.label_6.setText(_translate("temperature_control_widget", "nm", None))
-        self.groupBox_3.setTitle(_translate("temperature_control_widget", "Settings", None))
+        self.settings_box.setTitle(_translate("temperature_control_widget", "Settings", None))
         self.settings_cb.setItemText(0, _translate("temperature_control_widget", "user_specified", None))
         self.load_settings_btn.setText(_translate("temperature_control_widget", "Load", None))
         self.save_settings_btn.setText(_translate("temperature_control_widget", "Save", None))

@@ -31,7 +31,16 @@ class TraxData(object):
 
     def load_exp_data(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
-        self.roi_data =self.exp_data.roi_data
+        self.roi_data = self.exp_data.roi_data
+        try:
+            self.ds_calib_data.roi_data=self.roi_data
+        except AttributeError:
+            pass
+        try:
+            self.us_calib_data.roi_data=self.roi_data
+        except AttributeError:
+            pass
+        self.calc_spectra()
         pub.sendMessage("EXP DATA CHANGED", self)
 
     def load_next_exp_file(self):
@@ -251,20 +260,23 @@ class TraxData(object):
     def get_settings(self):
         return TraxTemperatureSettings(self)
 
-    def load_settings(self, settings):
+    def load_settings(self, settings):  
+        self.roi_data_manager._add(settings.img_dimension, ROIData(settings.ds_roi,settings.us_roi))      
+        self.roi_data = self.roi_data_manager.get_roi_data(self.exp_data.get_img_dimension())
+        self.exp_data.roi_data = self.roi_data
+
         if not settings.ds_calib_file_name == 'Select File...':
-            self.load_ds_calib_data(settings.ds_calib_file_name)
+            self.load_ds_calib_data(settings.ds_calib_file_name, False)
+            self.ds_calib_data.roi_data=self.roi_data
         else:
             self.ds_calib_data = None
         if not settings.us_calib_file_name == 'Select File...':
-            self.load_us_calib_data(settings.us_calib_file_name)
+            self.load_us_calib_data(settings.us_calib_file_name, False)
+            self.us_calib_data.roi_data=self.roi_data
         else:
             self.us_calib_data = None
         self.load_ds_calib_etalon(settings.ds_etalon_file_name, False)
         self.load_us_calib_etalon(settings.us_etalon_file_name, False)
-        self.roi_data_manager._add(settings.img_dimension, ROIData(settings.ds_roi,settings.us_roi))
-        self.roi_data = self.roi_data_manager.get_roi_data(settings.img_dimension)
-        self.exp_data.roi_data = self.roi_data
         self.set_ds_calib_modus(settings.ds_modus, False)
         self.set_us_calib_modus(settings.us_modus, False)
         self.set_ds_calib_temp(settings.ds_temperature, False)

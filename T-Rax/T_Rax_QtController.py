@@ -156,6 +156,7 @@ class TRaxTemperatureController():
                 self._settings_file_names_list.append(file.split('.')[:-1][0])
         self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
         self.main_view.temperature_control_widget.settings_cb.clear()
+        self.main_view.temperature_control_widget.settings_cb.addItem('None')
         self.main_view.temperature_control_widget.settings_cb.addItems(self._settings_file_names_list)
         self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
 
@@ -227,7 +228,6 @@ class TRaxTemperatureController():
             self.roi_controller.show()
 
     def data_changed(self, event):
-        print 'data changed'
         self.main_view.temperature_control_graph.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
@@ -350,16 +350,23 @@ class TRaxTemperatureController():
 
     def save_settings_btn_click(self, filename=None):
         if filename is None:
-            filename = str(QtGui.QFileDialog.getSaveFileName(self.main_view, caption="Save Current Settings", 
+            filename = str(QtGui.QFileDialog.getSaveFileName(self.main_view, caption="Save current settings", 
                                           directory = os.getcwd()+'/settings/', filter='*.trs'))
         
         if filename is not '':
             pickle.dump(self.data.get_settings(),open(filename,'wb'))
             self.load_settings()
+            try:
+                ind= self.main_view.temperature_control_widget.settings_cb.findText(filename.replace('\\','/').split('/')[-1].split('.')[:-1][0])
+                self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
+                self.main_view.temperature_control_widget.settings_cb.setCurrentIndex(ind)
+                self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
+            except:
+                pass
 
     def load_settings_btn_click(self, filename=None):
         if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load new Settings", 
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load new setting", 
                                           directory = os.getcwd()+'/settings/', filter='*.trs'))
         
         if filename is not '':
@@ -375,11 +382,15 @@ class TRaxTemperatureController():
             else:
                 self.main_view.temperature_control_widget.us_etalon_rb.toggle()
             self.data.load_settings(settings)
+                    
+
+
 
     def settings_cb_changed(self):
         current_index=self.main_view.temperature_control_widget.settings_cb.currentIndex()
-        new_file_name = os.getcwd()+'/settings/'+self._settings_files_list[current_index]
-        self.load_settings_btn_click(new_file_name)
+        if not current_index==0: #is the None index
+            new_file_name = os.getcwd()+'/settings/'+self._settings_files_list[current_index-1] # therefore also one has to be deleted
+            self.load_settings_btn_click(new_file_name)
             
 
     def epics_connection_cb_clicked(self):

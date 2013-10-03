@@ -57,6 +57,14 @@ QComboBox {
 	text-align: right;
 	margin:3px;
 }
+QComboBox QAbstractItemView{
+	background: #2D2D30;
+	margin-left: 10px;
+	color: #F1F1F1;
+	selection-background-color: rgba(221, 124, 40, 120);
+	border-radius: 5px;
+
+}
    
  QPushButton{  
      color:white;  
@@ -149,7 +157,7 @@ QComboBox {
    <item>
     <widget class="QTabWidget" name="tab_control">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="experiment_tab">
       <attribute name="title">
