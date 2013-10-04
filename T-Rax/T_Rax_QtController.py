@@ -140,7 +140,7 @@ class TRaxTemperatureController():
 
         self.create_temperature_pub_listeners()
         self.create_calibration_signals()
-        self.create_temperature_control_signals()
+        self.create_fit_range_signals()
         self.create_auto_process_signal()
         self.create_settings_signals()
 
@@ -178,7 +178,7 @@ class TRaxTemperatureController():
         self.main_view.temperature_control_widget.ds_temperature_txt.editingFinished.connect(self.ds_temperature_changed)
         self.main_view.temperature_control_widget.us_temperature_txt.editingFinished.connect(self.us_temperature_changed)
 
-    def create_temperature_control_signals(self):
+    def create_fit_range_signals(self):
         self.main_view.temperature_control_widget.fit_from_txt.editingFinished.connect(self.fit_txt_changed)
         self.main_view.temperature_control_widget.fit_to_txt.editingFinished.connect(self.fit_txt_changed)
 

@@ -29,7 +29,9 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.setWindowTitle('T-rax ver 0.2 ROI Selector')
         self.set_validator()     
         self.create_graph()
-        self.draw_image()
+        self.fitting_roi_box.hide()
+        self.downstream_roi_box.hide()
+        self.upstream_roi_box.hide()
         self.resizeEvent = self.resize_graph
         self.setWindowFlags(QtCore.Qt.Tool)
         self.move(parent.x(), parent.y()+parent.height()+50)
@@ -80,14 +82,12 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             self.connect_rectangles()
             self.mode = 'IMG'
             pub.sendMessage("IMG LOADED", None)
-            print 'image_loaded'
         except NotImplementedError, e:
             self.plot_graph()
             self.plot_lines()
             self.redraw_figure()
             self.connect_lines()
             self.mode='GRAPH'
-            print 'graph_loaded'
             pub.sendMessage('GRAPH LOADED', None)
 
     def plot_img(self):

@@ -704,13 +704,20 @@ class ROIData():
         return data
 
     def set_ds_roi(self, ds_limits):
-        self.ds_roi = ROI(ds_limits)
-        self.us_roi.set_x_limit(ds_limits[:2])
+        if self.roi_is_valid(ROI(ds_limits)):
+            self.ds_roi = ROI(ds_limits)
+            self.us_roi.set_x_limit(ds_limits[:2])
+        else:
+            pub.sendMessage("ROI ERROR")
+
         pub.sendMessage("ROI CHANGED")
 
     def set_us_roi(self, us_limits):
-        self.us_roi = ROI(us_limits)
-        self.ds_roi.set_x_limit(us_limits[:2])
+        if self.roi_is_valid(ROI(us_limits)):
+            self.us_roi = ROI(us_limits)
+            self.ds_roi.set_x_limit(us_limits[:2])
+        else:
+            pub.sendMessage("ROI ERROR")
         pub.sendMessage("ROI CHANGED")
 
     def set_max_x_limits(self, x_max):
@@ -726,8 +733,12 @@ class ROIData():
         self.set_max_y_limits(y_max)
 
     def set_x_limits(self, x_limits):
-        self.set_x_min(x_limits[0])
-        self.set_x_max(x_limits[1])
+        if x_limits[0]<x_limits[1]:
+            self.set_x_min(x_limits[0])
+            self.set_x_max(x_limits[1])
+        else:
+            pub.sendMessage("ROI ERROR")
+            pub.sendMessage("ROI CHANGED")
 
     def get_x_limits(self):
         return [self.ds_roi.x_min, self.ds_roi.x_max]
@@ -741,6 +752,14 @@ class ROIData():
         self.ds_roi.x_max = x_max
         self.us_roi.x_max = x_max
         pub.sendMessage("ROI CHANGED")
+
+    def roi_is_valid(self, roi):
+        if roi.x_min>roi.x_max:
+            return False
+        elif roi.y_min>roi.y_max:
+            return False
+        return True
+
 
 
 def black_body_function(wavelength, temp, scaling):

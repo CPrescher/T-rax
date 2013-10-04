@@ -14,7 +14,7 @@ class TRaxROIController(object):
         self.create_signals()
         self.view.update_txt_roi()
         self.save_roi_data()
-        self.mode=self.view.mode
+        self.view.draw_image()
 
     def create_signals(self):
         self.create_btn_signals()
@@ -116,6 +116,7 @@ class TRaxROIController(object):
         self.view.downstream_roi_box.show()
         self.view.upstream_roi_box.show()
         self.view.fitting_roi_box.hide()
+        
 
     def graph_loaded(self, event=None):
         self.mode = 'GRAPH'
@@ -127,7 +128,6 @@ class TRaxROIController(object):
         self.save_roi_data()
         self.view.show()
         self.view.activateWindow()
-        self.view.layout()
         if self.mode =='IMAGE':
             self.img_loaded()
         elif self.mode =='GRAPH':
