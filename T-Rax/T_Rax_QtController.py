@@ -169,10 +169,10 @@ class TRaxTemperatureController():
                                     self.load_ds_calib_data)
         self.connect_click_function(self.main_view.temperature_control_widget.load_us_calib_data_btn,
                                     self.load_us_calib_data)
-        self.main_view.temperature_control_widget.ds_temperature_rb.toggled.connect(self.ds_temperature_rb_clicked)
-        self.main_view.temperature_control_widget.us_temperature_rb.toggled.connect(self.us_temperature_rb_clicked)
-        self.main_view.temperature_control_widget.ds_etalon_rb.toggled.connect(self.ds_etalon_rb_clicked)
-        self.main_view.temperature_control_widget.us_etalon_rb.toggled.connect(self.us_etalon_rb_clicked)
+        self.main_view.temperature_control_widget.ds_temperature_rb.clicked.connect(self.ds_temperature_rb_clicked)
+        self.main_view.temperature_control_widget.us_temperature_rb.clicked.connect(self.us_temperature_rb_clicked)
+        self.main_view.temperature_control_widget.ds_etalon_rb.clicked.connect(self.ds_etalon_rb_clicked)
+        self.main_view.temperature_control_widget.us_etalon_rb.clicked.connect(self.us_etalon_rb_clicked)
         self.connect_click_function(self.main_view.temperature_control_widget.ds_etalon_btn,self.ds_etalon_btn_clicked)
         self.connect_click_function(self.main_view.temperature_control_widget.us_etalon_btn,self.us_etalon_btn_clicked)
         self.main_view.temperature_control_widget.ds_temperature_txt.editingFinished.connect(self.ds_temperature_changed)
@@ -282,12 +282,14 @@ class TRaxTemperatureController():
         self.data.set_ds_calib_modus(0)
 
     def us_temperature_rb_clicked(self):
+        print 'temperature clicked'
         self.data.set_us_calib_modus(0)
 
     def ds_etalon_rb_clicked(self):
         self.data.set_ds_calib_modus(1)
     
     def us_etalon_rb_clicked(self):
+        print 'etalon clicked'
         self.data.set_us_calib_modus(1)
 
     def ds_etalon_btn_clicked(self, filename=None):
@@ -371,16 +373,29 @@ class TRaxTemperatureController():
         
         if filename is not '':
             settings=pickle.load(open(filename,'rb'))
-            self.main_view.temperature_control_widget.ds_temperature_txt.setText(str(int(settings.ds_temperature)))
-            self.main_view.temperature_control_widget.us_temperature_txt.setText(str(int(settings.us_temperature)))
-            if settings.ds_modus==0:
+            self.main_view.temperature_control_widget.ds_temperature_txt.setText(str(int(settings.ds_calibration_temperature)))
+            self.main_view.temperature_control_widget.us_temperature_txt.setText(str(int(settings.us_calibration_temperature)))
+            
+            self.main_view.temperature_control_widget.ds_temperature_rb.blockSignals(True)
+            self.main_view.temperature_control_widget.us_temperature_rb.blockSignals(True)
+            self.main_view.temperature_control_widget.ds_etalon_rb.blockSignals(True)
+            self.main_view.temperature_control_widget.us_etalon_rb.blockSignals(True)
+            if settings.ds_calibration_modus==0:
                 self.main_view.temperature_control_widget.ds_temperature_rb.toggle()
             else:
                 self.main_view.temperature_control_widget.ds_etalon_rb.toggle()
-            if settings.ds_modus==0:
+
+            print settings.us_calibration_modus
+            if settings.us_calibration_modus==0:
                 self.main_view.temperature_control_widget.us_temperature_rb.toggle()
             else:
                 self.main_view.temperature_control_widget.us_etalon_rb.toggle()
+
+            self.main_view.temperature_control_widget.ds_temperature_rb.blockSignals(False)
+            self.main_view.temperature_control_widget.us_temperature_rb.blockSignals(False)
+            self.main_view.temperature_control_widget.ds_etalon_rb.blockSignals(False)
+            self.main_view.temperature_control_widget.us_etalon_rb.blockSignals(False)
+
             self.data.load_settings(settings)
             try:
                 ind= self.main_view.temperature_control_widget.settings_cb.findText(filename.replace('\\','/').split('/')[-1].split('.')[:-1][0])
