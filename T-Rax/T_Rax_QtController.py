@@ -24,7 +24,7 @@ class TRaxMainController(object):
         
         self.create_signals()
         self.create_sub_controller()
-        self.load_parameter()
+        self.load_directories()
         self.temperature_btn_click()
         self.main_view.show()
 
@@ -33,19 +33,22 @@ class TRaxMainController(object):
         self.ruby_controller = TRaxRubyController(self, self.main_view)
         self.diamond_controller = TRaxDiamondController(self, self.main_view)
         
-    def load_parameter(self):
+    def load_directories(self):
        try:
             fid = open('parameters.txt', 'r')
             self.temperature_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             self.temperature_controller._calib_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
+            self.temperature_controller._settings_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             self.ruby_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]            
             self.diamond_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             fid.close()
        except IOError:
             self.temperature_controller._exp_working_dir = os.getcwd()
             self.temperature_controller._calib_working_dir = os.getcwd()
+            self.temperature_controller._settings_working_dir  = os.getcwd()
             self.ruby_controller._exp_working_dir = os.getcwd()
             self.diamond_controller._exp_working_dir = os.getcwd()
+       self.temperature_controller.load_settings()
             
     def create_signals(self):
         self.create_navigation_signals()
@@ -112,8 +115,9 @@ class TRaxMainController(object):
         output_str = \
             'Temperature Working directory: ' + self.temperature_controller._exp_working_dir + '\n' + \
             'Temperature Calibration directory: ' + self.temperature_controller._calib_working_dir +'\n'+\
+            'Temperature Settings directory: ' + self.temperature_controller._settings_working_dir +'\n'+\
             'Ruby Working directory: ' + self.ruby_controller._exp_working_dir + '\n' + \
-            'Diamond Working directory: ' + self.diamond_controller._exp_working_dir
+            'Diamond Working directory: ' + self.diamond_controller._exp_working_dir + ''
         fid.write(output_str)
         fid.close()
 
@@ -141,7 +145,6 @@ class TRaxTemperatureController():
         self.data = TraxData()
         self.main_view = main_view
         self.create_signals()
-        self.load_settings()
         pub.sendMessage("EXP DATA CHANGED", self)
         pub.sendMessage("ROI CHANGED")
 
@@ -161,7 +164,7 @@ class TRaxTemperatureController():
     def load_settings(self):
         self._settings_files_list=[]
         self._settings_file_names_list=[]
-        for file in os.listdir(os.getcwd()+'/settings/'):
+        for file in os.listdir(self._settings_working_dir):
             if file.endswith('.trs'):
                 self._settings_files_list.append(file)
                 self._settings_file_names_list.append(file.split('.')[:-1][0])
@@ -362,11 +365,12 @@ class TRaxTemperatureController():
     def save_settings_btn_click(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getSaveFileName(self.main_view, caption="Save current settings", 
-                                          directory = os.getcwd()+'/settings/', filter='*.trs'))
+                                          directory = self._settings_working_dir, filter='*.trs'))
         
         if filename is not '':
             pickle.dump(self.data.get_settings(),open(filename,'wb'))
-            self.load_settings()
+            self._settings_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
+            self.load_settings()            
             try:
                 ind= self.main_view.temperature_control_widget.settings_cb.findText(filename.replace('\\','/').split('/')[-1].split('.')[:-1][0])
                 self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
@@ -378,10 +382,12 @@ class TRaxTemperatureController():
     def load_settings_btn_click(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load new setting", 
-                                          directory = os.getcwd()+'/settings/', filter='*.trs'))
+                                          directory = self._settings_working_dir, filter='*.trs'))
         
         if filename is not '':
             settings=pickle.load(open(filename,'rb'))
+            self._settings_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
+            self.load_settings()
             self.main_view.temperature_control_widget.ds_temperature_txt.setText(str(int(settings.ds_calibration_temperature)))
             self.main_view.temperature_control_widget.us_temperature_txt.setText(str(int(settings.us_calibration_temperature)))
             
@@ -394,7 +400,6 @@ class TRaxTemperatureController():
             else:
                 self.main_view.temperature_control_widget.ds_etalon_rb.toggle()
 
-            print settings.us_calibration_modus
             if settings.us_calibration_modus==0:
                 self.main_view.temperature_control_widget.us_temperature_rb.toggle()
             else:
@@ -418,8 +423,9 @@ class TRaxTemperatureController():
     def settings_cb_changed(self):
         current_index=self.main_view.temperature_control_widget.settings_cb.currentIndex()
         if not current_index==0: #is the None index
-            new_file_name = os.getcwd()+'/settings/'+self._settings_files_list[current_index-1] # therefore also one has to be deleted
+            new_file_name = self._settings_working_dir+self._settings_files_list[current_index-1] # therefore also one has to be deleted
             self.load_settings_btn_click(new_file_name)
+
             
 
     def epics_connection_cb_clicked(self):
