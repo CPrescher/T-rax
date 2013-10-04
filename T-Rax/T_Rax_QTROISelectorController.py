@@ -16,7 +16,6 @@ class TRaxROIController(object):
         self.save_roi_data()
         self.mode=self.view.mode
 
-
     def create_signals(self):
         self.create_btn_signals()
         self.create_ds_txt_signals()

@@ -142,7 +142,6 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             self.mode='GRAPH'
             pub.sendMessage('GRAPH LOADED', None)
         
-
     def create_rectangle(self, roi, color, flag):
         return ResizeableRectangle(self, self.axes, self.canvas,QtCore.QRect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), color, flag)
 
@@ -165,12 +164,15 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def create_line(self, pos, limits, flag):
         return MoveableLine(self, self.axes, self.canvas,pos, limits, flag)
 
-    def update_lines(self):
-        self.redraw_figure()
-
     def connect_lines(self):
         self.min_line.connect()
         self.max_line.connect()
+
+    def update_line_limits(self):
+        x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
+        axes_xlim = self.axes.get_xlim()
+        self.min_line.limit = [axes_xlim[0], x_limits[1] - 1]
+        self.max_line.limit = [x_limits[0] + 1, axes_xlim[1]]
 
     def create_wavelength_x_axis(self):
         xlimits = self.data.get_x_limits()
@@ -359,6 +361,7 @@ class MoveableLine:
         self.mode = None
         MoveableLine.lock = None      
         self.is_animated=False
+        self.parent.update_line_limits()
 
     def set_limit(self,limit):
         self.limit = limit
