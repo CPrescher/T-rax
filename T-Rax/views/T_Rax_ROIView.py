@@ -26,7 +26,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         super(TRaxROIView, self).__init__(None)
         self.data = data
         self.setupUi(self)   
-        self.setWindowTitle('T-rax ver 0.2 ROI Selector')
+        self.setWindowTitle('Temperature ROI Selector')
         self.set_validator()     
         self.create_graph()
         self.fitting_roi_box.hide()

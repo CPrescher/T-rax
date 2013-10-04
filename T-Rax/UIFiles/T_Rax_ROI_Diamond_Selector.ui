@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>roi_selector_single_widget</class>
- <widget class="QWidget" name="roi_selector_single_widget">
+ <class>roi_selector_diamond_widget</class>
+ <widget class="QWidget" name="roi_selector_diamond_widget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#roi_selector_single_widget{
+   <string notr="true">#roi_selector_diamond_widget{
 	background: #1E1E1E;	
 }
 
@@ -61,8 +61,8 @@ QGroupBox::title {
 }
 
 #roi_box{
-	color:  rgba(197, 0, 3, 255);
-	border: 2px solid rgba(197, 0, 3, 255);
+	color: rgba(0, 127, 255, 255);
+	border: 2px solid rgba(0, 127, 255, 255);
 }
 </string>
   </property>
@@ -118,64 +118,14 @@ QGroupBox::title {
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="1">
-            <widget class="QLabel" name="label">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Min</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="label_2">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>60</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Max</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="QLabel" name="label_3">
              <property name="text">
               <string>X:</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="0" column="1">
             <widget class="QLineEdit" name="x_min_txt">
              <property name="minimumSize">
               <size>
@@ -197,7 +147,7 @@ QGroupBox::title {
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
+           <item row="0" column="2">
             <widget class="QLineEdit" name="x_max_txt">
              <property name="minimumSize">
               <size>
@@ -219,14 +169,14 @@ QGroupBox::title {
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="label_4">
              <property name="text">
               <string>Y:</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="1" column="1">
             <widget class="QLineEdit" name="y_min_txt">
              <property name="minimumSize">
               <size>
@@ -248,7 +198,7 @@ QGroupBox::title {
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
+           <item row="1" column="2">
             <widget class="QLineEdit" name="y_max_txt">
              <property name="minimumSize">
               <size>

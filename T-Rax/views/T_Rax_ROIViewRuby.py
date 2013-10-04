@@ -1,4 +1,4 @@
-from UIFiles.T_Rax_ROI_Single_Selector import Ui_roi_selector_single_widget
+from UIFiles.T_Rax_ROI_Ruby_Selector import Ui_roi_selector_ruby_widget
 from views.T_Rax_ROIView import ResizeableRectangle
 from T_Rax_Data import TraxData, ROI
 from PyQt4 import QtGui, QtCore
@@ -22,12 +22,12 @@ mpl.rc('ytick', color='white')
 mpl.rc('figure', facecolor='#1E1E1E', edgecolor='black')
 import numpy as np
 
-class TRaxROIViewSingle(QtGui.QWidget, Ui_roi_selector_single_widget):
+class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
     def __init__(self, data, parent=None):
-        super(TRaxROIViewSingle, self).__init__(None)
+        super(TRaxROIViewRuby, self).__init__(None)
         self.data = data
         self.setupUi(self)   
-        self.setWindowTitle('T-rax ver 0.2 ROI Selector')
+        self.setWindowTitle('Ruby ROI Selector')
         self.set_validator()     
         self.create_graph()
         self.draw_image()

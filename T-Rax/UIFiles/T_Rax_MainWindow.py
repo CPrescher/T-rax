@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Fri Oct 04 11:33:07 2013
+# Created: Fri Oct 04 16:54:02 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -141,6 +141,11 @@ class Ui_T_Rax_MainWindow(object):
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setMargin(0)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.figure3_frame = QtGui.QFrame(self.main_frame)
+        self.figure3_frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.figure3_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.figure3_frame.setObjectName(_fromUtf8("figure3_frame"))
+        self.horizontalLayout_2.addWidget(self.figure3_frame)
         self.figure1_frame = QtGui.QFrame(self.main_frame)
         self.figure1_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.figure1_frame.setFrameShadow(QtGui.QFrame.Raised)

@@ -32,9 +32,11 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.resize(900,450)
 
     def create_graphs(self):
-        self.temperature_control_graph = T_Rax_2axes_graph(self.figure1_frame)
-        self.graph_1axes = T_Rax_1axes_graph(self.figure2_frame)
-        self.graph_1axes.hide()
+        self.temperature_axes = T_Rax_2axes_graph(self.figure1_frame)
+        self.ruby_axes = T_Rax_1axes_graph(self.figure2_frame, (0.77,0,0), '$\lambda$ $(nm)$')
+        self.diamond_axes = T_Rax_1axes_graph(self.figure3_frame, (0,0.5,1), '$v$ $(cm^{-1})$')
+        self.ruby_axes.hide()
+        self.diamond_axes.hide()
 
     
     def create_widgets(self):
@@ -57,24 +59,27 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
             self.temperature_control_widget.show()   
             self.status_ds_calib_filename_lbl.show()
             self.status_us_calib_filename_lbl.show()
-            self.graph_1axes.hide()
-            self.temperature_control_graph.show()
+            self.ruby_axes.hide()
+            self.diamond_axes.hide()
+            self.temperature_axes.show()
 
         elif btn_name == 'ruby_btn':
             self.update_navigation_bar('rgba(197, 0, 3, 255)', 'ruby_btn')
             self.ruby_control_widget.show()            
             self.status_ds_calib_filename_lbl.hide()
             self.status_us_calib_filename_lbl.hide()
-            self.temperature_control_graph.hide()            
-            self.graph_1axes.show()
+            self.temperature_axes.hide()      
+            self.diamond_axes.hide()      
+            self.ruby_axes.show()
 
         elif btn_name == 'diamond_btn':
             self.update_navigation_bar('rgba(27, 0, 134, 255)', 'diamond_btn')
             self.diamond_control_widget.show()
             self.status_ds_calib_filename_lbl.hide()
             self.status_us_calib_filename_lbl.hide()
-            self.temperature_control_graph.hide()
-            self.graph_1axes.show()
+            self.temperature_axes.hide()
+            self.ruby_axes.hide()
+            self.diamond_axes.show()
 
     def set_temperature_filename(self, filename):      
         self.temperature_control_widget.exp_filename_lbl.setText(filename)
@@ -106,8 +111,8 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.diamond_control_widget.hide()
     
     def resize_graphs(self, event):
-        self.graph_1axes.resize_graph(self.figure2_frame.size())
-        self.temperature_control_graph.resize_graph(self.figure1_frame.size())
+        self.ruby_axes.resize_graph(self.figure2_frame.size())
+        self.temperature_axes.resize_graph(self.figure1_frame.size())
 
 
     def update_navigation_bar(self, new_color, sender):
@@ -267,8 +272,10 @@ class T_Rax_2axes_graph():
         self.canvas.draw()
 
 class T_Rax_1axes_graph():
-    def __init__(self, parent):
+    def __init__(self, parent, second_line_color='red', x_axis_label='$\lambda$ $(nm)$'):
         self._parent = parent
+        self._second_line_color = second_line_color
+        self._x_axis_label = x_axis_label
         self.figure = Figure(None, dpi=100)
         self.canvas = FigureCanvas(self.figure)
         self.canvas.setParent(self._parent)
@@ -288,10 +295,10 @@ class T_Rax_1axes_graph():
 
     def create_graph(self):
         self.data_line, = self.axes.plot([],[],'-', color = (0.7,0.9,0.9), lw=2)
-        self.fit_line, = self.axes.plot([],[], '-', color = 'red', lw=2)
+        self.fit_line, = self.axes.plot([],[], '-', color = self._second_line_color, lw=2)
         self.pos_line, = self.axes.plot([],[], '-', color = 'white', lw=2)
         
-        self.axes.set_xlabel('$\lambda$ $(nm)$', size=11)
+        self.axes.set_xlabel(self._x_axis_label, size=11)
 
     def update_graph(self, spectrum, click_pos, fit_spectrum):
         self.data_line.set_data(spectrum.get_data())

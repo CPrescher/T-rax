@@ -3,13 +3,13 @@ from PyQt4 import QtCore, QtGui
 import sys
 from wx.lib.pubsub import Publisher as pub
 
-from views.T_Rax_ROIViewSingle import TRaxROIViewSingle
+from views.T_Rax_ROIViewRuby import TRaxROIViewRuby
 from T_Rax_Data import TraxData
 
-class TRaxROIControllerSingle(object):
+class TRaxROIControllerRuby(object):
     def __init__(self, data, parent=None):
         self.parent=parent
-        self.view = TRaxROIViewSingle(data,parent)
+        self.view = TRaxROIViewRuby(data,parent)
         self.data = data
         self.create_signals()
         self.view.update_txt_roi()

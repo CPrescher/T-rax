@@ -44,3 +44,7 @@ class DiamondControlWidget(QtGui.QWidget, Ui_diamond_control_widget):
     def __init__(self, parent = None):
         super(DiamondControlWidget, self).__init__(parent)
         self.setupUi(self)
+        self.set_validator()
+
+    def set_validator(self):
+        self.reference_pos_txt.setValidator(QtGui.QDoubleValidator())

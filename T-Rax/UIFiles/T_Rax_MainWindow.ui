@@ -187,6 +187,16 @@ margin: 2px;
         <number>0</number>
        </property>
        <item>
+        <widget class="QFrame" name="figure3_frame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QFrame" name="figure1_frame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
