@@ -1,10 +1,6 @@
-import pickle
+import numpy as np
 
+array=np.array([[9,2,3],[4,5,9],[1,2,3]])
 
-class test_class():
-    def __init__(self):
-        self.temp='blub'
-        self.temp2='blub3'
-
-test_obj=test_class()
-pickle.dump(test_obj,open('settings/test.tra',"w"))
+dim_array=np.reshape(array,np.size(array))
+print dim_array

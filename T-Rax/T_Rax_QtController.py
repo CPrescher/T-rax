@@ -27,7 +27,6 @@ class TRaxMainController(object):
         self.load_parameter()
         self.temperature_btn_click()
         self.main_view.show()
-        self.diamond_btn_click()
 
     def create_sub_controller(self):
         self.temperature_controller = TRaxTemperatureController(self,self.main_view)

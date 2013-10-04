@@ -71,19 +71,18 @@ class TRaxROIViewDiamond(QtGui.QWidget, Ui_roi_selector_diamond_widget):
         x_max = len(self.data.get_exp_img_data()[0]) - 1
         self.axes.set_ylim([0,y_max])
         self.axes.set_xlim([0,x_max])
-        scaling = mpl.colors.Normalize()
-        scaling.autoscale(self.img_data)
+        img_data_1d= np.reshape(self.img_data, np.size(self.img_data))
+        img_data_1d_sorted = np.sort(img_data_1d)
         self.img = self.axes.imshow(self.img_data, cmap = 'copper', aspect = 'auto',
                                     extent=[0,x_max + 1,y_max + 1,0],
-                                    norm=scaling)
+                                    vmin = img_data_1d_sorted[int(0.3*len(img_data_1d))], vmax=max(img_data_1d))
         self.axes.set_ylim([0,len(self.img_data) - 1])
         self.axes.set_xlim([0,len(self.img_data[0]) - 1])
         self.axes.invert_yaxis()
-        self.img.autoscale()
         self.create_wavelength_x_axis()
 
     def plot_rects(self):
-        self.rect = self.create_rectangle(self.data.roi, (0.77, 0, 0.01), 'DIAMOND')  
+        self.rect = self.create_rectangle(self.data.roi, (0, 0.5, 1), 'DIAMOND')  
 
     def update_img(self):
         self.plot_img()
