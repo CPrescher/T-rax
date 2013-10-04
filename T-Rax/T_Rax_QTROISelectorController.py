@@ -14,7 +14,7 @@ class TRaxROIController(object):
         self.create_signals()
         self.view.update_txt_roi()
         self.save_roi_data()
-        self.mode = "IMAGE"
+        self.mode=self.view.mode
 
 
     def create_signals(self):
@@ -92,6 +92,7 @@ class TRaxROIController(object):
 
     def exp_data_changed(self, event):
         self.view.update_img()
+        self.view.update_txt_roi()
 
     def save_btn_click(self):
         self.shut_down_window()

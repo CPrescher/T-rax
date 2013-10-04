@@ -63,9 +63,6 @@ class Test_T_Rax_Data_Test(unittest.TestCase):
         self.assertEqual(data.get_ds_calib_temperature(),2000)
         self.assertNotEqual(data.get_ds_roi, [100,500,10,20])
         self.assertNotEqual(data.get_us_roi, [100,500,80,90])
-        
-
-
-
+ 
 if __name__ == '__main__':
     unittest.main()

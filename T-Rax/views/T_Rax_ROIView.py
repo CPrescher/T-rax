@@ -80,12 +80,14 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             self.connect_rectangles()
             self.mode = 'IMG'
             pub.sendMessage("IMG LOADED", None)
+            print 'image_loaded'
         except NotImplementedError, e:
             self.plot_graph()
             self.plot_lines()
             self.redraw_figure()
             self.connect_lines()
             self.mode='GRAPH'
+            print 'graph_loaded'
             pub.sendMessage('GRAPH LOADED', None)
 
     def plot_img(self):

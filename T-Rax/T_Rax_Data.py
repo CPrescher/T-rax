@@ -202,8 +202,6 @@ class TraxData(object):
 
     def exp_data_us_calibration_data_same_dimension(self):
         try:
-            print self.exp_data.get_img_dimension()
-            print  self.us_calib_data.get_img_dimension()
             return self.exp_data.get_img_dimension() == self.us_calib_data.get_img_dimension()
         except:
             return False
@@ -466,7 +464,6 @@ class ExpSpecData(ExpData):
         self.roi_data.set_max_x_limits(x_max - 1)
 
     def calc_spectra(self):
-        print self.roi_data.us_roi.get_roi_as_list()
         self.y_whole = self.img_data[0]
         self.x_zoom = self.x_whole[(self.roi_data.us_roi.x_min):           
                          (self.roi_data.us_roi.x_max + 1)]
