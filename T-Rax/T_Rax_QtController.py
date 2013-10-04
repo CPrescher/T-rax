@@ -64,6 +64,7 @@ class TRaxMainController(object):
 
     def create_error_listener(self):
         pub.subscribe(self.interpolation_error, "INTERPOLATION RANGE ERROR")
+        pub.subscribe(self.roi_error, "ROI ERROR")
 
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -96,6 +97,11 @@ class TRaxMainController(object):
     def interpolation_error(self, event):
         error_message=QtGui.QMessageBox.warning(None, 'Interpolation Error',
                                                 'Etalon spectrum file has not the right range. Please select either standard temperature or load another etalon file.',
+                                                QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
+
+    def roi_error(self, event):
+        error_message=QtGui.QMessageBox.warning(None, 'ROI Error',
+                                                'Please enter valid limits for the regions of interest.',
                                                 QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
     def save_directories(self):
@@ -282,14 +288,12 @@ class TRaxTemperatureController():
         self.data.set_ds_calib_modus(0)
 
     def us_temperature_rb_clicked(self):
-        print 'temperature clicked'
         self.data.set_us_calib_modus(0)
 
     def ds_etalon_rb_clicked(self):
         self.data.set_ds_calib_modus(1)
     
     def us_etalon_rb_clicked(self):
-        print 'etalon clicked'
         self.data.set_us_calib_modus(1)
 
     def ds_etalon_btn_clicked(self, filename=None):
