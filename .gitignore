@@ -11,6 +11,9 @@
 *.SPE
 *.txt
 
+dist/
+build/
+
 
 # Build results
 

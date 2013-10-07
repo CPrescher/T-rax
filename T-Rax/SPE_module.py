@@ -5,8 +5,6 @@ import datetime
 import time
 from dateutil import parser
 from matplotlib import tight_layout
-import matplotlib.pyplot as plt
-from pylab import show, meshgrid,figure 
 from xml.dom.minidom import parseString
 
 class SPE_File(object):
@@ -230,22 +228,3 @@ if __name__ == "__main__":
     #spe_file = SPE_File('spe files\Pt_38.SPE')
     spe_file = SPE_File('D:\\Programming\\VS Projects\\T-Rax\\T-Rax\\SPE test vers3\\test_073.spe')
     #spe_file = SPE_File('binary files\lamp_15_up(v3.0).SPE')
-
-  #img = spe_file.img
-  #x,y = spe_file.get_mesh_grid()
-  #
-  #
-  #img_fig = figure()
-  #imgplot = plt.imshow(img, aspect='auto', cmap='gray')
-  #y_spec = img.sum(axis=0)
-  #x_spec = spe_file.x_calibration
-  #
-  #print np.size(y_spec)
-  #print np.size(x_spec)
-  #
-  #figure()
-  #plt.plot(x_spec,y_spec)
-  #plt.xlim(650,850)
-  #
-  #plt.tight_layout()
-  #show()

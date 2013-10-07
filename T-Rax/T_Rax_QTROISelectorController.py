@@ -1,7 +1,7 @@
 from PyQt4.QtCore import SIGNAL
 from PyQt4 import QtCore, QtGui
 import sys
-from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import pub
 
 from views.T_Rax_ROIView import TRaxROIView
 from T_Rax_Data import TraxData
@@ -69,27 +69,27 @@ class TRaxROIController(object):
         converted_limits = self.data.calculate_ind(self.view.get_fit_x_limits())
         self.data.roi_data.set_x_limits(converted_limits)
 
-    def roi_changed(self, event):
+    def roi_changed(self):
         self.view.update_graph_roi()
         self.view.update_txt_roi()
 
-    def ds_roi_graph_changed(self, event):
-        self.data.roi_data.set_ds_roi(event.data)
+    def ds_roi_graph_changed(self, data):
+        self.data.roi_data.set_ds_roi(data)
 
-    def us_roi_graph_changed(self, event):
-        self.data.roi_data.set_us_roi(event.data)
+    def us_roi_graph_changed(self, data):
+        self.data.roi_data.set_us_roi(data)
 
-    def min_roi_line_changed(self,event):
-        new_x_min = self.data.calculate_ind(event.data)
+    def min_roi_line_changed(self,data):
+        new_x_min = self.data.calculate_ind(data)
         self.data.roi_data.set_x_min(new_x_min)
         self.view.graph_panel.update_line_limits()
 
-    def max_roi_line_changed(self,event):
-        new_x_max = self.data.calculate_ind(event.data)
+    def max_roi_line_changed(self,data):
+        new_x_max = self.data.calculate_ind(data)
         self.data.roi_data.set_x_max(new_x_max)
         self.view.graph_panel.update_line_limits()
 
-    def exp_data_changed(self, event):
+    def exp_data_changed(self):
         self.view.update_img()
         self.view.update_txt_roi()
 
@@ -111,14 +111,14 @@ class TRaxROIController(object):
     def shut_down_window(self):
         self.view.close()
 
-    def img_loaded(self, event=None):
+    def img_loaded(self):
         self.mode = 'IMAGE'
         self.view.downstream_roi_box.show()
         self.view.upstream_roi_box.show()
         self.view.fitting_roi_box.hide()
         
 
-    def graph_loaded(self, event=None):
+    def graph_loaded(self):
         self.mode = 'GRAPH'
         self.view.downstream_roi_box.hide()
         self.view.upstream_roi_box.hide()

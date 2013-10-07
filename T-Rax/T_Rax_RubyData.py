@@ -1,4 +1,4 @@
-from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import pub
 from SPE_module import SPE_File
 import os.path
 import numpy as np
@@ -27,7 +27,7 @@ class TraxRubyData(object):
         self.exp_data = self.read_exp_image_file(filename)
         self.roi = self.exp_data.roi
         self.fitted_spectrum=Spectrum([],[])
-        pub.sendMessage("EXP RUBY DATA CHANGED", self)
+        pub.sendMessage("EXP RUBY DATA CHANGED")
 
     def load_next_ruby_file(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
@@ -42,7 +42,7 @@ class TraxRubyData(object):
             self.load_ruby_data(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
             self.load_ruby_data(new_file_name_with_leading_zeros)
-        pub.sendMessage("EXP RUBY DATA CHANGED", self)
+        pub.sendMessage("EXP RUBY DATA CHANGED")
 
     def read_exp_image_file(self, file_name):
         img_file= SPE_File(file_name)
@@ -130,19 +130,19 @@ class TraxRubyData(object):
     
     def set_click_pos(self, pos):
         self.click_pos = pos
-        pub.sendMessage("RUBY POS CHANGED", self)
+        pub.sendMessage("RUBY POS CHANGED")
 
     def set_ruby_reference_pos(self, pos):
         self.ruby_reference_pos=pos
-        pub.sendMessage("RUBY POS CHANGED", self)
+        pub.sendMessage("RUBY POS CHANGED")
 
     def set_temperature(self, temperature):
         self.temperature = temperature
-        pub.sendMessage("RUBY POS CHANGED", self)
+        pub.sendMessage("RUBY POS CHANGED")
     
     def set_ruby_condition(self, condition):
         self.ruby_condition=condition
-        pub.sendMessage("RUBY POS CHANGED", self)
+        pub.sendMessage("RUBY POS CHANGED")
 
     def get_pressure(self):
         A=1904
@@ -173,7 +173,7 @@ class TraxRubyData(object):
                                                                res.x[6],res.x[7],res.x[8],\
                                                                res.x[9]))
         #self.fitted_spectrum=Spectrum(fit_x, pseudo_voigt_curve(fit_x, res.x[0],res.x[4],res.x[6],res.x[2]))
-        pub.sendMessage("RUBY POS CHANGED", self)
+        pub.sendMessage("RUBY POS CHANGED")
 
     def create_p0(self):
         intensities=[np.max(self.get_spectrum().y),np.max(self.get_spectrum().y)*0.5]

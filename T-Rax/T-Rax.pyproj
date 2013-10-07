@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Include="Backup_wxPython\Misc\colors.py" />
     <Compile Include="Backup_wxPython\Misc\Helper.py" />
+    <Compile Include="create_executable.py" />
     <Compile Include="Playing\ParkingLot.py" />
     <Compile Include="Playing\playing.py" />
     <Compile Include="convert_ui_files.py" />

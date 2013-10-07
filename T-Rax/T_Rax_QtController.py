@@ -1,7 +1,8 @@
 import sys
 import os
 import pickle
-from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import setupkwargs
+from wx.lib.pubsub import pub
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import SIGNAL
 import numpy as np
@@ -100,12 +101,12 @@ class TRaxMainController(object):
            self.main_view.status_coord_lbl.setText('')
 
 
-    def interpolation_error(self, event):
+    def interpolation_error(self):
         error_message=QtGui.QMessageBox.warning(None, 'Interpolation Error',
                                                 'Etalon spectrum file has not the right range. Please select either standard temperature or load another etalon file.',
                                                 QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
-    def roi_error(self, event):
+    def roi_error(self):
         error_message=QtGui.QMessageBox.warning(None, 'ROI Error',
                                                 'Please enter valid limits for the regions of interest.',
                                                 QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
@@ -145,7 +146,7 @@ class TRaxTemperatureController():
         self.data = TraxData()
         self.main_view = main_view
         self.create_signals()
-        pub.sendMessage("EXP DATA CHANGED", self)
+        pub.sendMessage("EXP DATA CHANGED")
         pub.sendMessage("ROI CHANGED")
 
     def create_signals(self):
@@ -241,7 +242,7 @@ class TRaxTemperatureController():
             self.roi_controller = TRaxROIController(self.data, parent=self.main_view)
             self.roi_controller.show()
 
-    def data_changed(self, event):
+    def data_changed(self):
         self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
@@ -254,7 +255,7 @@ class TRaxTemperatureController():
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
         self.update_pv_names()
 
-    def roi_changed(self, event):
+    def roi_changed(self):
         self.data.calc_spectra()
         self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
@@ -447,7 +448,7 @@ class TRaxRubyController():
         self.main_view = main_view
         self.create_signals()
         
-        pub.sendMessage("EXP RUBY DATA CHANGED", self)
+        pub.sendMessage("EXP RUBY DATA CHANGED")
 
     def create_signals(self):
         self.create_exp_file_signals()
@@ -517,17 +518,17 @@ class TRaxRubyController():
             self.roi_controller = TRaxROIControllerRuby(self.data, parent=self.main_view)
             self.roi_controller.show()
 
-    def data_changed(self, event):
+    def data_changed(self):
         self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
         self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
 
-    def roi_changed(self, event):
+    def roi_changed(self):
         self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
         self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
 
-    def ruby_pos_changed(self, event):
+    def ruby_pos_changed(self):
         self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
 
     def axes_click(self,event):
@@ -638,7 +639,7 @@ class TRaxDiamondController():
         self.main_view.diamond_control_widget.derivative_show_cb.toggle()
         self.create_signals()
         
-        pub.sendMessage("EXP DIAMOND DATA CHANGED", self)
+        pub.sendMessage("EXP DIAMOND DATA CHANGED")
 
     def create_signals(self):
         self.create_exp_file_signals()
@@ -710,15 +711,15 @@ class TRaxDiamondController():
             self.roi_controller = TRaxROIControllerDiamond(self.data, parent=self.main_view)
             self.roi_controller.show()
 
-    def data_changed(self, event):
+    def data_changed(self):
         self.main_view.diamond_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_derivative_spectrum())
         self.main_view.diamond_control_widget.exp_filename_lbl.setText(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.diamond_control_widget.exp_folder_name_lbl.setText('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
 
-    def roi_changed(self, event):
+    def roi_changed(self):
         self.main_view.diamond_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_derivative_spectrum())
 
-    def diamond_pos_changed(self, event):
+    def diamond_pos_changed(self):
         self.main_view.diamond_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_derivative_spectrum())
 
     def axes_click(self,event):

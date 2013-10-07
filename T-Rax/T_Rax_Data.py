@@ -1,9 +1,11 @@
-from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import pub
 from SPE_module import SPE_File
 import os.path
 import numpy as np
 import random
 import scipy.interpolate as ip
+def dependencies_for_myprogram():
+    from scipy.sparse.csgraph import _validation
 from scipy.optimize import curve_fit
 
 
@@ -18,8 +20,8 @@ class TraxData(object):
 
         self._create_dummy_img()
         self._load_calib_etalon()
-        pub.sendMessage("EXP DATA CHANGED", self)
-        pub.sendMessage("ROI CHANGED", self)
+        pub.sendMessage("EXP DATA CHANGED")
+        pub.sendMessage("ROI CHANGED")
 
     def _create_dummy_img(self):
         self.exp_data = DummyImg(self.roi_data_manager)
@@ -41,7 +43,7 @@ class TraxData(object):
         except AttributeError:
             pass
         self.calc_spectra()
-        pub.sendMessage("EXP DATA CHANGED", self)
+        pub.sendMessage("EXP DATA CHANGED")
 
     def load_next_exp_file(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
@@ -56,7 +58,7 @@ class TraxData(object):
             self.load_exp_data(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
             self.load_exp_data(new_file_name_with_leading_zeros)
-        pub.sendMessage("EXP DATA CHANGED", self)
+        pub.sendMessage("EXP DATA CHANGED")
 
     def read_exp_image_file(self, file_name):
         img_file = SPE_File(file_name)
@@ -69,17 +71,17 @@ class TraxData(object):
         self.ds_calib_data = self.read_exp_image_file(file_name)
         self.calc_spectra()
         if send_message:
-            pub.sendMessage("EXP DATA CHANGED", self)
+            pub.sendMessage("EXP DATA CHANGED")
 
     def set_ds_calib_modus(self, modus, send_message=True):
         self.ds_calibration_parameter.set_modus(modus)
         if send_message:
-            pub.sendMessage("EXP DATA CHANGED", self)
+            pub.sendMessage("EXP DATA CHANGED")
 
     def set_ds_calib_temp(self, val,send_message=True):
         self.ds_calibration_parameter.set_temp(val) 
         if send_message:
-            pub.sendMessage("EXP DATA CHANGED", self)
+            pub.sendMessage("EXP DATA CHANGED")
 
     def get_ds_calib_modus(self):
         return self.ds_calibration_parameter.modus
@@ -90,28 +92,28 @@ class TraxData(object):
     def load_ds_calib_etalon(self, fname, send_message=True):
         self.ds_calibration_parameter.load_etalon_spec(fname)
         if send_message:
-            pub.sendMessage("EXP DATA CHANGED", self)
+            pub.sendMessage("EXP DATA CHANGED")
 
     def load_us_calib_data(self, file_name,send_message=True):
         self.us_calib_data = self.read_exp_image_file(file_name)
         self.calc_spectra()
         if send_message:
-            pub.sendMessage("EXP DATA CHANGED", self)
+            pub.sendMessage("EXP DATA CHANGED")
 
     def set_us_calib_modus(self, modus,sendMessage=True):
         self.us_calibration_parameter.set_modus(modus)
         if sendMessage:
-            pub.sendMessage("EXP DATA CHANGED", self)
+            pub.sendMessage("EXP DATA CHANGED")
 
     def set_us_calib_temp(self, val,send_message=True):
         self.us_calibration_parameter.set_temp(val)
         if send_message:
-            pub.sendMessage("EXP DATA CHANGED", self)
+            pub.sendMessage("EXP DATA CHANGED")
 
     def load_us_calib_etalon(self, fname, send_message=True):
         self.us_calibration_parameter.load_etalon_spec(fname)
         if send_message:
-            pub.sendMessage("EXP DATA CHANGED", self)
+            pub.sendMessage("EXP DATA CHANGED")
 
     def calculate_wavelength(self,channel):
         if isinstance(channel,list):
@@ -290,7 +292,7 @@ class TraxData(object):
         self.set_ds_calib_temp(settings.ds_calibration_temperature, False)
         self.set_us_calib_temp(settings.us_calibration_temperature, False)
         self.calc_spectra()
-        pub.sendMessage("EXP DATA CHANGED", self)
+        pub.sendMessage("EXP DATA CHANGED")
 
 
 
@@ -541,7 +543,7 @@ class CalibParam(object):
             try:
                 return self.etalon_spectrum_func(wavelength)
             except:
-                pub.sendMessage("INTERPOLATION RANGE ERROR", self)
+                pub.sendMessage("INTERPOLATION RANGE ERROR")
                 return np.ones(np.size(wavelength))
 
     def get_etalon_fname(self):

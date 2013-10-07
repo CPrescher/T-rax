@@ -3,7 +3,7 @@ from T_Rax_Data import TraxData, ROI
 from PyQt4 import QtGui, QtCore
 import sys
 import colors
-from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import pub
 
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
@@ -81,14 +81,14 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             self.redraw_figure()
             self.connect_rectangles()
             self.mode = 'IMG'
-            pub.sendMessage("IMG LOADED", None)
+            pub.sendMessage("IMG LOADED")
         except NotImplementedError, e:
             self.plot_graph()
             self.plot_lines()
             self.redraw_figure()
             self.connect_lines()
             self.mode='GRAPH'
-            pub.sendMessage('GRAPH LOADED', None)
+            pub.sendMessage('GRAPH LOADED')
 
     def plot_img(self):
         self.axes.cla()
@@ -132,14 +132,14 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             self.redraw_figure()
             self.connect_rectangles()
             self.mode = 'IMG'
-            pub.sendMessage("IMG LOADED", None)
+            pub.sendMessage("IMG LOADED")
         except NotImplementedError, e:
             self.plot_graph()
             self.plot_lines()
             self.redraw_figure()
             self.connect_lines()
             self.mode='GRAPH'
-            pub.sendMessage('GRAPH LOADED', None)
+            pub.sendMessage('GRAPH LOADED')
         
     def create_rectangle(self, roi, color, flag):
         return ResizeableRectangle(self, self.axes, self.canvas,QtCore.QRect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), color, flag)
@@ -340,7 +340,7 @@ class MoveableLine:
 
     def send_message(self):
         try:
-            pub.sendMessage(self.flag + " ROI LINE CHANGED", self.line.get_xdata()[0])
+            pub.sendMessage(self.flag + " ROI LINE CHANGED", data=self.line.get_xdata()[0])
         except AttributeError:
             pass
 
@@ -527,7 +527,7 @@ class ResizeableRectangle:
 
     def send_message(self):
         try:
-            pub.sendMessage(self.flag + " ROI GRAPH CHANGED", 
+            pub.sendMessage(self.flag + " ROI GRAPH CHANGED", data=
                         [int(self.rect.get_x()),int(self.rect.get_x() + self.rect.get_width()),
                          int(self.rect.get_y()),int(self.rect.get_y() + self.rect.get_height())])
         except AttributeError:

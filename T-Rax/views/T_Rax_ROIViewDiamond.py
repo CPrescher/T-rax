@@ -4,7 +4,7 @@ from T_Rax_Data import TraxData, ROI
 from PyQt4 import QtGui, QtCore
 import sys
 import colors
-from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import pub
 
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
