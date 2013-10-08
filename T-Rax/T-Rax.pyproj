@@ -27,7 +27,7 @@
     <Compile Include="Playing\ParkingLot.py" />
     <Compile Include="Playing\playing.py" />
     <Compile Include="convert_ui_files.py" />
-    <Compile Include="run_T-Rax.pyw" />
+    <Compile Include="run_T-Rax.py" />
     <Compile Include="T_Rax_DiamondData.py" />
     <Compile Include="T_Rax_QTROISelectorRubyController.py" />
     <Compile Include="T_Rax_QTROISelectorDiamondController.py" />

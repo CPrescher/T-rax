@@ -144,10 +144,17 @@ class TRaxTemperatureController():
     def __init__(self, parent, main_view):
         self.parent = parent
         self.data = TraxData()
+        self.load_standard_parameter()
         self.main_view = main_view
         self.create_signals()
         pub.sendMessage("EXP DATA CHANGED")
         pub.sendMessage("ROI CHANGED")
+
+    def load_standard_parameter(self):
+        try:
+            self.data.load_calib_etalon()
+        except IOError:
+            pass        
 
     def create_signals(self):
         self.create_exp_file_signals()
@@ -165,10 +172,13 @@ class TRaxTemperatureController():
     def load_settings(self):
         self._settings_files_list=[]
         self._settings_file_names_list=[]
-        for file in os.listdir(self._settings_working_dir):
-            if file.endswith('.trs'):
-                self._settings_files_list.append(file)
-                self._settings_file_names_list.append(file.split('.')[:-1][0])
+        try:
+            for file in os.listdir(self._settings_working_dir):
+                if file.endswith('.trs'):
+                    self._settings_files_list.append(file)
+                    self._settings_file_names_list.append(file.split('.')[:-1][0])
+        except:
+            pass
         self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
         self.main_view.temperature_control_widget.settings_cb.clear()
         self.main_view.temperature_control_widget.settings_cb.addItem('None')

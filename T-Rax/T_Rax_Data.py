@@ -19,7 +19,6 @@ class TraxData(object):
         self.roi_data_manager = ROIDataManager()
 
         self._create_dummy_img()
-        self._load_calib_etalon()
         pub.sendMessage("EXP DATA CHANGED")
         pub.sendMessage("ROI CHANGED")
 
@@ -27,7 +26,7 @@ class TraxData(object):
         self.exp_data = DummyImg(self.roi_data_manager)
         self.roi_data = self.exp_data.roi_data
 
-    def _load_calib_etalon(self):
+    def load_calib_etalon(self):
         self.load_us_calib_etalon('15A_lamp.txt')
         self.load_ds_calib_etalon('15A_lamp.txt')
 
@@ -512,6 +511,7 @@ class CalibParam(object):
 
         self.temp = 2000
         self.etalon_spectrum_func = None
+        self.etalon_file_name = 'Select File...'
 
     def set_modus(self, val):
         self.modus = val
