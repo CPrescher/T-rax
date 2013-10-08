@@ -39,6 +39,14 @@
  QRadioButton {  
      font-weight: normal;  
  }  
+   
+ QLineEdit{  
+     border-radius: 5px;  
+     background: #F1F1F1;  
+     color: black;  
+ }  
+
+
 QComboBox {
 	background: #2D2D30;
 	border-radius:5px;
@@ -48,45 +56,48 @@ QComboBox {
 	text-align: right;
 	margin:3px;
 }
+QComboBox QAbstractItemView{
+	background: #2D2D30;
+	margin-left: 10px;
+	color: #F1F1F1;
+	selection-background-color: rgba(221, 124, 40, 120);
+	border-radius: 5px;
 
- QLineEdit{  
-     border-radius: 5px;  
-     background: #F1F1F1;  
-     color: black;  
- }  
+}
    
  QPushButton{  
      color:white;  
      border-color: black;  
-     border: 2px solid #F1F1F1;  
+     border: 1px solid rgba(241,241,241,255); 
      border-radius: 11px;  
      font-weight: bold;  
      padding: 5px;  
  }  
  #temperature_control_widget QPushButton {  
-     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(221, 124, 40, 180), stop:1 rgba(0, 0, 0, 255))  
+     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(221, 124, 40, 180), stop:1 rgba(0, 0, 0, 50))
  }  
    
  #ruby_control_widget QPushButton {  
-     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(197, 0, 3, 255), stop:1 rgba(0, 0, 0, 255))  
+     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(197, 0, 3, 255), stop:1 rgba(0, 0, 0, 50))  
  }  
    
  #diamond_control_widget QPushButton{  
-     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(27, 0, 134, 255), stop:1 rgba(0, 0, 0, 255))  
+     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(27, 0, 134, 255), stop:1 rgba(0, 0, 0, 50))  
  }  
    
  QPushButton::hover{  
-     border:2px solid #fff;  
-     margin: 0.5px;  
+     border:1px solid #fff;  
+     padding: 5px;  
  }  
    
- QPushPutton::press{  
+ QPushPutton::pressed{  
     border:2px solid #fff;  
-     margin: 2px;  
+    padding: 5px;  
+    margin: 5px;  
  }  
    
  QGroupBox {  
-     border: 2px solid #F1F1F1;  
+     border: 1px solid #F1F1F1;  
      border-radius: 5px;  
      margin-top: 7px;  
      padding: 0px  
@@ -98,7 +109,7 @@ QComboBox {
     
  QTabBar::tab {  
      background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(221, 124, 40, 180), stop:1 #1E1E1E);  
-     border: 2px solid  #F1F1F1;  
+     border: 1px solid  #F1F1F1;  
      border-top-left-radius: 4px;  
      border-top-right-radius: 10px;  
      padding: 5px;  
@@ -114,28 +125,25 @@ QComboBox {
  }  
    
  QTabBar::tab:selected {  
-   
-     border:3px solid  #FFF;  
+     border:2px solid  #FFF;  
      border-bottom-color: #1E1E1E;  
- }  
-   
+ }     
  QTabBar::tab:!selected {  
      margin-top: 2px;  
  }  
    
  #downstream_calib_box{  
      color:  rgba(255,255,0,255);  
-     border: 2px solid rgba(255,255,0,255);  
+     border: 1px solid rgba(255,255,0,255);  
  }  
  #upstream_calib_box {  
      color: rgba(255,140,0,255);  
-     border: 2px solid rgba(255,140,0,255);  
+     border: 1px solid rgba(255,140,0,255);  
  }  
    
  #upstream_calib_box QPushButton, #downstream_calib_box QPushButton {  
      background:qconicalgradient(cx:0.5, cy:0.5, angle:0, stop:0 rgba(30, 30, 30, 255), stop:1 rgba(60, 60, 64, 255))  
- }  
-</string>
+ }  </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="topMargin">

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_ROI_Ruby_Selector.ui'
 #
-# Created: Fri Oct 04 16:54:02 2013
+# Created: Tue Oct 08 10:28:47 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,7 +45,7 @@ class Ui_roi_selector_ruby_widget(object):
 "QPushButton{\n"
 "    color:white;\n"
 "    border-color: black;\n"
-"    border: 2px solid #F1F1F1;\n"
+"    border: 1px solid #F1F1F1;\n"
 "    border-radius: 11px;\n"
 "    font-weight: bold;\n"
 "    padding: 5px;\n"
@@ -57,13 +57,13 @@ class Ui_roi_selector_ruby_widget(object):
 "    margin: 0.5px;\n"
 "}\n"
 "\n"
-"QPushPutton::press{\n"
-"   border:2px solid #fff;\n"
+"QPushPutton::pressed{\n"
+"   border:1px solid #fff;\n"
 "    margin: 2px;\n"
 "}\n"
 "\n"
 "QGroupBox {\n"
-"    border: 2px solid #F1F1F1;\n"
+"    border:1px solid #F1F1F1;\n"
 "    border-radius: 5px;\n"
 "    margin-top: 7px;\n"
 "    padding: 0px\n"
@@ -75,7 +75,7 @@ class Ui_roi_selector_ruby_widget(object):
 "\n"
 "#roi_box{\n"
 "    color:  rgba(197, 0, 3, 255);\n"
-"    border: 2px solid rgba(197, 0, 3, 255);\n"
+"    border: 1px solid rgba(197, 0, 3, 255);\n"
 "}\n"
 ""))
         self.horizontalLayout = QtGui.QHBoxLayout(roi_selector_ruby_widget)
