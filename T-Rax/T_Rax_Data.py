@@ -27,8 +27,8 @@ class TraxData(object):
         self.roi_data = self.exp_data.roi_data
 
     def load_calib_etalon(self):
-        self.load_us_calib_etalon('15A_lamp.txt')
-        self.load_ds_calib_etalon('15A_lamp.txt')
+        self.load_us_calib_etalon('15A_lmp.txt')
+        self.load_ds_calib_etalon('15A_lmp.txt')
 
     def load_exp_data(self, filename):
         self.exp_data = self.read_exp_image_file(filename)

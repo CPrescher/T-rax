@@ -154,7 +154,8 @@ class TRaxTemperatureController():
         try:
             self.data.load_calib_etalon()
         except IOError:
-            pass        
+            self.data.set_ds_calib_modus(0)
+            self.data.set_us_calib_modus(0) 
 
     def create_signals(self):
         self.create_exp_file_signals()
@@ -258,12 +259,26 @@ class TRaxTemperatureController():
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_temperature_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.set_temperature_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+        self.main_view.set_fit_limits(self.data.get_x_roi_limits())
+        self.update_calibration_view()
+        self.update_pv_names()
+
+    def update_calibration_view(self):
         self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
                                            self.data.get_us_calib_file_name().replace('\\','/').split('/')[-1])
         self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calib_etalon_file_name().replace('\\','/').split('/')[-1])
         self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calib_etalon_file_name().replace('\\','/').split('/')[-1])
-        self.main_view.set_fit_limits(self.data.get_x_roi_limits())
-        self.update_pv_names()
+        ds_modus = self.data.get_ds_calib_modus()
+        us_modus = self.data.get_us_calib_modus()
+        if us_modus == 0:
+            self.main_view.temperature_control_widget.us_temperature_rb.toggle()
+        elif us_modus == 1:
+            self.main_view.temperature_control_widget.us_etalon_rb.toggle()
+
+        if ds_modus ==0:
+            self.main_view.temperature_control_widget.ds_temperature_rb.toggle()
+        elif ds_modus == 1:
+            self.main_view.temperature_control_widget.us_etalon_rb.toggle()
 
     def roi_changed(self):
         self.data.calc_spectra()
