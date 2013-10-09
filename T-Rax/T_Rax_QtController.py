@@ -18,7 +18,6 @@ from T_Rax_DiamondData import TraxDiamondData
 from epics import caput, PV
 
 
-
 class TRaxMainController(object):
     def __init__(self):
         self.main_view = TRaxMainView()
@@ -376,6 +375,12 @@ class TRaxTemperatureController():
             new_file_str = self._files_added[-1]
             file_info = os.stat(self._exp_working_dir+new_file_str)
             if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
+                if self.epics_is_connected:
+                    try:
+                        if caget('13LF1:cam1:Acquire')==1:
+                            return #aborts if lightfield has not finished all his file handling
+                    except:
+                        pass
                 if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
                     path = self._exp_working_dir + new_file_str
                     self.data.load_exp_data(path)

@@ -1,6 +1,7 @@
-import numpy as np
+from epics import caget
+import time
 
-array=np.array([[9,2,3],[4,5,9],[1,2,3]])
-
-dim_array=np.reshape(array,np.size(array))
-print dim_array
+while True:
+    print caget('13LF1:cam1:Acquire')
+    print caget('13LF1:cam1:Acquire')==0
+    time.sleep(0.5)
