@@ -202,8 +202,8 @@ class TRaxTemperatureController():
         self.main_view.temperature_control_widget.us_temperature_rb.clicked.connect(self.us_temperature_rb_clicked)
         self.main_view.temperature_control_widget.ds_etalon_rb.clicked.connect(self.ds_etalon_rb_clicked)
         self.main_view.temperature_control_widget.us_etalon_rb.clicked.connect(self.us_etalon_rb_clicked)
-        self.connect_click_function(self.main_view.temperature_control_widget.ds_etalon_btn,self.ds_etalon_btn_clicked)
-        self.connect_click_function(self.main_view.temperature_control_widget.us_etalon_btn,self.us_etalon_btn_clicked)
+        self.connect_click_function(self.main_view.temperature_control_widget.ds_etalon_btn,self.load_ds_etalon_data)
+        self.connect_click_function(self.main_view.temperature_control_widget.us_etalon_btn,self.load_us_etalon_data)
         self.main_view.temperature_control_widget.ds_temperature_txt.editingFinished.connect(self.ds_temperature_changed)
         self.main_view.temperature_control_widget.us_temperature_txt.editingFinished.connect(self.us_temperature_changed)
 
@@ -334,7 +334,7 @@ class TRaxTemperatureController():
     def us_etalon_rb_clicked(self):
         self.data.set_us_calib_modus(1)
 
-    def ds_etalon_btn_clicked(self, filename=None):
+    def load_ds_etalon_data(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Downstream Etalaon Spectrum", 
                                           directory = self._calib_working_dir))
@@ -342,7 +342,7 @@ class TRaxTemperatureController():
         if filename is not '':
             self.data.load_ds_calib_etalon(filename)
 
-    def us_etalon_btn_clicked(self, filename=None):
+    def load_us_etalon_data(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Upstream Etalaon Spectrum", 
                                           directory = self._calib_working_dir))
@@ -499,7 +499,7 @@ class TRaxRubyController():
         self.main_view.connect(self.autoprocess_timer,QtCore.SIGNAL('timeout()'), self.check_files)
     
     def create_exp_file_signals(self):
-        self.connect_click_function(self.main_view.ruby_control_widget.load_exp_data_btn, self.load_ruby_data)        
+        self.connect_click_function(self.main_view.ruby_control_widget.load_exp_data_btn, self.load_exp_data)        
         self.connect_click_function(self.main_view.ruby_control_widget.load_next_exp_data_btn, self.load_next_exp_data)        
         self.connect_click_function(self.main_view.ruby_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
 
@@ -524,7 +524,7 @@ class TRaxRubyController():
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
 
-    def load_ruby_data(self, filename=None):
+    def load_exp_data(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Experiment SPE", 
                                           directory = self._exp_working_dir))
@@ -532,13 +532,13 @@ class TRaxRubyController():
         if filename is not '':
             self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])+'/'
             self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
-            self.data.load_ruby_data(filename)
+            self.data.load_exp_data(filename)
 
     def load_next_exp_data(self):
-        self.data.load_next_ruby_file()
+        self.data.load_next_exp_data()
 
     def load_previous_exp_data(self):
-        self.data.load_previous_ruby_file()
+        self.data.load_previous_exp_data()
 
     def load_roi_view(self):
         try:
@@ -646,7 +646,7 @@ class TRaxRubyController():
             if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
                 if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
                     path = self._exp_working_dir + new_file_str
-                    self.data.load_ruby_data(path)
+                    self.data.load_exp_data(path)
                 self._files_before = self._files_now
             
     def file_is_spe(self, filename):
@@ -692,7 +692,7 @@ class TRaxDiamondController():
         self.main_view.connect(self.autoprocess_timer,QtCore.SIGNAL('timeout()'), self.check_files)
     
     def create_exp_file_signals(self):
-        self.connect_click_function(self.main_view.diamond_control_widget.load_exp_data_btn, self.load_diamond_data)        
+        self.connect_click_function(self.main_view.diamond_control_widget.load_exp_data_btn, self.load_exp_data)        
         self.connect_click_function(self.main_view.diamond_control_widget.load_next_exp_data_btn, self.load_next_exp_data)        
         self.connect_click_function(self.main_view.diamond_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
 
@@ -718,7 +718,7 @@ class TRaxDiamondController():
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
 
-    def load_diamond_data(self, filename=None):
+    def load_exp_data(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Experiment SPE", 
                                           directory = self._exp_working_dir))

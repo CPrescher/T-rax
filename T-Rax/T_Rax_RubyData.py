@@ -23,25 +23,25 @@ class TraxRubyData(object):
         self.fitted_spectrum=Spectrum([],[])
         self.roi = self.exp_data.roi
 
-    def load_ruby_data(self, filename):
+    def load_exp_data(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
         self.roi = self.exp_data.roi
         self.fitted_spectrum=Spectrum([],[])
         pub.sendMessage("EXP RUBY DATA CHANGED")
 
-    def load_next_ruby_file(self):
+    def load_next_exp_data(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
         if os.path.isfile(new_file_name):
-            self.load_ruby_data(new_file_name)
+            self.load_exp_data(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_ruby_data(new_file_name_with_leading_zeros)
+            self.load_exp_data(new_file_name_with_leading_zeros)
 
-    def load_previous_ruby_file(self):
+    def load_previous_exp_data(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_previous_file_names()
         if os.path.isfile(new_file_name):
-            self.load_ruby_data(new_file_name)
+            self.load_exp_data(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_ruby_data(new_file_name_with_leading_zeros)
+            self.load_exp_data(new_file_name_with_leading_zeros)
         pub.sendMessage("EXP RUBY DATA CHANGED")
 
     def read_exp_image_file(self, file_name):

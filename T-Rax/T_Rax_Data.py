@@ -27,8 +27,8 @@ class TraxData(object):
         self.roi_data = self.exp_data.roi_data
 
     def load_calib_etalon(self):
-        self.load_us_calib_etalon('15A_lmp.txt')
-        self.load_ds_calib_etalon('15A_lmp.txt')
+        self.load_us_calib_etalon('15A_lamp.txt')
+        self.load_ds_calib_etalon('15A_lamp.txt')
 
     def load_exp_data(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
@@ -570,7 +570,10 @@ class CalibParam(object):
         return Spectrum(self._etalon_x,self._etalon_y)
 
     def set_etalon_function_from_spectrum(self, spectrum):
-        self.etalon_spectrum_func = ip.interp1d(spectrum.x, spectrum.y, 'cubic')
+        try:
+            self.etalon_spectrum_func = ip.interp1d(spectrum.x, spectrum.y, 'cubic')
+        except AttributeError:
+            pass
 
 
 
@@ -794,11 +797,18 @@ class TraxTemperatureSettings():
         self.ds_calib_file_name = data.get_ds_calib_file_name()
         self.us_calib_file_name = data.get_us_calib_file_name()
 
-        self.ds_etalon_file_name = data.get_ds_calib_etalon_file_name()        
-        self.ds_etalon_spectrum = data.ds_calibration_parameter.get_etalon_spectrum()
+        self.ds_etalon_file_name = data.get_ds_calib_etalon_file_name()      
+        try:  
+            self.ds_etalon_spectrum = data.ds_calibration_parameter.get_etalon_spectrum()
+        except AttributeError:
+            self.ds_etalon_spectrum = []
 
         self.us_etalon_file_name = data.get_us_calib_etalon_file_name()
-        self.us_etalon_spectrum = data.us_calibration_parameter.get_etalon_spectrum()
+
+        try:
+            self.us_etalon_spectrum = data.us_calibration_parameter.get_etalon_spectrum()
+        except AttributeError:
+            self.us_etalon_spectrum = []
 
         self.ds_calibration_modus = data.get_ds_calib_modus()
         self.us_calibration_modus = data.get_us_calib_modus()
