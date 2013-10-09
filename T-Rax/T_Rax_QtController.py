@@ -78,14 +78,17 @@ class TRaxMainController(object):
 
     def temperature_btn_click(self):
         self.main_view.navigate_to('temperature_btn')
+        self.main_view.status_file_information_lbl.setText(self.temperature_controller.data.exp_data.get_file_information())
         self.mode = "temperature"
 
     def ruby_btn_click(self):
         self.main_view.navigate_to('ruby_btn')
+        self.main_view.status_file_information_lbl.setText(self.ruby_controller.data.exp_data.get_file_information())
         self.mode = "ruby"
 
     def diamond_btn_click(self):
         self.main_view.navigate_to('diamond_btn')
+        self.main_view.status_file_information_lbl.setText(self.diamond_controller.data.exp_data.get_file_information())
         self.mode = "diamond"
 
     def raman_btn_click(self):
@@ -548,6 +551,7 @@ class TRaxRubyController():
         self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
         self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
 
     def roi_changed(self):
         self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
@@ -741,6 +745,7 @@ class TRaxDiamondController():
         self.main_view.diamond_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_derivative_spectrum())
         self.main_view.diamond_control_widget.exp_filename_lbl.setText(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.diamond_control_widget.exp_folder_name_lbl.setText('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
 
     def roi_changed(self):
         self.main_view.diamond_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_derivative_spectrum())

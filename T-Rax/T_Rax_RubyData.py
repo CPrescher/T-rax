@@ -282,6 +282,16 @@ class ExpRubyData(object):
 
     def get_x_limits(self):
         return np.array([min(self.x_whole), max(self.x_whole)])
+    
+    def get_file_information(self):
+        return ('{exp_time:g}s, ' +\
+               '{detector}, '+\
+               '{grating}, ' +\
+               '{center_wavelength:g}nm').format(
+                exp_time=self._img_file.exposure_time,
+                detector=self._img_file.detector,
+                grating= self._img_file.grating,
+                center_wavelength=self._img_file.center_wavelength)
 
 
 class DummyImg(ExpRubyData):
@@ -291,7 +301,7 @@ class DummyImg(ExpRubyData):
         self.filename = 'dummy_img.spe'
 
     def create_img(self):
-        x=np.linspace(645,750,1300)
+        x=np.linspace(650,750,1300)
         y=np.linspace(0,101, 100)
         X,Y = np.meshgrid(x,y)
 
@@ -310,6 +320,10 @@ class DummyImg(ExpRubyData):
                 Z[y_ind,x_ind] = lorenz1[x_ind]*gauss1[y_ind] +lorenz2[x_ind]*gauss2[y_ind]
         self.img_data=Z+np.random.normal(0,.01*max(lorenz1),(len(y),len(x)))
         self.x_whole = x
+
+    
+    def get_file_information(self):
+        return '10s, dummy spec, 700nm'
 
 
 
