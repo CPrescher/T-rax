@@ -259,6 +259,7 @@ class TRaxTemperatureController():
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_temperature_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.set_temperature_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
         self.update_calibration_view()
         self.update_pv_names()

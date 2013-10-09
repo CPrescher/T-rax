@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
-# Created: Tue Oct 08 10:28:49 2013
+# Created: Wed Oct 09 10:18:02 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,8 +26,8 @@ except AttributeError:
 class Ui_temperature_control_widget(object):
     def setupUi(self, temperature_control_widget):
         temperature_control_widget.setObjectName(_fromUtf8("temperature_control_widget"))
-        temperature_control_widget.resize(269, 444)
-        temperature_control_widget.setMaximumSize(QtCore.QSize(269, 16777215))
+        temperature_control_widget.resize(260, 407)
+        temperature_control_widget.setMaximumSize(QtCore.QSize(260, 16777215))
         temperature_control_widget.setStyleSheet(_fromUtf8(" #ruby_control_widget, #temperature_control_widget, #diamond_control_widget, QTabWidget::pane, QTabWidget::tab-bar,  \n"
 " #experiment_tab, #calibration_tab{  \n"
 "     background: #1E1E1E;      \n"
@@ -187,18 +187,24 @@ class Ui_temperature_control_widget(object):
         self.exp_filename_lbl.setObjectName(_fromUtf8("exp_filename_lbl"))
         self.gridLayout.addWidget(self.exp_filename_lbl, 0, 1, 1, 1)
         self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setSpacing(7)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.load_previous_exp_data_btn = QtGui.QPushButton(self.groupBox)
-        self.load_previous_exp_data_btn.setMaximumSize(QtCore.QSize(40, 24))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.load_previous_exp_data_btn.sizePolicy().hasHeightForWidth())
+        self.load_previous_exp_data_btn.setSizePolicy(sizePolicy)
+        self.load_previous_exp_data_btn.setMaximumSize(QtCore.QSize(50000, 24))
         self.load_previous_exp_data_btn.setObjectName(_fromUtf8("load_previous_exp_data_btn"))
         self.horizontalLayout.addWidget(self.load_previous_exp_data_btn)
         self.load_next_exp_data_btn = QtGui.QPushButton(self.groupBox)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.load_next_exp_data_btn.sizePolicy().hasHeightForWidth())
         self.load_next_exp_data_btn.setSizePolicy(sizePolicy)
-        self.load_next_exp_data_btn.setMaximumSize(QtCore.QSize(40, 24))
+        self.load_next_exp_data_btn.setMaximumSize(QtCore.QSize(5000, 24))
         self.load_next_exp_data_btn.setObjectName(_fromUtf8("load_next_exp_data_btn"))
         self.horizontalLayout.addWidget(self.load_next_exp_data_btn)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)

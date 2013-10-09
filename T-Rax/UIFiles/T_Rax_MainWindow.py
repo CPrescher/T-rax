@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Tue Oct 08 10:28:47 2013
+# Created: Wed Oct 09 10:18:00 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -177,16 +177,10 @@ class Ui_T_Rax_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.status_coord_lbl)
         spacerItem1 = QtGui.QSpacerItem(743, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
-        self.status_ds_calib_filename_lbl = QtGui.QLabel(self.status_bar)
-        self.status_ds_calib_filename_lbl.setText(_fromUtf8(""))
-        self.status_ds_calib_filename_lbl.setObjectName(_fromUtf8("status_ds_calib_filename_lbl"))
-        self.horizontalLayout_3.addWidget(self.status_ds_calib_filename_lbl)
-        spacerItem2 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem2)
-        self.status_us_calib_filename_lbl = QtGui.QLabel(self.status_bar)
-        self.status_us_calib_filename_lbl.setText(_fromUtf8(""))
-        self.status_us_calib_filename_lbl.setObjectName(_fromUtf8("status_us_calib_filename_lbl"))
-        self.horizontalLayout_3.addWidget(self.status_us_calib_filename_lbl)
+        self.status_file_information_lbl = QtGui.QLabel(self.status_bar)
+        self.status_file_information_lbl.setText(_fromUtf8(""))
+        self.status_file_information_lbl.setObjectName(_fromUtf8("status_file_information_lbl"))
+        self.horizontalLayout_3.addWidget(self.status_file_information_lbl)
         self.verticalLayout.addWidget(self.status_bar)
         T_Rax_MainWindow.setCentralWidget(self.centralwidget)
 

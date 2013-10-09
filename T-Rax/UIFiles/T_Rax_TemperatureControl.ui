@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>269</width>
-    <height>444</height>
+    <width>260</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>269</width>
+    <width>260</width>
     <height>16777215</height>
    </size>
   </property>
@@ -204,11 +204,20 @@ QComboBox QAbstractItemView{
             </item>
             <item row="1" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout">
+              <property name="spacing">
+               <number>7</number>
+              </property>
               <item>
                <widget class="QPushButton" name="load_previous_exp_data_btn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="maximumSize">
                  <size>
-                  <width>40</width>
+                  <width>50000</width>
                   <height>24</height>
                  </size>
                 </property>
@@ -220,14 +229,14 @@ QComboBox QAbstractItemView{
               <item>
                <widget class="QPushButton" name="load_next_exp_data_btn">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>40</width>
+                  <width>5000</width>
                   <height>24</height>
                  </size>
                 </property>

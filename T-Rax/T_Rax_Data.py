@@ -329,6 +329,17 @@ class GeneralData(object):
     def get_img_dimension(self):
         return self._img_file.get_dimension()
 
+    def get_file_information(self):
+        return ('{exp_time:g}s, ' +\
+               '{detector}, '+\
+               '{grating}, ' +\
+               '{center_wavelength:g}nm').format(
+                exp_time=self._img_file.exposure_time,
+                detector=self._img_file.detector,
+                grating= self._img_file.grating,
+                center_wavelength=self._img_file.center_wavelength)
+
+
 class ImgData(GeneralData):
     def calc_spectra(self):
         x = self.x_whole[(self.roi_data.us_roi.x_min):           
@@ -457,6 +468,9 @@ class DummyImg(ExpData):
 
     def get_img_dimension(self):
         return (1300,100)
+
+    def get_file_information(self):
+        return '10s, dummy spec, 550nm'
 
 
 class ExpSpecData(ExpData):

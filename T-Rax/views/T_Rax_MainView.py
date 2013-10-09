@@ -56,9 +56,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.hide_control_widgets()
         if btn_name == 'temperature_btn':
             self.update_navigation_bar('rgba(221, 124, 40, 255)', 'temperature_btn')
-            self.temperature_control_widget.show()   
-            self.status_ds_calib_filename_lbl.show()
-            self.status_us_calib_filename_lbl.show()
+            self.temperature_control_widget.show()
             self.ruby_axes.hide()
             self.diamond_axes.hide()
             self.temperature_axes.show()
@@ -66,8 +64,6 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         elif btn_name == 'ruby_btn':
             self.update_navigation_bar('rgba(197, 0, 3, 255)', 'ruby_btn')
             self.ruby_control_widget.show()            
-            self.status_ds_calib_filename_lbl.hide()
-            self.status_us_calib_filename_lbl.hide()
             self.temperature_axes.hide()      
             self.diamond_axes.hide()      
             self.ruby_axes.show()
@@ -75,8 +71,6 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         elif btn_name == 'diamond_btn':
             self.update_navigation_bar('rgba(27, 0, 134, 255)', 'diamond_btn')
             self.diamond_control_widget.show()
-            self.status_ds_calib_filename_lbl.hide()
-            self.status_us_calib_filename_lbl.hide()
             self.temperature_axes.hide()
             self.ruby_axes.hide()
             self.diamond_axes.show()
@@ -102,8 +96,6 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
     def set_calib_filenames(self, ds_filename, us_filename):
         self.temperature_control_widget.us_calib_filename_lbl.setText(us_filename)
         self.temperature_control_widget.ds_calib_filename_lbl.setText(ds_filename)
-        self.status_ds_calib_filename_lbl.setText('DS calibration: '+ds_filename.replace('\\','/').split('/')[-1])
-        self.status_us_calib_filename_lbl.setText('US calibration: '+us_filename.replace('\\','/').split('/')[-1])
 
     def hide_control_widgets(self):
         self.temperature_control_widget.hide()

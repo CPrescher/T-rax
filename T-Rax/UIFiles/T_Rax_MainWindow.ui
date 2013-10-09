@@ -276,30 +276,7 @@ margin: 2px;
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="status_ds_calib_filename_lbl">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>15</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="status_us_calib_filename_lbl">
+        <widget class="QLabel" name="status_file_information_lbl">
          <property name="text">
           <string/>
          </property>

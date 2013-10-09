@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_DiamondControl.ui'
 #
-# Created: Tue Oct 08 10:28:46 2013
+# Created: Wed Oct 09 10:18:00 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
