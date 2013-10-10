@@ -1,7 +1,7 @@
 from T_Rax_QtController import TRaxMainController
 from PyQt4 import QtGui
 import sys
-from time import gmtime, strftime 
+from datetime import datetime
 
 
 class Logger(object):
@@ -20,7 +20,7 @@ sys.stderr = Logger()
 print ('*********************************************************\n'+
        'T-Rax has been started at {time}\n'+
        '*********************************************************').\
-       format(time = strftime("%Y-%m-%d %H:%M:%S", gmtime()))
+       format(time = str(datetime.now()))
 
 app = QtGui.QApplication(sys.argv)
 controller = TRaxMainController()

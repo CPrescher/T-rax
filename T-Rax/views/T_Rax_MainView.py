@@ -137,17 +137,20 @@ class T_Rax_2axes_graph():
         self.us_axes = self.figure.add_subplot(122)
         self.create_ds_graph()
         self.create_us_graph()
+        self.create_color_map()
         self._hidden = False
  
     def create_us_graph(self):
         self.us_data_line , self.us_fit_line, self.us_temp_txt, \
-            self.us_int_txt, self.us_warning_txt, self.us_calib_file_txt = \
+            self.us_int_txt, self.us_warning_txt, self.us_calib_file_txt,\
+            self.us_indicator_rectangle_line, self.us_indicator_rectangle_fill = \
             self.create_axes_lines(self.us_axes)    
         self.us_axes.set_title('UPSTREAM', color=(1,0.55,0), weight = 'bold', va='bottom')
         
     def create_ds_graph(self):
         self.ds_data_line , self.ds_fit_line, self.ds_temp_txt, \
-            self.ds_int_txt, self.ds_warning_txt, self.ds_calib_file_txt = \
+            self.ds_int_txt, self.ds_warning_txt, self.ds_calib_file_txt, \
+            self.ds_indicator_rectangle_line, self.ds_indicator_rectangle_fill =  \
             self.create_axes_lines(self.ds_axes)  
         self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0), weight = 'bold', va='bottom') 
 
@@ -157,11 +160,30 @@ class T_Rax_2axes_graph():
         temp_txt = axes.text(0,0, '', size=20, ha='left', va='top')
         int_txt = axes.text(0,0,'',size=13, color = (0.04,0.76,0.17), ha='right')
         warning_txt = axes.text(0,0,'', size=25, color = 'r', va='center', ha='center', weight = 'bold') 
+        indicator_rectangle_line = mpl.patches.Rectangle((0,0),10,10, fill=True, color=(0.12,0.12,0.12), lw=1, ec=(0.9,0.9,0.9), zorder=9999)
+        indicator_rectangle_fill = mpl.patches.Rectangle((0,0),10,10, fill=True, lw=0, zorder =10000)
+        axes.add_artist(indicator_rectangle_line)
+        axes.add_artist(indicator_rectangle_fill)
         calib_file_txt = axes.text(0,0, '', size=9, color =  'r', ha='left', va='top')
 
         axes.yaxis.set_visible(False)
         axes.set_xlabel('$\lambda$ $(nm)$', size=11)
-        return data_line, fit_line, temp_txt, int_txt, warning_txt, calib_file_txt
+        return data_line, fit_line, temp_txt, int_txt, warning_txt, calib_file_txt, indicator_rectangle_line, indicator_rectangle_fill
+
+    def create_color_map(self):
+        color_dict={
+                      'red'  :  ( (0.0, 1.0, 1.0),
+                                  (0.5, 0.0, 0.0), 
+                                  (1.0, 1.0, 1.0)),
+                      'green':  ( (0.0, 0.0, 0.0), 
+                                  (0.5, 1.0, 1.0),
+                                  (0.85,0.0, 0.0),
+                                  (1.0, 0.0, 0.0)),
+                      'blue' :  ( (0.0, 0.0, 0.0), 
+                                  (0.5, 0.0, 0.0),
+                                  (1.0, 0.0, 0.0))
+                    }
+        self.cmap=mpl.colors.LinearSegmentedColormap('own_color_map', color_dict)
     
     def update_graph(self, ds_spectrum, us_spectrum, ds_max_int, us_max_int, ds_calib_fname, us_calib_fname):
         if isinstance(ds_spectrum,list):
@@ -192,7 +214,7 @@ class T_Rax_2axes_graph():
         else:
             self.ds_temp_txt.set_text('{0:.0f} K $\pm$ {1:.0f}'.format(ds_fit_spectrum.T, ds_fit_spectrum.T_err))
             self.ds_fit_line.set_data(ds_fit_spectrum.get_data())
-            self.ds_temp_txt.set_x(min(ds_exp_spectrum.x) + 0.05 * ds_exp_spectrum.get_x_range())
+            self.ds_temp_txt.set_x(min(ds_exp_spectrum.x) + 0.07 * ds_exp_spectrum.get_x_range())
             self.ds_temp_txt.set_y(min(ds_exp_spectrum.y) + 0.9 * ds_exp_spectrum.get_y_range() * 1.05)
 
         if us_fit_spectrum == None:
@@ -201,7 +223,7 @@ class T_Rax_2axes_graph():
         else:
             self.us_temp_txt.set_text('{0:.0f} K $\pm$ {1:.0f}'.format(us_fit_spectrum.T, us_fit_spectrum.T_err))
             self.us_fit_line.set_data(us_fit_spectrum.get_data())
-            self.us_temp_txt.set_x(min(us_exp_spectrum.x) + 0.05 * us_exp_spectrum.get_x_range())
+            self.us_temp_txt.set_x(min(us_exp_spectrum.x) + 0.07 * us_exp_spectrum.get_x_range())
             self.us_temp_txt.set_y(min(us_exp_spectrum.y) + 0.9 * us_exp_spectrum.get_y_range() * 1.05)
 
         #Maximum intensity:
@@ -212,6 +234,44 @@ class T_Rax_2axes_graph():
         self.us_int_txt.set_text('Max Int: {0:.0f}'.format(us_max_int))
         self.us_int_txt.set_x(min(us_exp_spectrum.x) + 0.97 * us_exp_spectrum.get_x_range())
         self.us_int_txt.set_y(min(us_exp_spectrum.y) + 0.03 * us_exp_spectrum.get_y_range())
+        
+        #intensity indicator rectangles:
+        width=0.02
+        height=1
+        self.ds_indicator_rectangle_line.set_x(min(ds_exp_spectrum.x))
+        self.ds_indicator_rectangle_line.set_y(min(ds_exp_spectrum.y))
+        self.ds_indicator_rectangle_line.set_width(width*ds_exp_spectrum.get_x_range())
+        self.ds_indicator_rectangle_line.set_height(height*ds_exp_spectrum.get_y_range()*1.05)
+
+        self.ds_indicator_rectangle_fill.set_x(min(ds_exp_spectrum.x))
+        self.ds_indicator_rectangle_fill.set_y(min(ds_exp_spectrum.y))
+        self.ds_indicator_rectangle_fill.set_width(width*ds_exp_spectrum.get_x_range())
+        self.ds_indicator_rectangle_fill.set_height(ds_max_int/64400.0*height*ds_exp_spectrum.get_y_range()*1.05)
+
+        self.ds_indicator_rectangle_fill.set_facecolor(self.cmap(ds_max_int/64400.0))
+
+        if ds_max_int<1000:
+            self.ds_indicator_rectangle_line.set_facecolor((1,0.5,0))
+        else:
+            self.ds_indicator_rectangle_line.set_facecolor((0.12,0.12,0.12))
+
+        if us_max_int<1000:
+            self.us_indicator_rectangle_line.set_facecolor((1,0.5,0))
+        else:
+            self.us_indicator_rectangle_line.set_facecolor((0.12,0.12,0.12))
+
+
+        self.us_indicator_rectangle_line.set_x(min(us_exp_spectrum.x))
+        self.us_indicator_rectangle_line.set_y(min(us_exp_spectrum.y))
+        self.us_indicator_rectangle_line.set_width(width*us_exp_spectrum.get_x_range())
+        self.us_indicator_rectangle_line.set_height(height*us_exp_spectrum.get_y_range()*1.05)
+
+        self.us_indicator_rectangle_fill.set_x(min(us_exp_spectrum.x))
+        self.us_indicator_rectangle_fill.set_y(min(us_exp_spectrum.y))
+        self.us_indicator_rectangle_fill.set_width(width*us_exp_spectrum.get_x_range())
+        self.us_indicator_rectangle_fill.set_height(us_max_int/64400.0*height*us_exp_spectrum.get_y_range()*1.05)
+             
+        self.us_indicator_rectangle_fill.set_facecolor(self.cmap(us_max_int/64400.0))
 
         #do a warning if it is over a specific value:
         if ds_max_int >= 64400:
@@ -231,14 +291,14 @@ class T_Rax_2axes_graph():
         #Calibration files:
         if ds_fit_spectrum == None:
             self.ds_calib_file_txt.set_text('Load calibration with correct dimensions!')
-            self.ds_calib_file_txt.set_x(min(ds_exp_spectrum.x) + 0.03 * ds_exp_spectrum.get_x_range())
+            self.ds_calib_file_txt.set_x(min(ds_exp_spectrum.x) + 0.05 * ds_exp_spectrum.get_x_range())
             self.ds_calib_file_txt.set_y(min(ds_exp_spectrum.y) + 0.96 * ds_exp_spectrum.get_y_range() * 1.05)
         else:
             self.ds_calib_file_txt.set_text('')
 
         if us_fit_spectrum == None:
             self.us_calib_file_txt.set_text('Load calibration with correct dimensions!')
-            self.us_calib_file_txt.set_x(min(us_exp_spectrum.x) + 0.03 * us_exp_spectrum.get_x_range())
+            self.us_calib_file_txt.set_x(min(us_exp_spectrum.x) + 0.05 * us_exp_spectrum.get_x_range())
             self.us_calib_file_txt.set_y(min(us_exp_spectrum.y) + 0.96 * us_exp_spectrum.get_y_range() * 1.05)
         else:
             self.us_calib_file_txt.set_text('')
