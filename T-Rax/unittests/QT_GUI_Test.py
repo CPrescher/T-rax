@@ -62,8 +62,7 @@ class Test_QT_GUI_Test(unittest.TestCase):
         self.assertEqual(str(self.diamond_controller.main_view.diamond_control_widget.exp_folder_name_lbl.text()),
                          '/'.join(filename1.replace('\\','/').split('/')[-3:-1]))
 
-
-    def test_load_roi_selector_view(self):
+    def test_temperature_roi_selector(self):
         self.temperature_controller.load_roi_view()
         new_ds_roi=[100,900,80,90]
         self.temperature_controller.data.roi_data.set_ds_roi(new_ds_roi)        
@@ -75,7 +74,7 @@ class Test_QT_GUI_Test(unittest.TestCase):
         self.assertEqual(self.temperature_controller.roi_controller.view.get_fit_x_limits(),
                          new_ds_roi[:2])
 
-        new_us_roi=[7,13,120,850]
+        new_us_roi=[120,850,7,13]
         self.temperature_controller.data.roi_data.set_us_roi(new_ds_roi)        
         new_ds_roi[:2]=np.round(self.temperature_controller.data.calculate_wavelength(new_ds_roi[:2]))
         self.assertEqual(self.temperature_controller.roi_controller.view.get_us_roi(),
@@ -84,6 +83,24 @@ class Test_QT_GUI_Test(unittest.TestCase):
                          new_ds_roi[:2])
         self.assertEqual(self.temperature_controller.roi_controller.view.get_fit_x_limits(),
                          new_ds_roi[:2])
+
+        new_ds_roi=[650,750,12,20]
+        self.temperature_controller.roi_controller.view.set_ds_txt_roi(new_ds_roi)
+        self.temperature_controller.roi_controller.ds_roi_txt_changed()
+        data_ds_roi=self.temperature_controller.data.get_ds_roi()
+        data_ds_roi[:2]=np.round(self.temperature_controller.data.calculate_wavelength(data_ds_roi[:2]))
+        self.assertEqual(data_ds_roi, new_ds_roi)
+        self.assertEqual(self.temperature_controller.data.get_ds_roi()[:2],
+                         self.temperature_controller.data.get_us_roi()[:2])
+
+        new_us_roi=[659,788,80,90]
+        self.temperature_controller.roi_controller.view.set_us_txt_roi(new_us_roi)
+        self.temperature_controller.roi_controller.us_roi_txt_changed()
+        data_us_roi=self.temperature_controller.data.get_us_roi()
+        data_us_roi[:2]=np.round(self.temperature_controller.data.calculate_wavelength(data_us_roi[:2]))
+        self.assertEqual(data_us_roi, new_us_roi)
+        self.assertEqual(self.temperature_controller.data.get_us_roi()[:2],
+                         self.temperature_controller.data.get_ds_roi()[:2])
 
     def test_temperature_calibration_tab(self):
         self.temperature_controller.load_ds_calib_data('unittest files/dn_15.SPE')
