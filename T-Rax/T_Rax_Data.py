@@ -466,6 +466,12 @@ class DummyImg(ExpData):
         self.x_whole = x
         self.calc_spectra()
 
+    def get_next_file_names(self):
+        return '',''
+
+    def get_previous_file_names(self):
+        return '',''
+
     def get_img_dimension(self):
         return (1300,100)
 

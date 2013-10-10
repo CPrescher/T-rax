@@ -173,14 +173,19 @@ class T_Rax_2axes_graph():
     def create_color_map(self):
         color_dict={
                       'red'  :  ( (0.0, 1.0, 1.0),
-                                  (0.5, 0.0, 0.0), 
+                                  (0.023, 0.04, 0.04),
+                                  (0.7,0.04,0.04),
+                                  (0.7, 0.0, 0.0), 
                                   (1.0, 1.0, 1.0)),
                       'green':  ( (0.0, 0.0, 0.0), 
-                                  (0.5, 1.0, 1.0),
+                                  (0.023,0.76,0.76),
+                                  (0.7,0.76,0.76),
                                   (0.85,0.0, 0.0),
                                   (1.0, 0.0, 0.0)),
-                      'blue' :  ( (0.0, 0.0, 0.0), 
-                                  (0.5, 0.0, 0.0),
+                      'blue' :  ( (0.0, 0.0, 0.0),
+                                  (0.023, 0.17,0.17), 
+                                  (0.7, 0.17,0.17),
+                                  (0.85,0.0, 0.0),
                                   (1.0, 0.0, 0.0))
                     }
         self.cmap=mpl.colors.LinearSegmentedColormap('own_color_map', color_dict)
@@ -236,7 +241,7 @@ class T_Rax_2axes_graph():
         self.us_int_txt.set_y(min(us_exp_spectrum.y) + 0.03 * us_exp_spectrum.get_y_range())
         
         #intensity indicator rectangles:
-        width=0.02
+        width=0.025
         height=1
         self.ds_indicator_rectangle_line.set_x(min(ds_exp_spectrum.x))
         self.ds_indicator_rectangle_line.set_y(min(ds_exp_spectrum.y))
@@ -250,13 +255,13 @@ class T_Rax_2axes_graph():
 
         self.ds_indicator_rectangle_fill.set_facecolor(self.cmap(ds_max_int/64400.0))
 
-        if ds_max_int<1000:
-            self.ds_indicator_rectangle_line.set_facecolor((1,0.5,0))
+        if ds_max_int<100:
+            self.ds_indicator_rectangle_line.set_facecolor((1,0,0))
         else:
             self.ds_indicator_rectangle_line.set_facecolor((0.12,0.12,0.12))
 
-        if us_max_int<1000:
-            self.us_indicator_rectangle_line.set_facecolor((1,0.5,0))
+        if us_max_int<100:
+            self.us_indicator_rectangle_line.set_facecolor((1,0,0))
         else:
             self.us_indicator_rectangle_line.set_facecolor((0.12,0.12,0.12))
 
@@ -278,11 +283,19 @@ class T_Rax_2axes_graph():
             self.ds_warning_txt.set_text('SATURATION')
             self.ds_warning_txt.set_x(min(ds_exp_spectrum.x) + 0.5 * ds_exp_spectrum.get_x_range())
             self.ds_warning_txt.set_y(min(ds_exp_spectrum.y) + 0.5 * ds_exp_spectrum.get_y_range())
+        elif ds_max_int <=100:
+            self.ds_warning_txt.set_text('TOO LOW\nINTENSITY')
+            self.ds_warning_txt.set_x(min(ds_exp_spectrum.x) + 0.5 * ds_exp_spectrum.get_x_range())
+            self.ds_warning_txt.set_y(min(ds_exp_spectrum.y) + 0.5 * ds_exp_spectrum.get_y_range())
         else:
             self.ds_warning_txt.set_text('')
 
         if us_max_int >= 64400:
             self.us_warning_txt.set_text('SATURATION')
+            self.us_warning_txt.set_x(min(us_exp_spectrum.x) + 0.5 * us_exp_spectrum.get_x_range())
+            self.us_warning_txt.set_y(min(us_exp_spectrum.y) + 0.5 * us_exp_spectrum.get_y_range())
+        elif us_max_int <=100:
+            self.us_warning_txt.set_text('TOO LOW\n INTENSITY')
             self.us_warning_txt.set_x(min(us_exp_spectrum.x) + 0.5 * us_exp_spectrum.get_x_range())
             self.us_warning_txt.set_y(min(us_exp_spectrum.y) + 0.5 * us_exp_spectrum.get_y_range())
         else:
