@@ -378,6 +378,7 @@ class TRaxTemperatureController():
                 if self.epics_is_connected:
                     try:
                         if caget('13LF1:cam1:Acquire')==1:
+                            print 'LIGHTFIELD still collecting'
                             return #aborts if lightfield has not finished all his file handling
                     except:
                         pass

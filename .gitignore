@@ -10,7 +10,8 @@
 *.spe
 *.SPE
 *.txt
-
+*.xml
+spe_xml.xml
 dist/
 build/
 
