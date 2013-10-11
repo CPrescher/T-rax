@@ -122,14 +122,10 @@ class T_Rax_2axes_temperature_graph():
         self._parent = parent
         self.create_figure()
         self.create_subplots()
-        self.create_ds_graph()
-        self.create_us_graph()
+        self.create_graph_content()
+        self.set_graph_style()
         self.create_intensity_indicator_color_map()
         self._hidden = False
- 
-    def create_subplots(self):
-        self.us_axes = self.figure.add_subplot(122)
-        self.ds_axes = self.figure.add_subplot(121)
 
     def create_figure(self):
         self.figure = Figure(None, dpi=100)
@@ -143,25 +139,40 @@ class T_Rax_2axes_temperature_graph():
         self.canvas.setSizePolicy( QtGui.QSizePolicy.Expanding,
                                    QtGui.QSizePolicy.Expanding)
         self.canvas.updateGeometry()
+    
+    def create_subplots(self):
+        self.us_axes = self.figure.add_subplot(122)
+        self.ds_axes = self.figure.add_subplot(121)
+    
+    def create_graph_content(self):
+        self.create_upstream_graph_content()
+        self.create_downstream_graph_content()
 
-    def create_us_graph(self):
+    def create_upstream_graph_content(self):
         self.us_data_line , self.us_fit_line, self.us_temp_txt, \
             self.us_int_txt, self.us_warning_txt, self.us_calib_file_txt,\
             self.us_indicator_rectangle_line, self.us_indicator_rectangle_fill = \
-            self.create_axes_content(self.us_axes)    
-        
-        self.us_axes.yaxis.set_visible(False)
-        self.us_axes.set_xlabel('$\lambda$ $(nm)$', size=11)
-        self.us_axes.set_title('UPSTREAM', color=(1,0.55,0), weight = 'bold', va='bottom')
-        
-    def create_ds_graph(self):
+            self.create_axes_content(self.us_axes)           
+
+    def create_downstream_graph_content(self):
         self.ds_data_line , self.ds_fit_line, self.ds_temp_txt, \
             self.ds_int_txt, self.ds_warning_txt, self.ds_calib_file_txt, \
             self.ds_indicator_rectangle_line, self.ds_indicator_rectangle_fill =  \
             self.create_axes_content(self.ds_axes)  
+
+    def set_graph_style(self):
+        self.set_upstream_graph_style()
+        self.set_downstream_graph_style()
+        
+    def set_upstream_graph_style(self):
+        self.us_axes.yaxis.set_visible(False)
+        self.us_axes.set_xlabel('$\lambda$ $(nm)$', size=11)
+        self.us_axes.set_title('UPSTREAM', color=(1,0.55,0), weight = 'bold', va='bottom')
+        
+    def set_downstream_graph_style(self):
         self.ds_axes.yaxis.set_visible(False)
         self.ds_axes.set_xlabel('$\lambda$ $(nm)$', size=11)
-        self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0), weight = 'bold', va='bottom') 
+        self.ds_axes.set_title('DOWNSTREAM', color=(1, 1, 0), weight = 'bold', va='bottom')
 
     def create_axes_content(self, axes):
         data_line, = axes.plot([], [], '-', color = (0.7,0.9,0.9), lw=1)
@@ -240,6 +251,18 @@ class T_Rax_2axes_temperature_graph():
         self.ds_axes.set_xlim(self.ds_exp_spectrum.get_x_plot_limits())
         self.ds_axes.set_ylim(self.ds_exp_spectrum.get_y_plot_limits())
 
+    def get_ds_x_absolute_position(self, relative_x_position ):
+        return min(self.ds_exp_spectrum.x) + relative_x_position * self.ds_exp_spectrum.get_x_range()
+
+    def get_ds_y_absolute_position(self, relative_y_position ):
+        return min(self.ds_exp_spectrum.y) + relative_y_position * self.ds_exp_spectrum.get_y_range() * 1.05
+
+    def get_us_x_absolute_position(self, relative_x_position ):
+        return min(self.us_exp_spectrum.x) + relative_x_position * self.us_exp_spectrum.get_x_range()
+
+    def get_us_y_absolute_position(self, relative_y_position ):
+        return min(self.us_exp_spectrum.y) + relative_y_position * self.us_exp_spectrum.get_y_range() * 1.05
+
     def update_temperature_labels(self):
         if self.ds_fit_spectrum == None:
             self.ds_temp_txt.set_text('')
@@ -247,8 +270,8 @@ class T_Rax_2axes_temperature_graph():
         else:
             self.ds_temp_txt.set_text('{0:.0f} K $\pm$ {1:.0f}'.format(self.ds_fit_spectrum.T, self.ds_fit_spectrum.T_err))
             self.ds_fit_line.set_data(self.ds_fit_spectrum.get_data())
-            self.ds_temp_txt.set_x(min(self.ds_exp_spectrum.x) + 0.07 * self.ds_exp_spectrum.get_x_range())
-            self.ds_temp_txt.set_y(min(self.ds_exp_spectrum.y) + 0.9 * self.ds_exp_spectrum.get_y_range() * 1.05)
+            self.ds_temp_txt.set_x(self.get_ds_x_absolute_position(0.07))
+            self.ds_temp_txt.set_y(self.get_ds_y_absolute_position(0.9))
         
         if self.us_fit_spectrum == None:
             self.us_temp_txt.set_text('')
@@ -256,17 +279,17 @@ class T_Rax_2axes_temperature_graph():
         else:
             self.us_temp_txt.set_text('{0:.0f} K $\pm$ {1:.0f}'.format(self.us_fit_spectrum.T, self.us_fit_spectrum.T_err))
             self.us_fit_line.set_data(self.us_fit_spectrum.get_data())
-            self.us_temp_txt.set_x(min(self.us_exp_spectrum.x) + 0.07 * self.us_exp_spectrum.get_x_range())
-            self.us_temp_txt.set_y(min(self.us_exp_spectrum.y) + 0.9 * self.us_exp_spectrum.get_y_range() * 1.05)
+            self.us_temp_txt.set_x(self.get_us_x_absolute_position(0.07))
+            self.us_temp_txt.set_y(self.get_us_y_absolute_position(0.9))
 
     def update_maximum_intensity_labels(self):
         self.ds_int_txt.set_text('Max Int: {0:.0f}'.format(self.ds_max_int))
-        self.ds_int_txt.set_x(min(self.ds_exp_spectrum.x) + 0.97 * self.ds_exp_spectrum.get_x_range())
-        self.ds_int_txt.set_y(min(self.ds_exp_spectrum.y) + 0.03 * self.ds_exp_spectrum.get_y_range())
+        self.ds_int_txt.set_x(self.get_ds_x_absolute_position(0.97))
+        self.ds_int_txt.set_y(self.get_ds_y_absolute_position(0.03))
         
         self.us_int_txt.set_text('Max Int: {0:.0f}'.format(self.us_max_int))
-        self.us_int_txt.set_x(min(self.us_exp_spectrum.x) + 0.97 * self.us_exp_spectrum.get_x_range())
-        self.us_int_txt.set_y(min(self.us_exp_spectrum.y) + 0.03 * self.us_exp_spectrum.get_y_range())
+        self.us_int_txt.set_x(self.get_us_x_absolute_position(0.97))
+        self.us_int_txt.set_y(self.get_us_y_absolute_position(0.03))
 
     def update_intensity_indicator_bar(self, width, height):
         self.ds_indicator_rectangle_line.set_x(min(self.ds_exp_spectrum.x))
@@ -304,40 +327,36 @@ class T_Rax_2axes_temperature_graph():
         self.us_indicator_rectangle_fill.set_facecolor(self.cmap(self.us_max_int/64400.0))
 
     def update_intensity_warning(self):
+        self.ds_warning_txt.set_x(self.get_ds_x_absolute_position(0.5))
+        self.ds_warning_txt.set_y(self.get_ds_y_absolute_position(0.5))
         if self.ds_max_int >= 64400:
             self.ds_warning_txt.set_text('SATURATION')
-            self.ds_warning_txt.set_x(min(self.ds_exp_spectrum.x) + 0.5 * self.ds_exp_spectrum.get_x_range())
-            self.ds_warning_txt.set_y(min(self.ds_exp_spectrum.y) + 0.5 * self.ds_exp_spectrum.get_y_range())
         elif self.ds_max_int <=100:
             self.ds_warning_txt.set_text('TOO LOW\nINTENSITY')
-            self.ds_warning_txt.set_x(min(self.ds_exp_spectrum.x) + 0.5 * self.ds_exp_spectrum.get_x_range())
-            self.ds_warning_txt.set_y(min(self.ds_exp_spectrum.y) + 0.5 * self.ds_exp_spectrum.get_y_range())
         else:
             self.ds_warning_txt.set_text('')
-        
+            
+        self.us_warning_txt.set_x(self.get_us_x_absolute_position(0.5))
+        self.us_warning_txt.set_y(self.get_us_y_absolute_position(0.5))
         if self.us_max_int >= 64400:
             self.us_warning_txt.set_text('SATURATION')
-            self.us_warning_txt.set_x(min(self.us_exp_spectrum.x) + 0.5 * self.us_exp_spectrum.get_x_range())
-            self.us_warning_txt.set_y(min(self.us_exp_spectrum.y) + 0.5 * self.us_exp_spectrum.get_y_range())
         elif self.us_max_int <=100:
             self.us_warning_txt.set_text('TOO LOW\n INTENSITY')
-            self.us_warning_txt.set_x(min(self.us_exp_spectrum.x) + 0.5 * self.us_exp_spectrum.get_x_range())
-            self.us_warning_txt.set_y(min(self.us_exp_spectrum.y) + 0.5 * self.us_exp_spectrum.get_y_range())
         else:
             self.us_warning_txt.set_text('')
 
     def update_calibration_file_warning(self):
         if self.ds_fit_spectrum == None:
             self.ds_calib_file_txt.set_text('Load calibration with correct dimensions!')
-            self.ds_calib_file_txt.set_x(min(self.ds_exp_spectrum.x) + 0.05 * self.ds_exp_spectrum.get_x_range())
-            self.ds_calib_file_txt.set_y(min(self.ds_exp_spectrum.y) + 0.96 * self.ds_exp_spectrum.get_y_range() * 1.05)
+            self.ds_calib_file_txt.set_x(self.get_ds_x_absolute_position(0.05))
+            self.ds_calib_file_txt.set_y(self.get_ds_y_absolute_position(0.96))
         else:
             self.ds_calib_file_txt.set_text('')
         
         if self.us_fit_spectrum == None:
             self.us_calib_file_txt.set_text('Load calibration with correct dimensions!')
-            self.us_calib_file_txt.set_x(min(self.us_exp_spectrum.x) + 0.05 * self.us_exp_spectrum.get_x_range())
-            self.us_calib_file_txt.set_y(min(self.us_exp_spectrum.y) + 0.96 * self.us_exp_spectrum.get_y_range() * 1.05)
+            self.us_calib_file_txt.set_x(self.get_us_x_absolute_position(0.05))
+            self.us_calib_file_txt.set_y(self.get_us_y_absolute_position(0.96))
         else:
             self.us_calib_file_txt.set_text('')
 
