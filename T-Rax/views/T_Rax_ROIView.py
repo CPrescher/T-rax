@@ -72,7 +72,6 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
                                    QtGui.QSizePolicy.Expanding)
         self.canvas.updateGeometry()
         self.axes = self.figure.add_subplot(111)
-        self.old_size = 0,0
 
     def draw_image(self):
         try:

@@ -25,11 +25,11 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.setupUi(self)
         self.main_layout = self.main_frame.layout()
         self.setWindowIcon(QtGui.QIcon('icons/first_version.png'))
-        
+ 
         self.create_graphs()
         self.create_widgets()
         self.hide_control_widgets()
-        self.resize(900,450)
+        self.resize(900,480)
 
     def create_graphs(self):
         self.temperature_axes = T_Rax_2axes_temperature_graph(self.figure1_frame)

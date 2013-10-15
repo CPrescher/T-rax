@@ -38,6 +38,7 @@ class SPE_File(object):
         self._read_grating_from_header()
         self._read_center_wavelength_from_header()
         self._read_roi_from_header()
+        self._read_num_frames_from_header()
         
     def _read_parameter_from_dom(self):
         self._get_xml_string()
@@ -50,6 +51,7 @@ class SPE_File(object):
         self._read_center_wavelength_from_dom()
         self._read_roi_from_dom()
         self._select_wavelength_from_roi()
+        self._read_num_frames_from_header()
 
     def _read_date_time_from_header(self):
         rawdate = self._read_at(20, 9, np.int8)
@@ -66,6 +68,7 @@ class SPE_File(object):
 
     def _read_exposure_from_header(self):
         self.exposure_time = self._read_at(10,1,np.float32)
+        self.exposure_time = self.exposure_time[0]
 
     def _read_detector_from_header(self):
         self.detector = 'unspecified'
@@ -74,10 +77,13 @@ class SPE_File(object):
         self.grating = str(self._read_at(650,1,np.float32)[0])
 
     def _read_center_wavelength_from_header(self):
-        self.center_wavelength = self._read_at(72,1,np.float32)[0]
+        self.center_wavelength = float(self._read_at(72,1,np.float32)[0])
 
     def _read_roi_from_header(self):
         return
+
+    def _read_num_frames_from_header(self):
+        self.num_frames=self._read_at(1446,1,np.int32)[0]
 
     def _create_dom_from_xml(self):
         self.dom = parseString(self.xml_string)
@@ -188,15 +194,26 @@ class SPE_File(object):
         return np.fromfile(self._fid, ntype, size)
 
     def _load_img(self):
+        self.img = self.read_frame(4100)
+        if self.num_frames>1:
+            img_temp=[]
+            img_temp.append(self.img)
+            for n in xrange(self.num_frames-1):
+                img_temp.append(self.read_frame())
+            self.img=img_temp
+
+    def read_frame(self,pos=None):
+        if pos==None:
+            pos=self._fid.tell()
         if self._data_type == 0:
-            img = self._read_at(4100, self._xdim * self._ydim, np.float32)
+            img = self._read_at(pos, self._xdim * self._ydim, np.float32)
         elif self._data_type == 1:
-            img = self._read_at(4100, self._xdim * self._ydim, np.int32)
+            img = self._read_at(pos, self._xdim * self._ydim, np.int32)
         elif self._data_type == 2:
-            img = self._read_at(4100, self._xdim * self._ydim, np.int16)
+            img = self._read_at(pos, self._xdim * self._ydim, np.int16)
         elif self._data_type == 3:
-            img = self._read_at(4100, self._xdim * self._ydim, np.uint16)
-        self.img = img.reshape((self._ydim, self._xdim))
+            img = self._read_at(pos, self._xdim * self._ydim, np.uint16)
+        return img.reshape((self._ydim, self._xdim))
                         
     def get_dimension(self):
         return (self._xdim, self._ydim)

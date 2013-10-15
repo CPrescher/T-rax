@@ -8,6 +8,7 @@ from PyQt4.QtCore import SIGNAL
 import numpy as np
 
 from views.T_Rax_MainView import TRaxMainView
+from T_Rax_OutputGraphController import TRaxOutputGraphController
 from T_Rax_QTROISelectorController import TRaxROIController
 from T_Rax_QTROISelectorRubyController import TRaxROIControllerRuby
 from T_Rax_QTROISelectorDiamondController import TRaxROIControllerDiamond
@@ -32,6 +33,7 @@ class TRaxMainController(object):
         self.temperature_controller = TRaxTemperatureController(self,self.main_view)
         self.ruby_controller = TRaxRubyController(self, self.main_view)
         self.diamond_controller = TRaxDiamondController(self, self.main_view)
+        self.output_graph_controller = TRaxOutputGraphController(self, self.main_view)
         
     def load_directories(self):
        try:
@@ -161,6 +163,7 @@ class TRaxTemperatureController():
 
     def create_signals(self):
         self.create_exp_file_signals()
+        self.create_frame_signals()
         self.create_roi_view_signals()
 
         self.create_temperature_pub_listeners()
@@ -191,6 +194,10 @@ class TRaxTemperatureController():
     def create_temperature_pub_listeners(self):
         pub.subscribe(self.data_changed, "EXP DATA CHANGED")
         pub.subscribe(self.roi_changed, "ROI CHANGED")
+
+    def create_frame_signals(self):
+        self.main_view.temperature_control_widget.frame_sb.valueChanged.connect(self.frame_value_changed)
+        self.connect_click_function(self.main_view.temperature_control_widget.time_lapse_btn, self.plot_time_lapse)
     
     def create_calibration_signals(self):
         self.connect_click_function(self.main_view.temperature_control_widget.load_ds_calib_data_btn,
@@ -263,8 +270,22 @@ class TRaxTemperatureController():
         self.main_view.set_temperature_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
         self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
+        self.update_frames_widget()
         self.update_calibration_view()
         self.update_pv_names()
+
+    def update_frames_widget(self):
+        if self.data.exp_data.num_frames>1:
+            self.main_view.temperature_control_widget.frames_widget.show()
+            self.main_view.temperature_control_widget.frame_line.show()
+            self.main_view.temperature_control_widget.frame_sb.blockSignals(True)
+            self.main_view.temperature_control_widget.frame_sb.setValue(self.data.exp_data.current_frame+1)
+            self.main_view.temperature_control_widget.frame_sb.setMaximum(self.data.exp_data.num_frames)
+            self.main_view.temperature_control_widget.frame_sb.setMinimum(1)
+            self.main_view.temperature_control_widget.frame_sb.blockSignals(False)
+        else:
+            self.main_view.temperature_control_widget.frames_widget.hide()
+            self.main_view.temperature_control_widget.frame_line.hide()
 
     def update_calibration_view(self):
         self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
@@ -290,6 +311,15 @@ class TRaxTemperatureController():
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
         self.update_pv_names()
+
+    def frame_value_changed(self):
+        self.data.set_current_frame(self.main_view.temperature_control_widget.frame_sb.value())
+
+    def plot_time_lapse(self):
+        ds_temperature, ds_temperature_err, us_temperature, us_temperature_err = self.data.calculate_time_lapse()
+        self.parent.output_graph_controller.show()
+        self.parent.output_graph_controller.plot_temperature_series(\
+            ds_temperature, ds_temperature_err, us_temperature, us_temperature_err)
 
     def update_pv_names(self):
         if self.epics_is_connected:

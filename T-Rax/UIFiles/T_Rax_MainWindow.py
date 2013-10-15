@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Wed Oct 09 10:18:00 2013
+# Created: Mon Oct 14 23:43:41 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,13 +26,13 @@ except AttributeError:
 class Ui_T_Rax_MainWindow(object):
     def setupUi(self, T_Rax_MainWindow):
         T_Rax_MainWindow.setObjectName(_fromUtf8("T_Rax_MainWindow"))
-        T_Rax_MainWindow.resize(850, 500)
+        T_Rax_MainWindow.resize(850, 530)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(T_Rax_MainWindow.sizePolicy().hasHeightForWidth())
         T_Rax_MainWindow.setSizePolicy(sizePolicy)
-        T_Rax_MainWindow.setMinimumSize(QtCore.QSize(850, 500))
+        T_Rax_MainWindow.setMinimumSize(QtCore.QSize(850, 530))
         T_Rax_MainWindow.setStyleSheet(_fromUtf8("QMainWindow, #T_Rax_MainWindow{\n"
 "    background: rgb(44, 43, 43)\n"
 "}\n"

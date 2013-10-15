@@ -6,7 +6,7 @@ import os
 from SPE_module import SPE_File
 from T_Rax_Data import ROI
 
-unittest_folder=os.getcwd()+'\\unittests\\unittest files\\'
+unittest_folder=os.getcwd()+'\\unittest files\\'
 
 class TestSPEModule(unittest.TestCase):
     def setUp(self):
@@ -64,6 +64,11 @@ class TestSPEModule(unittest.TestCase):
         dimensions = self.vers3_spe_file_full_sensor.get_dimension()
         self.assertEqual(self.vers3_spe_file_full_sensor.get_roi(),
                          [0,dimensions[0]-1,0,dimensions[1]-1])
+
+    def test_multiple_frames(self):
+        self.spe3_2frames_file = SPE_File(unittest_folder+'SPE_v3_PIMAX_2frames.spe')
+        print self.spe3_2frames_file.num_frames
+       
 
 if __name__ == '__main__':
     unittest.main()

@@ -29,6 +29,7 @@
     <Compile Include="convert_ui_files.py" />
     <Compile Include="run_T-Rax.py" />
     <Compile Include="T_Rax_DiamondData.py" />
+    <Compile Include="T_Rax_OutputGraphController.py" />
     <Compile Include="T_Rax_QTROISelectorRubyController.py" />
     <Compile Include="T_Rax_QTROISelectorDiamondController.py" />
     <Compile Include="T_Rax_RubyData.py" />
@@ -38,6 +39,7 @@
     <Compile Include="unittests\T_Rax_Data_Test.py" />
     <Compile Include="views\T_Rax_ControlWidgets.py" />
     <Compile Include="T_Rax_QTROISelectorController.py" />
+    <Compile Include="views\T_Rax_OutputGraphView.py" />
     <Compile Include="views\T_Rax_ROIView.py" />
     <Compile Include="T_Rax_QtController.py" />
     <Compile Include="views\T_Rax_MainView.py" />

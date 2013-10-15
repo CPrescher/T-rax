@@ -7,6 +7,8 @@ import scipy.interpolate as ip
 def dependencies_for_myprogram():
     from scipy.sparse.csgraph import _validation
 from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
+import colors
 
 
 class TraxData(object):
@@ -65,6 +67,31 @@ class TraxData(object):
             return ExpData(img_file, self.roi_data_manager)
         elif img_file.type == 'spectrum':
             return ExpSpecData(img_file, self.roi_data_manager)
+
+    def set_current_frame(self,frame_number):
+        self.exp_data.current_frame=frame_number-1
+        self.calc_spectra()
+        pub.sendMessage("EXP DATA CHANGED")
+
+    def calculate_time_lapse(self):
+        old_frame_number=self.exp_data.current_frame
+        ds_temperature=[]
+        ds_temperature_err=[]
+        us_temperature=[]
+        us_temperature_err=[]
+        for frame_number in xrange(self.exp_data.num_frames):
+            self.exp_data.current_frame=frame_number
+            self.calc_spectra()
+            dummy, ds_fit = self.get_ds_spectrum()
+            dummy, us_fit = self.get_us_spectrum()
+            ds_temperature.append(ds_fit.T)
+            us_temperature.append(us_fit.T)
+            ds_temperature_err.append(ds_fit.T_err)
+            us_temperature_err.append(us_fit.T_err)
+        
+        self.exp_data.current_frame = old_frame_number
+        return ds_temperature, ds_temperature_err,\
+               us_temperature, us_temperature_err
 
     def load_ds_calib_data(self, file_name, send_message=True):
         self.ds_calib_data = self.read_exp_image_file(file_name)
@@ -294,8 +321,6 @@ class TraxData(object):
         pub.sendMessage("EXP DATA CHANGED")
 
 
-
-
 class GeneralData(object):
     def __init__(self, img_file, roi_data_manager):
         self._img_file = img_file
@@ -305,8 +330,16 @@ class GeneralData(object):
     
     def read_parameter(self):
         self.filename = self._img_file.filename
-        self.img_data = self._img_file.img
+        self._img_data = self._img_file.img
         self.x_whole = self._img_file.x_calibration
+        self.current_frame = 0
+        self.num_frames=self._img_file.num_frames
+
+    def img_data(self):
+        if self.num_frames>1:
+            return self._img_data[self.current_frame]
+        else:
+            return self._img_data
 
     def calc_spectra(self):
         raise NotImplementedError
@@ -356,7 +389,7 @@ class ImgData(GeneralData):
         return np.max(roi_img)
 
     def get_roi_img(self, roi):
-        return self.img_data[roi.y_min : roi.y_max + 1, roi.x_min:roi.x_max + 1]
+        return self.img_data()[roi.y_min : roi.y_max + 1, roi.x_min:roi.x_max + 1]
 
     def get_x_limits(self):
         return np.array([min(self.x_whole), max(self.x_whole)])
@@ -386,7 +419,7 @@ class ExpData(ImgData):
         self._get_file_base_str()
 
     def get_img_data(self):
-        return self.img_data
+        return self.img_data()
 
     def calc_corrected_ds_spectrum(self, calib_img_spectrum, calib_spectrum):
         response_function = calib_img_spectrum.y / calib_spectrum
@@ -440,29 +473,35 @@ class ExpData(ImgData):
 
 class DummyImg(ExpData):
     def __init__(self, roi_data_manager):
+        self.num_frames=10
+        self.current_frame=0;
         self.roi_data = roi_data_manager.get_roi_data([1300,100])
         self.create_img()
         self.filename = 'dummy_img.spe'
 
     def create_img(self):
-        x = np.linspace(645,850,1300)
-        y = np.linspace(0,101, 100)
+        x = np.linspace(645,850,1024)
+        y = np.linspace(0,101, 256)
         X,Y = np.meshgrid(x,y)
+
+        
 
         Z = np.ones((len(y),len(x)))
         random.seed()
-        T1 = random.randrange(1700,3000,1)
-        T2 = T1 + random.randrange(-200,200,1)
+        self._img_data=[]
+        for frame_number in xrange(self.num_frames):
+            T1 = random.randrange(1700,3000,1)
+            T2 = T1 + random.randrange(-200,200,1)
 
-        black1 = black_body_function(x,T1,1e-8)
-        gauss1 = gauss_curve_function(y,2,80,3)
-        black2 = black_body_function(x,T2,1e-8)
-        gauss2 = gauss_curve_function(y,2,15,3)
+            black1 = black_body_function(x,T1,1e-8)
+            gauss1 = gauss_curve_function(y,2,80,3)
+            black2 = black_body_function(x,T2,1e-8)
+            gauss2 = gauss_curve_function(y,2,15,3)
 
-        for x_ind in xrange(len(x)):
-            for y_ind in xrange(len(y)):
-                Z[y_ind,x_ind] = black1[x_ind] * gauss1[y_ind] + black2[x_ind] * gauss2[y_ind]
-        self.img_data = Z + np.random.normal(0,.1 * max(black1),(len(y),len(x)))
+            for x_ind in xrange(len(x)):
+                for y_ind in xrange(len(y)):
+                    Z[y_ind,x_ind] = black1[x_ind] * gauss1[y_ind] + black2[x_ind] * gauss2[y_ind]
+            self._img_data.append( Z + np.random.normal(0,.1 * max(black1),(len(y),len(x))))
         self.x_whole = x
         self.calc_spectra()
 
@@ -485,7 +524,7 @@ class ExpSpecData(ExpData):
         self.roi_data.set_max_x_limits(x_max - 1)
 
     def calc_spectra(self):
-        self.y_whole = self.img_data[0]
+        self.y_whole = self.img_data()[0]
         self.x_zoom = self.x_whole[(self.roi_data.us_roi.x_min):           
                          (self.roi_data.us_roi.x_max + 1)]
         self.y_zoom = self.y_whole[(self.roi_data.us_roi.x_min):           
@@ -499,10 +538,11 @@ class ExpSpecData(ExpData):
 
 class ExpDataFromImgData(ExpData):
     def __init__(self, img_data, filename, x_calibration, roi_data_manager):
-        self.img_data = img_data
+        self._img_data = img_data
+        self.num_frames = 1
         self.filename = filename
         self.x_whole = x_calibration
-        self.img_dimension = (np.size(self.img_data,1),np.size(self.img_data,0))
+        self.img_dimension = (np.size(self._img_data,1),np.size(self._img_data,0))
         self.roi_data = roi_data_manager.get_roi_data(self.get_img_dimension())
         self.calc_spectra()
     
@@ -511,10 +551,11 @@ class ExpDataFromImgData(ExpData):
 
 class ExpSpecDataFromArray(ExpSpecData):
     def __init__(self, img_data, filename, x_calibration, roi_data_manager):
-        self.img_data = img_data
+        self._img_data = img_data
+        self.num_frames = 1
         self.filename = filename
         self.x_whole = x_calibration
-        self.img_dimension = (np.size(self.img_data),1)
+        self.img_dimension = (np.size(self._img_data),1)
         self.roi_data = roi_data_manager.get_roi_data(self.get_img_dimension())
         self.calc_spectra()
 
