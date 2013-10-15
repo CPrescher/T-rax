@@ -196,7 +196,9 @@ class TRaxTemperatureController():
         pub.subscribe(self.roi_changed, "ROI CHANGED")
 
     def create_frame_signals(self):
-        self.main_view.temperature_control_widget.frame_sb.valueChanged.connect(self.frame_value_changed)
+        self.main_view.temperature_control_widget.frame_number_txt.editingFinished.connect(self.frame_txt_value_changed)
+        self.connect_click_function(self.main_view.temperature_control_widget.next_frame_btn, self.load_next_frame)
+        self.connect_click_function(self.main_view.temperature_control_widget.previous_frame_btn, self.load_previous_frame)
         self.connect_click_function(self.main_view.temperature_control_widget.time_lapse_btn, self.plot_time_lapse)
     
     def create_calibration_signals(self):
@@ -278,11 +280,18 @@ class TRaxTemperatureController():
         if self.data.exp_data.num_frames>1:
             self.main_view.temperature_control_widget.frames_widget.show()
             self.main_view.temperature_control_widget.frame_line.show()
-            self.main_view.temperature_control_widget.frame_sb.blockSignals(True)
-            self.main_view.temperature_control_widget.frame_sb.setValue(self.data.exp_data.current_frame+1)
-            self.main_view.temperature_control_widget.frame_sb.setMaximum(self.data.exp_data.num_frames)
-            self.main_view.temperature_control_widget.frame_sb.setMinimum(1)
-            self.main_view.temperature_control_widget.frame_sb.blockSignals(False)
+            self.main_view.temperature_control_widget.frame_number_txt.blockSignals(True)
+            self.main_view.temperature_control_widget.frame_number_txt.setText(str(self.data.exp_data.current_frame+1))
+            if self.data.exp_data.current_frame+1 == self.data.exp_data.num_frames:
+                self.main_view.temperature_control_widget.next_frame_btn.setDisabled(True)
+            else:
+                self.main_view.temperature_control_widget.next_frame_btn.setDisabled(False)
+
+            if self.data.exp_data.current_frame==0:
+                self.main_view.temperature_control_widget.previous_frame_btn.setDisabled(True)
+            else:
+                self.main_view.temperature_control_widget.previous_frame_btn.setDisabled(False)
+            self.main_view.temperature_control_widget.frame_number_txt.blockSignals(False)
         else:
             self.main_view.temperature_control_widget.frames_widget.hide()
             self.main_view.temperature_control_widget.frame_line.hide()
@@ -312,8 +321,14 @@ class TRaxTemperatureController():
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
         self.update_pv_names()
 
-    def frame_value_changed(self):
-        self.data.set_current_frame(self.main_view.temperature_control_widget.frame_sb.value())
+    def frame_txt_value_changed(self):
+        self.data.set_current_frame(int(self.main_view.temperature_control_widget.frame_number_txt.text())-1)
+
+    def load_next_frame(self):
+        self.data.load_next_frame()
+
+    def load_previous_frame(self):
+        self.data.load_previous_frame()
 
     def plot_time_lapse(self):
         ds_temperature, ds_temperature_err, us_temperature, us_temperature_err = self.data.calculate_time_lapse()

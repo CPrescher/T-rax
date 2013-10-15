@@ -69,9 +69,20 @@ class TraxData(object):
             return ExpSpecData(img_file, self.roi_data_manager)
 
     def set_current_frame(self,frame_number):
-        self.exp_data.current_frame=frame_number-1
+        if frame_number >= self.exp_data.num_frames-1:
+            self.exp_data.current_frame = self.exp_data.num_frames-1
+        elif frame_number<1:
+            self.exp_data.current_frame=0
+        else:
+            self.exp_data.current_frame=frame_number
         self.calc_spectra()
         pub.sendMessage("EXP DATA CHANGED")
+
+    def load_next_frame(self):
+        self.set_current_frame(self.exp_data.current_frame+1)
+
+    def load_previous_frame(self):
+        self.set_current_frame(self.exp_data.current_frame-1)
 
     def calculate_time_lapse(self):
         old_frame_number=self.exp_data.current_frame

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>850</width>
-    <height>530</height>
+    <height>564</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -67,7 +67,7 @@ QPushButton::hover{
 
 QPushPutton::press{
    border: 3px solid #fff;
-margin: 2px;
+  margin: 2px;
 }
 
 
@@ -96,7 +96,14 @@ margin: 2px;
  }  
  #status_us_calib_filename_lbl{  
 	color: #F1F1F1;
-}</string>
+}
+
+
+ QLineEdit{  
+     border-radius: 5px;  
+     background: #F1F1F1;  
+     color: black;  
+ }  </string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -187,16 +194,6 @@ margin: 2px;
         <number>0</number>
        </property>
        <item>
-        <widget class="QFrame" name="figure3_frame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QFrame" name="figure1_frame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -204,6 +201,7 @@ margin: 2px;
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
+         <zorder>figure2_frame</zorder>
         </widget>
        </item>
        <item>
@@ -214,6 +212,18 @@ margin: 2px;
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="figure3_frame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <zorder>figure1_frame</zorder>
+         <zorder>figure1_frame</zorder>
         </widget>
        </item>
       </layout>
@@ -259,6 +269,28 @@ margin: 2px;
         <widget class="QLabel" name="status_coord_lbl">
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QProgressBar" name="progress_bar">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>18</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: white</string>
+         </property>
+         <property name="value">
+          <number>24</number>
          </property>
         </widget>
        </item>

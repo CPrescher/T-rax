@@ -29,6 +29,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.create_graphs()
         self.create_widgets()
         self.hide_control_widgets()
+        self.progress_bar.hide()
         self.resize(900,480)
 
     def create_graphs(self):

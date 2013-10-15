@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
-# Created: Mon Oct 14 23:43:42 2013
+# Created: Tue Oct 15 08:38:02 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_temperature_control_widget(object):
     def setupUi(self, temperature_control_widget):
         temperature_control_widget.setObjectName(_fromUtf8("temperature_control_widget"))
-        temperature_control_widget.resize(260, 686)
+        temperature_control_widget.resize(260, 575)
         temperature_control_widget.setMaximumSize(QtCore.QSize(260, 16777215))
         temperature_control_widget.setStyleSheet(_fromUtf8(" #ruby_control_widget, #temperature_control_widget, #diamond_control_widget, QTabWidget::pane, QTabWidget::tab-bar,  \n"
 " #experiment_tab, #calibration_tab{  \n"
@@ -75,24 +75,33 @@ class Ui_temperature_control_widget(object):
 "   \n"
 " QPushButton{  \n"
 "     color:white;  \n"
-"     border-color: black;  \n"
 "     border: 1px solid rgba(241,241,241,255); \n"
-"     border-radius: 11px;  \n"
-"     font-weight: bold;  \n"
+"     border-radius: 11px; \n"
 "     padding: 5px;  \n"
+"     font-weight: bold;\n"
 " }  \n"
+"\n"
 " #temperature_control_widget QPushButton {  \n"
-"     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(221, 124, 40, 180), stop:1 rgba(0, 0, 0, 50))\n"
+"     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(221, 124, 40, 180), stop:1 rgba(0, 0, 0, 50));\n"
+"\n"
 " }  \n"
 "   \n"
 " #ruby_control_widget QPushButton {  \n"
 "     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(197, 0, 3, 255), stop:1 rgba(0, 0, 0, 50))  \n"
-" }  \n"
+" }\n"
+"\n"
+"QPushButton::disabled{\n"
+"    border: 1px solid rgba(200,200,200,255); \n"
+"    color: rgba(200,200,200,255);\n"
+"}  \n"
 "   \n"
 " #diamond_control_widget QPushButton{  \n"
 "     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(27, 0, 134, 255), stop:1 rgba(0, 0, 0, 50))  \n"
 " }  \n"
 "   \n"
+"#next_frame_btn, #previous_frame_btn {\n"
+"    border-radius: 0px;\n"
+"}\n"
 " QPushButton::hover{  \n"
 "     border:1px solid #fff;  \n"
 "     padding: 5px;  \n"
@@ -172,7 +181,7 @@ class Ui_temperature_control_widget(object):
         self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
         self.verticalLayout_8 = QtGui.QVBoxLayout(self.groupBox_3)
         self.verticalLayout_8.setSpacing(7)
-        self.verticalLayout_8.setContentsMargins(-1, -1, -1, 4)
+        self.verticalLayout_8.setContentsMargins(-1, -1, -1, 11)
         self.verticalLayout_8.setObjectName(_fromUtf8("verticalLayout_8"))
         self.gridLayout_5 = QtGui.QGridLayout()
         self.gridLayout_5.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
@@ -240,36 +249,39 @@ class Ui_temperature_control_widget(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frames_widget.sizePolicy().hasHeightForWidth())
         self.frames_widget.setSizePolicy(sizePolicy)
-        self.frames_widget.setMinimumSize(QtCore.QSize(0, 40))
+        self.frames_widget.setMinimumSize(QtCore.QSize(0, 0))
         self.frames_widget.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frames_widget.setFrameShadow(QtGui.QFrame.Raised)
         self.frames_widget.setObjectName(_fromUtf8("frames_widget"))
-        self.verticalLayout_9 = QtGui.QVBoxLayout(self.frames_widget)
-        self.verticalLayout_9.setSpacing(5)
-        self.verticalLayout_9.setMargin(0)
-        self.verticalLayout_9.setObjectName(_fromUtf8("verticalLayout_9"))
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setSpacing(7)
-        self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
+        self.horizontalLayout = QtGui.QHBoxLayout(self.frames_widget)
+        self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.label_3 = QtGui.QLabel(self.frames_widget)
-        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.horizontalLayout.addWidget(self.label_3)
-        self.frame_sb = QtGui.QSpinBox(self.frames_widget)
-        self.frame_sb.setMaximumSize(QtCore.QSize(50, 16777215))
-        self.frame_sb.setObjectName(_fromUtf8("frame_sb"))
-        self.horizontalLayout.addWidget(self.frame_sb)
+        self.previous_frame_btn = QtGui.QPushButton(self.frames_widget)
+        self.previous_frame_btn.setMaximumSize(QtCore.QSize(16777215, 22))
+        self.previous_frame_btn.setStyleSheet(_fromUtf8("font-size: 11"))
+        self.previous_frame_btn.setObjectName(_fromUtf8("previous_frame_btn"))
+        self.horizontalLayout.addWidget(self.previous_frame_btn)
+        self.frame_number_txt = QtGui.QLineEdit(self.frames_widget)
+        self.frame_number_txt.setMinimumSize(QtCore.QSize(35, 0))
+        self.frame_number_txt.setMaximumSize(QtCore.QSize(35, 16777215))
+        self.frame_number_txt.setAlignment(QtCore.Qt.AlignCenter)
+        self.frame_number_txt.setObjectName(_fromUtf8("frame_number_txt"))
+        self.horizontalLayout.addWidget(self.frame_number_txt)
+        self.next_frame_btn = QtGui.QPushButton(self.frames_widget)
+        self.next_frame_btn.setMinimumSize(QtCore.QSize(0, 0))
+        self.next_frame_btn.setMaximumSize(QtCore.QSize(16777215, 22))
+        self.next_frame_btn.setObjectName(_fromUtf8("next_frame_btn"))
+        self.horizontalLayout.addWidget(self.next_frame_btn)
         self.time_lapse_btn = QtGui.QPushButton(self.frames_widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.time_lapse_btn.sizePolicy().hasHeightForWidth())
         self.time_lapse_btn.setSizePolicy(sizePolicy)
-        self.time_lapse_btn.setMinimumSize(QtCore.QSize(90, 28))
+        self.time_lapse_btn.setMinimumSize(QtCore.QSize(90, 25))
+        self.time_lapse_btn.setMaximumSize(QtCore.QSize(16777215, 25))
         self.time_lapse_btn.setObjectName(_fromUtf8("time_lapse_btn"))
         self.horizontalLayout.addWidget(self.time_lapse_btn)
-        self.verticalLayout_9.addLayout(self.horizontalLayout)
         self.verticalLayout_8.addWidget(self.frames_widget)
         self.verticalLayout_2.addWidget(self.groupBox_3)
         self.roi_setup_btn = QtGui.QPushButton(self.experiment_tab)
@@ -451,7 +463,9 @@ class Ui_temperature_control_widget(object):
         self.auto_process_cb.setText(_translate("temperature_control_widget", "autoprocess", None))
         self.load_previous_exp_data_btn.setText(_translate("temperature_control_widget", "<--", None))
         self.load_next_exp_data_btn.setText(_translate("temperature_control_widget", "-->", None))
-        self.label_3.setText(_translate("temperature_control_widget", "Frame:", None))
+        self.previous_frame_btn.setText(_translate("temperature_control_widget", "<", None))
+        self.frame_number_txt.setText(_translate("temperature_control_widget", "100", None))
+        self.next_frame_btn.setText(_translate("temperature_control_widget", ">", None))
         self.time_lapse_btn.setText(_translate("temperature_control_widget", "Time Lapse", None))
         self.roi_setup_btn.setText(_translate("temperature_control_widget", "ROI Setup", None))
         self.groupBox_2.setTitle(_translate("temperature_control_widget", "Fit Limits", None))

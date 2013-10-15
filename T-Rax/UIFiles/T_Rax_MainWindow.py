@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Mon Oct 14 23:43:41 2013
+# Created: Tue Oct 15 08:38:01 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_T_Rax_MainWindow(object):
     def setupUi(self, T_Rax_MainWindow):
         T_Rax_MainWindow.setObjectName(_fromUtf8("T_Rax_MainWindow"))
-        T_Rax_MainWindow.resize(850, 530)
+        T_Rax_MainWindow.resize(850, 564)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -74,7 +74,7 @@ class Ui_T_Rax_MainWindow(object):
 "\n"
 "QPushPutton::press{\n"
 "   border: 3px solid #fff;\n"
-"margin: 2px;\n"
+"  margin: 2px;\n"
 "}\n"
 "\n"
 "\n"
@@ -103,7 +103,14 @@ class Ui_T_Rax_MainWindow(object):
 " }  \n"
 " #status_us_calib_filename_lbl{  \n"
 "    color: #F1F1F1;\n"
-"}"))
+"}\n"
+"\n"
+"\n"
+" QLineEdit{  \n"
+"     border-radius: 5px;  \n"
+"     background: #F1F1F1;  \n"
+"     color: black;  \n"
+" }  "))
         self.centralwidget = QtGui.QWidget(T_Rax_MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
@@ -141,11 +148,6 @@ class Ui_T_Rax_MainWindow(object):
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setMargin(0)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.figure3_frame = QtGui.QFrame(self.main_frame)
-        self.figure3_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.figure3_frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.figure3_frame.setObjectName(_fromUtf8("figure3_frame"))
-        self.horizontalLayout_2.addWidget(self.figure3_frame)
         self.figure1_frame = QtGui.QFrame(self.main_frame)
         self.figure1_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.figure1_frame.setFrameShadow(QtGui.QFrame.Raised)
@@ -156,6 +158,11 @@ class Ui_T_Rax_MainWindow(object):
         self.figure2_frame.setFrameShadow(QtGui.QFrame.Raised)
         self.figure2_frame.setObjectName(_fromUtf8("figure2_frame"))
         self.horizontalLayout_2.addWidget(self.figure2_frame)
+        self.figure3_frame = QtGui.QFrame(self.main_frame)
+        self.figure3_frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.figure3_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.figure3_frame.setObjectName(_fromUtf8("figure3_frame"))
+        self.horizontalLayout_2.addWidget(self.figure3_frame)
         self.verticalLayout.addWidget(self.main_frame)
         self.status_bar = QtGui.QFrame(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
@@ -175,6 +182,13 @@ class Ui_T_Rax_MainWindow(object):
         self.status_coord_lbl.setText(_fromUtf8(""))
         self.status_coord_lbl.setObjectName(_fromUtf8("status_coord_lbl"))
         self.horizontalLayout_3.addWidget(self.status_coord_lbl)
+        self.progress_bar = QtGui.QProgressBar(self.status_bar)
+        self.progress_bar.setMinimumSize(QtCore.QSize(0, 20))
+        self.progress_bar.setMaximumSize(QtCore.QSize(16777215, 18))
+        self.progress_bar.setStyleSheet(_fromUtf8("color: white"))
+        self.progress_bar.setProperty("value", 24)
+        self.progress_bar.setObjectName(_fromUtf8("progress_bar"))
+        self.horizontalLayout_3.addWidget(self.progress_bar)
         spacerItem1 = QtGui.QSpacerItem(743, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
         self.status_file_information_lbl = QtGui.QLabel(self.status_bar)

@@ -21,6 +21,7 @@ class TemperatureControlWidget(QtGui.QWidget, Ui_temperature_control_widget):
         self.ds_temperature_txt.setValidator(QtGui.QDoubleValidator())
         self.fit_from_txt.setValidator(QtGui.QIntValidator())
         self.fit_to_txt.setValidator(QtGui.QIntValidator())
+        self.frame_number_txt.setValidator(QtGui.QIntValidator())
 
     def set_fit_limits(self, limits):
         self.fit_from_txt.setText(str(int(np.round(limits[0]))))
