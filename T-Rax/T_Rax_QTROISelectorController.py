@@ -21,6 +21,7 @@ class TRaxROIController(object):
         self.create_ds_txt_signals()
         self.create_us_txt_signals()
         self.create_fit_txt_signals()
+        self.create_key_signals()
         self.create_pub_signals()
 
     def create_btn_signals(self):
@@ -43,6 +44,9 @@ class TRaxROIController(object):
         self.view.fit_from_txt.editingFinished.connect(self.fit_txt_changed)
         self.view.fit_to_txt.editingFinished.connect(self.fit_txt_changed)     
 
+    def create_key_signals(self):
+        self.view.keyPressEvent = self.key_pressed
+
     def create_pub_signals(self):
         pub.subscribe(self.ds_roi_graph_changed, "DS ROI GRAPH CHANGED")
         pub.subscribe(self.us_roi_graph_changed, "US ROI GRAPH CHANGED")
@@ -64,6 +68,24 @@ class TRaxROIController(object):
         ds_roi=self.view.get_ds_roi()      
         ds_roi[:2] = self.data.calculate_ind(ds_roi[:2])
         self.data.roi_data.set_ds_roi(ds_roi)
+
+    def key_pressed(self,event):
+        if type(event) == QtGui.QKeyEvent and \
+            event.key() == QtCore.Qt.Key_Up:
+            ds_roi = self.data.get_ds_roi()
+            us_roi = self.data.get_us_roi()
+            ds_roi[2:]=[ds_roi[2]-1, ds_roi[3]-1]
+            us_roi[2:]=[us_roi[2]-1, us_roi[3]-1]
+            self.data.roi_data.set_ds_roi(ds_roi)
+            self.data.roi_data.set_us_roi(us_roi)
+        elif type(event) == QtGui.QKeyEvent and \
+            event.key() == QtCore.Qt.Key_Down:
+            ds_roi = self.data.get_ds_roi()
+            us_roi = self.data.get_us_roi()
+            ds_roi[2:]=[ds_roi[2]+1, ds_roi[3]+1]
+            us_roi[2:]=[us_roi[2]+1, us_roi[3]+1]
+            self.data.roi_data.set_ds_roi(ds_roi)
+            self.data.roi_data.set_us_roi(us_roi)
 
     def fit_txt_changed(self):
         converted_limits = self.data.calculate_ind(self.view.get_fit_x_limits())
@@ -116,7 +138,6 @@ class TRaxROIController(object):
         self.view.downstream_roi_box.show()
         self.view.upstream_roi_box.show()
         self.view.fitting_roi_box.hide()
-        
 
     def graph_loaded(self):
         self.mode = 'GRAPH'

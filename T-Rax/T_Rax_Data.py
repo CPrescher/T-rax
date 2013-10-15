@@ -59,7 +59,6 @@ class TraxData(object):
             self.load_exp_data(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
             self.load_exp_data(new_file_name_with_leading_zeros)
-        pub.sendMessage("EXP DATA CHANGED")
 
     def read_exp_image_file(self, file_name):
         img_file = SPE_File(file_name)

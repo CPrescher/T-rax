@@ -33,6 +33,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.downstream_roi_box.hide()
         self.upstream_roi_box.hide()
         self.resizeEvent = self.resize_graph
+        self.axes_frame.leaveEvent = self.axes_leave_event
         self.setWindowFlags(QtCore.Qt.Tool)
         self.move(parent.x(), parent.y()+parent.height()+50)
         self.resize(parent.size().width(),150)
@@ -198,6 +199,25 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         new_size=self.axes_frame.size()
         self.figure.set_size_inches([new_size.width() / 100.0, new_size.height() / 100.0])
         self.redraw_figure()
+        self.update_rect_pick_limits(new_size.width(),new_size.height())
+
+    def axes_leave_event(self, event):
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+
+    def update_rect_pick_limits(self, graph_width, graph_height):
+        xlimits=self.axes.get_xlim()
+        ylimits=self.axes.get_ylim()
+        axes_width=graph_width-50
+        axes_height=graph_height-50
+
+        fixed_pixel_pick_limit=3
+        x_pick_limit_percentage = fixed_pixel_pick_limit/axes_width 
+        y_pick_limit_percentage = fixed_pixel_pick_limit/axes_width 
+
+        x_range = xlimits[1]-xlimits[0]
+        y_range = ylimits[1]-ylimits[0]
+
+
 
     def update_graph_roi(self):
         try:
@@ -402,6 +422,10 @@ class ResizeableRectangle:
         self.update_timer.setInterval(40)
         self.parent.connect(self.update_timer,QtCore.SIGNAL('timeout()'), self.send_message)
 
+    def set_border(self,x_border, y_border):
+        self.x_border=x_border
+        self.y_border=y_border
+
     def set_roi(self, roi): 
         if self.press == None:
             self.rect.set_y(roi.y_min)
@@ -432,7 +456,7 @@ class ResizeableRectangle:
 
         if y_click >= y0 - self.y_border and y_click <= y0 + height + self.y_border and \
             x_click >= x0 - self.x_border and x_click <= x0 + width + self.x_border:
-            self.set_mode(x_click, y_click, x0, y0, width, height)
+            self.set_mode(x_click, y_click, self.rect)
             self.press = x0, y0, x_click, y_click
             for rect in ResizeableRectangle.rects:
                 rect.set_animated(True)
@@ -452,35 +476,64 @@ class ResizeableRectangle:
     def get_rect(self,i):
         return ResizeableRectangle.rects
 
-    def set_mode(self,x_click, y_click, x0, y0, width, height):
-        if y_click >= y0 + self.y_border / 2.0 and y_click <= y0 + height - self.y_border / 2.0 and \
-            x_click >= x0 + self.x_border / 2.0 and x_click <= x0 + width - self.x_border / 2.0:
-            self.mode = 'move'
-        elif y_click > y0 + height - self.y_border and y_click <= y0 + height + self.y_border and \
-            x_click >= x0 + self.x_border and x_click <= x0 + width - self.x_border:
-            self.mode = 'resize_top'
-        elif y_click > y0 - self.y_border and y_click < y0 + self.y_border and \
-            x_click >= x0 + self.x_border and x_click <= x0 + width - self.x_border:
-            self.mode = 'resize_bottom'
-        elif x_click > x0 + width - self.x_border and x_click <= x0 + width + self.x_border and \
-            y_click >= y0 - self.y_border and y_click <= y0 + height + self.y_border:
-            self.mode = 'resize_right'
-        elif x_click > x0 - self.x_border and x_click < x0 + self.x_border and \
-            y_click >= y0 - self.y_border and y_click <= y0 + height + self.y_border:
-            self.mode = 'resize_left'
+    def set_mode(self,x_click, y_click, rect):
+        self.mode = self.get_mode(x_click, y_click, rect)
+
+    def get_mode(self,x_mouse_pos, y_mouse_pos, rect):
+        y0 = rect.get_y()
+        x0 = rect.get_x()
+        height = rect.get_height()
+        width  = rect.get_width()
+        if y_mouse_pos >= y0 + self.y_border / 2.0 and y_mouse_pos <= y0 + height - self.y_border / 2.0 and \
+            x_mouse_pos >= x0 + self.x_border / 2.0 and x_mouse_pos <= x0 + width - self.x_border / 2.0:
+            return 'move'
+        elif y_mouse_pos > y0 + height - self.y_border and y_mouse_pos <= y0 + height + self.y_border and \
+            x_mouse_pos >= x0 + self.x_border and x_mouse_pos <= x0 + width - self.x_border:
+            return 'resize_top'
+        elif y_mouse_pos > y0 - self.y_border and y_mouse_pos < y0 + self.y_border and \
+            x_mouse_pos >= x0 + self.x_border and x_mouse_pos <= x0 + width - self.x_border:
+            return 'resize_bottom'
+        elif x_mouse_pos > x0 + width - self.x_border and x_mouse_pos <= x0 + width + self.x_border and \
+            y_mouse_pos >= y0 - self.y_border and y_mouse_pos <= y0 + height + self.y_border:
+            return 'resize_right'
+        elif x_mouse_pos > x0 - self.x_border and x_mouse_pos < x0 + self.x_border and \
+            y_mouse_pos >= y0 - self.y_border and y_mouse_pos <= y0 + height + self.y_border:
+            return 'resize_left'
+        else:
+            return 'None'
 
     def on_motion(self, event):
         'on motion we will move the rect if the mouse is over us'
-        if self.press is None: return
-        if event.inaxes != self.rect.axes: return
-        
+        if event.inaxes != self.rect.axes: 
+            QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+            return
+
+        y0 = self.rect.get_y()
+        x0 = self.rect.get_x()
+        height = self.rect.get_height()
+        width = self.rect.get_width()
         y_click = event.ydata
         x_click = event.xdata
+        if self.press is None:
+            if ResizeableRectangle.lock is None:
+                mode=self.get_mode(x_click, y_click, self.rect)
+                if mode=='move':
+                    QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeAllCursor))
+                elif mode=='resize_bottom' or mode=='resize_top':
+                    QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeVerCursor))
+                elif mode=='resize_right' or mode=='resize_left':
+                    QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeHorCursor))
+                else:
+                    for rect in ResizeableRectangle.rects:
+                        rect_mode = self.get_mode(x_click, y_click, rect)
+                        if rect_mode is not 'None':
+                            return
+                    QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+            return
+
         x0, y0, xpress, ypress = self.press
         dy = event.ydata - ypress
         dx = event.xdata - xpress
-        height = self.rect.get_height()
-        width = self.rect.get_width()
 
         if self.mode == 'move':
             y_new_pos = int(y0 + dy)
