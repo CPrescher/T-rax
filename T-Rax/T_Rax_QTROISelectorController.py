@@ -63,7 +63,6 @@ class TRaxROIController(object):
     def ds_roi_txt_changed(self):
         ds_roi=self.view.get_ds_roi()      
         ds_roi[:2] = self.data.calculate_ind(ds_roi[:2])
-        print ds_roi
         self.data.roi_data.set_ds_roi(ds_roi)
 
     def fit_txt_changed(self):

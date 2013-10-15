@@ -76,7 +76,7 @@ class TraxData(object):
         else:
             self.exp_data.current_frame=frame_number
         self.calc_spectra()
-        pub.sendMessage("EXP DATA CHANGED")
+        pub.sendMessage("EXP DATA FRAME CHANGED")
 
     def load_next_frame(self):
         self.set_current_frame(self.exp_data.current_frame+1)
@@ -99,6 +99,8 @@ class TraxData(object):
             us_temperature.append(us_fit.T)
             ds_temperature_err.append(ds_fit.T_err)
             us_temperature_err.append(us_fit.T_err)
+            progress=np.int(np.round((float(frame_number+1)/self.exp_data.num_frames)*100))
+            pub.sendMessage("PROGRESS ONGOING", progress=progress)
         
         self.exp_data.current_frame = old_frame_number
         return ds_temperature, ds_temperature_err,\

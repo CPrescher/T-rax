@@ -56,6 +56,7 @@ class TRaxMainController(object):
         self.create_navigation_signals()
         self.create_axes_listener()
         self.create_error_listener()
+        self.create_progress_listener()
         self.main_view.closeEvent = self.closeEvent 
 
     def create_navigation_signals(self):
@@ -73,6 +74,9 @@ class TRaxMainController(object):
     def create_error_listener(self):
         pub.subscribe(self.interpolation_error, "INTERPOLATION RANGE ERROR")
         pub.subscribe(self.roi_error, "ROI ERROR")
+
+    def create_progress_listener(self):
+        pub.subscribe(self.progress_bar_change, "PROGRESS ONGOING")
 
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)
@@ -115,6 +119,12 @@ class TRaxMainController(object):
                                                 'Please enter valid limits for the regions of interest.',
                                                 QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
+    def progress_bar_change(self, progress):
+        self.main_view.progress_bar.show()
+        self.main_view.progress_bar.setValue(progress)
+        if progress==100:
+            self.main_view.progress_bar.hide()
+
     def save_directories(self):
         fid = open('parameters.txt', 'w')
         output_str = \
@@ -136,6 +146,12 @@ class TRaxMainController(object):
             self.ruby_controller.roi_controller.view.close()
         except:
             pass
+
+        try:
+            self.output_graph_controller.view.close()
+        except:
+            pass
+
         self.main_view.close()
         event.accept()
 
@@ -193,13 +209,14 @@ class TRaxTemperatureController():
 
     def create_temperature_pub_listeners(self):
         pub.subscribe(self.data_changed, "EXP DATA CHANGED")
+        pub.subscribe(self.frame_changed, "EXP DATA FRAME CHANGED")
         pub.subscribe(self.roi_changed, "ROI CHANGED")
 
     def create_frame_signals(self):
         self.main_view.temperature_control_widget.frame_number_txt.editingFinished.connect(self.frame_txt_value_changed)
         self.connect_click_function(self.main_view.temperature_control_widget.next_frame_btn, self.load_next_frame)
         self.connect_click_function(self.main_view.temperature_control_widget.previous_frame_btn, self.load_previous_frame)
-        self.connect_click_function(self.main_view.temperature_control_widget.time_lapse_btn, self.plot_time_lapse)
+        self.connect_click_function(self.main_view.temperature_control_widget.time_lapse_btn, self.start_time_lapse)
     
     def create_calibration_signals(self):
         self.connect_click_function(self.main_view.temperature_control_widget.load_ds_calib_data_btn,
@@ -265,6 +282,10 @@ class TRaxTemperatureController():
             self.roi_controller.show()
 
     def data_changed(self):
+        self.frame_changed()
+        self.update_time_lapse()
+
+    def frame_changed(self):
         self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
                                                 self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
@@ -286,7 +307,6 @@ class TRaxTemperatureController():
                 self.main_view.temperature_control_widget.next_frame_btn.setDisabled(True)
             else:
                 self.main_view.temperature_control_widget.next_frame_btn.setDisabled(False)
-
             if self.data.exp_data.current_frame==0:
                 self.main_view.temperature_control_widget.previous_frame_btn.setDisabled(True)
             else:
@@ -295,6 +315,14 @@ class TRaxTemperatureController():
         else:
             self.main_view.temperature_control_widget.frames_widget.hide()
             self.main_view.temperature_control_widget.frame_line.hide()
+
+    def update_time_lapse(self):
+        if self.data.exp_data.num_frames>1:
+            try:
+                if self._time_lapse_is_on:
+                    self.plot_time_lapse()
+            except:
+                pass
 
     def update_calibration_view(self):
         self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
@@ -329,6 +357,11 @@ class TRaxTemperatureController():
 
     def load_previous_frame(self):
         self.data.load_previous_frame()
+
+    def start_time_lapse(self):
+        self._time_lapse_is_on=True
+        self.plot_time_lapse()
+            
 
     def plot_time_lapse(self):
         ds_temperature, ds_temperature_err, us_temperature, us_temperature_err = self.data.calculate_time_lapse()

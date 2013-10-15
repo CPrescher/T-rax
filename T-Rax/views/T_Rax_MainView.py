@@ -29,7 +29,6 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.create_graphs()
         self.create_widgets()
         self.hide_control_widgets()
-        self.progress_bar.hide()
         self.resize(900,480)
 
     def create_graphs(self):
@@ -42,6 +41,7 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
     
     def create_widgets(self):
         self.create_navigation_widgets()
+        self.set_progress_bar()
 
     def create_navigation_widgets(self):
         self.temperature_control_widget = TemperatureControlWidget()
@@ -52,6 +52,10 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
         self.main_layout.addWidget(self.ruby_control_widget)        
         self.main_layout.addWidget(self.diamond_control_widget)
 
+    def set_progress_bar(self):
+        self.progress_bar.hide()
+        self.progress_bar.setMinimum(0)
+        self.progress_bar.setMaximum(100)
 
     def navigate_to(self, btn_name):
         self.hide_control_widgets()

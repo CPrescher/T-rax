@@ -14,6 +14,7 @@ class TRaxOutputGraphView(QtGui.QWidget, Ui_output_graph_widget):
         self.setupUi(self)
         self.setWindowTitle('Output Graph')
         self.create_graph()
+        self.setWindowFlags(QtCore.Qt.Tool)
         self.resizeEvent = self.resize_graph
 
     def create_graph(self):
@@ -36,6 +37,9 @@ class TRaxOutputGraphView(QtGui.QWidget, Ui_output_graph_widget):
         self.axes.errorbar(x, y_data, yerr=y_data_errors, label=label,
                      color=color, lw=2, capsize=5, capthick=2,
                      marker='s', mec=color, ms=8)
+       
+    def create_legend(self):
+        self.axes.legend(loc='best')
 
     def set_axis_labels(self,x_axis_label, y_axis_label):
         self.axes.set_xlabel(x_axis_label)
@@ -58,7 +62,6 @@ class TRaxOutputGraphView(QtGui.QWidget, Ui_output_graph_widget):
                            old_ylim[1]+0.05*ylim_range)
 
     def redraw_figure(self):
-        self.axes.legend(loc='best')
         self.figure.tight_layout()
         self.canvas.draw()
 
