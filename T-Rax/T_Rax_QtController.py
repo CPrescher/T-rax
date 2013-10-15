@@ -451,19 +451,19 @@ class TRaxTemperatureController():
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
         if len(self._files_added) > 0:
             new_file_str = self._files_added[-1]
-            file_info = os.stat(self._exp_working_dir+new_file_str)
-            if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
-                if self.epics_is_connected:
-                    try:
-                        if caget('13LF1:cam1:Acquire')==1:
-                            print 'LIGHTFIELD still collecting'
-                            return #aborts if lightfield has not finished all his file handling
-                    except:
-                        pass
-                if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+                file_info = os.stat(self._exp_working_dir+new_file_str)
+                if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
+                    if self.epics_is_connected:
+                        try:
+                            if caget('13LF1:cam1:Acquire')==1:
+                                print 'LIGHTFIELD still collecting'
+                                return #aborts if lightfield has not finished all his file handling
+                        except:
+                            pass
                     path = self._exp_working_dir + new_file_str
                     self.data.load_exp_data(path)
-                self._files_before = self._files_now
+                    self._files_before = self._files_now
             
     def file_is_spe(self, filename):
         return filename.endswith('.SPE') or filename.endswith('.spe')
@@ -726,12 +726,12 @@ class TRaxRubyController():
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
         if len(self._files_added) > 0:
             new_file_str = self._files_added[-1]
-            file_info = os.stat(self._exp_working_dir+new_file_str)
-            if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
-                if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+                file_info = os.stat(self._exp_working_dir+new_file_str)
+                if file_info.st_size>1000:
                     path = self._exp_working_dir + new_file_str
                     self.data.load_exp_data(path)
-                self._files_before = self._files_now
+                    self._files_before = self._files_now
             
     def file_is_spe(self, filename):
         return filename.endswith('.SPE') or filename.endswith('.spe')
@@ -901,12 +901,12 @@ class TRaxDiamondController():
         self._files_removed = [f for f in self._files_before if not f in self._files_now]
         if len(self._files_added) > 0:
             new_file_str = self._files_added[-1]
-            file_info = os.stat(self._exp_working_dir+new_file_str)
-            if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
-                if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
+                file_info = os.stat(self._exp_working_dir+new_file_str)
+                if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
                     path = self._exp_working_dir + new_file_str
                     self.data.load_diamond_data(path)
-                self._files_before = self._files_now
+                    self._files_before = self._files_now
             
     def file_is_spe(self, filename):
         return filename.endswith('.SPE') or filename.endswith('.spe')
