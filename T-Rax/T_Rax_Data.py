@@ -487,7 +487,7 @@ class ExpData(ImgData):
 class DummyImg(ExpData):
     def __init__(self, roi_data_manager):
         self.num_frames=10
-        self.current_frame=0;
+        self.current_frame=0
         self.roi_data = roi_data_manager.get_roi_data([1300,100])
         self.create_img()
         self.filename = 'dummy_img.spe'

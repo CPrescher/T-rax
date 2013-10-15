@@ -169,14 +169,22 @@ class ExpDiamondData(object):
     
     def read_parameter(self):
         self.filename = self._img_file.filename
-        self.img_data = self._img_file.img
+        self._img_data = self._img_file.img
         self.x_whole = self._img_file.x_calibration
+        self.current_frame = 0
+        self.num_frames=self._img_file.num_frames
+
+    def img_data(self):
+        if self.num_frames>1:
+            return self._img_data[self.current_frame]
+        else:
+            return self._img_data
 
     def get_img_data(self):
-        return self.img_data
+        return self.img_data()
 
     def get_roi_img(self):
-        return self.img_data[self.roi.y_min : self.roi.y_max+1, 
+        return self.img_data()[self.roi.y_min : self.roi.y_max+1, 
                              self.roi.x_min : self.roi.x_max+1]
 
     def get_spectrum(self):
@@ -238,6 +246,8 @@ class DummyImg(ExpDiamondData):
         self.roi=roi_data_manager.get_roi_data([1300,100])
         self.create_img()
         self.filename = 'dummy_img.spe'
+        self.num_frames=1
+        self.current_frame=0
 
     def create_img(self):
         x=np.linspace(570,580,1300)
@@ -257,9 +267,11 @@ class DummyImg(ExpDiamondData):
         for x_ind in xrange(len(x)):
             for y_ind in xrange(len(y)):
                 Z[y_ind,x_ind] = lorenz1[x_ind]*gauss1[y_ind] +lorenz2[x_ind]*gauss2[y_ind]
-        self.img_data=Z+np.random.normal(0,.01*max(lorenz1),(len(y),len(x)))
+        self._img_data=Z+np.random.normal(0,.01*max(lorenz1),(len(y),len(x)))
         self.x_whole = x
 
+    def img_data(self):
+        return self._img_data
     
     def get_file_information(self):
         return '10s, dummy spec, 575nm'
