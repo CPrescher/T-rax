@@ -47,7 +47,7 @@ class TRaxMainController(object):
        except IOError:
             self.temperature_controller._exp_working_dir = os.getcwd()
             self.temperature_controller._calib_working_dir = os.getcwd()
-            self.temperature_controller._settings_working_dir  = os.getcwd()
+            self.temperature_controller._settings_working_dir = os.getcwd()
             self.ruby_controller._exp_working_dir = os.getcwd()
             self.diamond_controller._exp_working_dir = os.getcwd()
        self.temperature_controller.load_settings()
@@ -110,27 +110,27 @@ class TRaxMainController(object):
 
 
     def interpolation_error(self):
-        error_message=QtGui.QMessageBox.warning(None, 'Interpolation Error',
+        error_message = QtGui.QMessageBox.warning(None, 'Interpolation Error',
                                                 'Etalon spectrum file has not the right range. Please select either standard temperature or load another etalon file.',
                                                 QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
     def roi_error(self):
-        error_message=QtGui.QMessageBox.warning(None, 'ROI Error',
+        error_message = QtGui.QMessageBox.warning(None, 'ROI Error',
                                                 'Please enter valid limits for the regions of interest.',
                                                 QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
     def progress_bar_change(self, progress):
         self.main_view.progress_bar.show()
         self.main_view.progress_bar.setValue(progress)
-        if progress==100:
+        if progress == 100:
             self.main_view.progress_bar.hide()
 
     def save_directories(self):
         fid = open('parameters.txt', 'w')
         output_str = \
             'Temperature Working directory: ' + self.temperature_controller._exp_working_dir + '\n' + \
-            'Temperature Calibration directory: ' + self.temperature_controller._calib_working_dir +'\n'+\
-            'Temperature Settings directory: ' + self.temperature_controller._settings_working_dir +'\n'+\
+            'Temperature Calibration directory: ' + self.temperature_controller._calib_working_dir + '\n' + \
+            'Temperature Settings directory: ' + self.temperature_controller._settings_working_dir + '\n' + \
             'Ruby Working directory: ' + self.ruby_controller._exp_working_dir + '\n' + \
             'Diamond Working directory: ' + self.diamond_controller._exp_working_dir + ''
         fid.write(output_str)
@@ -189,11 +189,11 @@ class TRaxTemperatureController():
         self.create_settings_signals()
 
         self.main_view.temperature_control_widget.epics_connection_cb.clicked.connect(self.epics_connection_cb_clicked)
-        self.epics_is_connected=False
+        self.epics_is_connected = False
 
     def load_settings(self):
-        self._settings_files_list=[]
-        self._settings_file_names_list=[]
+        self._settings_files_list = []
+        self._settings_file_names_list = []
         try:
             for file in os.listdir(self._settings_working_dir):
                 if file.endswith('.trs'):
@@ -264,7 +264,7 @@ class TRaxTemperatureController():
                                           directory = self._exp_working_dir))
 
         if filename is not '':
-            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])+'/'
+            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
             self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
             self.data.load_exp_data(filename)
 
@@ -298,16 +298,16 @@ class TRaxTemperatureController():
         self.update_pv_names()
 
     def update_frames_widget(self):
-        if self.data.exp_data.num_frames>1:
+        if self.data.exp_data.num_frames > 1:
             self.main_view.temperature_control_widget.frames_widget.show()
             self.main_view.temperature_control_widget.frame_line.show()
             self.main_view.temperature_control_widget.frame_number_txt.blockSignals(True)
-            self.main_view.temperature_control_widget.frame_number_txt.setText(str(self.data.exp_data.current_frame+1))
-            if self.data.exp_data.current_frame+1 == self.data.exp_data.num_frames:
+            self.main_view.temperature_control_widget.frame_number_txt.setText(str(self.data.exp_data.current_frame + 1))
+            if self.data.exp_data.current_frame + 1 == self.data.exp_data.num_frames:
                 self.main_view.temperature_control_widget.next_frame_btn.setDisabled(True)
             else:
                 self.main_view.temperature_control_widget.next_frame_btn.setDisabled(False)
-            if self.data.exp_data.current_frame==0:
+            if self.data.exp_data.current_frame == 0:
                 self.main_view.temperature_control_widget.previous_frame_btn.setDisabled(True)
             else:
                 self.main_view.temperature_control_widget.previous_frame_btn.setDisabled(False)
@@ -317,12 +317,14 @@ class TRaxTemperatureController():
             self.main_view.temperature_control_widget.frame_line.hide()
 
     def update_time_lapse(self):
-        if self.data.exp_data.num_frames>1:
+        if self.data.exp_data.num_frames > 1:
             try:
                 if self._time_lapse_is_on:
                     self.plot_time_lapse()
             except:
                 pass
+        else:
+             self.parent.output_graph_controller.hide()
 
     def update_calibration_view(self):
         self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
@@ -336,7 +338,7 @@ class TRaxTemperatureController():
         elif us_modus == 1:
             self.main_view.temperature_control_widget.us_etalon_rb.toggle()
 
-        if ds_modus ==0:
+        if ds_modus == 0:
             self.main_view.temperature_control_widget.ds_temperature_rb.toggle()
         elif ds_modus == 1:
             self.main_view.temperature_control_widget.us_etalon_rb.toggle()
@@ -350,7 +352,7 @@ class TRaxTemperatureController():
         self.update_pv_names()
 
     def frame_txt_value_changed(self):
-        self.data.set_current_frame(int(self.main_view.temperature_control_widget.frame_number_txt.text())-1)
+        self.data.set_current_frame(int(self.main_view.temperature_control_widget.frame_number_txt.text()) - 1)
 
     def load_next_frame(self):
         self.data.load_next_frame()
@@ -359,14 +361,17 @@ class TRaxTemperatureController():
         self.data.load_previous_frame()
 
     def start_time_lapse(self):
-        self._time_lapse_is_on=True
+        self._time_lapse_is_on = True
         self.plot_time_lapse()
             
 
     def plot_time_lapse(self):
         ds_temperature, ds_temperature_err, us_temperature, us_temperature_err = self.data.calculate_time_lapse()
+        #ds_temperature, ds_temperature_err, us_temperature, us_temperature_err
+        #= [1200,1300,1400,1000],[10,20,10,30],\
+        #                                                                         [1000,1400,1240,1923],[10,30,10,20]
         self.parent.output_graph_controller.show()
-        self.parent.output_graph_controller.plot_temperature_series(\
+        self.parent.output_graph_controller.plot_temperature_series(self.data.exp_data.get_exposure_time(),\
             ds_temperature, ds_temperature_err, us_temperature, us_temperature_err)
 
     def update_pv_names(self):
@@ -452,11 +457,11 @@ class TRaxTemperatureController():
         if len(self._files_added) > 0:
             new_file_str = self._files_added[-1]
             if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
-                file_info = os.stat(self._exp_working_dir+new_file_str)
-                if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
+                file_info = os.stat(self._exp_working_dir + new_file_str)
+                if file_info.st_size > 1000: #needed because there are some timing issues with WinSpec
                     if self.epics_is_connected:
                         try:
-                            if caget('13LF1:cam1:Acquire')==1:
+                            if caget('13LF1:cam1:Acquire') == 1:
                                 print 'LIGHTFIELD still collecting'
                                 return #aborts if lightfield has not finished all his file handling
                         except:
@@ -486,7 +491,7 @@ class TRaxTemperatureController():
             self._settings_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
             self.load_settings()            
             try:
-                ind= self.main_view.temperature_control_widget.settings_cb.findText(filename.replace('\\','/').split('/')[-1].split('.')[:-1][0])
+                ind = self.main_view.temperature_control_widget.settings_cb.findText(filename.replace('\\','/').split('/')[-1].split('.')[:-1][0])
                 self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
                 self.main_view.temperature_control_widget.settings_cb.setCurrentIndex(ind)
                 self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
@@ -499,7 +504,7 @@ class TRaxTemperatureController():
                                           directory = self._settings_working_dir, filter='*.trs'))
         
         if filename is not '':
-            settings=pickle.load(open(filename,'rb'))
+            settings = pickle.load(open(filename,'rb'))
             self._settings_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
             self.load_settings()
             self.main_view.temperature_control_widget.ds_temperature_txt.setText(str(int(settings.ds_calibration_temperature)))
@@ -509,12 +514,12 @@ class TRaxTemperatureController():
             self.main_view.temperature_control_widget.us_temperature_rb.blockSignals(True)
             self.main_view.temperature_control_widget.ds_etalon_rb.blockSignals(True)
             self.main_view.temperature_control_widget.us_etalon_rb.blockSignals(True)
-            if settings.ds_calibration_modus==0:
+            if settings.ds_calibration_modus == 0:
                 self.main_view.temperature_control_widget.ds_temperature_rb.toggle()
             else:
                 self.main_view.temperature_control_widget.ds_etalon_rb.toggle()
 
-            if settings.us_calibration_modus==0:
+            if settings.us_calibration_modus == 0:
                 self.main_view.temperature_control_widget.us_temperature_rb.toggle()
             else:
                 self.main_view.temperature_control_widget.us_etalon_rb.toggle()
@@ -526,7 +531,7 @@ class TRaxTemperatureController():
 
             self.data.load_settings(settings)
             try:
-                ind= self.main_view.temperature_control_widget.settings_cb.findText(filename.replace('\\','/').split('/')[-1].split('.')[:-1][0])
+                ind = self.main_view.temperature_control_widget.settings_cb.findText(filename.replace('\\','/').split('/')[-1].split('.')[:-1][0])
                 self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
                 self.main_view.temperature_control_widget.settings_cb.setCurrentIndex(ind)
                 self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
@@ -535,23 +540,23 @@ class TRaxTemperatureController():
                     
 
     def settings_cb_changed(self):
-        current_index=self.main_view.temperature_control_widget.settings_cb.currentIndex()
-        if not current_index==0: #is the None index
-            new_file_name = self._settings_working_dir+self._settings_files_list[current_index-1] # therefore also one has to be deleted
+        current_index = self.main_view.temperature_control_widget.settings_cb.currentIndex()
+        if not current_index == 0: #is the None index
+            new_file_name = self._settings_working_dir + self._settings_files_list[current_index - 1] # therefore also one has to be deleted
             self.load_settings_btn_click(new_file_name)
 
             
 
     def epics_connection_cb_clicked(self):
         if self.main_view.temperature_control_widget.epics_connection_cb.isChecked():
-            self.pv_us_temperature=PV('13IDD:us_las_temp.VAL')
-            self.pv_ds_temperature=PV('13IDD:ds_las_temp.VAL')
+            self.pv_us_temperature = PV('13IDD:us_las_temp.VAL')
+            self.pv_ds_temperature = PV('13IDD:ds_las_temp.VAL')
             self.pv_us_int = PV('13IDD:up_t_int')
             self.pv_ds_int = PV('13IDD:dn_t_int')
-            self.epics_is_connected=True
+            self.epics_is_connected = True
             self.update_pv_names()
         else:
-            self.epics_is_connected=False
+            self.epics_is_connected = False
 
 class TRaxRubyController():
     def __init__(self, parent, main_view):
@@ -614,7 +619,7 @@ class TRaxRubyController():
                                           directory = self._exp_working_dir))
 
         if filename is not '':
-            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])+'/'
+            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
             self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
             self.data.load_exp_data(filename)
 
@@ -646,35 +651,35 @@ class TRaxRubyController():
         self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
 
     def axes_click(self,event):
-        if event.button==1:
-            self._axes_mouse_x=event.xdata
+        if event.button == 1:
+            self._axes_mouse_x = event.xdata
             self.pos_update_timer.start()
         else:
             self.data.set_x_roi_limits_to(self.data.get_x_limits())
             pub.sendMessage("RUBY ROI CHANGED")
 
     def axes_move(self,event):
-        self._axes_mouse_x=event.xdata
+        self._axes_mouse_x = event.xdata
 
     def axes_release(self,event):
         self.pos_update_timer.stop()
     
     def update_ruby_mouse_move_pos(self):
-        x_coord=self._axes_mouse_x
+        x_coord = self._axes_mouse_x
         if x_coord is not None:
             self.update_ruby_pos(x_coord)
 
     def update_ruby_pos(self,x_coord):
         self.data.set_click_pos(x_coord)
-        self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f'%x_coord)
-        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+        self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f' % x_coord)
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f' % self.data.get_pressure())
 
     def axes_mouse_scroll(self,event):
         curr_xlim = self.main_view.ruby_axes.axes.get_xlim()
-        base_scale=1.5
+        base_scale = 1.5
         if event.button == 'up':
             #zoom in
-            scale_factor = 1/base_scale
+            scale_factor = 1 / base_scale
         elif event.button == 'down':
             #zoom out
             scale_factor = base_scale
@@ -682,10 +687,10 @@ class TRaxRubyController():
             scale_factor = 1
             print event.button
 
-        new_width = (curr_xlim[1]-curr_xlim[0])*scale_factor
+        new_width = (curr_xlim[1] - curr_xlim[0]) * scale_factor
 
-        relx = (curr_xlim[1]-event.xdata)/(curr_xlim[1]-curr_xlim[0])
-        new_xlim=([event.xdata-new_width*(1-relx), event.xdata+new_width*(relx)])
+        relx = (curr_xlim[1] - event.xdata) / (curr_xlim[1] - curr_xlim[0])
+        new_xlim = ([event.xdata - new_width * (1 - relx), event.xdata + new_width * (relx)])
         self.main_view.ruby_axes.axes.set_xlim(new_xlim)
         self.data.set_x_roi_limits_to(new_xlim)
         pub.sendMessage("RUBY ROI CHANGED")
@@ -694,24 +699,24 @@ class TRaxRubyController():
 
     def reference_txt_changed(self):
         self.data.set_ruby_reference_pos(np.double(self.main_view.ruby_control_widget.reference_pos_txt.text()))
-        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f' % self.data.get_pressure())
 
     def temperature_txt_changed(self):
         self.data.set_temperature(np.double(self.main_view.ruby_control_widget.temperature_txt.text()))
-        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f' % self.data.get_pressure())
 
     def condition_cb_changed(self):
-        ind=self.main_view.ruby_control_widget.conditions_cb.currentIndex()
-        if ind==0:
+        ind = self.main_view.ruby_control_widget.conditions_cb.currentIndex()
+        if ind == 0:
             self.data.set_ruby_condition('hydrostatic')
-        elif ind==1:
+        elif ind == 1:
             self.data.set_ruby_condition('non-hydrostatic')
-        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f' % self.data.get_pressure())
 
     def fit_ruby_btn_click(self):
         self.data.fit_spectrum()
-        self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f'%self.data.click_pos)
-        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+        self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f' % self.data.click_pos)
+        self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f' % self.data.get_pressure())
             
     def auto_process_cb_click(self):
         if self.main_view.ruby_control_widget.auto_process_cb.isChecked():
@@ -727,8 +732,8 @@ class TRaxRubyController():
         if len(self._files_added) > 0:
             new_file_str = self._files_added[-1]
             if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
-                file_info = os.stat(self._exp_working_dir+new_file_str)
-                if file_info.st_size>1000:
+                file_info = os.stat(self._exp_working_dir + new_file_str)
+                if file_info.st_size > 1000:
                     path = self._exp_working_dir + new_file_str
                     self.data.load_exp_data(path)
                     self._files_before = self._files_now
@@ -808,7 +813,7 @@ class TRaxDiamondController():
                                           directory = self._exp_working_dir))
 
         if filename is not '':
-            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1])+'/'
+            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
             self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
             self.data.load_diamond_data(filename)
 
@@ -838,35 +843,35 @@ class TRaxDiamondController():
         self.main_view.diamond_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_derivative_spectrum())
 
     def axes_click(self,event):
-        if event.button==1:
-            self._axes_mouse_x=event.xdata
+        if event.button == 1:
+            self._axes_mouse_x = event.xdata
             self.pos_update_timer.start()
         else: #means right click, which is causing a complete unzoom
             self.data.set_x_roi_limits_to(self.data.get_x_limits())
             pub.sendMessage("DIAMOND ROI CHANGED")
 
     def axes_move(self,event):
-        self._axes_mouse_x=event.xdata
+        self._axes_mouse_x = event.xdata
 
     def axes_release(self,event):
         self.pos_update_timer.stop()
     
     def update_diamond_mouse_move_pos(self):
-        x_coord=self._axes_mouse_x
+        x_coord = self._axes_mouse_x
         if x_coord is not None:
             self.update_diamond_pos(x_coord)
 
     def update_diamond_pos(self,x_coord):
         self.data.set_click_pos(x_coord)
-        self.main_view.diamond_control_widget.measured_pos_lbl.setText('%.2f'%x_coord)
-        self.main_view.diamond_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+        self.main_view.diamond_control_widget.measured_pos_lbl.setText('%.2f' % x_coord)
+        self.main_view.diamond_control_widget.pressure_lbl.setText('%.1f' % self.data.get_pressure())
 
     def axes_mouse_scroll(self,event):
         curr_xlim = self.main_view.diamond_axes.axes.get_xlim()
-        base_scale=1.5
+        base_scale = 1.5
         if event.button == 'up':
             #zoom in
-            scale_factor = 1/base_scale
+            scale_factor = 1 / base_scale
         elif event.button == 'down':
             #zoom out
             scale_factor = base_scale
@@ -874,10 +879,10 @@ class TRaxDiamondController():
             scale_factor = 1
             print event.button
 
-        new_width = (curr_xlim[1]-curr_xlim[0])*scale_factor
+        new_width = (curr_xlim[1] - curr_xlim[0]) * scale_factor
 
-        relx = (curr_xlim[1]-event.xdata)/(curr_xlim[1]-curr_xlim[0])
-        new_xlim=([event.xdata-new_width*(1-relx), event.xdata+new_width*(relx)])
+        relx = (curr_xlim[1] - event.xdata) / (curr_xlim[1] - curr_xlim[0])
+        new_xlim = ([event.xdata - new_width * (1 - relx), event.xdata + new_width * (relx)])
         self.main_view.diamond_axes.axes.set_xlim(new_xlim)
         self.data.set_x_roi_limits_to(new_xlim)
         pub.sendMessage("DIAMOND ROI CHANGED")
@@ -886,7 +891,7 @@ class TRaxDiamondController():
 
     def reference_txt_changed(self):
         self.data.set_diamond_reference_pos(np.double(self.main_view.diamond_control_widget.reference_pos_txt.text()))
-        self.main_view.diamond_control_widget.pressure_lbl.setText('%.1f'%self.data.get_pressure())
+        self.main_view.diamond_control_widget.pressure_lbl.setText('%.1f' % self.data.get_pressure())
             
     def auto_process_cb_click(self):
         if self.main_view.diamond_control_widget.auto_process_cb.isChecked():
@@ -902,8 +907,8 @@ class TRaxDiamondController():
         if len(self._files_added) > 0:
             new_file_str = self._files_added[-1]
             if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
-                file_info = os.stat(self._exp_working_dir+new_file_str)
-                if file_info.st_size>1000: #needed because there are some timing issues with WinSpec
+                file_info = os.stat(self._exp_working_dir + new_file_str)
+                if file_info.st_size > 1000: #needed because there are some timing issues with WinSpec
                     path = self._exp_working_dir + new_file_str
                     self.data.load_diamond_data(path)
                     self._files_before = self._files_now
@@ -920,10 +925,10 @@ class TRaxDiamondController():
 
     def derivative_show_cb_click(self):
         if self.main_view.diamond_control_widget.derivative_show_cb.isChecked():
-            self.data.return_derivative=True
+            self.data.return_derivative = True
             pub.sendMessage("DIAMOND ROI CHANGED")
         else:
-            self.data.return_derivative=False
+            self.data.return_derivative = False
             pub.sendMessage("DIAMOND ROI CHANGED")
 
     def change_derivative_smoothing(self):

@@ -374,6 +374,9 @@ class GeneralData(object):
     def get_img_dimension(self):
         return self._img_file.get_dimension()
 
+    def get_exposure_time(self):
+        return self._img_file.exposure_time
+
     def get_file_information(self):
         return ('{exp_time:g}s, ' +\
                '{detector}, '+\

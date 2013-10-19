@@ -202,7 +202,8 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.update_rect_pick_limits(new_size.width(),new_size.height())
 
     def axes_leave_event(self, event):
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        #QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        QtGui.QApplication.restoreOverrideCursor()
 
     def update_rect_pick_limits(self, graph_width, graph_height):
         xlimits=self.axes.get_xlim()
@@ -506,6 +507,7 @@ class ResizeableRectangle:
         'on motion we will move the rect if the mouse is over us'
         if event.inaxes != self.rect.axes: 
             QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+            QtGui.QApplication.restoreOverrideCursor()
             return
 
         y0 = self.rect.get_y()
@@ -518,17 +520,23 @@ class ResizeableRectangle:
             if ResizeableRectangle.lock is None:
                 mode=self.get_mode(x_click, y_click, self.rect)
                 if mode=='move':
+                    QtGui.QApplication.restoreOverrideCursor()
                     QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeAllCursor))
                 elif mode=='resize_bottom' or mode=='resize_top':
+                    QtGui.QApplication.restoreOverrideCursor()
                     QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeVerCursor))
                 elif mode=='resize_right' or mode=='resize_left':
+                    QtGui.QApplication.restoreOverrideCursor()
                     QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeHorCursor))
                 else:
                     for rect in ResizeableRectangle.rects:
                         rect_mode = self.get_mode(x_click, y_click, rect)
                         if rect_mode is not 'None':
                             return
+                        
+                    QtGui.QApplication.restoreOverrideCursor()
                     QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+                    QtGui.QApplication.restoreOverrideCursor()
             return
 
         x0, y0, xpress, ypress = self.press

@@ -334,7 +334,7 @@ class T_Rax_2axes_temperature_graph():
     def update_intensity_warning(self):
         self.ds_warning_txt.set_x(self.get_ds_x_absolute_position(0.5))
         self.ds_warning_txt.set_y(self.get_ds_y_absolute_position(0.5))
-        if self.ds_max_int >= 64400:
+        if self.ds_max_int >= 63500:
             self.ds_warning_txt.set_text('SATURATION')
         elif self.ds_max_int <=100:
             self.ds_warning_txt.set_text('TOO LOW\nINTENSITY')
@@ -343,7 +343,7 @@ class T_Rax_2axes_temperature_graph():
             
         self.us_warning_txt.set_x(self.get_us_x_absolute_position(0.5))
         self.us_warning_txt.set_y(self.get_us_y_absolute_position(0.5))
-        if self.us_max_int >= 64400:
+        if self.us_max_int >= 63500:
             self.us_warning_txt.set_text('SATURATION')
         elif self.us_max_int <=100:
             self.us_warning_txt.set_text('TOO LOW\n INTENSITY')

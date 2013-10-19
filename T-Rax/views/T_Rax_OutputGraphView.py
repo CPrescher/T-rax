@@ -32,7 +32,7 @@ class TRaxOutputGraphView(QtGui.QWidget, Ui_output_graph_widget):
         self.canvas.updateGeometry()
         self.axes = self.figure.add_subplot(111)
         
-    def plot_series(self, y_data, y_data_errors, color, label):
+    def plot_series(self,x, y_data, y_data_errors, color, label):
         x=xrange(len(y_data))
         self.axes.errorbar(x, y_data, yerr=y_data_errors, label=label,
                      color=color, lw=2, capsize=5, capthick=2,

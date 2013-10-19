@@ -39,6 +39,7 @@ class SPE_File(object):
         self._read_center_wavelength_from_header()
         self._read_roi_from_header()
         self._read_num_frames_from_header()
+        self._read_num_combined_frames_from_header()
         
     def _read_parameter_from_dom(self):
         self._get_xml_string()
@@ -52,6 +53,7 @@ class SPE_File(object):
         self._read_roi_from_dom()
         self._select_wavelength_from_roi()
         self._read_num_frames_from_header()
+        self._read_num_combined_frames_from_dom()
 
     def _read_date_time_from_header(self):
         rawdate = self._read_at(20, 9, np.int8)
@@ -84,6 +86,9 @@ class SPE_File(object):
 
     def _read_num_frames_from_header(self):
         self.num_frames=self._read_at(1446,1,np.int32)[0]
+
+    def _read_num_combined_frames_from_header(self):
+        self._num_combined_frames=1
 
     def _create_dom_from_xml(self):
         self.dom = parseString(self.xml_string)
@@ -182,6 +187,14 @@ class SPE_File(object):
             self.roi_y=0
             self.roi_width = self._xdim
             self.roi_height = self._ydim
+
+    def _read_num_combined_frames_from_dom(self):
+         self.frame_combination=self.dom.getElementsByTagName('Experiment')[0].\
+                                        getElementsByTagName('Devices')[0].\
+                                        getElementsByTagName('Cameras')[0].\
+                                        getElementsByTagName('FrameCombination')[0]
+         self.num_frames_combined = int(self.frame_combination.getElementsByTagName('FramesCombined')[0].\
+                                                              childNodes[0].toxml())                                        
 
     def _select_wavelength_from_roi(self):
         self.x_calibration=self.x_calibration[self.roi_x: self.roi_x+self.roi_width]

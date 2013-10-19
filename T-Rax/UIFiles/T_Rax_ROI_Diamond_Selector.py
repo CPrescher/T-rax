@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_ROI_Diamond_Selector.ui'
 #
-# Created: Tue Oct 15 08:38:01 2013
+# Created: Wed Oct 16 19:21:56 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
