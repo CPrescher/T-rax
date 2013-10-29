@@ -3,17 +3,18 @@ from PyQt4 import QtCore, QtGui
 import sys
 from wx.lib.pubsub import pub
 
-from views.T_Rax_ROIViewDiamond import TRaxROIViewDiamond
-from T_Rax_Data import TraxData
+from views.T_Rax_ROIViewRuby import TRaxROIViewRuby
 
-class TRaxROIControllerDiamond(object):
+class TRaxROIControllerRuby(object):
     def __init__(self, data, parent=None):
         self.parent=parent
-        self.view = TRaxROIViewDiamond(data,parent)
+        self.view = TRaxROIViewRuby(data,parent)
         self.data = data
         self.create_signals()
         self.view.update_txt_roi()
         self.save_roi_data()
+        self.mode = "temperature"
+
 
     def create_signals(self):
         self.create_btn_signals()
@@ -31,15 +32,15 @@ class TRaxROIControllerDiamond(object):
         self.view.y_max_txt.editingFinished.connect(self.roi_txt_changed)
 
     def create_pub_signals(self):
-        pub.subscribe(self.roi_graph_changed, "DIAMOND ROI GRAPH CHANGED")
-        pub.subscribe(self.roi_changed, "DIAMOND ROI CHANGED")
-        pub.subscribe(self.exp_data_changed, "EXP DIAMOND DATA CHANGED")
+        pub.subscribe(self.roi_graph_changed, "SINGLE ROI GRAPH CHANGED")
+        pub.subscribe(self.roi_changed, "RUBY ROI CHANGED")
+        pub.subscribe(self.exp_data_changed, "EXP RUBY DATA CHANGED")
 
     def roi_txt_changed(self):
         roi=self.view.get_roi()
         roi[:2] = self.data.calculate_ind(roi[:2])  
         self.data.roi.set_roi(roi)
-        pub.sendMessage("DIAMOND ROI CHANGED")
+        pub.sendMessage("RUBY ROI CHANGED")
 
     def roi_changed(self):
         self.view.update_graph_roi()
@@ -47,7 +48,7 @@ class TRaxROIControllerDiamond(object):
 
     def roi_graph_changed(self, data):
         self.data.roi.set_roi(data)
-        pub.sendMessage("DIAMOND ROI CHANGED")
+        pub.sendMessage("RUBY ROI CHANGED")
 
 
     def exp_data_changed(self):
@@ -76,11 +77,3 @@ class TRaxROIControllerDiamond(object):
         self.view.move(self.parent.x(), 
                        self.parent.y()+self.parent.height()+50)
         self.view.resize(self.parent.size().width(),self.view.size().height())
-
-
-if __name__=="__main__":
-    app=QtGui.QApplication(sys.argv)
-    data=TraxData()
-    controller=TRaxROIController(data)
-    controller.view.show()
-    app.exec_()

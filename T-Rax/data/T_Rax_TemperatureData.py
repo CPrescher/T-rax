@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import colors
 
 
-class TraxData(object):
+class TraxTemperatureData(object):
     def __init__(self):
         self.ds_calib_data = None
         self.ds_calibration_parameter = CalibParam()

@@ -6,7 +6,7 @@
     <ProjectGuid>7b93f3b8-989a-4a3a-92b3-4d75d1a84f3c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>run_T-Rax.py</StartupFile>
-    <SearchPath>..\T-Rax;TRaxROISelector</SearchPath>
+    <SearchPath>..\T-Rax</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>T-Rax</Name>
@@ -21,60 +21,49 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Backup_wxPython\Misc\colors.py" />
-    <Compile Include="Backup_wxPython\Misc\Helper.py" />
+    <Compile Include="controller\__init__.py" />
     <Compile Include="create_executable.py" />
-    <Compile Include="Playing\ParkingLot.py" />
-    <Compile Include="Playing\playing.py" />
     <Compile Include="convert_ui_files.py" />
+    <Compile Include="data\__init__.py" />
     <Compile Include="run_T-Rax.py" />
-    <Compile Include="T_Rax_DiamondData.py" />
-    <Compile Include="T_Rax_OutputGraphController.py" />
-    <Compile Include="T_Rax_QTROISelectorRubyController.py" />
-    <Compile Include="T_Rax_QTROISelectorDiamondController.py" />
-    <Compile Include="T_Rax_RubyData.py" />
+    <Compile Include="controller\T_Rax_DiamondController.py" />
+    <Compile Include="data\T_Rax_DiamondData.py" />
+    <Compile Include="controller\T_Rax_OutputGraphController.py" />
+    <Compile Include="controller\T_Rax_ROISelectorRubyController.py" />
+    <Compile Include="controller\T_Rax_ROISelectorDiamondController.py" />
+    <Compile Include="controller\T_Rax_RubyController.py" />
+    <Compile Include="data\T_Rax_RubyData.py" />
+    <Compile Include="controller\T_Rax_TemperatureController.py" />
     <Compile Include="UIFiles\T_Rax_ROI_Diamond_Selector.py" />
     <Compile Include="UIFiles\T_Rax_ROI_Ruby_Selector.py" />
     <Compile Include="unittests\QT_GUI_Test.py" />
     <Compile Include="unittests\T_Rax_Data_Test.py" />
     <Compile Include="views\T_Rax_ControlWidgets.py" />
-    <Compile Include="T_Rax_QTROISelectorController.py" />
+    <Compile Include="controller\T_Rax_ROISelectorTemperatureController.py" />
     <Compile Include="views\T_Rax_OutputGraphView.py" />
     <Compile Include="views\T_Rax_ROIView.py" />
-    <Compile Include="T_Rax_QtController.py" />
+    <Compile Include="controller\T_Rax_MainController.py" />
     <Compile Include="views\T_Rax_MainView.py" />
     <Compile Include="UIFiles\T_Rax_DiamondControl.py" />
     <Compile Include="UIFiles\T_Rax_MainWindow.py" />
     <Compile Include="UIFiles\T_Rax_RubyControl.py" />
     <Compile Include="UIFiles\T_Rax_TemperatureControl.py" />
     <Compile Include="UIFiles\__init__.py" />
-    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_boxes.py" />
-    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_controller.py" />
-    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_graph_helper.py" />
-    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_panels.py" />
-    <Compile Include="Backup_wxPython\run_T-Rax.pyw" />
     <Compile Include="SPE_module.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Backup_wxPython\TRaxROISelector\__init__.py" />
-    <Compile Include="Backup_wxPython\T_Rax_Controller.pyw" />
-    <Compile Include="T_Rax_Data.py" />
-    <Compile Include="Backup_wxPython\T_Rax_Main_View.py" />
-    <Compile Include="Backup_wxPython\TRaxROISelector\T_Rax_ROI_selector.py" />
+    <Compile Include="data\T_Rax_TemperatureData.py" />
     <Compile Include="unittests\spe_file_unit_test.py" />
     <Compile Include="views\T_Rax_ROIViewDiamond.py" />
     <Compile Include="views\T_Rax_ROIViewRuby.py" />
     <Compile Include="views\__init__.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Backup_wxPython\" />
-    <Folder Include="Backup_wxPython\Misc\" />
-    <Folder Include="Backup_wxPython\TRaxROISelector\" />
     <Folder Include="controller\" />
+    <Folder Include="data\" />
     <Folder Include="views\" />
     <Folder Include="UIFiles\" />
     <Folder Include="unittests\" />
-    <Folder Include="Playing\" />
     <Folder Include="Temperature Calibration\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

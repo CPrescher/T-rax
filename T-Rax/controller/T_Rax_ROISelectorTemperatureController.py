@@ -4,9 +4,8 @@ import sys
 from wx.lib.pubsub import pub
 
 from views.T_Rax_ROIView import TRaxROIView
-from T_Rax_Data import TraxData
 
-class TRaxROIController(object):
+class TRaxROITemperatureController(object):
     def __init__(self, data, parent=None):
         self.parent=parent
         self.view = TRaxROIView(data,parent)
@@ -156,11 +155,3 @@ class TRaxROIController(object):
         self.view.move(self.parent.x(), 
                        self.parent.y()+self.parent.height()+50)
         self.view.resize(self.parent.size().width(),self.view.size().height())
-
-
-if __name__=="__main__":
-    app=QtGui.QApplication(sys.argv)
-    data=TraxData()
-    controller=TRaxROIController(data)
-    controller.view.show()
-    app.exec_()
