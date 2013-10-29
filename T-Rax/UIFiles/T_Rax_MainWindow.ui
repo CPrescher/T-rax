@@ -175,6 +175,30 @@ QPushPutton::press{
          </property>
         </spacer>
        </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>written by C. Prescher, GSECARS, UofC</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
     </item>
@@ -201,7 +225,6 @@ QPushPutton::press{
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <zorder>figure2_frame</zorder>
         </widget>
        </item>
        <item>
@@ -222,8 +245,6 @@ QPushPutton::press{
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <zorder>figure1_frame</zorder>
-         <zorder>figure1_frame</zorder>
         </widget>
        </item>
       </layout>

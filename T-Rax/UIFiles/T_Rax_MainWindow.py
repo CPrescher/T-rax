@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Wed Oct 16 19:21:55 2013
+# Created: Tue Oct 29 18:43:31 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -139,6 +139,14 @@ class Ui_T_Rax_MainWindow(object):
         self.horizontalLayout.addWidget(self.raman_btn)
         spacerItem = QtGui.QSpacerItem(248, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.label_2 = QtGui.QLabel(self.navigation_frame)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.verticalLayout_3.addWidget(self.label_2)
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_3.addItem(spacerItem1)
+        self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.verticalLayout.addWidget(self.navigation_frame)
         self.main_frame = QtGui.QFrame(self.centralwidget)
         self.main_frame.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -189,8 +197,8 @@ class Ui_T_Rax_MainWindow(object):
         self.progress_bar.setProperty("value", 24)
         self.progress_bar.setObjectName(_fromUtf8("progress_bar"))
         self.horizontalLayout_3.addWidget(self.progress_bar)
-        spacerItem1 = QtGui.QSpacerItem(743, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem1)
+        spacerItem2 = QtGui.QSpacerItem(743, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem2)
         self.status_file_information_lbl = QtGui.QLabel(self.status_bar)
         self.status_file_information_lbl.setText(_fromUtf8(""))
         self.status_file_information_lbl.setObjectName(_fromUtf8("status_file_information_lbl"))
@@ -207,4 +215,5 @@ class Ui_T_Rax_MainWindow(object):
         self.ruby_btn.setText(_translate("T_Rax_MainWindow", "Ruby", None))
         self.diamond_btn.setText(_translate("T_Rax_MainWindow", "Diamond", None))
         self.raman_btn.setText(_translate("T_Rax_MainWindow", "Raman", None))
+        self.label_2.setText(_translate("T_Rax_MainWindow", "written by C. Prescher, GSECARS, UofC", None))
 
