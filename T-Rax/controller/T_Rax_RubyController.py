@@ -23,12 +23,12 @@ class TRaxRubyController():
     def create_signals(self):
         self.create_exp_file_signals()
         self.create_roi_view_signals()
-        self.create_temperature_pub_listeners()
+        self.create_ruby_pub_listeners()
         self.create_auto_process_signal()
         self.create_pressure_signals()
         self.create_axes_click_signal()
 
-    def create_temperature_pub_listeners(self):
+    def create_ruby_pub_listeners(self):
         pub.subscribe(self.data_changed, "EXP RUBY DATA CHANGED")
         pub.subscribe(self.roi_changed, "RUBY ROI CHANGED")
         pub.subscribe(self.ruby_pos_changed, "RUBY POS CHANGED")
@@ -44,9 +44,6 @@ class TRaxRubyController():
         self.connect_click_function(self.main_view.ruby_control_widget.load_next_exp_data_btn, self.load_next_exp_data)        
         self.connect_click_function(self.main_view.ruby_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
 
-    def create_roi_view_signals(self):
-        self.connect_click_function(self.main_view.ruby_control_widget.roi_setup_btn, self.load_roi_view)
-
     def create_axes_click_signal(self):
         self.pos_update_timer = QtCore.QTimer(self.main_view)
         self.pos_update_timer.setInterval(5)
@@ -61,6 +58,9 @@ class TRaxRubyController():
         self.main_view.ruby_control_widget.temperature_txt.editingFinished.connect(self.temperature_txt_changed)
         self.main_view.ruby_control_widget.conditions_cb.currentIndexChanged.connect(self.condition_cb_changed)
         self.connect_click_function(self.main_view.ruby_control_widget.fit_ruby_btn,self.fit_ruby_btn_click)
+
+    def create_roi_view_signals(self):
+        self.connect_click_function(self.main_view.ruby_control_widget.roi_setup_btn, self.load_roi_view)
     
     def connect_click_function(self, emitter, function):
         self.main_view.connect(emitter, SIGNAL('clicked()'), function)

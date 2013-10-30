@@ -21,6 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="controller\T_Rax_ModuleController.py" />
     <Compile Include="controller\__init__.py" />
     <Compile Include="create_executable.py" />
     <Compile Include="convert_ui_files.py" />

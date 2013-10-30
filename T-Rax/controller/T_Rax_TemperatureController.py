@@ -195,7 +195,7 @@ class TRaxTemperatureController():
         if ds_modus == 0:
             self.main_view.temperature_control_widget.ds_temperature_rb.toggle()
         elif ds_modus == 1:
-            self.main_view.temperature_control_widget.us_etalon_rb.toggle()
+            self.main_view.temperature_control_widget.ds_etalon_rb.toggle()
 
     def roi_changed(self):
         self.data.calc_spectra()
