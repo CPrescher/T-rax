@@ -32,7 +32,7 @@ class TraxTemperatureData(object):
         self.load_us_calib_etalon('15A_lamp.txt')
         self.load_ds_calib_etalon('15A_lamp.txt')
 
-    def load_exp_data(self, filename):
+    def load_exp_file(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
         self.roi_data = self.exp_data.roi_data
         try:
@@ -49,16 +49,16 @@ class TraxTemperatureData(object):
     def load_next_exp_file(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
         if os.path.isfile(new_file_name):
-            self.load_exp_data(new_file_name)
+            self.load_exp_file(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_exp_data(new_file_name_with_leading_zeros)
+            self.load_exp_file(new_file_name_with_leading_zeros)
 
     def load_previous_exp_file(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_previous_file_names()
         if os.path.isfile(new_file_name):
-            self.load_exp_data(new_file_name)
+            self.load_exp_file(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_exp_data(new_file_name_with_leading_zeros)
+            self.load_exp_file(new_file_name_with_leading_zeros)
 
     def read_exp_image_file(self, file_name):
         img_file = SPE_File(file_name)

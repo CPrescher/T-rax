@@ -8,18 +8,19 @@ from PyQt4.QtCore import SIGNAL
 import numpy as np
 from epics import caput, PV
 
-
+from controller.T_Rax_ModuleController import TRaxModuleController
 from controller.T_Rax_OutputGraphController import TRaxOutputGraphController
 from controller.T_Rax_ROISelectorTemperatureController import TRaxROITemperatureController
 from data.T_Rax_TemperatureData import TraxTemperatureData
 
 
-class TRaxTemperatureController():
+class TRaxTemperatureController(TRaxModuleController):
     def __init__(self, parent, main_view):
-        self.parent = parent
         self.data = TraxTemperatureData()
-        self.load_standard_parameter()
+        self.parent = parent
+        super(TRaxTemperatureController, self).__init__(parent, self.data,main_view.temperature_control_widget)
         self.main_view = main_view
+        self.load_standard_parameter()
         self.create_signals()
         pub.sendMessage("EXP DATA CHANGED")
         pub.sendMessage("ROI CHANGED")
@@ -32,14 +33,11 @@ class TRaxTemperatureController():
             self.data.set_us_calib_modus(0) 
 
     def create_signals(self):
-        self.create_exp_file_signals()
         self.create_frame_signals()
-        self.create_roi_view_signals()
 
         self.create_temperature_pub_listeners()
         self.create_calibration_signals()
         self.create_fit_range_signals()
-        self.create_auto_process_signal()
         self.create_settings_signals()
 
         self.main_view.temperature_control_widget.epics_connection_cb.clicked.connect(self.epics_connection_cb_clicked)
@@ -90,43 +88,10 @@ class TRaxTemperatureController():
         self.main_view.temperature_control_widget.fit_from_txt.editingFinished.connect(self.fit_txt_changed)
         self.main_view.temperature_control_widget.fit_to_txt.editingFinished.connect(self.fit_txt_changed)
 
-    def create_auto_process_signal(self):
-        self.main_view.temperature_control_widget.auto_process_cb.clicked.connect(self.auto_process_cb_click)
-        self.autoprocess_timer = QtCore.QTimer(self.main_view)
-        self.autoprocess_timer.setInterval(100)
-        self.main_view.connect(self.autoprocess_timer,QtCore.SIGNAL('timeout()'), self.check_files)
-    
-    def create_exp_file_signals(self):
-        self.connect_click_function(self.main_view.temperature_control_widget.load_exp_data_btn, self.load_exp_data)        
-        self.connect_click_function(self.main_view.temperature_control_widget.load_next_exp_data_btn, self.load_next_exp_data)        
-        self.connect_click_function(self.main_view.temperature_control_widget.load_previous_exp_data_btn, self.load_previous_exp_data)
-
-    def create_roi_view_signals(self):
-        self.connect_click_function(self.main_view.temperature_control_widget.roi_setup_btn, self.load_roi_view)
-
     def create_settings_signals(self):
         self.connect_click_function(self.main_view.temperature_control_widget.save_settings_btn, self.save_settings_btn_click)
         self.connect_click_function(self.main_view.temperature_control_widget.load_settings_btn, self.load_settings_btn_click)
         self.main_view.temperature_control_widget.settings_cb.currentIndexChanged.connect(self.settings_cb_changed)
-    
-    def connect_click_function(self, emitter, function):
-        self.main_view.connect(emitter, SIGNAL('clicked()'), function)
-
-    def load_exp_data(self, filename=None):
-        if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Experiment SPE", 
-                                          directory = self._exp_working_dir))
-
-        if filename is not '':
-            self._exp_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
-            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)]) #reset for the autoprocessing
-            self.data.load_exp_data(filename)
-
-    def load_next_exp_data(self):
-        self.data.load_next_exp_file()
-
-    def load_previous_exp_data(self):
-        self.data.load_previous_exp_file()
 
     def load_roi_view(self):
         try:
@@ -221,9 +186,6 @@ class TRaxTemperatureController():
 
     def plot_time_lapse(self):
         ds_temperature, ds_temperature_err, us_temperature, us_temperature_err = self.data.calculate_time_lapse()
-        #ds_temperature, ds_temperature_err, us_temperature, us_temperature_err
-        #= [1200,1300,1400,1000],[10,20,10,30],\
-        #                                                                         [1000,1400,1240,1923],[10,30,10,20]
         self.parent.output_graph_controller.show()
         self.parent.output_graph_controller.plot_temperature_series(self.data.exp_data.get_exposure_time(),\
             ds_temperature, ds_temperature_err, us_temperature, us_temperature_err)
@@ -294,45 +256,7 @@ class TRaxTemperatureController():
     
     def fit_txt_changed(self):
         limits = self.main_view.temperature_control_widget.get_fit_limits()
-        self.data.set_x_roi_limits_to(limits)
-
-    
-    def auto_process_cb_click(self):
-        if self.main_view.temperature_control_widget.auto_process_cb.isChecked():
-            self._files_before = dict([(f, None) for f in os.listdir(self._exp_working_dir)])
-            self.autoprocess_timer.start()
-        else:
-            self.autoprocess_timer.stop()
-
-    def check_files(self):
-        self._files_now = dict([(f,None) for f in os.listdir(self._exp_working_dir)])
-        self._files_added = [f for f in self._files_now if not f in self._files_before]
-        self._files_removed = [f for f in self._files_before if not f in self._files_now]
-        if len(self._files_added) > 0:
-            new_file_str = self._files_added[-1]
-            if self.file_is_spe(new_file_str) and not self.file_is_raw(new_file_str):
-                file_info = os.stat(self._exp_working_dir + new_file_str)
-                if file_info.st_size > 1000: #needed because there are some timing issues with WinSpec
-                    if self.epics_is_connected:
-                        try:
-                            if caget('13LF1:cam1:Acquire') == 1:
-                                print 'LIGHTFIELD still collecting'
-                                return #aborts if lightfield has not finished all his file handling
-                        except:
-                            pass
-                    path = self._exp_working_dir + new_file_str
-                    self.data.load_exp_data(path)
-                    self._files_before = self._files_now
-            
-    def file_is_spe(self, filename):
-        return filename.endswith('.SPE') or filename.endswith('.spe')
-    
-    def file_is_raw(self, filename):
-        try:
-            #checks if file contains "-raw" string at the end
-            return filename.split('-')[-1].split('.')[0] == 'raw'
-        except:
-            return false        
+        self.data.set_x_roi_limits_to(limits)  
 
 
     def save_settings_btn_click(self, filename=None):
@@ -399,7 +323,6 @@ class TRaxTemperatureController():
             new_file_name = self._settings_working_dir + self._settings_files_list[current_index - 1] # therefore also one has to be deleted
             self.load_settings_btn_click(new_file_name)
 
-            
 
     def epics_connection_cb_clicked(self):
         if self.main_view.temperature_control_widget.epics_connection_cb.isChecked():

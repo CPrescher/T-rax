@@ -24,25 +24,25 @@ class TraxDiamondData(object):
         self.fitted_spectrum=Spectrum([],[])
         self.roi = self.exp_data.roi
 
-    def load_diamond_data(self, filename):
+    def load_exp_file(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
         self.roi = self.exp_data.roi
         self.fitted_spectrum=Spectrum([],[])
         pub.sendMessage("EXP DIAMOND DATA CHANGED")
 
-    def load_next_diamond_file(self):
+    def load_next_exp_file(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
         if os.path.isfile(new_file_name):
-            self.load_diamond_data(new_file_name)
+            self.load_exp_file(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_diamond_data(new_file_name_with_leading_zeros)
+            self.load_exp_file(new_file_name_with_leading_zeros)
 
-    def load_previous_diamond_file(self):
+    def load_previous_exp_file(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_previous_file_names()
         if os.path.isfile(new_file_name):
-            self.load_diamond_data(new_file_name)
+            self.load_exp_file(new_file_name)
         elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_diamond_data(new_file_name_with_leading_zeros)
+            self.load_exp_file(new_file_name_with_leading_zeros)
         pub.sendMessage("EXP DIAMOND DATA CHANGED")
 
     def read_exp_image_file(self, file_name):
