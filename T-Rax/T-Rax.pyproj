@@ -25,6 +25,7 @@
     <Compile Include="controller\__init__.py" />
     <Compile Include="create_executable.py" />
     <Compile Include="convert_ui_files.py" />
+    <Compile Include="data\T_Rax_GeneralData.py" />
     <Compile Include="data\__init__.py" />
     <Compile Include="run_T-Rax.py" />
     <Compile Include="controller\T_Rax_DiamondController.py" />

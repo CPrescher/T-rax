@@ -6,12 +6,13 @@ import random
 import scipy.interpolate as ip
 from scipy.optimize import minimize
 
-from T_Rax_Data import ROI, Spectrum, black_body_function, gauss_curve_function
+from data.T_Rax_TemperatureData import ROI, Spectrum, gauss_curve_function
+from data.T_Rax_GeneralData import TraxGeneralData
 
 
-class TraxRubyData(object):
+class TraxRubyData(TraxGeneralData):
     def __init__(self):
-        self.roi_data_manager =  ROIRubyManager()
+        self.roi_data_manager =  ROIRubyManager()        
         self._create_dummy_img()
         self.click_pos=694.35
         self.ruby_reference_pos=694.35
@@ -29,102 +30,10 @@ class TraxRubyData(object):
         self.fitted_spectrum=Spectrum([],[])
         pub.sendMessage("EXP RUBY DATA CHANGED")
 
-    def load_next_exp_file(self):
-        new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
-        if os.path.isfile(new_file_name):
-            self.load_exp_file(new_file_name)
-        elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_exp_file(new_file_name_with_leading_zeros)
-
-    def load_previous_exp_file(self):
-        new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_previous_file_names()
-        if os.path.isfile(new_file_name):
-            self.load_exp_file(new_file_name)
-        elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_exp_file(new_file_name_with_leading_zeros)
-        pub.sendMessage("EXP RUBY DATA CHANGED")
-
     def read_exp_image_file(self, file_name):
         img_file= SPE_File(file_name)
         return ExpRubyData(img_file, self.roi_data_manager)
-
-    def calculate_wavelength(self,channel):
-        if isinstance(channel,list):
-            result = []
-            for c in channel:
-                result.append(self.exp_data.x_whole[c])
-            return np.array(result)
-        else:
-            return self.exp_data.x_whole[channel]
-
-    def calculate_ind(self, wavelength):
-        result = []
-        xdata = np.array( self.exp_data.x_whole)
-        try:
-            for w in wavelength:
-                try:
-                    base_ind = max(max(np.where(xdata <= w)))
-                    if base_ind < len(xdata)-1:
-                        result.append(int(np.round((w - xdata[base_ind]) / \
-                            (xdata[base_ind + 1] - xdata[base_ind]) \
-                            + base_ind)))
-                    else:
-                        result.append(base_ind)
-                except:
-                    result.append(0)
-            return np.array(result)
-        except TypeError:
-            base_ind = max(max(np.where(xdata <= wavelength)))
-            return int(np.round((wavelength - xdata[base_ind]) / \
-                    (xdata[base_ind + 1] - xdata[base_ind]) \
-                    + base_ind))
     
-    def calc_spectra(self):
-        self.exp_data.calc_spectra()
-
-    def get_exp_file_name(self):
-        return self.exp_data.filename
-
-    def get_exp_img_data(self):
-        return self.exp_data.get_img_data()
-
-    def get_exp_graph_data(self):
-        return self.exp_data.get_ds_spectrum()
-             
-    def get_spectrum(self):
-        return self.exp_data.get_spectrum()
-
-    def get_roi_max(self):
-        return self.exp_data.calc_roi_max(self.exp_data.roi.roi)
-
-    def get_us_spectrum(self):
-        if self.us_calib_data == None:
-            return self.exp_data.us_spectrum
-        else:
-            x=self.exp_data.us_spectrum.x
-            corrected_spectrum = self.exp_data.calc_corrected_us_spectrum(self.us_calib_data.us_spectrum, 
-                                                self.us_calib_param.get_calibrated_spec(x))
-            self.us_fitted_spectrum = FitSpectrum(corrected_spectrum)
-            return [corrected_spectrum, self.us_fitted_spectrum]
-
-    def get_roi_max(self):
-        return self.exp_data.calc_roi_max(self.exp_data.roi.us_roi)
-
-    def get_whole_spectrum(self):
-        return self.exp_data.x, self.exp_data.y_whole_spectrum
-
-    def save_roi_data(self):
-        np.savetxt('roi_data.txt', self.roi.get_roi_data(), delimiter=',', fmt='%.0f')     
-        
-    def get_x_limits(self):
-        return self.exp_data.get_x_limits()
-
-    def get_x_roi_limits(self):
-        return self.calculate_wavelength(self.exp_data.roi.get_x_limits())
-
-    def set_x_roi_limits_to(self, limits):
-        limits_ind=self.calculate_ind(limits)
-        self.roi.set_x_limit(limits_ind)
 #********************RUBY STUFF HERE***********************
 #
     
@@ -172,7 +81,6 @@ class TraxRubyData(object):
                                                                res.x[3],res.x[4],res.x[5],\
                                                                res.x[6],res.x[7],res.x[8],\
                                                                res.x[9]))
-        #self.fitted_spectrum=Spectrum(fit_x, pseudo_voigt_curve(fit_x, res.x[0],res.x[4],res.x[6],res.x[2]))
         pub.sendMessage("RUBY POS CHANGED")
 
     def create_p0(self):

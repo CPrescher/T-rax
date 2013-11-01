@@ -7,10 +7,11 @@ import scipy.interpolate as ip
 from scipy.optimize import minimize
 from scipy.ndimage import gaussian_filter1d
 
-from T_Rax_Data import ROI, Spectrum, black_body_function, gauss_curve_function
+from data.T_Rax_GeneralData import TraxGeneralData
+from data.T_Rax_TemperatureData import ROI, Spectrum, gauss_curve_function
 
 
-class TraxDiamondData(object):
+class TraxDiamondData(TraxGeneralData):
     def __init__(self):
         self.roi_data_manager =  ROIDiamondManager()
         self._create_dummy_img()
@@ -30,91 +31,13 @@ class TraxDiamondData(object):
         self.fitted_spectrum=Spectrum([],[])
         pub.sendMessage("EXP DIAMOND DATA CHANGED")
 
-    def load_next_exp_file(self):
-        new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
-        if os.path.isfile(new_file_name):
-            self.load_exp_file(new_file_name)
-        elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_exp_file(new_file_name_with_leading_zeros)
-
-    def load_previous_exp_file(self):
-        new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_previous_file_names()
-        if os.path.isfile(new_file_name):
-            self.load_exp_file(new_file_name)
-        elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_exp_file(new_file_name_with_leading_zeros)
-        pub.sendMessage("EXP DIAMOND DATA CHANGED")
-
     def read_exp_image_file(self, file_name):
         img_file= SPE_File(file_name)
         return ExpDiamondData(img_file, self.roi_data_manager)
-
-    def calculate_wavelength(self,channel):
-        if isinstance(channel,list):
-            result = []
-            for c in channel:
-                result.append(self.exp_data.x_whole[c])
-            return np.array(result)
-        else:
-            return self.exp_data.x_whole[channel]
-
-    def convert_reverse_cm_to_wavelength(self, reverse_cm):
-        return 1/(1.0/532-np.array(reverse_cm)/1.0e7)
-
-    def convert_wavelength_to_reverse_cm(self, wavelength):
-        return (1.0/532-1/np.array(wavelength))*1.0e7
-
-    def calculate_ind(self, wavelength):
-        result = []
-        xdata = np.array( self.exp_data.x_whole)
-        try:
-            for w in wavelength:
-                try:
-                    base_ind = max(max(np.where(xdata <= w)))
-                    if base_ind < len(xdata)-1:
-                        result.append(int(np.round((w - xdata[base_ind]) / \
-                            (xdata[base_ind + 1] - xdata[base_ind]) \
-                            + base_ind)))
-                    else:
-                        result.append(base_ind)
-                except:
-                    result.append(0)
-            return np.array(result)
-        except TypeError:
-            base_ind = max(max(np.where(xdata <= wavelength)))
-            return int(np.round((wavelength - xdata[base_ind]) / \
-                    (xdata[base_ind + 1] - xdata[base_ind]) \
-                    + base_ind))
+  
+#********************DIAMOND STUFF HERE***********************
+#
     
-    def calc_spectra(self):
-        self.exp_data.calc_spectra()
-
-    def get_exp_file_name(self):
-        return self.exp_data.filename
-
-    def get_exp_img_data(self):
-        return self.exp_data.get_img_data()
-
-    def get_exp_graph_data(self):
-        return self.exp_data.get_ds_spectrum()
-             
-    def get_spectrum(self):
-        spec=self.exp_data.get_spectrum()
-        spec.x=self.convert_wavelength_to_reverse_cm(spec.x)
-        return spec
-
-    def get_roi_max(self):
-        return self.exp_data.calc_roi_max(self.exp_data.roi.roi)
-
-    def get_roi_max(self):
-        return self.exp_data.calc_roi_max(self.exp_data.roi.us_roi)
-
-    def get_whole_spectrum(self):
-        return self.exp_data.x, self.convert_wavelength_to_reverse_cm(self.exp_data.y_whole_spectrum)
-
-    def get_fitted_spectrum(self):
-        return Spectrum([],[])
-
     def get_derivative_spectrum(self):
         if self.return_derivative:
             original_spectrum = self.get_spectrum()
@@ -124,23 +47,8 @@ class TraxDiamondData(object):
             derivative_spectrum.y = derivative_spectrum.y+min(original_spectrum.y)-min(derivative_spectrum.y)
             return derivative_spectrum
         else:
-            return Spectrum([],[])
+            return Spectrum([],[])   
 
-    def save_roi_data(self):
-        np.savetxt('roi_data.txt', self.roi.get_roi_data(), delimiter=',', fmt='%.0f')     
-        
-    def get_x_limits(self):
-        return self.convert_wavelength_to_reverse_cm(self.exp_data.get_x_limits())
-
-    def get_x_roi_limits(self):
-        return self.calculate_wavelength(self.exp_data.roi.get_x_limits())
-
-    def set_x_roi_limits_to(self, limits):
-        limits_ind=self.calculate_ind(self.convert_reverse_cm_to_wavelength(limits))
-        self.roi.set_x_limit(limits_ind)
-#********************RUBY STUFF HERE***********************
-#
-    
     def set_click_pos(self, pos):
         self.click_pos = pos
         pub.sendMessage("DIAMOND POS CHANGED")
