@@ -14,10 +14,10 @@ from data.T_Rax_GeneralData import TraxGeneralData
 
 class TraxTemperatureData(TraxGeneralData):
     def __init__(self):
-        self.ds_calib_data = None
-        self.ds_calibration_parameter = CalibParam()
-        self.us_calib_data = None
-        self.us_calibration_parameter = CalibParam()
+        self.ds_calibration_data = None
+        self.ds_calibration_parameter = CalibrationParameter()
+        self.us_calibration_data = None
+        self.us_calibration_parameter = CalibrationParameter()
 
         self.roi_data_manager = ROIDataManager()
         self._create_dummy_img()
@@ -29,18 +29,18 @@ class TraxTemperatureData(TraxGeneralData):
         self.roi_data = self.exp_data.roi_data
 
     def load_calib_etalon(self):
-        self.load_us_calib_etalon('15A_lamp.txt')
-        self.load_ds_calib_etalon('15A_lamp.txt')
+        self.load_us_calibration_etalon('15A_lamp.txt')
+        self.load_ds_calibration_etalon('15A_lamp.txt')
 
     def load_exp_file(self, filename):
         self.exp_data = self.read_exp_image_file(filename)
         self.roi_data = self.exp_data.roi_data
         try:
-            self.ds_calib_data.roi_data = self.roi_data
+            self.ds_calibration_data.roi_data = self.roi_data
         except AttributeError:
             pass
         try:
-            self.us_calib_data.roi_data = self.roi_data
+            self.us_calibration_data.roi_data = self.roi_data
         except AttributeError:
             pass
         self.calc_spectra()
@@ -91,83 +91,83 @@ class TraxTemperatureData(TraxGeneralData):
         return ds_temperature, ds_temperature_err,\
                us_temperature, us_temperature_err
 
-    def load_ds_calib_data(self, file_name, send_message=True):
-        self.ds_calib_data = self.read_exp_image_file(file_name)
+    def load_ds_calibration_data(self, file_name, send_message=True):
+        self.ds_calibration_data = self.read_exp_image_file(file_name)
         self.calc_spectra()
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def set_ds_calib_modus(self, modus, send_message=True):
+    def set_ds_calibration_modus(self, modus, send_message=True):
         self.ds_calibration_parameter.set_modus(modus)
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def set_ds_calib_temp(self, val,send_message=True):
+    def set_ds_calibration_temp(self, val,send_message=True):
         self.ds_calibration_parameter.set_temp(val) 
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def get_ds_calib_modus(self):
+    def get_ds_calibration_modus(self):
         return self.ds_calibration_parameter.modus
 
-    def get_us_calib_modus(self):
+    def get_us_calibration_modus(self):
         return self.us_calibration_parameter.modus
 
-    def load_ds_calib_etalon(self, fname, send_message=True):
+    def load_ds_calibration_etalon(self, fname, send_message=True):
         self.ds_calibration_parameter.load_etalon_spec(fname)
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def load_us_calib_data(self, file_name,send_message=True):
-        self.us_calib_data = self.read_exp_image_file(file_name)
+    def load_us_calibration_data(self, file_name,send_message=True):
+        self.us_calibration_data = self.read_exp_image_file(file_name)
         self.calc_spectra()
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def set_us_calib_modus(self, modus,sendMessage=True):
+    def set_us_calibration_modus(self, modus,sendMessage=True):
         self.us_calibration_parameter.set_modus(modus)
         if sendMessage:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def set_us_calib_temp(self, val,send_message=True):
+    def set_us_calibration_temp(self, val,send_message=True):
         self.us_calibration_parameter.set_temp(val)
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def load_us_calib_etalon(self, fname, send_message=True):
+    def load_us_calibration_etalon(self, fname, send_message=True):
         self.us_calibration_parameter.load_etalon_spec(fname)
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
     
     def calc_spectra(self):
         self.exp_data.calc_spectra()
-        if self.ds_calib_data is not None:
-            self.ds_calib_data.calc_spectra()
-        if self.us_calib_data is not None:
-            self.us_calib_data.calc_spectra()
+        if self.ds_calibration_data is not None:
+            self.ds_calibration_data.calc_spectra()
+        if self.us_calibration_data is not None:
+            self.us_calibration_data.calc_spectra()
 
-    def get_ds_calib_file_name(self):
+    def get_ds_calibration_file_name(self):
         try:
-            return self.ds_calib_data.filename
+            return self.ds_calibration_data.filename
         except AttributeError:
             return 'Select File...'
 
-    def get_us_calib_file_name(self):
+    def get_us_calibration_file_name(self):
         try:
-            return self.us_calib_data.filename
+            return self.us_calibration_data.filename
         except AttributeError:
             return 'Select File...'
 
-    def get_ds_calib_etalon_file_name(self):
+    def get_ds_calibration_etalon_file_name(self):
         return self.ds_calibration_parameter.get_etalon_fname()
 
-    def get_us_calib_etalon_file_name(self):
+    def get_us_calibration_etalon_file_name(self):
         return self.us_calibration_parameter.get_etalon_fname()
 
-    def get_ds_calib_temperature(self):
+    def get_ds_calibration_temperature(self):
         return self.ds_calibration_parameter.temp
 
-    def get_us_calib_temperature(self):
+    def get_us_calibration_temperature(self):
         return self.us_calibration_parameter.temp
 
     def get_ds_spectrum(self):
@@ -175,20 +175,20 @@ class TraxTemperatureData(TraxGeneralData):
             return self.exp_data.ds_spectrum
         else:
             x = self.exp_data.ds_spectrum.x
-            corrected_spectrum = self.exp_data.calc_corrected_ds_spectrum(self.ds_calib_data.ds_spectrum, 
+            corrected_spectrum = self.exp_data.calc_corrected_ds_spectrum(self.ds_calibration_data.ds_spectrum, 
                                                 self.ds_calibration_parameter.get_calibration_y(x))
             self.ds_fitted_spectrum = FitSpectrum(corrected_spectrum)
             return [corrected_spectrum, self.ds_fitted_spectrum]
 
     def exp_data_ds_calibration_data_same_dimension(self):
         try:
-            return self.exp_data.get_img_dimension() == self.ds_calib_data.get_img_dimension()
+            return self.exp_data.get_img_dimension() == self.ds_calibration_data.get_img_dimension()
         except:
             return False
 
     def exp_data_us_calibration_data_same_dimension(self):
         try:
-            return self.exp_data.get_img_dimension() == self.us_calib_data.get_img_dimension()
+            return self.exp_data.get_img_dimension() == self.us_calibration_data.get_img_dimension()
         except:
             return False
 
@@ -206,7 +206,7 @@ class TraxTemperatureData(TraxGeneralData):
             return self.exp_data.us_spectrum
         else:
             x = self.exp_data.us_spectrum.x
-            corrected_spectrum = self.exp_data.calc_corrected_us_spectrum(self.us_calib_data.us_spectrum, 
+            corrected_spectrum = self.exp_data.calc_corrected_us_spectrum(self.us_calibration_data.us_spectrum, 
                                                 self.us_calibration_parameter.get_calibration_y(x))
             self.us_fitted_spectrum = FitSpectrum(corrected_spectrum)
             return [corrected_spectrum, self.us_fitted_spectrum]
@@ -243,29 +243,29 @@ class TraxTemperatureData(TraxGeneralData):
 
         if not settings.ds_calib_file_name == 'Select File...':
             try:
-                self.ds_calib_data = ExpDataFromImgData(settings.ds_img_data,settings.ds_calib_file_name,settings.ds_x_calibration,self.roi_data_manager)
+                self.ds_calibration_data = ExpDataFromImgData(settings.ds_img_data,settings.ds_calib_file_name,settings.ds_x_calibration,self.roi_data_manager)
             except AttributeError:
-                self.us_calib_data = ExpSpecDataFromArray(settings.ds_calibration_spectrum,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
+                self.us_calibration_data = ExpSpecDataFromArray(settings.ds_calibration_spectrum,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
         else:
-            self.ds_calib_data = None
+            self.ds_calibration_data = None
         if not settings.us_calib_file_name == 'Select File...':
             try:
-                self.us_calib_data = ExpDataFromImgData(settings.us_img_data,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
+                self.us_calibration_data = ExpDataFromImgData(settings.us_img_data,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
             except AttributeError:
-                self.us_calib_data = ExpSpecDataFromArray(settings.us_calibration_spectrum,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
+                self.us_calibration_data = ExpSpecDataFromArray(settings.us_calibration_spectrum,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
 
         else:
-            self.us_calib_data = None
+            self.us_calibration_data = None
 
         self.ds_calibration_parameter.set_etalon_fname(settings.ds_etalon_file_name)
         self.us_calibration_parameter.set_etalon_fname(settings.us_etalon_file_name)
         self.ds_calibration_parameter.set_etalon_function_from_spectrum(settings.ds_etalon_spectrum)
         self.us_calibration_parameter.set_etalon_function_from_spectrum(settings.us_etalon_spectrum)
 
-        self.set_ds_calib_modus(settings.ds_calibration_modus, False)
-        self.set_us_calib_modus(settings.us_calibration_modus, False)
-        self.set_ds_calib_temp(settings.ds_calibration_temperature, False)
-        self.set_us_calib_temp(settings.us_calibration_temperature, False)
+        self.set_ds_calibration_modus(settings.ds_calibration_modus, False)
+        self.set_us_calibration_modus(settings.us_calibration_modus, False)
+        self.set_ds_calibration_temp(settings.ds_calibration_temperature, False)
+        self.set_us_calibration_temp(settings.us_calibration_temperature, False)
         self.calc_spectra()
         pub.sendMessage("EXP DATA CHANGED")
 
@@ -516,7 +516,7 @@ class ExpSpecDataFromArray(ExpSpecData):
 
 
 
-class CalibParam(object):
+class CalibrationParameter(object):
     def __init__(self):
         self.modus = 1
         #modi: 0 - given temperature
@@ -793,44 +793,44 @@ def gauss_curve_function(x, scaling, center, sigma):
 
 class TraxTemperatureSettings():
     def __init__(self, data):
-        self.ds_calib_file_name = data.get_ds_calib_file_name()
-        self.us_calib_file_name = data.get_us_calib_file_name()
+        self.ds_calib_file_name = data.get_ds_calibration_file_name()
+        self.us_calib_file_name = data.get_us_calibration_file_name()
 
-        self.ds_etalon_file_name = data.get_ds_calib_etalon_file_name()      
+        self.ds_etalon_file_name = data.get_ds_calibration_etalon_file_name()      
         try:  
             self.ds_etalon_spectrum = data.ds_calibration_parameter.get_etalon_spectrum()
         except AttributeError:
             self.ds_etalon_spectrum = []
 
-        self.us_etalon_file_name = data.get_us_calib_etalon_file_name()
+        self.us_etalon_file_name = data.get_us_calibration_etalon_file_name()
 
         try:
             self.us_etalon_spectrum = data.us_calibration_parameter.get_etalon_spectrum()
         except AttributeError:
             self.us_etalon_spectrum = []
 
-        self.ds_calibration_modus = data.get_ds_calib_modus()
-        self.us_calibration_modus = data.get_us_calib_modus()
+        self.ds_calibration_modus = data.get_ds_calibration_modus()
+        self.us_calibration_modus = data.get_us_calibration_modus()
 
-        self.ds_calibration_temperature = data.get_ds_calib_temperature()
-        self.us_calibration_temperature = data.get_us_calib_temperature()
+        self.ds_calibration_temperature = data.get_ds_calibration_temperature()
+        self.us_calibration_temperature = data.get_us_calibration_temperature()
 
         self.ds_roi = data.get_ds_roi()
         self.us_roi = data.get_us_roi()
 
-        if not data.ds_calib_data == None:
+        if not data.ds_calibration_data == None:
             try:
-                self.ds_img_data = data.ds_calib_data.get_img_data()
+                self.ds_img_data = data.ds_calibration_data.get_img_data()
             except:
-                self.ds_calibration_spectrum = data.ds_calib_data.img_data
-            self.ds_x_calibration = data.ds_calib_data.x_whole
+                self.ds_calibration_spectrum = data.ds_calibration_data.img_data
+            self.ds_x_calibration = data.ds_calibration_data.x_whole
         
-        if not data.us_calib_data == None:
+        if not data.us_calibration_data == None:
             try:
-                self.us_img_data = data.us_calib_data.get_img_data()
+                self.us_img_data = data.us_calibration_data.get_img_data()
             except:
-                self.us_calibration_spectrum = data.us_calib_data.img_data
-            self.us_x_calibration = data.us_calib_data.x_whole
+                self.us_calibration_spectrum = data.us_calibration_data.img_data
+            self.us_x_calibration = data.us_calibration_data.x_whole
         self.img_dimension = data.exp_data.get_img_dimension()
 
        

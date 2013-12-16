@@ -29,8 +29,8 @@ class TRaxTemperatureController(TRaxModuleController):
         try:
             self.data.load_calib_etalon()
         except IOError:
-            self.data.set_ds_calib_modus(0)
-            self.data.set_us_calib_modus(0) 
+            self.data.set_ds_calibration_modus_modus(0)
+            self.data.set_us_calibration_modus_modus(0) 
 
     def create_signals(self):
         self.create_frame_signals()
@@ -107,7 +107,7 @@ class TRaxTemperatureController(TRaxModuleController):
     def frame_changed(self):
         self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
-                                                self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
+                                                self.data.get_ds_calibration_file_name(), self.data.get_us_calibration_file_name())
         self.main_view.set_temperature_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
         self.main_view.set_temperature_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
         self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
@@ -146,12 +146,12 @@ class TRaxTemperatureController(TRaxModuleController):
              self.parent.output_graph_controller.hide()
 
     def update_calibration_view(self):
-        self.main_view.set_calib_filenames(self.data.get_ds_calib_file_name().replace('\\','/').split('/')[-1],
-                                           self.data.get_us_calib_file_name().replace('\\','/').split('/')[-1])
-        self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calib_etalon_file_name().replace('\\','/').split('/')[-1])
-        self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calib_etalon_file_name().replace('\\','/').split('/')[-1])
-        ds_modus = self.data.get_ds_calib_modus()
-        us_modus = self.data.get_us_calib_modus()
+        self.main_view.set_calib_filenames(self.data.get_ds_calibration_file_name().replace('\\','/').split('/')[-1],
+                                           self.data.get_us_calibration_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calibration_etalon_file_name().replace('\\','/').split('/')[-1])
+        self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calibration_etalon_file_name().replace('\\','/').split('/')[-1])
+        ds_modus = self.data.get_ds_calibration_modus()
+        us_modus = self.data.get_us_calibration_modus()
         if us_modus == 0:
             self.main_view.temperature_control_widget.us_temperature_rb.toggle()
         elif us_modus == 1:
@@ -166,7 +166,7 @@ class TRaxTemperatureController(TRaxModuleController):
         self.data.calc_spectra()
         self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
                                                 self.data.get_ds_roi_max(), self.data.get_us_roi_max(),
-                                                self.data.get_ds_calib_file_name(), self.data.get_us_calib_file_name())
+                                                self.data.get_ds_calibration_file_name(), self.data.get_us_calibration_file_name())
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
         self.update_pv_names()
 
@@ -209,7 +209,7 @@ class TRaxTemperatureController(TRaxModuleController):
         
         if filename is not '':
             self._calib_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
-            self.data.load_ds_calib_data(filename)
+            self.data.load_ds_calibration_datan_datan_data(filename)
 
     def load_us_calib_data(self, filename=None):
         if filename is None:
@@ -218,19 +218,19 @@ class TRaxTemperatureController(TRaxModuleController):
         
         if filename is not '':
             self._calib_working_dir = '/'.join(str(filename).replace('\\','/').split('/')[0:-1]) + '/'
-            self.data.load_us_calib_data(filename)
+            self.data.load_us_calibration_datan_data(filename)
 
     def ds_temperature_rb_clicked(self):
-        self.data.set_ds_calib_modus(0)
+        self.data.set_ds_calibration_modus_modus(0)
 
     def us_temperature_rb_clicked(self):
-        self.data.set_us_calib_modus(0)
+        self.data.set_us_calibration_modus_modus(0)
 
     def ds_etalon_rb_clicked(self):
-        self.data.set_ds_calib_modus(1)
+        self.data.set_ds_calibration_modus_modus(1)
     
     def us_etalon_rb_clicked(self):
-        self.data.set_us_calib_modus(1)
+        self.data.set_us_calibration_modus_modus(1)
 
     def load_ds_etalon_data(self, filename=None):
         if filename is None:
@@ -238,7 +238,7 @@ class TRaxTemperatureController(TRaxModuleController):
                                           directory = self._calib_working_dir))
         
         if filename is not '':
-            self.data.load_ds_calib_etalon(filename)
+            self.data.load_ds_calibration_etalonetalon(filename)
 
     def load_us_etalon_data(self, filename=None):
         if filename is None:
@@ -246,13 +246,13 @@ class TRaxTemperatureController(TRaxModuleController):
                                           directory = self._calib_working_dir))
         
         if filename is not '':
-            self.data.load_us_calib_etalon(filename)
+            self.data.load_us_calibration_etalonetalon(filename)
 
     def ds_temperature_changed(self):
-        self.data.set_ds_calib_temp(np.double(self.main_view.temperature_control_widget.ds_temperature_txt.text()))
+        self.data.set_ds_calibration_tempn_temp(np.double(self.main_view.temperature_control_widget.ds_temperature_txt.text()))
     
     def us_temperature_changed(self):
-        self.data.set_us_calib_temp(np.double(self.main_view.temperature_control_widget.us_temperature_txt.text()))
+        self.data.set_us_calibration_tempn_temp(np.double(self.main_view.temperature_control_widget.us_temperature_txt.text()))
     
     def fit_txt_changed(self):
         limits = self.main_view.temperature_control_widget.get_fit_limits()
