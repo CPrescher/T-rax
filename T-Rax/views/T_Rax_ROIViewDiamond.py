@@ -102,17 +102,17 @@ class TRaxROIViewDiamond(QtGui.QWidget, Ui_roi_selector_diamond_widget):
         self.rect.connect()
 
     def create_wavelength_x_axis(self):
-        xlimits = self.data.convert_reverse_cm_to_wavelength(self.data.get_x_limits())
+        xlimits = self.data.convert_wavelength_to_reverse_cm(self.data.get_x_limits())
         increment = self.get_x_axis_increment()
         xlimits = np.ceil(xlimits / increment) * increment
         xtick_num = np.arange(xlimits[0],xlimits[1],increment)
-        xtick_pos = self.data.calculate_ind(xtick_num)
+        xtick_pos = self.data.calculate_ind(self.data.convert_reverse_cm_to_wavelength(xtick_num))
         self.axes.set_xticks(xtick_pos)
-        self.axes.set_xticklabels((map(int,self.data.convert_wavelength_to_reverse_cm(xtick_num))))
+        self.axes.set_xticklabels(map(int,xtick_num))
 
     def get_x_axis_increment(self):
-        data_x_limits = self.data.convert_reverse_cm_to_wavelength(self.data.get_x_limits())
-        possible_increments = [50,25,10,5,2,1,0.5,0.2,0.1,0.05,0.02]
+        data_x_limits = self.data.convert_wavelength_to_reverse_cm(self.data.get_x_limits())
+        possible_increments = [1000,500,200,100,50,25,10,5,2,1,0.5,0.2,0.1,0.05,0.02]
         for increment in possible_increments:
             x_tick_num=np.arange(data_x_limits[0],data_x_limits[1],increment)
             if len(x_tick_num)>5:

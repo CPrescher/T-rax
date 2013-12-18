@@ -107,8 +107,3 @@ class TraxGeneralData(object):
         limits_ind=self.calculate_ind(limits)
         self.roi.set_x_limit(limits_ind)
 
-    def convert_reverse_cm_to_wavelength(self, reverse_cm):
-        return 1/(1.0/532-np.array(reverse_cm)/1.0e7)
-
-    def convert_wavelength_to_reverse_cm(self, wavelength):
-        return (1.0/532-1/np.array(wavelength))*1.0e7

@@ -1,0 +1,5 @@
+Version 0.201
+
+-diamond modus 'derivative' is now called options
+-diamond modus 'options' now has an extra text field for changing the laser wavelength
+-fixed a bug in the diamond roiview which was causing the x-axis labels to be clumped on the left side

@@ -175,3 +175,6 @@ $RECYCLE.BIN/
 /T-Rax/roi_data.txt
 /T-Rax/roi_data.txt
 /T-Rax/classes_No_Name.dot
+*.~ml
+*.rar
+*.pyperf

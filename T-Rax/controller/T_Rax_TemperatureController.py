@@ -29,8 +29,8 @@ class TRaxTemperatureController(TRaxModuleController):
         try:
             self.data.load_calib_etalon()
         except IOError:
-            self.data.set_ds_calibration_modus_modus(0)
-            self.data.set_us_calibration_modus_modus(0) 
+            self.data.set_ds_calibration_modus(0)
+            self.data.set_us_calibration_modus(0) 
 
     def create_signals(self):
         self.create_frame_signals()

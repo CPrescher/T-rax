@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_DiamondControl.ui'
 #
-# Created: Tue Oct 29 18:43:30 2013
+# Created: Wed Dec 18 12:01:56 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -157,8 +157,8 @@ class Ui_diamond_control_widget(object):
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.groupBox = QtGui.QGroupBox(diamond_control_widget)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.groupBox)
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.groupBox)
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.load_exp_data_btn = QtGui.QPushButton(self.groupBox)
@@ -202,7 +202,7 @@ class Ui_diamond_control_widget(object):
         self.exp_folder_name_lbl.setText(_fromUtf8(""))
         self.exp_folder_name_lbl.setObjectName(_fromUtf8("exp_folder_name_lbl"))
         self.gridLayout.addWidget(self.exp_folder_name_lbl, 2, 0, 1, 2)
-        self.horizontalLayout_2.addLayout(self.gridLayout)
+        self.verticalLayout_3.addLayout(self.gridLayout)
         self.verticalLayout_2.addWidget(self.groupBox)
         self.roi_setup_btn = QtGui.QPushButton(diamond_control_widget)
         self.roi_setup_btn.setObjectName(_fromUtf8("roi_setup_btn"))
@@ -284,6 +284,21 @@ class Ui_diamond_control_widget(object):
         self.groupBox_4.setObjectName(_fromUtf8("groupBox_4"))
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.groupBox_4)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
+        self.horizontalLayout_8 = QtGui.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
+        self.label_14 = QtGui.QLabel(self.groupBox_4)
+        self.label_14.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_14.setObjectName(_fromUtf8("label_14"))
+        self.horizontalLayout_8.addWidget(self.label_14)
+        self.laser_line_txt = QtGui.QLineEdit(self.groupBox_4)
+        self.laser_line_txt.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.laser_line_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.laser_line_txt.setObjectName(_fromUtf8("laser_line_txt"))
+        self.horizontalLayout_8.addWidget(self.laser_line_txt)
+        self.label_15 = QtGui.QLabel(self.groupBox_4)
+        self.label_15.setObjectName(_fromUtf8("label_15"))
+        self.horizontalLayout_8.addWidget(self.label_15)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_8)
         self.derivative_show_cb = QtGui.QCheckBox(self.groupBox_4)
         self.derivative_show_cb.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.derivative_show_cb.setTristate(False)
@@ -327,7 +342,10 @@ class Ui_diamond_control_widget(object):
         self.label_3.setText(_translate("diamond_control_widget", "Pressure:", None))
         self.pressure_lbl.setText(_translate("diamond_control_widget", "10", None))
         self.label_6.setText(_translate("diamond_control_widget", "GPa", None))
-        self.groupBox_4.setTitle(_translate("diamond_control_widget", "Derivative", None))
-        self.derivative_show_cb.setText(_translate("diamond_control_widget", "show", None))
+        self.groupBox_4.setTitle(_translate("diamond_control_widget", "Options", None))
+        self.label_14.setText(_translate("diamond_control_widget", "Laser line:", None))
+        self.laser_line_txt.setText(_translate("diamond_control_widget", "532", None))
+        self.label_15.setText(_translate("diamond_control_widget", "nm", None))
+        self.derivative_show_cb.setText(_translate("diamond_control_widget", "show derivative", None))
         self.label_9.setText(_translate("diamond_control_widget", "Smoothing:", None))
 

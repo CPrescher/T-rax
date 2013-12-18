@@ -18,6 +18,7 @@ class TraxDiamondData(TraxGeneralData):
         self.click_pos=1334
         self.diamond_reference_pos=1334
         self.derivative_smoothing = 5
+        self.laser_line = 532 #in nm
         self.return_derivative = True
 
     def _create_dummy_img(self):
@@ -65,6 +66,22 @@ class TraxDiamondData(TraxGeneralData):
             (1 + 0.5*(Kp-1)*(self.click_pos-self.diamond_reference_pos)/self.diamond_reference_pos)
         return P
 
+    def set_laser_line(self, laser_line):
+        self.laser_line=laser_line
+        pub.sendMessage("EXP DIAMOND DATA CHANGED")
+
+    def convert_reverse_cm_to_wavelength(self, reverse_cm):
+        return 1/(1.0/self.laser_line-np.array(reverse_cm)/1.0e7)
+
+    def convert_wavelength_to_reverse_cm(self, wavelength):
+        return (1.0/self.laser_line-1/np.array(wavelength))*1.0e7
+
+    def get_spectrum(self):
+        wavelength_spectrum=self.exp_data.get_spectrum()
+        return Spectrum(self.convert_wavelength_to_reverse_cm(wavelength_spectrum.x),
+                        wavelength_spectrum.y)
+                        
+
 
 
 class ExpDiamondData(object):
@@ -96,6 +113,7 @@ class ExpDiamondData(object):
                              self.roi.x_min : self.roi.x_max+1]
 
     def get_spectrum(self):
+        print self.roi.x_min
         roi_img = self.get_roi_img()
         x=self.x_whole[self.roi.x_min:self.roi.x_max+1]
         y=np.sum(roi_img,0)/np.float(np.size(roi_img,0))

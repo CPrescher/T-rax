@@ -49,3 +49,4 @@ class DiamondControlWidget(QtGui.QWidget, Ui_diamond_control_widget):
 
     def set_validator(self):
         self.reference_pos_txt.setValidator(QtGui.QDoubleValidator())
+        self.laser_line_txt.setValidator(QtGui.QDoubleValidator())

@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>T-Rax ver 0.2</string>
+   <string>T-Rax ver 0.201</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow, #T_Rax_MainWindow{

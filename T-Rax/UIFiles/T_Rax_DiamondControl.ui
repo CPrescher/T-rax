@@ -154,7 +154,7 @@ QComboBox QAbstractItemView{
      <property name="title">
       <string>Experiment</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
@@ -447,16 +447,53 @@ QComboBox QAbstractItemView{
      <item>
       <widget class="QGroupBox" name="groupBox_4">
        <property name="title">
-        <string>Derivative</string>
+        <string>Options</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Laser line:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="laser_line_txt">
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>532</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>nm</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item>
          <widget class="QCheckBox" name="derivative_show_cb">
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
           </property>
           <property name="text">
-           <string>show</string>
+           <string>show derivative</string>
           </property>
           <property name="tristate">
            <bool>false</bool>

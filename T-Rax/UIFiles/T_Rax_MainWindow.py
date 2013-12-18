@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Tue Oct 29 18:43:31 2013
+# Created: Wed Dec 18 12:01:57 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -210,7 +210,7 @@ class Ui_T_Rax_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(T_Rax_MainWindow)
 
     def retranslateUi(self, T_Rax_MainWindow):
-        T_Rax_MainWindow.setWindowTitle(_translate("T_Rax_MainWindow", "T-Rax ver 0.2", None))
+        T_Rax_MainWindow.setWindowTitle(_translate("T_Rax_MainWindow", "T-Rax ver 0.201", None))
         self.temperature_btn.setText(_translate("T_Rax_MainWindow", "Temperature", None))
         self.ruby_btn.setText(_translate("T_Rax_MainWindow", "Ruby", None))
         self.diamond_btn.setText(_translate("T_Rax_MainWindow", "Diamond", None))

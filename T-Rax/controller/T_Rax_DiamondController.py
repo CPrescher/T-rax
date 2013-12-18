@@ -28,7 +28,7 @@ class TRaxDiamondController(TRaxModuleController):
     def create_signals(self):
         self.create_diamond_pub_listeners()
         self.create_pressure_signals()
-        self.create_derivative_signals()
+        self.create_options_signals()
         self.create_axes_click_signal()
 
     def create_diamond_pub_listeners(self):
@@ -48,9 +48,10 @@ class TRaxDiamondController(TRaxModuleController):
     def create_pressure_signals(self):
         self.main_view.diamond_control_widget.reference_pos_txt.editingFinished.connect(self.reference_txt_changed)
 
-    def create_derivative_signals(self):
+    def create_options_signals(self):
         self.connect_click_function(self.main_view.diamond_control_widget.derivative_show_cb, self.derivative_show_cb_click)
         self.main_view.diamond_control_widget.derivative_smoothing_sb.valueChanged.connect(self.change_derivative_smoothing)
+        self.main_view.diamond_control_widget.laser_line_txt.editingFinished.connect(self.laser_line_txt_changed)
 
     def load_exp_data(self, filename=None):
         if filename is None:
@@ -123,7 +124,7 @@ class TRaxDiamondController(TRaxModuleController):
         relx = (curr_xlim[1] - event.xdata) / (curr_xlim[1] - curr_xlim[0])
         new_xlim = ([event.xdata - new_width * (1 - relx), event.xdata + new_width * (relx)])
         self.main_view.diamond_axes.axes.set_xlim(new_xlim)
-        self.data.set_x_roi_limits_to(new_xlim)
+        self.data.set_x_roi_limits_to(self.data.convert_reverse_cm_to_wavelength(new_xlim))
         pub.sendMessage("DIAMOND ROI CHANGED")
         self.main_view.diamond_axes.redraw_figure()
 
@@ -139,6 +140,9 @@ class TRaxDiamondController(TRaxModuleController):
         else:
             self.data.return_derivative = False
             pub.sendMessage("DIAMOND ROI CHANGED")
+
+    def laser_line_txt_changed(self):
+        self.data.set_laser_line(np.double(self.main_view.diamond_control_widget.laser_line_txt.text()))
 
     def change_derivative_smoothing(self):
         self.data.derivative_smoothing = self.main_view.diamond_control_widget.derivative_smoothing_sb.value()
