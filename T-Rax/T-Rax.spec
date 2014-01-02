@@ -12,9 +12,7 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=False,
-		  icon = 'D:\Programming\VS Projects\T-Rax\T-Rax\icons\T-rax.ico')
-		  
+          console=False )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

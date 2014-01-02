@@ -124,7 +124,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
                                np.ravel(self.data.get_us_roi_img())))
         self.histogram_axes.hist(self.histogram_data, bins=100,
                                  orientation='horizontal', normed = False, histtype = 'stepfilled',
-                                 log=False, color=(0.40,0.40,0.4))
+                                 log=True, color=(0.40,0.40,0.4))
         self.histogram_axes.set_ylim(np.min(np.min(self.data.get_exp_img_data())),
                                         np.max(np.max(self.data.get_exp_img_data())))
         self.histogram_axes.yaxis.set_visible(False)
