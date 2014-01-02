@@ -1,3 +1,10 @@
+Version 0.203
+-remade the next file algorithm, to now also handle files without using an underscore as separation
+
+Version 0.202
+-added an intensity histogram to the temperature roiview
+-with this it is now possible to manipulate the vmin and vmax of the image
+
 Version 0.201
 
 -diamond modus 'derivative' is now called options

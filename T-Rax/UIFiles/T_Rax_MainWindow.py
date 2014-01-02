@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Wed Dec 18 12:01:57 2013
+# Created: Thu Jan 02 15:13:08 2014
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,6 +33,7 @@ class Ui_T_Rax_MainWindow(object):
         sizePolicy.setHeightForWidth(T_Rax_MainWindow.sizePolicy().hasHeightForWidth())
         T_Rax_MainWindow.setSizePolicy(sizePolicy)
         T_Rax_MainWindow.setMinimumSize(QtCore.QSize(850, 530))
+        T_Rax_MainWindow.setMaximumSize(QtCore.QSize(16777215, 16777215))
         T_Rax_MainWindow.setStyleSheet(_fromUtf8("QMainWindow, #T_Rax_MainWindow{\n"
 "    background: rgb(44, 43, 43)\n"
 "}\n"
@@ -210,7 +211,7 @@ class Ui_T_Rax_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(T_Rax_MainWindow)
 
     def retranslateUi(self, T_Rax_MainWindow):
-        T_Rax_MainWindow.setWindowTitle(_translate("T_Rax_MainWindow", "T-Rax ver 0.201", None))
+        T_Rax_MainWindow.setWindowTitle(_translate("T_Rax_MainWindow", "T-Rax ver 0.203", None))
         self.temperature_btn.setText(_translate("T_Rax_MainWindow", "Temperature", None))
         self.ruby_btn.setText(_translate("T_Rax_MainWindow", "Ruby", None))
         self.diamond_btn.setText(_translate("T_Rax_MainWindow", "Diamond", None))

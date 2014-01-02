@@ -373,8 +373,7 @@ class ImgData(GeneralData):
 class ExpData(ImgData):
     def read_parameter(self):
         super(ExpData, self).read_parameter()
-        self._get_file_number()
-        self._get_file_base_str()
+        self._get_file_name_info()
 
     def get_img_data(self):
         return self.img_data()
@@ -396,37 +395,40 @@ class ExpData(ImgData):
         test = FitSpectrum(self.us_corrected_spectrum)
         return self.us_corrected_spectrum
 
-    def _get_file_number(self):
+    
+    def _get_file_name_info(self):
         file_str = ''.join(self.filename.split('.')[0:-1])
-        num_str = file_str.split('_')[-1]
-        try:
-            self._file_number = int(num_str)
-            self._num_char_amount = len(num_str) #if number has leading zeros
-        except ValueError:
-            self._file_number = 0
-            self._num_char_amount = 1
+        self._file_type = self.filename.split('.')[-1]
 
-    def _get_file_base_str(self):
-        file_str = ''.join(self.filename.split('.')[0:-1])
-        self._file_base_str = '_'.join(file_str.split('_')[0:-1])
-        self._file_ending = self.filename.split('.')[-1]
+        self._file_number_str=self._get_ending_number(file_str)
+        self._file_number = int(self._file_number_str)
+        self._file_base_str = file_str[:-len(self._file_number_str)]
+
+    def _get_ending_number(self, str):
+        res = ''
+        for char in reversed(str):
+            if char.isdigit():
+                res+=char
+            else:
+                return res[::-1]
 
     def get_next_file_names(self):
-        new_file_name = self._file_base_str + '_' + str(self._file_number + 1) + \
-                        '.' + self._file_ending
-        format_str = '0' + str(self._num_char_amount) + 'd'
+        new_file_name = self._file_base_str + str(self._file_number + 1) + \
+                        '.' + self._file_type
+        format_str = '0' + str(len(self._file_number_str)) + 'd'
         number_str = ("{0:" + format_str + '}').format(self._file_number + 1)
-        new_file_name_with_leading_zeros = self._file_base_str + '_' + \
-                    number_str + '.' + self._file_ending
+        new_file_name_with_leading_zeros = self._file_base_str + \
+                    number_str + '.' + self._file_type
+        print new_file_name
         return new_file_name, new_file_name_with_leading_zeros
 
     def get_previous_file_names(self):
-        new_file_name = self._file_base_str + '_' + str(self._file_number - 1) + \
-                        '.' + self._file_ending
-        format_str = '0' + str(self._num_char_amount) + 'd'
+        new_file_name = self._file_base_str + str(self._file_number - 1) + \
+                        '.' + self._file_type
+        format_str = '0' + str(len(self._file_number_str)) + 'd'
         number_str = ("{0:" + format_str + '}').format(self._file_number - 1)
-        new_file_name_with_leading_zeros = self._file_base_str + '_' + \
-                    number_str + '.' + self._file_ending
+        new_file_name_with_leading_zeros = self._file_base_str + \
+                    number_str + '.' + self._file_type
         return new_file_name, new_file_name_with_leading_zeros
 
 class DummyImg(ExpData):
