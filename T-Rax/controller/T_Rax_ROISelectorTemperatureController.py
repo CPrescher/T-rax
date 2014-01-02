@@ -159,10 +159,7 @@ class TRaxROITemperatureController(object):
         self.save_roi_data()
         self.view.show()
         self.view.activateWindow()
-        if self.mode =='IMAGE':
-            self.img_loaded()
-        elif self.mode =='GRAPH':
-            self.graph_loaded()
+        self.img_loaded()
         if self.parent is not None:
             self.view.move(self.parent.x(), 
                            self.parent.y()+self.parent.height()+50)

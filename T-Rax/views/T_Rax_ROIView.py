@@ -32,11 +32,8 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.setup_window()
 
     def setup_data(self):
-        self.img_data = self.data.get_exp_img_data()
-        self.img_data_1d= np.reshape(self.img_data, np.size(self.img_data))
-        self.img_data_1d_sorted = np.sort(self.img_data_1d)
-        self.img_vmin = self.img_data_1d_sorted[int(0.3*len(self.img_data_1d))]
-        self.img_vmax=max(self.img_data_1d_sorted)
+        self.img_vmin_rel = 0.1 
+        self.img_vmax_rel = 0.8
 
     def setup_ui(self):
         self.setupUi(self)   
@@ -90,32 +87,23 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
                                    QtGui.QSizePolicy.Expanding)
         self.canvas.updateGeometry()
 
-        self.gs = mpl.gridspec.GridSpec(2,1,height_ratios=[6,1])
+        self.gs = mpl.gridspec.GridSpec(1,2,width_ratios=[6,1])
         self.img_axes = self.figure.add_subplot(self.gs[0,0])
-        self.histogram_axes = self.figure.add_subplot(self.gs[1,0])
+        self.histogram_axes = self.figure.add_subplot(self.gs[0,1])
 
     def draw_image(self):
-        try:
-            self.plot_img()
-            self.plot_rects()
-            self.redraw_figure()
-            self.connect_rectangles()
-            self.plot_histogram()
-            self.plot_histogram_lines()
-            self.connect_histogram_lines()
-            self.mode = 'IMG'
-            pub.sendMessage("IMG LOADED")
-        except NotImplementedError, e:
-            self.plot_graph()
-            self.plot_lines()
-            self.redraw_figure()
-            self.connect_lines()
-            self.mode='GRAPH'
-            pub.sendMessage('GRAPH LOADED')
+        self.plot_img()
+        self.plot_rects()
+        self.redraw_figure()
+        self.connect_rectangles()
+        self.plot_histogram()
+        self.plot_histogram_lines()
+        self.connect_histogram_lines()
 
     def plot_img(self):
         self.img_axes.cla()
         self.img_data = self.data.get_exp_img_data()
+        self.img_max_intensity=np.max(np.max(self.img_data))
         y_max = len(self.img_data) - 1
         x_max = len(self.img_data[0]) - 1
         self.img_axes.set_ylim([0,y_max])
@@ -123,7 +111,8 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         
         self.img = self.img_axes.imshow(self.img_data, cmap = 'copper', aspect = 'auto',
                                     extent=[0,x_max + 1,y_max + 1,0],
-                                    vmin = self.img_vmin, vmax=self.img_vmax)
+                                    vmin = self.img_vmin_rel*self.img_max_intensity, 
+                                    vmax = self.img_vmax_rel*self.img_max_intensity)
         self.img_axes.set_ylim([0,len(self.img_data) - 1])
         self.img_axes.set_xlim([0,len(self.img_data[0]) - 1])
         self.img_axes.invert_yaxis()
@@ -134,19 +123,21 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.histogram_data = np.concatenate((np.ravel(self.data.get_ds_roi_img()),
                                np.ravel(self.data.get_us_roi_img())))
         self.histogram_axes.hist(self.histogram_data, bins=100,
-                                 orientation='vertical', normed = False, histtype = 'stepfilled',
-                                 log=True, color=(0.35,0.35,0.35))
-        self.histogram_axes.set_xlim(np.min(np.min(self.data.get_exp_img_data())),
+                                 orientation='horizontal', normed = False, histtype = 'stepfilled',
+                                 log=False, color=(0.40,0.40,0.4))
+        self.histogram_axes.set_ylim(np.min(np.min(self.data.get_exp_img_data())),
                                         np.max(np.max(self.data.get_exp_img_data())))
         self.histogram_axes.yaxis.set_visible(False)
         self.histogram_axes.xaxis.set_visible(False)
 
     def plot_histogram_lines(self):
-        histogram_limits=self.histogram_axes.get_xlim()
-        self.histogram_min_line = self.create_histogram_line(self.img_vmin, 
-                                                             histogram_limits,"HISTOGRAM MIN")
-        self.histogram_max_line = self.create_histogram_line(self.img_vmax, 
-                                                             histogram_limits,"HISTOGRAM MAX")
+        histogram_limits=self.histogram_axes.get_ylim()
+        img_vmin=self.img_vmin_rel*self.img_max_intensity
+        img_vmax=self.img_vmax_rel*self.img_max_intensity
+        self.histogram_min_line = self.create_histogram_line(img_vmin, [histogram_limits[0],img_vmax-1],
+                                                             "HISTOGRAM MIN")
+        self.histogram_max_line = self.create_histogram_line(img_vmax, [img_vmin+1, histogram_limits[1]],
+                                                             "HISTOGRAM MAX")
 
     def update_histogram(self):
         MoveableLine.reset()
@@ -166,7 +157,6 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.ds_rect = self.create_rectangle(self.data.roi_data.ds_roi, colors.DOWNSTREAM_COLOR_NORM, 'DS')    
 
     def update_with_new_img(self):
-        self.setup_data()
         self.update_img()
         self.update_histogram()        
         self.redraw_figure()
@@ -180,12 +170,14 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.connect_rectangles()   
 
     def set_img_vmin(self,vmin):
-        self.img_vmin=vmin
+        self.img_vmin_rel=float(vmin)/self.img_max_intensity
         self.redraw_img()
+        self.histogram_max_line.set_limit([vmin+1,self.histogram_axes.get_ylim()[1]])
 
     def set_img_vmax(self,vmax):
-        self.img_vmax=vmax
+        self.img_vmax_rel=float(vmax)/self.img_max_intensity
         self.redraw_img()
+        self.histogram_min_line.set_limit([self.histogram_axes.get_ylim()[0],vmax-1])
 
     def redraw_img(self):
         ResizeableRectangle.reset()
@@ -223,11 +215,6 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def connect_lines(self):
         self.min_line.connect()
         self.max_line.connect()
-
-    def update_line_limits(self):
-        pass
-        #self.min_line.limit = [axes_xlim[0], x_limits[1] - 1]
-        #self.max_line.limit = [x_limits[0] + 1, axes_xlim[1]]
 
     def create_wavelength_x_axis(self):
         xlimits = self.data.get_x_limits()
@@ -337,9 +324,9 @@ class MoveableLine:
         self.xlim = self.axes.get_xlim()
         self.ylim = self.axes.get_ylim()
 
-        self.x_border = 0.05 * (self.xlim[1] - self.xlim[0])
+        self.y_border = 0.05 * (self.ylim[1] - self.ylim[0])
 
-        self.line, = axes.plot([pos, pos], self.ylim, color = (1,1,1), lw=2)
+        self.line, = axes.plot(self.xlim, [pos, pos],  color = (1,1,1), lw=2)
         self.limit = limit
 
         self.active = True #needed because of garbage collection issues
@@ -351,19 +338,12 @@ class MoveableLine:
 
         self.animation_timer=QtCore.QTimer(self.parent)
         self.update_timer = QtCore.QTimer(self.parent)
-        self.update_timer.setInterval(150)
+        self.update_timer.setInterval(75)
         self.parent.connect(self.update_timer,QtCore.SIGNAL('timeout()'), self.send_message)
 
     def set_pos(self, pos):
         if self.press == None:
-            self.line.set_xdata([pos,pos])
-
-    def update_limits(self):
-        pass
-        self.xlim = self.axes.get_xlim()
-        self.ylim = self.axes.get_ylim()
-        self.x_border = 0.05 * (self.xlim[1] - self.xlim[0])
-        self.line.set_y(self.axes.get_ylim)
+            self.line.set_ydata([pos,pos])
 
     def connect(self):
         self.cidpress = self.canvas.mpl_connect('button_press_event', self.on_press)
@@ -374,11 +354,11 @@ class MoveableLine:
         if event.inaxes != self.line.axes: return
         if MoveableLine.lock is not None: return
         if self.active is not True: return
-        x_click = event.xdata
-        x0 = self.line.get_xdata()[0]
+        y_click = event.ydata
+        y0 = self.line.get_ydata()[0]
 
-        if x_click >= x0 - self.x_border and x_click <= x0 + self.x_border:
-            self.press = x0, x_click
+        if y_click >= y0 - self.y_border and y_click <= y0 + self.y_border:
+            self.press = y0, y_click
             MoveableLine.lock = self
             self.line.set_animated(True)
             if not self.is_animated:
@@ -399,53 +379,69 @@ class MoveableLine:
 
     def on_motion(self, event):
         'on motion we will move the rect if the mouse is over us'
-        if event.inaxes != self.line.axes:             
-            QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-            QtGui.QApplication.restoreOverrideCursor()
-            return
-
-
         x_mouse = event.xdata
         y_mouse = event.ydata
-        x0 = self.line.get_xdata()[0]
-        
+        y0 = self.line.get_ydata()[0]
+
+        if event.inaxes != self.line.axes: 
+            if self.press is not None:
+                for line in MoveableLine.lines:
+                    line.set_animated(False)
+                try:
+                    self.ani._stop()
+                    self.ani._draw_next_frame(self.get_lines, True)
+                    self.update_timer.stop()
+                    self.send_message()
+                except:
+                    pass
+                self.press = None
+                self.mode = None
+                MoveableLine.lock = None      
+                self.is_animated=False
+                QtGui.QApplication.restoreOverrideCursor()  
+                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+                QtGui.QApplication.restoreOverrideCursor()  
+            else:
+                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+                QtGui.QApplication.restoreOverrideCursor()  
+            return
+
         if MoveableLine.lock is None:
-            if x_mouse >= x0 - self.x_border and x_mouse <= x0 + self.x_border and \
-                y_mouse >= self.line.axes.get_ylim()[0] and \
-                y_mouse <= self.line.axes.get_ylim()[1]:
+            if y_mouse >= y0 - self.y_border and y_mouse <= y0 + self.y_border and \
+                x_mouse >= self.line.axes.get_xlim()[0] and \
+                x_mouse <= self.line.axes.get_xlim()[1]:
 
                 QtGui.QApplication.restoreOverrideCursor()
-                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeHorCursor))
+                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeVerCursor))
             else:                        
                 for line in MoveableLine.lines:
-                    if x_mouse >= line.get_xdata()[0] - self.x_border \
-                        and x_mouse <= line.get_xdata()[0] +self.x_border and \
-                        y_mouse >= line.axes.get_ylim()[0] and \
-                        y_mouse <= line.axes.get_ylim()[1]:
+                    if y_mouse >= line.get_ydata()[0] - self.y_border \
+                        and y_mouse <= line.get_ydata()[0] +self.y_border and \
+                        x_mouse >= line.axes.get_xlim()[0] and \
+                        x_mouse <= line.axes.get_xlim()[1]:
                         return
                 QtGui.QApplication.restoreOverrideCursor()
                 QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
                 QtGui.QApplication.restoreOverrideCursor()
+                return
 
-        
         if self.press is None:
             return
 
-        
-        x0, xpress = self.press
-        dx = event.xdata - xpress
-        x_new_pos = x_mouse
+        y0, ypress = self.press
+        dx = event.xdata - ypress
+        y_new_pos = y_mouse
 
-        if x_new_pos >= self.limit[0] and x_new_pos <= self.limit[1]:
-            self.line.set_xdata([x_new_pos,x_new_pos])
-        elif x_new_pos < self.limit[0]:
-            self.line.set_xdata([self.limit[0], self.limit[0]])
-        elif x_new_pos > self.limit[1]:
-            self.line.set_xdata([self.limit[1], self.limit[1]])
+        if y_new_pos >= self.limit[0] and y_new_pos <= self.limit[1]:
+            self.line.set_ydata([y_new_pos,y_new_pos])
+        elif y_new_pos < self.limit[0]:
+            self.line.set_ydata([self.limit[0], self.limit[0]])
+        elif y_new_pos > self.limit[1]:
+            self.line.set_ydata([self.limit[1], self.limit[1]])
 
     def send_message(self):
         try:
-            pub.sendMessage(self.flag + " ROI LINE CHANGED", data=self.line.get_xdata()[0])
+            pub.sendMessage(self.flag + " ROI LINE CHANGED", data=self.line.get_ydata()[0])
         except AttributeError:
             pass
 
@@ -456,7 +452,6 @@ class MoveableLine:
             self.ani._stop()
             self.ani._draw_next_frame(self.get_lines, True)
             self.update_timer.stop()
-            self.send_message()
         except:
             pass
         
@@ -464,7 +459,6 @@ class MoveableLine:
         self.mode = None
         MoveableLine.lock = None      
         self.is_animated=False
-        self.parent.update_line_limits()
 
     def set_limit(self,limit):
         self.limit = limit
