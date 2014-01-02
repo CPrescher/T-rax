@@ -49,6 +49,9 @@ class TRaxROITemperatureController(object):
     def create_pub_signals(self):
         pub.subscribe(self.ds_roi_graph_changed, "DS ROI GRAPH CHANGED")
         pub.subscribe(self.us_roi_graph_changed, "US ROI GRAPH CHANGED")
+
+        pub.subscribe(self.histogram_min_roi_line_changed, "HISTOGRAM MIN ROI LINE CHANGED")
+        pub.subscribe(self.histogram_max_roi_line_changed, "HISTOGRAM MAX ROI LINE CHANGED")
         
         pub.subscribe(self.min_roi_line_changed, "MIN ROI LINE CHANGED")
         pub.subscribe(self.max_roi_line_changed, "MAX ROI LINE CHANGED")
@@ -57,6 +60,7 @@ class TRaxROITemperatureController(object):
         pub.subscribe(self.img_loaded, "IMG LOADED")
         pub.subscribe(self.graph_loaded, "GRAPH LOADED")
         pub.subscribe(self.exp_data_changed, "EXP DATA CHANGED")
+        pub.subscribe(self.exp_data_changed, "EXP DATA FRAME CHANGED")
 
     def us_roi_txt_changed(self):
         us_roi=self.view.get_us_roi()
@@ -92,6 +96,7 @@ class TRaxROITemperatureController(object):
 
     def roi_changed(self):
         self.view.update_graph_roi()
+        self.view.update_histogram()
         self.view.update_txt_roi()
 
     def ds_roi_graph_changed(self, data):
@@ -99,6 +104,12 @@ class TRaxROITemperatureController(object):
 
     def us_roi_graph_changed(self, data):
         self.data.roi_data.set_us_roi(data)
+
+    def histogram_min_roi_line_changed(self, data):
+        self.view.set_img_vmin(data)
+
+    def histogram_max_roi_line_changed(self,data):
+        self.view.set_img_vmax(data)
 
     def min_roi_line_changed(self,data):
         new_x_min = self.data.calculate_ind(data)
@@ -111,7 +122,7 @@ class TRaxROITemperatureController(object):
         self.view.graph_panel.update_line_limits()
 
     def exp_data_changed(self):
-        self.view.update_img()
+        self.view.update_with_new_img()
         self.view.update_txt_roi()
 
     def save_btn_click(self):
@@ -152,6 +163,7 @@ class TRaxROITemperatureController(object):
             self.img_loaded()
         elif self.mode =='GRAPH':
             self.graph_loaded()
-        self.view.move(self.parent.x(), 
-                       self.parent.y()+self.parent.height()+50)
-        self.view.resize(self.parent.size().width(),self.view.size().height())
+        if self.parent is not None:
+            self.view.move(self.parent.x(), 
+                           self.parent.y()+self.parent.height()+50)
+            self.view.resize(self.parent.size().width(),self.view.size().height())

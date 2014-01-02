@@ -226,6 +226,12 @@ class TraxTemperatureData(TraxGeneralData):
     def get_us_roi(self):
         return self.roi_data.us_roi.get_roi_as_list()
 
+    def get_us_roi_img(self):
+        return self.exp_data.get_roi_img(self.exp_data.roi_data.us_roi)
+
+    def get_ds_roi_img(self):
+        return self.exp_data.get_roi_img(self.exp_data.roi_data.ds_roi)
+
     def get_x_roi_limits(self):
         return self.calculate_wavelength(self.exp_data.roi_data.get_x_limits())
 

@@ -39,6 +39,7 @@
     <Compile Include="UIFiles\T_Rax_ROI_Diamond_Selector.py" />
     <Compile Include="UIFiles\T_Rax_ROI_Ruby_Selector.py" />
     <Compile Include="unittests\QT_GUI_Test.py" />
+    <Compile Include="run_roiview.py" />
     <Compile Include="unittests\T_Rax_Data_Test.py" />
     <Compile Include="views\T_Rax_ControlWidgets.py" />
     <Compile Include="controller\T_Rax_ROISelectorTemperatureController.py" />

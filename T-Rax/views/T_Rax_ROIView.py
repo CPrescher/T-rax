@@ -24,7 +24,21 @@ import numpy as np
 class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def __init__(self, data, parent=None):
         super(TRaxROIView, self).__init__(None)
-        self.data = data
+        self.data=data
+        self.parent=parent
+
+        self.setup_data()
+        self.setup_ui()
+        self.setup_window()
+
+    def setup_data(self):
+        self.img_data = self.data.get_exp_img_data()
+        self.img_data_1d= np.reshape(self.img_data, np.size(self.img_data))
+        self.img_data_1d_sorted = np.sort(self.img_data_1d)
+        self.img_vmin = self.img_data_1d_sorted[int(0.3*len(self.img_data_1d))]
+        self.img_vmax=max(self.img_data_1d_sorted)
+
+    def setup_ui(self):
         self.setupUi(self)   
         self.setWindowTitle('Temperature ROI Selector')
         self.set_validator()     
@@ -32,11 +46,14 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.fitting_roi_box.hide()
         self.downstream_roi_box.hide()
         self.upstream_roi_box.hide()
+
+    def setup_window(self):
         self.resizeEvent = self.resize_graph
         self.axes_frame.leaveEvent = self.axes_leave_event
         self.setWindowFlags(QtCore.Qt.Tool)
-        self.move(parent.x(), parent.y()+parent.height()+50)
-        self.resize(parent.size().width(),150)
+        if self.parent is not None:
+            self.move(self.parent.x(), self.parent.y()+self.parent.height()+50)
+            self.resize(self.parent.size().width(),150)
     
     def set_validator(self):
         self.set_ds_validator()
@@ -72,7 +89,10 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.canvas.setSizePolicy( QtGui.QSizePolicy.Expanding,
                                    QtGui.QSizePolicy.Expanding)
         self.canvas.updateGeometry()
-        self.axes = self.figure.add_subplot(111)
+
+        self.gs = mpl.gridspec.GridSpec(2,1,height_ratios=[6,1])
+        self.img_axes = self.figure.add_subplot(self.gs[0,0])
+        self.histogram_axes = self.figure.add_subplot(self.gs[1,0])
 
     def draw_image(self):
         try:
@@ -80,6 +100,9 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             self.plot_rects()
             self.redraw_figure()
             self.connect_rectangles()
+            self.plot_histogram()
+            self.plot_histogram_lines()
+            self.connect_histogram_lines()
             self.mode = 'IMG'
             pub.sendMessage("IMG LOADED")
         except NotImplementedError, e:
@@ -91,58 +114,89 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             pub.sendMessage('GRAPH LOADED')
 
     def plot_img(self):
-        self.axes.cla()
+        self.img_axes.cla()
         self.img_data = self.data.get_exp_img_data()
-        y_max = len(self.data.get_exp_img_data()) - 1
-        x_max = len(self.data.get_exp_img_data()[0]) - 1
-        self.axes.set_ylim([0,y_max])
-        self.axes.set_xlim([0,x_max])
-        img_data_1d= np.reshape(self.img_data, np.size(self.img_data))
-        img_data_1d_sorted = np.sort(img_data_1d)
-        self.img = self.axes.imshow(self.img_data, cmap = 'copper', aspect = 'auto',
+        y_max = len(self.img_data) - 1
+        x_max = len(self.img_data[0]) - 1
+        self.img_axes.set_ylim([0,y_max])
+        self.img_axes.set_xlim([0,x_max])
+        
+        self.img = self.img_axes.imshow(self.img_data, cmap = 'copper', aspect = 'auto',
                                     extent=[0,x_max + 1,y_max + 1,0],
-                                    vmin = img_data_1d_sorted[int(0.3*len(img_data_1d))], vmax=max(img_data_1d))
-        self.axes.set_ylim([0,len(self.img_data) - 1])
-        self.axes.set_xlim([0,len(self.img_data[0]) - 1])
-        self.axes.invert_yaxis()
+                                    vmin = self.img_vmin, vmax=self.img_vmax)
+        self.img_axes.set_ylim([0,len(self.img_data) - 1])
+        self.img_axes.set_xlim([0,len(self.img_data[0]) - 1])
+        self.img_axes.invert_yaxis()
         self.create_wavelength_x_axis()
+
+    def plot_histogram(self):
+        self.histogram_axes.cla()
+        self.histogram_data = np.concatenate((np.ravel(self.data.get_ds_roi_img()),
+                               np.ravel(self.data.get_us_roi_img())))
+        self.histogram_axes.hist(self.histogram_data, bins=100,
+                                 orientation='vertical', normed = False, histtype = 'stepfilled',
+                                 log=True, color=(0.35,0.35,0.35))
+        self.histogram_axes.set_xlim(np.min(np.min(self.data.get_exp_img_data())),
+                                        np.max(np.max(self.data.get_exp_img_data())))
+        self.histogram_axes.yaxis.set_visible(False)
+        self.histogram_axes.xaxis.set_visible(False)
+
+    def plot_histogram_lines(self):
+        histogram_limits=self.histogram_axes.get_xlim()
+        self.histogram_min_line = self.create_histogram_line(self.img_vmin, 
+                                                             histogram_limits,"HISTOGRAM MIN")
+        self.histogram_max_line = self.create_histogram_line(self.img_vmax, 
+                                                             histogram_limits,"HISTOGRAM MAX")
+
+    def update_histogram(self):
+        MoveableLine.reset()
+        self.histogram_min_line.active=False
+        self.histogram_max_line.active=False
+        self.plot_histogram()
+        self.plot_histogram_lines()
+        self.connect_histogram_lines()
+        self.repaint()
+
+    def connect_histogram_lines(self):
+        self.histogram_min_line.connect()
+        self.histogram_max_line.connect()
 
     def plot_rects(self):
         self.us_rect = self.create_rectangle(self.data.roi_data.us_roi, colors.UPSTREAM_COLOR_NORM, 'US')
         self.ds_rect = self.create_rectangle(self.data.roi_data.ds_roi, colors.DOWNSTREAM_COLOR_NORM, 'DS')    
 
+    def update_with_new_img(self):
+        self.setup_data()
+        self.update_img()
+        self.update_histogram()        
+        self.redraw_figure()
+
     def update_img(self):
-        #need to reset the ResizeableRectangles like that, because the Garbage Collector is not fast enough to
-        #delete all the rectangles.
-        try:
-            self.ds_rect.active=False
-            self.us_rect.active=False
-            ResizeableRectangle.reset()
-        except:
-            pass
-        try:
-            self.min_line.active=False
-            self.max_line.active=False
-            MoveableLine.reset()
-        except:
-            pass
-        try:
-            self.plot_img()
-            self.plot_rects()
-            self.redraw_figure()
-            self.connect_rectangles()
-            self.mode = 'IMG'
-            pub.sendMessage("IMG LOADED")
-        except NotImplementedError, e:
-            self.plot_graph()
-            self.plot_lines()
-            self.redraw_figure()
-            self.connect_lines()
-            self.mode='GRAPH'
-            pub.sendMessage('GRAPH LOADED')
+        self.ds_rect.active=False
+        self.us_rect.active=False
+        ResizeableRectangle.reset()
+        self.plot_img()
+        self.plot_rects()
+        self.connect_rectangles()   
+
+    def set_img_vmin(self,vmin):
+        self.img_vmin=vmin
+        self.redraw_img()
+
+    def set_img_vmax(self,vmax):
+        self.img_vmax=vmax
+        self.redraw_img()
+
+    def redraw_img(self):
+        ResizeableRectangle.reset()
+        self.plot_img()
+        self.plot_rects()
+        self.redraw_figure()
+        self.connect_rectangles()
+        self.repaint()
         
     def create_rectangle(self, roi, color, flag):
-        return ResizeableRectangle(self, self.axes, self.canvas,QtCore.QRect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), color, flag)
+        return ResizeableRectangle(self, self.img_axes, self.canvas,QtCore.QRect(roi.x_min,roi.y_min, roi.get_width(),roi.get_height()), color, flag)
 
     def connect_rectangles(self):
         self.us_rect.connect()
@@ -150,28 +204,30 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
 
     def plot_graph(self):
         self.graph_spec = self.data.get_exp_graph_data()
-        self.axes.set_xlim(self.graph_spec.get_x_plot_limits())
-        self.axes.set_ylim(self.graph_spec.get_y_plot_limits())
-        self.graph = self.axes.plot(self.graph_spec.x, self.graph_spec.y, 'c-', lw=1)
+        self.img_axes.set_xlim(self.graph_spec.get_x_plot_limits())
+        self.img_axes.set_ylim(self.graph_spec.get_y_plot_limits())
+        self.graph = self.img_axes.plot(self.graph_spec.x, self.graph_spec.y, 'c-', lw=1)
 
     def plot_lines(self):
         x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
-        axes_xlim = self.axes.get_xlim()
+        axes_xlim = self.img_axes.get_xlim()
         self.min_line = self.create_line(x_limits[0], [axes_xlim[0], x_limits[1] - 1],"MIN")
         self.max_line = self.create_line(x_limits[1], [x_limits[0] + 1, axes_xlim[1]],"MAX")
 
     def create_line(self, pos, limits, flag):
-        return MoveableLine(self, self.axes, self.canvas,pos, limits, flag)
+        return MoveableLine(self, self.img_axes, self.canvas,pos, limits, flag)
+
+    def create_histogram_line(self, pos, limits, flag):
+        return MoveableLine(self, self.histogram_axes, self.canvas, pos, limits, flag)
 
     def connect_lines(self):
         self.min_line.connect()
         self.max_line.connect()
 
     def update_line_limits(self):
-        x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
-        axes_xlim = self.axes.get_xlim()
-        self.min_line.limit = [axes_xlim[0], x_limits[1] - 1]
-        self.max_line.limit = [x_limits[0] + 1, axes_xlim[1]]
+        pass
+        #self.min_line.limit = [axes_xlim[0], x_limits[1] - 1]
+        #self.max_line.limit = [x_limits[0] + 1, axes_xlim[1]]
 
     def create_wavelength_x_axis(self):
         xlimits = self.data.get_x_limits()
@@ -179,8 +235,8 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         xlimits = np.ceil(xlimits / increment) * increment
         xtick_num = np.arange(xlimits[0],xlimits[1],increment)
         xtick_pos = self.data.calculate_ind(xtick_num)
-        self.axes.set_xticks(xtick_pos)
-        self.axes.set_xticklabels((map(int,xtick_num)))
+        self.img_axes.set_xticks(xtick_pos)
+        self.img_axes.set_xticklabels((map(int,xtick_num)))
 
     def get_x_axis_increment(self):
         data_x_limits = self.data.get_x_limits()
@@ -206,8 +262,8 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         QtGui.QApplication.restoreOverrideCursor()
 
     def update_rect_pick_limits(self, graph_width, graph_height):
-        xlimits=self.axes.get_xlim()
-        ylimits=self.axes.get_ylim()
+        xlimits=self.img_axes.get_xlim()
+        ylimits=self.img_axes.get_ylim()
         axes_width=graph_width-50
         axes_height=graph_height-50
 
@@ -218,15 +274,13 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         x_range = xlimits[1]-xlimits[0]
         y_range = ylimits[1]-ylimits[0]
 
-
-
     def update_graph_roi(self):
         try:
             self.us_rect.set_roi(self.data.roi_data.us_roi)
             self.ds_rect.set_roi(self.data.roi_data.ds_roi)
         except:
-            self.min_line.set_roi(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_min))
-            self.max_line.set_roi(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_max))
+            self.min_line.set_pos(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_min))
+            self.max_line.set_pos(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_max))
             self.redraw_figure()
 
     def update_txt_roi(self):
@@ -285,25 +339,27 @@ class MoveableLine:
 
         self.x_border = 0.05 * (self.xlim[1] - self.xlim[0])
 
-        self.line, = axes.plot([pos, pos], self.ylim, 'w-', lw=3)
+        self.line, = axes.plot([pos, pos], self.ylim, color = (1,1,1), lw=2)
         self.limit = limit
-        self.press = None
+
+        self.active = True #needed because of garbage collection issues
+        self.press = None 
         self.mode = None
-        self.active = True
+        self.is_animated = False
 
         MoveableLine.lines.append(self.line)
-        
-        self.is_animated = False
+
         self.animation_timer=QtCore.QTimer(self.parent)
         self.update_timer = QtCore.QTimer(self.parent)
-        self.update_timer.setInterval(40)
+        self.update_timer.setInterval(150)
         self.parent.connect(self.update_timer,QtCore.SIGNAL('timeout()'), self.send_message)
 
-    def set_roi(self, pos):
+    def set_pos(self, pos):
         if self.press == None:
             self.line.set_xdata([pos,pos])
 
     def update_limits(self):
+        pass
         self.xlim = self.axes.get_xlim()
         self.ylim = self.axes.get_ylim()
         self.x_border = 0.05 * (self.xlim[1] - self.xlim[0])
@@ -343,13 +399,42 @@ class MoveableLine:
 
     def on_motion(self, event):
         'on motion we will move the rect if the mouse is over us'
-        if self.press is None: return
-        if event.inaxes != self.line.axes: return
+        if event.inaxes != self.line.axes:             
+            QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+            QtGui.QApplication.restoreOverrideCursor()
+            return
+
+
+        x_mouse = event.xdata
+        y_mouse = event.ydata
+        x0 = self.line.get_xdata()[0]
         
-        x_click = event.xdata
+        if MoveableLine.lock is None:
+            if x_mouse >= x0 - self.x_border and x_mouse <= x0 + self.x_border and \
+                y_mouse >= self.line.axes.get_ylim()[0] and \
+                y_mouse <= self.line.axes.get_ylim()[1]:
+
+                QtGui.QApplication.restoreOverrideCursor()
+                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeHorCursor))
+            else:                        
+                for line in MoveableLine.lines:
+                    if x_mouse >= line.get_xdata()[0] - self.x_border \
+                        and x_mouse <= line.get_xdata()[0] +self.x_border and \
+                        y_mouse >= line.axes.get_ylim()[0] and \
+                        y_mouse <= line.axes.get_ylim()[1]:
+                        return
+                QtGui.QApplication.restoreOverrideCursor()
+                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+                QtGui.QApplication.restoreOverrideCursor()
+
+        
+        if self.press is None:
+            return
+
+        
         x0, xpress = self.press
         dx = event.xdata - xpress
-        x_new_pos = x_click
+        x_new_pos = x_mouse
 
         if x_new_pos >= self.limit[0] and x_new_pos <= self.limit[1]:
             self.line.set_xdata([x_new_pos,x_new_pos])
@@ -367,7 +452,6 @@ class MoveableLine:
     def on_release(self, event):
         for line in MoveableLine.lines:
             line.set_animated(False)
-
         try:
             self.ani._stop()
             self.ani._draw_next_frame(self.get_lines, True)
