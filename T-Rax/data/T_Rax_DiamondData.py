@@ -113,7 +113,6 @@ class ExpDiamondData(object):
                              self.roi.x_min : self.roi.x_max+1]
 
     def get_spectrum(self):
-        print self.roi.x_min
         roi_img = self.get_roi_img()
         x=self.x_whole[self.roi.x_min:self.roi.x_max+1]
         y=np.sum(roi_img,0)/np.float(np.size(roi_img,0))

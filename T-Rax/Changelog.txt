@@ -1,3 +1,10 @@
+Version 0.2032
+-fixed a bug which was causing errors when loading calibration files and changing the calibration methods
+
+Version 0.2031
+-added a right click option in the Temperature ROI view, it will reset the values to the initial start values
+	being 0.05 and 0.95
+
 Version 0.203
 -remade the next file algorithm, to now also handle files without using an underscore as separation
 

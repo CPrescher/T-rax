@@ -38,9 +38,7 @@
     <Compile Include="controller\T_Rax_TemperatureController.py" />
     <Compile Include="UIFiles\T_Rax_ROI_Diamond_Selector.py" />
     <Compile Include="UIFiles\T_Rax_ROI_Ruby_Selector.py" />
-    <Compile Include="unittests\QT_GUI_Test.py" />
     <Compile Include="run_roiview.py" />
-    <Compile Include="unittests\T_Rax_Data_Test.py" />
     <Compile Include="views\T_Rax_ControlWidgets.py" />
     <Compile Include="controller\T_Rax_ROISelectorTemperatureController.py" />
     <Compile Include="views\T_Rax_OutputGraphView.py" />
@@ -56,7 +54,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="data\T_Rax_TemperatureData.py" />
-    <Compile Include="unittests\spe_file_unit_test.py" />
     <Compile Include="views\T_Rax_ROIViewDiamond.py" />
     <Compile Include="views\T_Rax_ROIViewRuby.py" />
     <Compile Include="views\__init__.py" />
@@ -66,7 +63,6 @@
     <Folder Include="data\" />
     <Folder Include="views\" />
     <Folder Include="UIFiles\" />
-    <Folder Include="unittests\" />
     <Folder Include="Temperature Calibration\" />
   </ItemGroup>
   <ItemGroup>
