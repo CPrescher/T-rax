@@ -3,7 +3,6 @@ Created on 12.08.2013
 
 @author: Clemens
 '''
-#TODO Test the world
 
 
 folder_name='\QT_Trial'

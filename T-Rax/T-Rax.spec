@@ -1,6 +1,6 @@
 # -*- mode: python -*-
 a = Analysis(['T-Rax.py'],
-             pathex=['D:\\Programming\\VS Projects\\T-Rax\\T-Rax'],
+             pathex=['D:\Programming\VS Projects\Spectrometer Stuff\T-Rax'],
              hiddenimports=[],
              hookspath=None,
              runtime_hooks=None)

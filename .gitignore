@@ -107,7 +107,6 @@ publish/
 *.pubxml
 
 # NuGet Packages Directory
-## TODO: If you have NuGet Package Restore enabled, uncomment the next line
 #packages/
 
 # Windows Azure Build Output
@@ -174,7 +173,6 @@ $RECYCLE.BIN/
 /T-Rax/sample files/Test 2013-09-24/spe_xml.xml
 /T-Rax/roi_data.txt
 /T-Rax/roi_data.txt
-/T-Rax/classes_No_Name.dot
 *.~ml
 *.rar
 *.pyperf

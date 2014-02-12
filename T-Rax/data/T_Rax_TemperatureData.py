@@ -1,3 +1,4 @@
+
 from wx.lib.pubsub import pub
 from SPE_module import SPE_File
 import os.path
@@ -20,6 +21,7 @@ class TraxTemperatureData(TraxGeneralData):
         self.us_calibration_parameter = CalibrationParameter()
 
         self.roi_data_manager = ROIDataManager()
+        self.load_calib_etalon()
         self._create_dummy_img()
         pub.sendMessage("EXP DATA CHANGED")
         pub.sendMessage("ROI CHANGED")
@@ -48,10 +50,7 @@ class TraxTemperatureData(TraxGeneralData):
 
     def read_exp_image_file(self, file_name):
         img_file = SPE_File(file_name)
-        if img_file.type == 'image':
-            return ExpData(img_file, self.roi_data_manager)
-        elif img_file.type == 'spectrum':
-            return ExpSpecData(img_file, self.roi_data_manager)
+        return ExpData(img_file, self.roi_data_manager)
 
     def set_current_frame(self,frame_number):
         if frame_number >= self.exp_data.num_frames-1:
@@ -419,7 +418,6 @@ class ExpData(ImgData):
         number_str = ("{0:" + format_str + '}').format(self._file_number + 1)
         new_file_name_with_leading_zeros = self._file_base_str + \
                     number_str + '.' + self._file_type
-        print new_file_name
         return new_file_name, new_file_name_with_leading_zeros
 
     def get_previous_file_names(self):
@@ -478,22 +476,6 @@ class DummyImg(ExpData):
         return '10s, dummy spec, 550nm'
 
 
-class ExpSpecData(ExpData):
-    def update_roi(self):
-        x_max, y_max = self._img_file.get_dimension()        
-        self.roi_data.set_max_x_limits(x_max - 1)
-
-    def calc_spectra(self):
-        self.y_whole = self.img_data()[0]
-        self.x_zoom = self.x_whole[(self.roi_data.us_roi.x_min):           
-                         (self.roi_data.us_roi.x_max + 1)]
-        self.y_zoom = self.y_whole[(self.roi_data.us_roi.x_min):           
-                         (self.roi_data.us_roi.x_max + 1)]
-        self.ds_spectrum = Spectrum(self.x_whole,self.y_whole)
-        self.us_spectrum = Spectrum(self.x_zoom, self.y_zoom)
-
-    def get_img_data(self):
-        raise NotImplementedError
 
 
 class ExpDataFromImgData(ExpData):
@@ -506,19 +488,6 @@ class ExpDataFromImgData(ExpData):
         self.roi_data = roi_data_manager.get_roi_data(self.get_img_dimension())
         self.calc_spectra()
     
-    def get_img_dimension(self):
-        return self.img_dimension
-
-class ExpSpecDataFromArray(ExpSpecData):
-    def __init__(self, img_data, filename, x_calibration, roi_data_manager):
-        self._img_data = img_data
-        self.num_frames = 1
-        self.filename = filename
-        self.x_whole = x_calibration
-        self.img_dimension = (np.size(self._img_data),1)
-        self.roi_data = roi_data_manager.get_roi_data(self.get_img_dimension())
-        self.calc_spectra()
-
     def get_img_dimension(self):
         return self.img_dimension
 

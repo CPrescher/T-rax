@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "T-Rax", "T-Rax\T-Rax.pyproj", "{7B93F3B8-989A-4A3A-92B3-4D75D1A84F3C}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PressureCalibrations", "PressureCalibrations\PressureCalibrations.pyproj", "{1311C458-74EA-4E90-940D-EA9FCE956517}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Playground", "Playground\Playground.pyproj", "{9C29C053-578F-47B1-B37A-C4D14EE08E61}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RamanLab", "RamanLab", "{A5160A89-C7A8-4F90-9BAC-3F085CC2618B}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "T-Rax.test", "T-Rax.test\T-Rax.test.pyproj", "{17ECA533-63AE-42CF-9603-CEFA656D8E32}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B93F3B8-989A-4A3A-92B3-4D75D1A84F3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B93F3B8-989A-4A3A-92B3-4D75D1A84F3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B93F3B8-989A-4A3A-92B3-4D75D1A84F3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B93F3B8-989A-4A3A-92B3-4D75D1A84F3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1311C458-74EA-4E90-940D-EA9FCE956517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1311C458-74EA-4E90-940D-EA9FCE956517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1311C458-74EA-4E90-940D-EA9FCE956517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1311C458-74EA-4E90-940D-EA9FCE956517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C29C053-578F-47B1-B37A-C4D14EE08E61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C29C053-578F-47B1-B37A-C4D14EE08E61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C29C053-578F-47B1-B37A-C4D14EE08E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C29C053-578F-47B1-B37A-C4D14EE08E61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17ECA533-63AE-42CF-9603-CEFA656D8E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17ECA533-63AE-42CF-9603-CEFA656D8E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17ECA533-63AE-42CF-9603-CEFA656D8E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17ECA533-63AE-42CF-9603-CEFA656D8E32}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
