@@ -8,17 +8,21 @@ Created on 12.08.2013
 folder_name='\QT_Trial'
 
 import os
+import sys
 #os.chdir(os.getcwd()+folder_name)
 
 
-def convert_ui_files(folder='\UIFiles'):
+def convert_ui_files(folder='/UIFiles'):
     old_path=os.getcwd()
     new_path=os.getcwd()+folder
     os.chdir(new_path)
     for file in os.listdir('.'):
         if file.endswith(".ui"):
             file_name=str(file).split('.')[0]
-            cmd='pyuic4 '+file +' > '+file_name+'.py'
+            if sys.platform == 'darwin':
+                cmd='pyuic4-2.7 '+file +' > '+file_name+'.py'
+            else:
+                cmd='pyuic4-2.7 '+file +' > '+file_name+'.py'
             print cmd
             os.system(cmd)
     os.chdir(old_path)

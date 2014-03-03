@@ -1,41 +1,46 @@
-
 from wx.lib.pubsub import pub
 from SPE_module import SPE_File
-import os.path
 import numpy as np
 import random
-import scipy.interpolate as ip
+import T_Rax_Data # needs to be important in order to let old setting files work...
+
+
 def dependencies_for_myprogram():
     from scipy.sparse.csgraph import _validation
+
+
 from scipy.optimize import curve_fit
-import matplotlib.pyplot as plt
-import colors
 
 from data.T_Rax_GeneralData import TraxGeneralData
+
 
 class TraxTemperatureData(TraxGeneralData):
     def __init__(self):
         self.ds_calibration_data = None
-        self.ds_calibration_parameter = CalibrationParameter()
         self.us_calibration_data = None
+        self.ds_calibration_parameter = CalibrationParameter()
         self.us_calibration_parameter = CalibrationParameter()
 
-        self.roi_data_manager = ROIDataManager()
-        self.load_calib_etalon()
-        self._create_dummy_img()
-        pub.sendMessage("EXP DATA CHANGED")
-        pub.sendMessage("ROI CHANGED")
+        try:
+            self.get_us_calibration_parameter().load_etalon_spectrum('15A_lamp.txt')
+            self.get_ds_calibration_parameter().load_etalon_spectrum('15A_lamp.txt')
+        except IOError:
+            self.ds_calibration_parameter.set_modus(0)
+            self.us_calibration_parameter.set_modus(0)
 
-    def _create_dummy_img(self):
+        self.roi_data_manager = ROIDataManager()
         self.exp_data = DummyImg(self.roi_data_manager)
         self.roi_data = self.exp_data.roi_data
 
-    def load_calib_etalon(self):
-        self.load_us_calibration_etalon('15A_lamp.txt')
-        self.load_ds_calibration_etalon('15A_lamp.txt')
+        pub.sendMessage("EXP DATA CHANGED")
+        pub.sendMessage("ROI CHANGED")
+
+    def _read_exp_image_file(self, file_name):
+        img_file = SPE_File(file_name)
+        return ExpData(img_file, self.roi_data_manager)
 
     def load_exp_file(self, filename):
-        self.exp_data = self.read_exp_image_file(filename)
+        self.exp_data = self._read_exp_image_file(filename)
         self.roi_data = self.exp_data.roi_data
         try:
             self.ds_calibration_data.roi_data = self.roi_data
@@ -45,191 +50,67 @@ class TraxTemperatureData(TraxGeneralData):
             self.us_calibration_data.roi_data = self.roi_data
         except AttributeError:
             pass
-        self.calc_spectra()
+        self.calculate_spectra()
         pub.sendMessage("EXP DATA CHANGED")
 
-    def read_exp_image_file(self, file_name):
-        img_file = SPE_File(file_name)
-        return ExpData(img_file, self.roi_data_manager)
-
-    def set_current_frame(self,frame_number):
-        if frame_number >= self.exp_data.num_frames-1:
-            self.exp_data.current_frame = self.exp_data.num_frames-1
-        elif frame_number<1:
-            self.exp_data.current_frame=0
-        else:
-            self.exp_data.current_frame=frame_number
-        self.calc_spectra()
-        pub.sendMessage("EXP DATA FRAME CHANGED")
-
-    def load_next_frame(self):
-        self.set_current_frame(self.exp_data.current_frame+1)
-
-    def load_previous_frame(self):
-        self.set_current_frame(self.exp_data.current_frame-1)
-
-    def calculate_time_lapse(self):
-        old_frame_number=self.exp_data.current_frame
-        ds_temperature=[]
-        ds_temperature_err=[]
-        us_temperature=[]
-        us_temperature_err=[]
-        for frame_number in xrange(self.exp_data.num_frames):
-            self.exp_data.current_frame=frame_number
-            self.calc_spectra()
-            dummy, ds_fit = self.get_ds_spectrum()
-            dummy, us_fit = self.get_us_spectrum()
-            ds_temperature.append(ds_fit.T)
-            us_temperature.append(us_fit.T)
-            ds_temperature_err.append(ds_fit.T_err)
-            us_temperature_err.append(us_fit.T_err)
-            progress=np.int(np.round((float(frame_number+1)/self.exp_data.num_frames)*100))
-            pub.sendMessage("PROGRESS ONGOING", progress=progress)
-        
-        self.exp_data.current_frame = old_frame_number
-        return ds_temperature, ds_temperature_err,\
-               us_temperature, us_temperature_err
-
     def load_ds_calibration_data(self, file_name, send_message=True):
-        self.ds_calibration_data = self.read_exp_image_file(file_name)
-        self.calc_spectra()
+        self.ds_calibration_data = self._read_exp_image_file(file_name)
+        self.calculate_spectra()
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def set_ds_calibration_modus(self, modus, send_message=True):
-        self.ds_calibration_parameter.set_modus(modus)
+    def load_us_calibration_data(self, file_name, send_message=True):
+        self.us_calibration_data = self._read_exp_image_file(file_name)
+        self.calculate_spectra()
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def set_ds_calibration_temp(self, val,send_message=True):
-        self.ds_calibration_parameter.set_temp(val) 
-        if send_message:
-            pub.sendMessage("EXP DATA CHANGED")
-
-    def get_ds_calibration_modus(self):
-        return self.ds_calibration_parameter.modus
-
-    def get_us_calibration_modus(self):
-        return self.us_calibration_parameter.modus
-
-    def load_ds_calibration_etalon(self, fname, send_message=True):
-        self.ds_calibration_parameter.load_etalon_spec(fname)
-        if send_message:
-            pub.sendMessage("EXP DATA CHANGED")
-
-    def load_us_calibration_data(self, file_name,send_message=True):
-        self.us_calibration_data = self.read_exp_image_file(file_name)
-        self.calc_spectra()
-        if send_message:
-            pub.sendMessage("EXP DATA CHANGED")
-
-    def set_us_calibration_modus(self, modus,sendMessage=True):
-        self.us_calibration_parameter.set_modus(modus)
-        if sendMessage:
-            pub.sendMessage("EXP DATA CHANGED")
-
-    def set_us_calibration_temp(self, val,send_message=True):
-        self.us_calibration_parameter.set_temp(val)
-        if send_message:
-            pub.sendMessage("EXP DATA CHANGED")
-
-    def load_us_calibration_etalon(self, fname, send_message=True):
-        self.us_calibration_parameter.load_etalon_spec(fname)
-        if send_message:
-            pub.sendMessage("EXP DATA CHANGED")
-    
-    def calc_spectra(self):
+    def calculate_spectra(self):
         self.exp_data.calc_spectra()
         if self.ds_calibration_data is not None:
             self.ds_calibration_data.calc_spectra()
         if self.us_calibration_data is not None:
             self.us_calibration_data.calc_spectra()
 
-    def get_ds_calibration_file_name(self):
-        try:
-            return self.ds_calibration_data.filename
-        except AttributeError:
-            return 'Select File...'
-
-    def get_us_calibration_file_name(self):
-        try:
-            return self.us_calibration_data.filename
-        except AttributeError:
-            return 'Select File...'
-
-    def get_ds_calibration_etalon_file_name(self):
-        return self.ds_calibration_parameter.get_etalon_fname()
-
-    def get_us_calibration_etalon_file_name(self):
-        return self.us_calibration_parameter.get_etalon_fname()
-
-    def get_ds_calibration_temperature(self):
-        return self.ds_calibration_parameter.temp
-
-    def get_us_calibration_temperature(self):
-        return self.us_calibration_parameter.temp
-
     def get_ds_spectrum(self):
-        if not self.exp_data_ds_calibration_data_same_dimension():
+        try:
+            if self.exp_data.get_img_dimension() == self.ds_calibration_data.get_img_dimension():
+                x = self.exp_data.ds_spectrum.x
+                corrected_spectrum = self.exp_data.calc_corrected_ds_spectrum(self.ds_calibration_data.ds_spectrum,
+                                                                              self.ds_calibration_parameter.
+                                                                              get_calibration_y(x))
+                self.ds_fitted_spectrum = FitSpectrum(corrected_spectrum)
+                return [corrected_spectrum, self.ds_fitted_spectrum]
+            else:
+                return self.exp_data.ds_spectrum
+        except AttributeError:
             return self.exp_data.ds_spectrum
-        else:
-            x = self.exp_data.ds_spectrum.x
-            corrected_spectrum = self.exp_data.calc_corrected_ds_spectrum(self.ds_calibration_data.ds_spectrum, 
-                                                self.ds_calibration_parameter.get_calibration_y(x))
-            self.ds_fitted_spectrum = FitSpectrum(corrected_spectrum)
-            return [corrected_spectrum, self.ds_fitted_spectrum]
 
-    def exp_data_ds_calibration_data_same_dimension(self):
+    def get_us_spectrum(self):
         try:
-            return self.exp_data.get_img_dimension() == self.ds_calibration_data.get_img_dimension()
-        except:
-            return False
+            if self.exp_data.get_img_dimension() == self.us_calibration_data.get_img_dimension():
+                x = self.exp_data.us_spectrum.x
+                corrected_spectrum = self.exp_data.calc_corrected_us_spectrum(self.us_calibration_data.us_spectrum,
+                                                                              self.us_calibration_parameter.get_calibration_y(
+                                                                                  x))
+                self.us_fitted_spectrum = FitSpectrum(corrected_spectrum)
+                return [corrected_spectrum, self.us_fitted_spectrum]
+            else:
+                return self.exp_data.us_spectrum
+        except AttributeError:
+            return self.exp_data.us_spectrum
 
-    def exp_data_us_calibration_data_same_dimension(self):
-        try:
-            return self.exp_data.get_img_dimension() == self.us_calibration_data.get_img_dimension()
-        except:
-            return False
-
-    def get_ds_roi_max(self):
-        return self.exp_data.calc_roi_max(self.exp_data.roi_data.ds_roi)
-
-    def get_ds_temp(self):
+    def get_ds_temperature(self):
         try:
             return self.ds_fitted_spectrum.T
         except AttributeError:
             return 0
 
-    def get_us_spectrum(self):
-        if not self.exp_data_us_calibration_data_same_dimension():
-            return self.exp_data.us_spectrum
-        else:
-            x = self.exp_data.us_spectrum.x
-            corrected_spectrum = self.exp_data.calc_corrected_us_spectrum(self.us_calibration_data.us_spectrum, 
-                                                self.us_calibration_parameter.get_calibration_y(x))
-            self.us_fitted_spectrum = FitSpectrum(corrected_spectrum)
-            return [corrected_spectrum, self.us_fitted_spectrum]
-
-    def get_us_roi_max(self):
-        return self.exp_data.calc_roi_max(self.exp_data.roi_data.us_roi)
-
-    def get_us_temp(self):
+    def get_us_temperature(self):
         try:
             return self.us_fitted_spectrum.T
         except AttributeError:
             return 0
-
-    def get_ds_roi(self):
-        return self.roi_data.ds_roi.get_roi_as_list()
-
-    def get_us_roi(self):
-        return self.roi_data.us_roi.get_roi_as_list()
-
-    def get_us_roi_img(self):
-        return self.exp_data.get_roi_img(self.exp_data.roi_data.us_roi)
-
-    def get_ds_roi_img(self):
-        return self.exp_data.get_roi_img(self.exp_data.roi_data.ds_roi)
 
     def get_x_roi_limits(self):
         return self.calculate_wavelength(self.exp_data.roi_data.get_x_limits())
@@ -238,59 +119,59 @@ class TraxTemperatureData(TraxGeneralData):
         limits_ind = self.calculate_ind(limits)
         self.roi_data.set_x_limits(limits_ind)
 
-    def get_settings(self):
-        return TraxTemperatureSettings(self)
+    def get_roi_data(self):
+        return self.roi_data
 
-    def load_settings(self, settings):  
-        self.roi_data_manager._add(settings.img_dimension, ROIData(settings.ds_roi,settings.us_roi))      
-        self.roi_data = self.roi_data_manager.get_roi_data(self.exp_data.get_img_dimension())
-        self.exp_data.roi_data = self.roi_data
+    def get_ds_calibration_data(self):
+        return self.ds_calibration_data
 
-        if not settings.ds_calib_file_name == 'Select File...':
-            try:
-                self.ds_calibration_data = ExpDataFromImgData(settings.ds_img_data,settings.ds_calib_file_name,settings.ds_x_calibration,self.roi_data_manager)
-            except AttributeError:
-                self.us_calibration_data = ExpSpecDataFromArray(settings.ds_calibration_spectrum,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
-        else:
-            self.ds_calibration_data = None
-        if not settings.us_calib_file_name == 'Select File...':
-            try:
-                self.us_calibration_data = ExpDataFromImgData(settings.us_img_data,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
-            except AttributeError:
-                self.us_calibration_data = ExpSpecDataFromArray(settings.us_calibration_spectrum,settings.us_calib_file_name,settings.us_x_calibration,self.roi_data_manager)
+    def get_us_calibration_data(self):
+        return self.us_calibration_data
 
-        else:
-            self.us_calibration_data = None
+    def get_ds_calibration_parameter(self):
+        return self.ds_calibration_parameter
 
-        self.ds_calibration_parameter.set_etalon_fname(settings.ds_etalon_file_name)
-        self.us_calibration_parameter.set_etalon_fname(settings.us_etalon_file_name)
-        self.ds_calibration_parameter.set_etalon_function_from_spectrum(settings.ds_etalon_spectrum)
-        self.us_calibration_parameter.set_etalon_function_from_spectrum(settings.us_etalon_spectrum)
+    def get_us_calibration_parameter(self):
+        return self.us_calibration_parameter
 
-        self.set_ds_calibration_modus(settings.ds_calibration_modus, False)
-        self.set_us_calibration_modus(settings.us_calibration_modus, False)
-        self.set_ds_calibration_temp(settings.ds_calibration_temperature, False)
-        self.set_us_calibration_temp(settings.us_calibration_temperature, False)
-        self.calc_spectra()
-        pub.sendMessage("EXP DATA CHANGED")
+    def calculate_time_lapse(self):
+        old_frame_number = self.exp_data.current_frame
+        ds_temperature = []
+        ds_temperature_err = []
+        us_temperature = []
+        us_temperature_err = []
+        for frame_number in xrange(self.exp_data.num_frames):
+            self.exp_data.current_frame = frame_number
+            self.calculate_spectra()
+            dummy, ds_fit = self.get_ds_spectrum()
+            dummy, us_fit = self.get_us_spectrum()
+            ds_temperature.append(ds_fit.T)
+            us_temperature.append(us_fit.T)
+            ds_temperature_err.append(ds_fit.T_err)
+            us_temperature_err.append(us_fit.T_err)
+            progress = np.int(np.round((float(frame_number + 1) / self.exp_data.num_frames) * 100))
+            pub.sendMessage("PROGRESS ONGOING", progress=progress)
+
+        self.exp_data.current_frame = old_frame_number
+        return ds_temperature, ds_temperature_err, \
+               us_temperature, us_temperature_err
 
 
 class GeneralData(object):
     def __init__(self, img_file, roi_data_manager):
         self._img_file = img_file
         self.roi_data = roi_data_manager.get_roi_data(img_file.get_dimension())
-        self.read_parameter()
-        self.calc_spectra()
-    
-    def read_parameter(self):
-        self.filename = self._img_file.filename
+
+        self.file_name = self._img_file.filename
         self._img_data = self._img_file.img
         self.x_whole = self._img_file.x_calibration
         self.current_frame = 0
-        self.num_frames=self._img_file.num_frames
+        self.num_frames = self._img_file.num_frames
+
+        self.calc_spectra()
 
     def img_data(self):
-        if self.num_frames>1:
+        if self.num_frames > 1:
             return self._img_data[self.current_frame]
         else:
             return self._img_data
@@ -298,12 +179,9 @@ class GeneralData(object):
     def calc_spectra(self):
         raise NotImplementedError
 
-    def get_x(self):
-        raise NotImplementedError
-    
     def get_ds_y(self):
         raise NotImplementedError
-    
+
     def get_us_y(self):
         raise NotImplementedError
 
@@ -319,34 +197,41 @@ class GeneralData(object):
     def get_exposure_time(self):
         return self._img_file.exposure_time
 
-    def get_file_information(self):
-        return ('{exp_time:g}s, ' +\
-               '{detector}, '+\
-               '{grating}, ' +\
-               '{center_wavelength:g}nm').format(
-                exp_time=self._img_file.exposure_time,
-                detector=self._img_file.detector,
-                grating= self._img_file.grating,
-                center_wavelength=self._img_file.center_wavelength)
+    def get_file_information_string(self):
+        return ('{exp_time:g}s, ' +
+                '{detector}, ' +
+                '{grating}, ' +
+                '{center_wavelength:g}nm').format(exp_time=self._img_file.exposure_time,
+                                                  detector=self._img_file.detector,
+                                                  grating=self._img_file.grating,
+                                                  center_wavelength=self._img_file.center_wavelength)
 
 
 class ImgData(GeneralData):
     def calc_spectra(self):
-        x = self.x_whole[(self.roi_data.us_roi.x_min):           
-                         (self.roi_data.us_roi.x_max + 1)]
-        self.ds_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.ds_roi))
-        self.us_spectrum = Spectrum(x,self.calc_spectrum(self.roi_data.us_roi))
+        x = self.x_whole[self.roi_data.us_roi.x_min:
+                         self.roi_data.us_roi.x_max + 1]
+        self.ds_spectrum = Spectrum(x, self._calc_spectrum(self.roi_data.ds_roi))
+        self.us_spectrum = Spectrum(x, self._calc_spectrum(self.roi_data.us_roi))
 
-    def calc_spectrum(self, roi):
+    def _calc_spectrum(self, roi):
         roi_img = self.get_roi_img(roi)
-        return np.sum(roi_img,0) / np.float(np.size(roi_img,0))
+        return np.sum(roi_img, 0) / np.float(np.size(roi_img, 0))
 
-    def calc_roi_max(self, roi):
-        roi_img = self.get_roi_img(roi)
-        return np.max(roi_img)
+    def get_ds_roi_max(self):
+        return np.max(self.get_roi_img(self.roi_data.ds_roi))
+
+    def get_us_roi_max(self):
+        return np.max(self.get_roi_img(self.roi_data.us_roi))
+
+    def get_ds_roi_img(self):
+        return self.get_roi_img(self.roi_data.ds_roi)
+
+    def get_us_roi_img(self):
+        return self.get_roi_img(self.roi_data.us_roi)
 
     def get_roi_img(self, roi):
-        return self.img_data()[roi.y_min : roi.y_max + 1, roi.x_min:roi.x_max + 1]
+        return self.img_data()[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
 
     def get_x_limits(self):
         return np.array([min(self.x_whole), max(self.x_whole)])
@@ -354,9 +239,6 @@ class ImgData(GeneralData):
     def get_x_whole(self):
         return self.x_whole
 
-    def get_x(self):
-        return self.ds_spectrum.x
-    
     def get_ds_y(self):
         return self.ds_spectrum.y
 
@@ -368,10 +250,11 @@ class ImgData(GeneralData):
 
     def get_us_spectrum(self):
         return self.us_spectrum
-    
+
+
 class ExpData(ImgData):
-    def read_parameter(self):
-        super(ExpData, self).read_parameter()
+    def __init__(self, img_file, roi_data_manager):
+        super(ExpData, self).__init__(img_file, roi_data_manager)
         self._get_file_name_info()
 
     def get_img_data(self):
@@ -394,20 +277,22 @@ class ExpData(ImgData):
         test = FitSpectrum(self.us_corrected_spectrum)
         return self.us_corrected_spectrum
 
-    
     def _get_file_name_info(self):
-        file_str = ''.join(self.filename.split('.')[0:-1])
-        self._file_type = self.filename.split('.')[-1]
+        file_str = ''.join(self.file_name.split('.')[0:-1])
+        self._file_type = self.file_name.split('.')[-1]
 
-        self._file_number_str=self._get_ending_number(file_str)
-        self._file_number = int(self._file_number_str)
-        self._file_base_str = file_str[:-len(self._file_number_str)]
+        self._file_number_str = self._get_ending_number(file_str)
+        try:
+            self._file_number = int(self._file_number_str)
+            self._file_base_str = file_str[:-len(self._file_number_str)]
+        except ValueError:
+            return -1
 
     def _get_ending_number(self, str):
         res = ''
         for char in reversed(str):
             if char.isdigit():
-                res+=char
+                res += char
             else:
                 return res[::-1]
 
@@ -417,7 +302,7 @@ class ExpData(ImgData):
         format_str = '0' + str(len(self._file_number_str)) + 'd'
         number_str = ("{0:" + format_str + '}').format(self._file_number + 1)
         new_file_name_with_leading_zeros = self._file_base_str + \
-                    number_str + '.' + self._file_type
+                                           number_str + '.' + self._file_type
         return new_file_name, new_file_name_with_leading_zeros
 
     def get_previous_file_names(self):
@@ -426,71 +311,82 @@ class ExpData(ImgData):
         format_str = '0' + str(len(self._file_number_str)) + 'd'
         number_str = ("{0:" + format_str + '}').format(self._file_number - 1)
         new_file_name_with_leading_zeros = self._file_base_str + \
-                    number_str + '.' + self._file_type
+                                           number_str + '.' + self._file_type
         return new_file_name, new_file_name_with_leading_zeros
+
+    def set_current_frame(self, frame_number):
+        if frame_number >= self.num_frames - 1:
+            self.current_frame = self.num_frames - 1
+        elif frame_number < 1:
+            self.current_frame = 0
+        else:
+            self.current_frame = frame_number
+        pub.sendMessage("EXP DATA FRAME CHANGED")
+
+    def load_next_frame(self):
+        self.set_current_frame(self.current_frame + 1)
+
+    def load_previous_frame(self):
+        self.set_current_frame(self.current_frame - 1)
+
 
 class DummyImg(ExpData):
     def __init__(self, roi_data_manager):
-        self.num_frames=10
-        self.current_frame=0
-        self.roi_data = roi_data_manager.get_roi_data([1300,100])
+        self.num_frames = 10
+        self.current_frame = 0
+        self.roi_data = roi_data_manager.get_roi_data([1300, 100])
         self.create_img()
-        self.filename = 'dummy_img.spe'
+        self.file_name = 'dummy_img.spe'
 
     def create_img(self):
-        x = np.linspace(645,850,1024)
-        y = np.linspace(0,101, 256)
-        X,Y = np.meshgrid(x,y)
+        x = np.linspace(645, 850, 1024)
+        y = np.linspace(0, 101, 256)
+        X, Y = np.meshgrid(x, y)
 
-        
-
-        Z = np.ones((len(y),len(x)))
+        Z = np.ones((len(y), len(x)))
         random.seed()
-        self._img_data=[]
+        self._img_data = []
         for frame_number in xrange(self.num_frames):
-            T1 = random.randrange(1700,3000,1)
-            T2 = T1 + random.randrange(-200,200,1)
+            T1 = random.randrange(1700, 3000, 1)
+            T2 = T1 + random.randrange(-200, 200, 1)
 
-            black1 = black_body_function(x,T1,1e-8)
-            gauss1 = gauss_curve_function(y,2,80,3)
-            black2 = black_body_function(x,T2,1e-8)
-            gauss2 = gauss_curve_function(y,2,15,3)
+            black1 = black_body_function(x, T1, 1e-8)
+            gauss1 = gauss_curve_function(y, 2, 80, 3)
+            black2 = black_body_function(x, T2, 1e-8)
+            gauss2 = gauss_curve_function(y, 2, 15, 3)
 
             for x_ind in xrange(len(x)):
                 for y_ind in xrange(len(y)):
-                    Z[y_ind,x_ind] = black1[x_ind] * gauss1[y_ind] + black2[x_ind] * gauss2[y_ind]
-            self._img_data.append( Z + np.random.normal(0,.1 * max(black1),(len(y),len(x))))
+                    Z[y_ind, x_ind] = black1[x_ind] * gauss1[y_ind] + black2[x_ind] * gauss2[y_ind]
+            self._img_data.append(Z + np.random.normal(0, .1 * max(black1), (len(y), len(x))))
         self.x_whole = x
         self.calc_spectra()
 
     def get_next_file_names(self):
-        return '',''
+        return '', ''
 
     def get_previous_file_names(self):
-        return '',''
+        return '', ''
 
     def get_img_dimension(self):
-        return (1300,100)
+        return (1300, 100)
 
-    def get_file_information(self):
+    def get_file_information_string(self):
         return '10s, dummy spec, 550nm'
-
-
 
 
 class ExpDataFromImgData(ExpData):
     def __init__(self, img_data, filename, x_calibration, roi_data_manager):
         self._img_data = img_data
         self.num_frames = 1
-        self.filename = filename
+        self.file_name = filename
         self.x_whole = x_calibration
-        self.img_dimension = (np.size(self._img_data,1),np.size(self._img_data,0))
+        self.img_dimension = (np.size(self._img_data, 1), np.size(self._img_data, 0))
         self.roi_data = roi_data_manager.get_roi_data(self.get_img_dimension())
         self.calc_spectra()
-    
+
     def get_img_dimension(self):
         return self.img_dimension
-
 
 
 class CalibrationParameter(object):
@@ -503,27 +399,34 @@ class CalibrationParameter(object):
         self.etalon_spectrum_func = None
         self.etalon_file_name = 'Select File...'
 
-    def set_modus(self, val):
+    def set_modus(self, val, send_message=True):
         self.modus = val
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED")
 
-    def set_temp(self, temp):
+    def set_temperature(self, temp, send_message=True):
         self.temp = temp
-        
-    def load_etalon_spec(self, fname):
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED")
+
+    def load_etalon_spectrum(self, fname, send_message=True):
         try:
-            data = np.loadtxt(fname, delimiter = ',')
+            data = np.loadtxt(fname, delimiter=',')
         except ValueError:
             try:
-                data = np.loadtxt(fname, delimiter = ' ')
+                data = np.loadtxt(fname, delimiter=' ')
             except ValueError:
                 try:
-                    data = np.loadtxt(fname, delimiter = ';')
-                except:
-                    data = np.loadtxt(fname, delimiter = '\t')
+                    data = np.loadtxt(fname, delimiter=';')
+                except ValueError:
+                    data = np.loadtxt(fname, delimiter='\t')
         self._etalon_x = data.T[0]
         self._etalon_y = data.T[1]
-        self.etalon_spectrum_func = ip.interp1d(data.T[0], data.T[1],'cubic')
+        #self.etalon_spectrum_func = ip.interp1d(data.T[0], data.T[1], 'cubic')
+        # not used because scipy.interpolate is supported by pyinstaller...
         self.etalon_file_name = fname
+        if send_message:
+            pub.sendMessage("EXP DATA CHANGED")
 
     def get_calibration_y(self, wavelength):
         if self.modus == 0:
@@ -531,30 +434,33 @@ class CalibrationParameter(object):
             return y / max(y)
         elif self.modus == 1:
             try:
-                return self.etalon_spectrum_func(wavelength)
-            except:
+                #return self.etalon_spectrum_func(wavelength)
+                # not used because scipy.interpolate is supported by pyinstaller...
+                return np.interp(wavelength, self._etalon_x, self._etalon_y)
+            except ValueError:
                 pub.sendMessage("INTERPOLATION RANGE ERROR")
                 return np.ones(np.size(wavelength))
 
-    def get_etalon_fname(self):
+    def get_etalon_filename(self):
         return self.etalon_file_name
 
-    def set_etalon_fname(self, filename):
-        self.etalon_file_name=filename
+    def set_etalon_filename(self, filename):
+        self.etalon_file_name = filename
 
     def get_etalon_spectrum(self):
-        return Spectrum(self._etalon_x,self._etalon_y)
+        return Spectrum(self._etalon_x, self._etalon_y)
 
     def set_etalon_function_from_spectrum(self, spectrum):
         try:
-            self.etalon_spectrum_func = ip.interp1d(spectrum.x, spectrum.y, 'cubic')
+            self._etalon_x = spectrum.x
+            self._etalon_y = spectrum.y
+            #self.etalon_spectrum_func = ip.interp1d(spectrum.x, spectrum.y, 'cubic')
         except AttributeError:
             pass
 
 
-
 class Spectrum():
-    def __init__(self,x,y):
+    def __init__(self, x, y):
         self.x = x
         self.y = y
 
@@ -571,24 +477,24 @@ class Spectrum():
         return [min(self.y), max(self.y) + factor * self.get_y_range()]
 
     def get_data(self):
-        return [self.x,self.y]
+        return [self.x, self.y]
+
 
 class FitSpectrum(Spectrum):
-    def __init__(self,spectrum):
+    def __init__(self, spectrum):
         self._orig_spectrum = spectrum
         try:
-            param, cov = curve_fit(black_body_function, spectrum.x,spectrum.y,p0=[2000,1e-11])
+            param, cov = curve_fit(black_body_function, spectrum.x, spectrum.y, p0=[2000, 1e-11])
             self.T = param[0]
-            self.T_err = np.sqrt(cov[0,0])
-            
+            self.T_err = np.sqrt(cov[0, 0])
+
             self.x = spectrum.x
-            self.y = black_body_function(self.x,param[0],param[1])
+            self.y = black_body_function(self.x, param[0], param[1])
         except (RuntimeError, TypeError):
             self.T = np.NaN
             self.T_err = np.NaN
             self.x = []
             self.y = []
-
 
 
 class ROI():
@@ -611,7 +517,7 @@ class ROI():
             self.x_max = x_max
         if self.x_min >= x_max:
             self.x_min = 0
-            
+
     def set_y_max(self, y_max):
         if self.y_max > y_max:
             self.y_max = y_max
@@ -620,7 +526,7 @@ class ROI():
 
     def get_width(self):
         return self.x_max - self.x_min
-    
+
     def get_height(self):
         return self.y_max - self.y_min
 
@@ -628,7 +534,7 @@ class ROI():
         return [self.x_min, self.x_max]
 
     def get_y_limits(self):
-        return [self.y_min,self.y_max]
+        return [self.y_min, self.y_max]
 
     def get_roi_as_list(self):
         return [self.x_min, self.x_max, self.y_min, self.y_max]
@@ -655,14 +561,14 @@ class ROIDataManager():
 
     def _add(self, img_dimension, roi_data):
         if self._exists(img_dimension):
-             ind = self._get_dimension_ind(img_dimension)
-             self._roi_data_list[ind] = roi_data
+            ind = self._get_dimension_ind(img_dimension)
+            self._roi_data_list[ind] = roi_data
         else:
-             self._img_dimensions_list.append(img_dimension)
-             self._roi_data_list.append(roi_data)
-             self._num+=1
+            self._img_dimensions_list.append(img_dimension)
+            self._roi_data_list.append(roi_data)
+            self._num += 1
 
-    def _get_dimension_ind(self,img_dimension):
+    def _get_dimension_ind(self, img_dimension):
         for ind in range(self._num):
             if self._img_dimensions_list[ind] == img_dimension:
                 self._current = ind
@@ -675,9 +581,9 @@ class ROIDataManager():
             return self._roi_data_list[self._get_dimension_ind(img_dimension)]
         else:
             ds_limits = np.array([0.25 * (img_dimension[0] - 1), 0.75 * (img_dimension[0] - 1),
-                                    0.8 * (img_dimension[1] - 1), 0.9 * (img_dimension[1] - 1)])
+                                  0.8 * (img_dimension[1] - 1), 0.9 * (img_dimension[1] - 1)])
             us_limits = np.array([0.25 * (img_dimension[0] - 1), 0.75 * (img_dimension[0] - 1),
-                                    0.1 * (img_dimension[1] - 1), 0.2 * (img_dimension[1] - 1)])
+                                  0.1 * (img_dimension[1] - 1), 0.2 * (img_dimension[1] - 1)])
             ds_limits = np.round(ds_limits)
             us_limits = np.round(us_limits)
 
@@ -686,7 +592,7 @@ class ROIDataManager():
 
     def get_current_roi(self):
         return self._roi_data_list[self._current]
-        
+
 
 class ROIData():
     def __init__(self, ds_limits, us_limits):
@@ -694,9 +600,14 @@ class ROIData():
         self.us_roi = ROI(us_limits)
 
     def get_roi_data(self):
-        data = [self.ds_roi.get_roi_as_list()]
-        data.append(self.us_roi.get_roi_as_list())
+        data = [self.ds_roi.get_roi_as_list(), self.us_roi.get_roi_as_list()]
         return data
+
+    def get_ds_roi(self):
+        return self.ds_roi.get_roi_as_list()
+
+    def get_us_roi(self):
+        return self.us_roi.get_roi_as_list()
 
     def set_ds_roi(self, ds_limits):
         if self.roi_is_valid(ROI(ds_limits)):
@@ -704,7 +615,6 @@ class ROIData():
             self.us_roi.set_x_limit(ds_limits[:2])
         else:
             pub.sendMessage("ROI ERROR")
-
         pub.sendMessage("ROI CHANGED")
 
     def set_us_roi(self, us_limits):
@@ -728,7 +638,7 @@ class ROIData():
         self.set_max_y_limits(y_max)
 
     def set_x_limits(self, x_limits):
-        if x_limits[0]<x_limits[1]:
+        if x_limits[0] < x_limits[1]:
             self.set_x_min(x_limits[0])
             self.set_x_max(x_limits[1])
         else:
@@ -748,13 +658,13 @@ class ROIData():
         self.us_roi.x_max = x_max
         pub.sendMessage("ROI CHANGED")
 
-    def roi_is_valid(self, roi):
-        if roi.x_min>roi.x_max:
+    @staticmethod
+    def roi_is_valid(roi):
+        if roi.x_min > roi.x_max:
             return False
-        elif roi.y_min>roi.y_max:
+        elif roi.y_min > roi.y_max:
             return False
         return True
-
 
 
 def black_body_function(wavelength, temp, scaling):
@@ -770,39 +680,50 @@ def gauss_curve_function(x, scaling, center, sigma):
 
 class TraxTemperatureSettings():
     def __init__(self, data):
-        self.ds_calib_file_name = data.get_ds_calibration_file_name()
-        self.us_calib_file_name = data.get_us_calibration_file_name()
+        try:
+            us_calibration_filename_str = data.get_us_calibration_data().file_name
+        except AttributeError:
+            us_calibration_filename_str = 'Select File...'
 
-        self.ds_etalon_file_name = data.get_ds_calibration_etalon_file_name()      
-        try:  
+        try:
+            ds_calibration_filename_str = data.get_ds_calibration_data().file_name
+        except AttributeError:
+            ds_calibration_filename_str = 'Select File...'
+
+        self.ds_calib_file_name = ds_calibration_filename_str
+        self.us_calib_file_name = us_calibration_filename_str
+
+        self.ds_etalon_file_name = data.get_ds_calibration_parameter().get_etalon_filename()
+
+        try:
             self.ds_etalon_spectrum = data.ds_calibration_parameter.get_etalon_spectrum()
         except AttributeError:
             self.ds_etalon_spectrum = []
 
-        self.us_etalon_file_name = data.get_us_calibration_etalon_file_name()
+        self.us_etalon_file_name = data.get_us_calibration_parameter().get_etalon_filename()
 
         try:
             self.us_etalon_spectrum = data.us_calibration_parameter.get_etalon_spectrum()
         except AttributeError:
             self.us_etalon_spectrum = []
 
-        self.ds_calibration_modus = data.get_ds_calibration_modus()
-        self.us_calibration_modus = data.get_us_calibration_modus()
+        self.ds_calibration_modus = data.get_ds_calibration_parameter().modus
+        self.us_calibration_modus = data.get_us_calibration_parameter().modus
 
-        self.ds_calibration_temperature = data.get_ds_calibration_temperature()
-        self.us_calibration_temperature = data.get_us_calibration_temperature()
+        self.ds_calibration_temperature = data.get_ds_calibration_parameter().temp
+        self.us_calibration_temperature = data.get_us_calibration_parameter().temp
 
-        self.ds_roi = data.get_ds_roi()
-        self.us_roi = data.get_us_roi()
+        self.ds_roi = data.get_roi_data().get_ds_roi()
+        self.us_roi = data.get_roi_data().get_us_roi()
 
-        if not data.ds_calibration_data == None:
+        if not data.ds_calibration_data is None:
             try:
                 self.ds_img_data = data.ds_calibration_data.get_img_data()
             except:
                 self.ds_calibration_spectrum = data.ds_calibration_data.img_data
             self.ds_x_calibration = data.ds_calibration_data.x_whole
-        
-        if not data.us_calibration_data == None:
+
+        if not data.us_calibration_data is None:
             try:
                 self.us_img_data = data.us_calibration_data.get_img_data()
             except:
@@ -810,4 +731,32 @@ class TraxTemperatureSettings():
             self.us_x_calibration = data.us_calibration_data.x_whole
         self.img_dimension = data.exp_data.get_img_dimension()
 
-       
+    @staticmethod
+    def load_settings(settings, data):
+        data.roi_data_manager._add(settings.img_dimension, ROIData(settings.ds_roi, settings.us_roi))
+        data.roi_data = data.roi_data_manager.get_roi_data(data.exp_data.get_img_dimension())
+        data.exp_data.roi_data = data.roi_data
+
+        if not settings.ds_calib_file_name == 'Select File...':
+            data.ds_calibration_data = ExpDataFromImgData(settings.ds_img_data, settings.ds_calib_file_name,
+                                                          settings.ds_x_calibration, data.roi_data_manager)
+        else:
+            data.ds_calibration_data = None
+
+        if not settings.us_calib_file_name == 'Select File...':
+            data.us_calibration_data = ExpDataFromImgData(settings.us_img_data, settings.us_calib_file_name,
+                                                          settings.us_x_calibration, data.roi_data_manager)
+        else:
+            data.us_calibration_data = None
+
+        data.ds_calibration_parameter.set_etalon_filename(settings.ds_etalon_file_name)
+        data.us_calibration_parameter.set_etalon_filename(settings.us_etalon_file_name)
+        data.ds_calibration_parameter.set_etalon_function_from_spectrum(settings.ds_etalon_spectrum)
+        data.us_calibration_parameter.set_etalon_function_from_spectrum(settings.us_etalon_spectrum)
+
+        data.get_ds_calibration_parameter().set_modus(settings.ds_calibration_modus, False)
+        data.get_us_calibration_parameter().set_modus(settings.us_calibration_modus, False)
+        data.get_ds_calibration_parameter().set_temperature(settings.ds_calibration_temperature, False)
+        data.get_us_calibration_parameter().set_temperature(settings.us_calibration_temperature, False)
+        data.calculate_spectra()
+        pub.sendMessage("EXP DATA CHANGED")

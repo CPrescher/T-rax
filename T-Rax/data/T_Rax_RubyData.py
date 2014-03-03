@@ -1,9 +1,7 @@
 from wx.lib.pubsub import pub
 from SPE_module import SPE_File
-import os.path
 import numpy as np
 import random
-import scipy.interpolate as ip
 from scipy.optimize import minimize
 
 from data.T_Rax_TemperatureData import ROI, Spectrum, gauss_curve_function
@@ -75,7 +73,7 @@ class TraxRubyData(TraxGeneralData):
         res = minimize(self.fitting_function, self.create_p0(), method='L-BFGS-B',
                               bounds=self.create_limits())
         self.set_click_pos(np.max(res.x[2:4]))
-        fit_x =np.linspace(np.min(self.get_spectrum().x), np.max(self.get_spectrum().x),1000)
+        fit_x =np.linspace(np.min(self.exp_data.get_spectrum().x), np.max(self.exp_data.get_spectrum().x),1000)
         self.fitted_spectrum=Spectrum(fit_x, self.fitting_function_helper(fit_x,\
                                                                res.x[0],res.x[1],res.x[2],\
                                                                res.x[3],res.x[4],res.x[5],\
@@ -84,11 +82,11 @@ class TraxRubyData(TraxGeneralData):
         pub.sendMessage("RUBY POS CHANGED")
 
     def create_p0(self):
-        intensities=[np.max(self.get_spectrum().y),np.max(self.get_spectrum().y)*0.5]
+        intensities=[np.max(self.exp_data.get_spectrum().y),np.max(self.exp_data.get_spectrum().y)*0.5]
         positions=[self.click_pos,self.click_pos-1.5]
         hwhm =[0.1,0.1]
         n =[1,1]
-        constants=[np.min(self.get_spectrum().y),0]
+        constants=[np.min(self.exp_data.get_spectrum().y),0]
         return intensities+positions+hwhm+n+constants
 
     def create_limits(self):
@@ -100,8 +98,8 @@ class TraxRubyData(TraxGeneralData):
         return intensities+positions+hwhm+n+constants
     
     def fitting_function(self, param):
-        x=self.get_spectrum().x
-        y=self.get_spectrum().y
+        x=self.exp_data.get_spectrum().x
+        y=self.exp_data.get_spectrum().y
         int1=param[0] 
         int2=param[1] 
         pos1=param[2]
@@ -214,7 +212,7 @@ class DummyImg(ExpRubyData):
     def __init__(self, roi_data_manager):
         self.roi=roi_data_manager.get_roi_data([1300,100])
         self.create_img()
-        self.filename = 'dummy_img.spe'
+        self.file_name = 'dummy_img.spe'
         self.current_frame=0;
 
     def create_img(self):
@@ -242,7 +240,7 @@ class DummyImg(ExpRubyData):
         return self._img_data
 
     
-    def get_file_information(self):
+    def get_file_information_string(self):
         return '10s, dummy spec, 700nm'
 
 

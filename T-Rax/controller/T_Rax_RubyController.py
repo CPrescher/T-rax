@@ -11,15 +11,16 @@ from controller.T_Rax_ModuleController import TRaxModuleController
 from controller.T_Rax_ROISelectorRubyController import TRaxROIControllerRuby
 from data.T_Rax_RubyData import TraxRubyData
 
+
 class TRaxRubyController(TRaxModuleController):
     def __init__(self, parent, main_view):
         self.parent = parent
         self.data = TraxRubyData()
         super(TRaxRubyController, self).__init__(parent, \
-            self.data,main_view.ruby_control_widget)
+                                                 self.data, main_view.ruby_control_widget)
         self.main_view = main_view
         self.create_signals()
-        
+
         pub.sendMessage("EXP RUBY DATA CHANGED")
 
     def create_signals(self):
@@ -35,7 +36,7 @@ class TRaxRubyController(TRaxModuleController):
     def create_axes_click_signal(self):
         self.pos_update_timer = QtCore.QTimer(self.main_view)
         self.pos_update_timer.setInterval(5)
-        self.main_view.connect(self.pos_update_timer, QtCore.SIGNAL('timeout()'),self.update_ruby_mouse_move_pos)
+        self.main_view.connect(self.pos_update_timer, QtCore.SIGNAL('timeout()'), self.update_ruby_mouse_move_pos)
         self.main_view.ruby_axes.canvas.mpl_connect('button_press_event', self.axes_click)
         self.main_view.ruby_axes.canvas.mpl_connect('button_release_event', self.axes_release)
         self.main_view.ruby_axes.canvas.mpl_connect('motion_notify_event', self.axes_move)
@@ -45,7 +46,7 @@ class TRaxRubyController(TRaxModuleController):
         self.main_view.ruby_control_widget.reference_pos_txt.editingFinished.connect(self.reference_txt_changed)
         self.main_view.ruby_control_widget.temperature_txt.editingFinished.connect(self.temperature_txt_changed)
         self.main_view.ruby_control_widget.conditions_cb.currentIndexChanged.connect(self.condition_cb_changed)
-        self.connect_click_function(self.main_view.ruby_control_widget.fit_ruby_btn,self.fit_ruby_btn_click)
+        self.connect_click_function(self.main_view.ruby_control_widget.fit_ruby_btn, self.fit_ruby_btn_click)
 
     def load_roi_view(self):
         try:
@@ -55,20 +56,25 @@ class TRaxRubyController(TRaxModuleController):
             self.roi_controller.show()
 
     def data_changed(self):
-        self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
-        self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
-        self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
-        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
+        self.main_view.ruby_axes.update_graph(self.data.get_exp_data().get_spectrum(), self.data.click_pos,
+                                              self.data.get_fitted_spectrum())
+        self.main_view.set_ruby_filename(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-1])
+        self.main_view.set_ruby_foldername(
+            '/'.join(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-3:-1]))
+        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information_string())
 
     def roi_changed(self):
-        self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
-        self.main_view.set_ruby_filename(self.data.get_exp_file_name().replace('\\','/').split('/')[-1])
-        self.main_view.set_ruby_foldername('/'.join(self.data.get_exp_file_name().replace('\\','/').split('/')[-3:-1]))
+        self.main_view.ruby_axes.update_graph(self.data.get_exp_data().get_spectrum(), self.data.click_pos,
+                                              self.data.get_fitted_spectrum())
+        self.main_view.set_ruby_filename(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-1])
+        self.main_view.set_ruby_foldername(
+            '/'.join(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-3:-1]))
 
     def ruby_pos_changed(self):
-        self.main_view.ruby_axes.update_graph(self.data.get_spectrum(), self.data.click_pos, self.data.get_fitted_spectrum())
+        self.main_view.ruby_axes.update_graph(self.data.get_exp_data().get_spectrum(), self.data.click_pos,
+                                              self.data.get_fitted_spectrum())
 
-    def axes_click(self,event):
+    def axes_click(self, event):
         if event.button == 1:
             self._axes_mouse_x = event.xdata
             self.pos_update_timer.start()
@@ -76,23 +82,23 @@ class TRaxRubyController(TRaxModuleController):
             self.data.set_x_roi_limits_to(self.data.get_x_limits())
             pub.sendMessage("RUBY ROI CHANGED")
 
-    def axes_move(self,event):
+    def axes_move(self, event):
         self._axes_mouse_x = event.xdata
 
-    def axes_release(self,event):
+    def axes_release(self, event):
         self.pos_update_timer.stop()
-    
+
     def update_ruby_mouse_move_pos(self):
         x_coord = self._axes_mouse_x
         if x_coord is not None:
             self.update_ruby_pos(x_coord)
 
-    def update_ruby_pos(self,x_coord):
+    def update_ruby_pos(self, x_coord):
         self.data.set_click_pos(x_coord)
         self.main_view.ruby_control_widget.measured_pos_lbl.setText('%.2f' % x_coord)
         self.main_view.ruby_control_widget.pressure_lbl.setText('%.1f' % self.data.get_pressure())
 
-    def axes_mouse_scroll(self,event):
+    def axes_mouse_scroll(self, event):
         curr_xlim = self.main_view.ruby_axes.axes.get_xlim()
         base_scale = 1.5
         if event.button == 'up':

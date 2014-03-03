@@ -1,6 +1,6 @@
 # -*- mode: python -*-
 a = Analysis(['T-Rax.py'],
-             pathex=['D:\Programming\VS Projects\Spectrometer Stuff\T-Rax'],
+             pathex=['Z:\Documents\Programming\Large Projects\Spectrometer Stuff\T-Rax'],
              hiddenimports=[],
              hookspath=None,
              runtime_hooks=None)
@@ -12,7 +12,7 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=False )
+          console=False)
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

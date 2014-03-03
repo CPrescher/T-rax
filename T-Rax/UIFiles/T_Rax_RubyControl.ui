@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>263</width>
-    <height>393</height>
+    <height>436</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -146,8 +146,11 @@ QComboBox QAbstractItemView{
  }  </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="topMargin">
-    <number>0</number>
+   <property name="spacing">
+    <number>20</number>
+   </property>
+   <property name="margin">
+    <number>20</number>
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox">
@@ -173,6 +176,9 @@ QComboBox QAbstractItemView{
           </property>
           <property name="text">
            <string>Load Data</string>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -202,6 +208,9 @@ QComboBox QAbstractItemView{
             <property name="text">
              <string>&lt;--</string>
             </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -220,6 +229,9 @@ QComboBox QAbstractItemView{
             </property>
             <property name="text">
              <string>--&gt;</string>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -249,12 +261,18 @@ QComboBox QAbstractItemView{
      <property name="text">
       <string>ROI Setup</string>
      </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Pressure</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -529,6 +547,9 @@ QComboBox QAbstractItemView{
      </property>
      <property name="text">
       <string>Fit Ruby</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

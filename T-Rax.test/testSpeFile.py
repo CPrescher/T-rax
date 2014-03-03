@@ -4,7 +4,6 @@ import datetime
 import os
 
 from SPE_module import SPE_File
-from T_Rax_Data import ROI
 
 unittest_folder=os.getcwd()+'\\unittest files\\'
 

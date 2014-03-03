@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>260</width>
-    <height>575</height>
+    <height>538</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -177,6 +177,12 @@ QPushButton::disabled{
        <string>Experiment</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>20</number>
+       </property>
+       <property name="topMargin">
+        <number>20</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="minimumSize">
@@ -187,6 +193,12 @@ QPushButton::disabled{
          </property>
          <property name="title">
           <string>Experiment</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_8">
           <property name="spacing">
@@ -222,6 +234,9 @@ QPushButton::disabled{
               </property>
               <property name="text">
                <string>Load Data</string>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -273,6 +288,9 @@ QPushButton::disabled{
                 <property name="text">
                  <string>&lt;--</string>
                 </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
               <item>
@@ -291,6 +309,9 @@ QPushButton::disabled{
                 </property>
                 <property name="text">
                  <string>--&gt;</string>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -333,12 +354,18 @@ QPushButton::disabled{
              </size>
             </property>
             <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+             <enum>QFrame::NoFrame</enum>
             </property>
             <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+             <enum>QFrame::Plain</enum>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <property name="sizeConstraint">
+              <enum>QLayout::SetFixedSize</enum>
+             </property>
              <property name="margin">
               <number>0</number>
              </property>
@@ -356,13 +383,22 @@ QPushButton::disabled{
                <property name="text">
                 <string>&lt;</string>
                </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
+               <property name="default">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
              <item>
               <widget class="QLineEdit" name="frame_number_txt">
                <property name="minimumSize">
                 <size>
-                 <width>35</width>
+                 <width>30</width>
                  <height>0</height>
                 </size>
                </property>
@@ -374,6 +410,9 @@ QPushButton::disabled{
                </property>
                <property name="text">
                 <string>100</string>
+               </property>
+               <property name="frame">
+                <bool>true</bool>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -396,6 +435,15 @@ QPushButton::disabled{
                </property>
                <property name="text">
                 <string>&gt;</string>
+               </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
+               <property name="default">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -422,6 +470,15 @@ QPushButton::disabled{
                <property name="text">
                 <string>Time Lapse</string>
                </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
+               <property name="default">
+                <bool>false</bool>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
             </layout>
@@ -431,18 +488,48 @@ QPushButton::disabled{
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="roi_setup_btn">
-         <property name="text">
-          <string>ROI Setup</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
           <string>Fit Limits</string>
          </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>-1</number>
+          </property>
+          <property name="topMargin">
+           <number>14</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="roi_setup_btn">
+            <property name="mouseTracking">
+             <bool>false</bool>
+            </property>
+            <property name="acceptDrops">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>ROI Setup</string>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
+            </property>
+            <property name="default">
+             <bool>false</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
@@ -517,6 +604,9 @@ QPushButton::disabled{
          <property name="title">
           <string>Settings</string>
          </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <widget class="QComboBox" name="settings_cb">
@@ -540,6 +630,9 @@ QPushButton::disabled{
               <property name="text">
                <string>Load</string>
               </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>
@@ -552,6 +645,9 @@ QPushButton::disabled{
               </property>
               <property name="text">
                <string>Save</string>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -568,7 +664,7 @@ QPushButton::disabled{
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>118</height>
+           <height>70</height>
           </size>
          </property>
         </spacer>
@@ -590,14 +686,29 @@ QPushButton::disabled{
        <string>Calibration</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="spacing">
+        <number>25</number>
+       </property>
+       <property name="topMargin">
+        <number>20</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="upstream_calib_box">
          <property name="title">
           <string>Upstream</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="margin">
+           <number>10</number>
+          </property>
           <item>
            <layout class="QGridLayout" name="gridLayout_3">
+            <property name="spacing">
+             <number>12</number>
+            </property>
             <item row="0" column="1">
              <widget class="QLabel" name="us_calib_filename_lbl">
               <property name="text">
@@ -701,9 +812,21 @@ QPushButton::disabled{
          <property name="title">
           <string>Downstream</string>
          </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="margin">
+           <number>10</number>
+          </property>
           <item>
            <layout class="QGridLayout" name="gridLayout_4">
+            <property name="spacing">
+             <number>12</number>
+            </property>
             <item row="0" column="1">
              <widget class="QLabel" name="ds_calib_filename_lbl">
               <property name="text">

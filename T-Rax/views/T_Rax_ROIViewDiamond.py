@@ -1,15 +1,10 @@
 from UIFiles.T_Rax_ROI_Diamond_Selector import Ui_roi_selector_diamond_widget
 from views.T_Rax_ROIView import ResizeableRectangle
-from T_Rax_Data import TraxData, ROI
 from PyQt4 import QtGui, QtCore
-import sys
-import colors
-from wx.lib.pubsub import pub
 
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib import animation
 import matplotlib as mpl
 
 mpl.rcParams['font.size'] = 10
@@ -66,9 +61,9 @@ class TRaxROIViewDiamond(QtGui.QWidget, Ui_roi_selector_diamond_widget):
 
     def plot_img(self):
         self.axes.cla()
-        self.img_data = self.data.get_exp_img_data()
-        y_max = len(self.data.get_exp_img_data()) - 1
-        x_max = len(self.data.get_exp_img_data()[0]) - 1
+        self.img_data = self.data.get_exp_data().get_img_data()
+        y_max = len(self.img_data) - 1
+        x_max = len(self.img_data[0]) - 1
         self.axes.set_ylim([0,y_max])
         self.axes.set_xlim([0,x_max])
         img_data_1d= np.reshape(self.img_data, np.size(self.img_data))

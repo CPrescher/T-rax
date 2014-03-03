@@ -75,16 +75,16 @@ class TRaxROITemperatureController(object):
     def key_pressed(self,event):
         if type(event) == QtGui.QKeyEvent and \
             event.key() == QtCore.Qt.Key_Up:
-            ds_roi = self.data.get_ds_roi()
-            us_roi = self.data.get_us_roi()
+            ds_roi = self.data.get_roi_data().get_ds_roi()
+            us_roi = self.data.get_roi_data().get_us_roi()
             ds_roi[2:]=[ds_roi[2]-1, ds_roi[3]-1]
             us_roi[2:]=[us_roi[2]-1, us_roi[3]-1]
             self.data.roi_data.set_ds_roi(ds_roi)
             self.data.roi_data.set_us_roi(us_roi)
         elif type(event) == QtGui.QKeyEvent and \
             event.key() == QtCore.Qt.Key_Down:
-            ds_roi = self.data.get_ds_roi()
-            us_roi = self.data.get_us_roi()
+            ds_roi = self.data.get_roi_data().get_ds_roi()
+            us_roi = self.data.get_roi_data().get_us_roi()
             ds_roi[2:]=[ds_roi[2]+1, ds_roi[3]+1]
             us_roi[2:]=[us_roi[2]+1, us_roi[3]+1]
             self.data.roi_data.set_ds_roi(ds_roi)

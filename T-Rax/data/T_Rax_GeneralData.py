@@ -32,8 +32,8 @@ class TraxGeneralData(object):
                 try:
                     base_ind = max(max(np.where(xdata <= w)))
                     if base_ind < len(xdata) - 1:
-                        result.append(int(np.round((w - xdata[base_ind]) / \
-                                                   (xdata[base_ind + 1] - xdata[base_ind]) \
+                        result.append(int(np.round((w - xdata[base_ind]) /
+                                                   (xdata[base_ind + 1] - xdata[base_ind])
                                                    + base_ind)))
                     else:
                         result.append(base_ind)
@@ -77,29 +77,11 @@ class TraxGeneralData(object):
                                 (xdata[base_ind + 1] - xdata[base_ind]) \
                                 + base_ind))
 
-    def calc_spectra(self):
-        self.exp_data.calc_spectra()
+    def calculate_spectra(self):
+        self.exp_data.calculate_spectra()
 
-    def get_exp_file_name(self):
-        return self.exp_data.filename
-
-    def get_exp_img_data(self):
-        return self.exp_data.get_img_data()
-
-    def get_exp_graph_data(self):
-        return self.exp_data.get_ds_spectrum()
-
-    def get_spectrum(self):
-        return self.exp_data.get_spectrum()
-
-    def get_roi_max(self):
-        return self.exp_data.calc_roi_max(self.exp_data.roi.roi)
-
-    def get_whole_spectrum(self):
-        return self.exp_data.x, self.exp_data.y_whole_spectrum
-
-    def save_roi_data(self):
-        np.savetxt('roi_data.txt', self.roi.get_roi_data(), delimiter=',', fmt='%.0f')
+    def get_exp_data(self):
+        return self.exp_data
 
     def get_x_limits(self):
         return self.exp_data.get_x_limits()

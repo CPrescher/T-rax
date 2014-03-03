@@ -1,10 +1,7 @@
 from wx.lib.pubsub import pub
 from SPE_module import SPE_File
-import os.path
 import numpy as np
 import random
-import scipy.interpolate as ip
-from scipy.optimize import minimize
 from scipy.ndimage import gaussian_filter1d
 
 from data.T_Rax_GeneralData import TraxGeneralData
@@ -170,7 +167,7 @@ class DummyImg(ExpDiamondData):
     def __init__(self, roi_data_manager):
         self.roi=roi_data_manager.get_roi_data([1300,100])
         self.create_img()
-        self.filename = 'dummy_img.spe'
+        self.file_name = 'dummy_img.spe'
         self.num_frames=1
         self.current_frame=0
 
@@ -198,7 +195,7 @@ class DummyImg(ExpDiamondData):
     def img_data(self):
         return self._img_data
     
-    def get_file_information(self):
+    def get_file_information_string(self):
         return '10s, dummy spec, 575nm'
 
 

@@ -83,17 +83,17 @@ class TRaxMainController(object):
 
     def temperature_btn_click(self):
         self.main_view.navigate_to('temperature_btn')
-        self.main_view.status_file_information_lbl.setText(self.temperature_controller.data.exp_data.get_file_information())
+        self.main_view.status_file_information_lbl.setText(self.temperature_controller.data.exp_data.get_file_information_string())
         self.mode = "temperature"
 
     def ruby_btn_click(self):
         self.main_view.navigate_to('ruby_btn')
-        self.main_view.status_file_information_lbl.setText(self.ruby_controller.data.exp_data.get_file_information())
+        self.main_view.status_file_information_lbl.setText(self.ruby_controller.data.exp_data.get_file_information_string())
         self.mode = "ruby"
 
     def diamond_btn_click(self):
         self.main_view.navigate_to('diamond_btn')
-        self.main_view.status_file_information_lbl.setText(self.diamond_controller.data.exp_data.get_file_information())
+        self.main_view.status_file_information_lbl.setText(self.diamond_controller.data.exp_data.get_file_information_string())
         self.mode = "diamond"
 
     def raman_btn_click(self):

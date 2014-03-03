@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'T_Rax_DiamondControl.ui'
 #
-# Created: Thu Jan 02 15:13:08 2014
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Mon Feb 17 14:35:53 2014
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_diamond_control_widget(object):
     def setupUi(self, diamond_control_widget):
         diamond_control_widget.setObjectName(_fromUtf8("diamond_control_widget"))
-        diamond_control_widget.resize(251, 430)
+        diamond_control_widget.resize(263, 457)
         diamond_control_widget.setMaximumSize(QtCore.QSize(263, 16777215))
         diamond_control_widget.setStyleSheet(_fromUtf8(" #ruby_control_widget, #temperature_control_widget, #diamond_control_widget, QTabWidget::pane, QTabWidget::tab-bar,  \n"
 " #experiment_tab, #calibration_tab{  \n"
@@ -153,7 +153,8 @@ class Ui_diamond_control_widget(object):
 "     background:qconicalgradient(cx:0.5, cy:0.5, angle:0, stop:0 rgba(30, 30, 30, 255), stop:1 rgba(60, 60, 64, 255))  \n"
 " }  "))
         self.verticalLayout_2 = QtGui.QVBoxLayout(diamond_control_widget)
-        self.verticalLayout_2.setContentsMargins(-1, 0, -1, -1)
+        self.verticalLayout_2.setSpacing(20)
+        self.verticalLayout_2.setMargin(20)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.groupBox = QtGui.QGroupBox(diamond_control_widget)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -168,6 +169,7 @@ class Ui_diamond_control_widget(object):
         sizePolicy.setHeightForWidth(self.load_exp_data_btn.sizePolicy().hasHeightForWidth())
         self.load_exp_data_btn.setSizePolicy(sizePolicy)
         self.load_exp_data_btn.setMinimumSize(QtCore.QSize(90, 0))
+        self.load_exp_data_btn.setFlat(True)
         self.load_exp_data_btn.setObjectName(_fromUtf8("load_exp_data_btn"))
         self.gridLayout.addWidget(self.load_exp_data_btn, 0, 0, 1, 1)
         self.exp_filename_lbl = QtGui.QLabel(self.groupBox)
@@ -183,6 +185,7 @@ class Ui_diamond_control_widget(object):
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.load_previous_exp_data_btn = QtGui.QPushButton(self.groupBox)
         self.load_previous_exp_data_btn.setMaximumSize(QtCore.QSize(40, 24))
+        self.load_previous_exp_data_btn.setFlat(True)
         self.load_previous_exp_data_btn.setObjectName(_fromUtf8("load_previous_exp_data_btn"))
         self.horizontalLayout.addWidget(self.load_previous_exp_data_btn)
         self.load_next_exp_data_btn = QtGui.QPushButton(self.groupBox)
@@ -192,6 +195,7 @@ class Ui_diamond_control_widget(object):
         sizePolicy.setHeightForWidth(self.load_next_exp_data_btn.sizePolicy().hasHeightForWidth())
         self.load_next_exp_data_btn.setSizePolicy(sizePolicy)
         self.load_next_exp_data_btn.setMaximumSize(QtCore.QSize(40, 24))
+        self.load_next_exp_data_btn.setFlat(True)
         self.load_next_exp_data_btn.setObjectName(_fromUtf8("load_next_exp_data_btn"))
         self.horizontalLayout.addWidget(self.load_next_exp_data_btn)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
@@ -205,11 +209,17 @@ class Ui_diamond_control_widget(object):
         self.verticalLayout_3.addLayout(self.gridLayout)
         self.verticalLayout_2.addWidget(self.groupBox)
         self.roi_setup_btn = QtGui.QPushButton(diamond_control_widget)
+        self.roi_setup_btn.setAutoDefault(False)
+        self.roi_setup_btn.setDefault(False)
+        self.roi_setup_btn.setFlat(True)
         self.roi_setup_btn.setObjectName(_fromUtf8("roi_setup_btn"))
         self.verticalLayout_2.addWidget(self.roi_setup_btn)
         self.groupBox_2 = QtGui.QGroupBox(diamond_control_widget)
+        self.groupBox_2.setFlat(True)
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
         self.verticalLayout = QtGui.QVBoxLayout(self.groupBox_2)
+        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setContentsMargins(-1, 12, -1, -1)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)

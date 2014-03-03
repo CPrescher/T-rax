@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Thu Jan 02 15:13:08 2014
-#      by: PyQt4 UI code generator 4.9.6
+# Created: Mon Feb 17 14:35:53 2014
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -112,6 +112,7 @@ class Ui_T_Rax_MainWindow(object):
 "     background: #F1F1F1;  \n"
 "     color: black;  \n"
 " }  "))
+        T_Rax_MainWindow.setAnimated(False)
         self.centralwidget = QtGui.QWidget(T_Rax_MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
@@ -121,8 +122,9 @@ class Ui_T_Rax_MainWindow(object):
         self.navigation_frame = QtGui.QFrame(self.centralwidget)
         self.navigation_frame.setMinimumSize(QtCore.QSize(0, 60))
         self.navigation_frame.setMaximumSize(QtCore.QSize(16777215, 100))
-        self.navigation_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.navigation_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.navigation_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.navigation_frame.setFrameShadow(QtGui.QFrame.Plain)
+        self.navigation_frame.setLineWidth(0)
         self.navigation_frame.setObjectName(_fromUtf8("navigation_frame"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.navigation_frame)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
@@ -150,26 +152,30 @@ class Ui_T_Rax_MainWindow(object):
         self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.verticalLayout.addWidget(self.navigation_frame)
         self.main_frame = QtGui.QFrame(self.centralwidget)
-        self.main_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.main_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.main_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.main_frame.setFrameShadow(QtGui.QFrame.Plain)
+        self.main_frame.setLineWidth(0)
         self.main_frame.setObjectName(_fromUtf8("main_frame"))
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.main_frame)
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setMargin(0)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.figure1_frame = QtGui.QFrame(self.main_frame)
-        self.figure1_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.figure1_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.figure1_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.figure1_frame.setFrameShadow(QtGui.QFrame.Plain)
+        self.figure1_frame.setLineWidth(0)
         self.figure1_frame.setObjectName(_fromUtf8("figure1_frame"))
         self.horizontalLayout_2.addWidget(self.figure1_frame)
         self.figure2_frame = QtGui.QFrame(self.main_frame)
-        self.figure2_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.figure2_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.figure2_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.figure2_frame.setFrameShadow(QtGui.QFrame.Plain)
+        self.figure2_frame.setLineWidth(0)
         self.figure2_frame.setObjectName(_fromUtf8("figure2_frame"))
         self.horizontalLayout_2.addWidget(self.figure2_frame)
         self.figure3_frame = QtGui.QFrame(self.main_frame)
-        self.figure3_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.figure3_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.figure3_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.figure3_frame.setFrameShadow(QtGui.QFrame.Plain)
+        self.figure3_frame.setLineWidth(0)
         self.figure3_frame.setObjectName(_fromUtf8("figure3_frame"))
         self.horizontalLayout_2.addWidget(self.figure3_frame)
         self.verticalLayout.addWidget(self.main_frame)
@@ -180,8 +186,9 @@ class Ui_T_Rax_MainWindow(object):
         sizePolicy.setHeightForWidth(self.status_bar.sizePolicy().hasHeightForWidth())
         self.status_bar.setSizePolicy(sizePolicy)
         self.status_bar.setMaximumSize(QtCore.QSize(16777215, 25))
-        self.status_bar.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.status_bar.setFrameShadow(QtGui.QFrame.Raised)
+        self.status_bar.setFrameShape(QtGui.QFrame.NoFrame)
+        self.status_bar.setFrameShadow(QtGui.QFrame.Plain)
+        self.status_bar.setLineWidth(0)
         self.status_bar.setObjectName(_fromUtf8("status_bar"))
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.status_bar)
         self.horizontalLayout_3.setSpacing(5)
