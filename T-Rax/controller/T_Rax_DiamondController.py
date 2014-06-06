@@ -78,9 +78,9 @@ class TRaxDiamondController(TRaxModuleController):
         self.main_view.diamond_axes.update_graph(self.data.get_spectrum(), self.data.click_pos,
                                                  self.data.get_derivative_spectrum())
         self.main_view.diamond_control_widget.exp_filename_lbl.setText(
-            self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-1])
+            self.data.exp_data.file_name.replace('\\', '/').split('/')[-1])
         self.main_view.diamond_control_widget.exp_folder_name_lbl.setText('/'.
-                                                                          join(self.data.get_exp_data().file_name.
+                                                                          join(self.data.exp_data.file_name.
                                                                                    replace('\\', '/').split('/')[
                                                                                -3:-1]))
         self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information_string())

@@ -112,12 +112,12 @@ class TRaxTemperatureController(TRaxModuleController):
             ds_calibration_filename_str = 'Select File...'
 
         self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
-                                                     self.data.get_exp_data().get_ds_roi_max(),
-                                                     self.data.get_exp_data().get_us_roi_max(),
+                                                     self.data.exp_data.get_ds_roi_max(),
+                                                     self.data.exp_data.get_us_roi_max(),
                                                      ds_calibration_filename_str, us_calibration_filename_str)
-        self.main_view.set_temperature_filename(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-1])
+        self.main_view.set_temperature_filename(self.data.exp_data.file_name.replace('\\', '/').split('/')[-1])
         self.main_view.set_temperature_foldername(
-            '/'.join(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-3:-1]))
+            '/'.join(self.data.exp_data.file_name.replace('\\', '/').split('/')[-3:-1]))
         self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information_string())
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
         self.update_frames_widget()
@@ -198,20 +198,20 @@ class TRaxTemperatureController(TRaxModuleController):
             ds_calibration_filename_str = 'Select File...'
 
         self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
-                                                     self.data.get_exp_data().get_ds_roi_max(),
-                                                     self.data.get_exp_data().get_us_roi_max(),
+                                                     self.data.exp_data.get_ds_roi_max(),
+                                                     self.data.exp_data.get_us_roi_max(),
                                                      ds_calibration_filename_str, us_calibration_filename_str)
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
 
     def frame_txt_value_changed(self):
-        self.data.get_exp_data().set_current_frame(
+        self.data.exp_data.set_current_frame(
             int(self.main_view.temperature_control_widget.frame_number_txt.text()) - 1)
 
     def load_next_frame(self):
-        self.data.get_exp_data().load_next_frame()
+        self.data.exp_data.load_next_frame()
 
     def load_previous_frame(self):
-        self.data.get_exp_data().load_previous_frame()
+        self.data.exp_data.load_previous_frame()
 
     def start_time_lapse(self):
         self._time_lapse_is_on = True
@@ -234,8 +234,8 @@ class TRaxTemperatureController(TRaxModuleController):
             caput('13IDD:us_las_temp.VAL', self.data.get_us_temperature())
             caput('13IDD:ds_las_temp.VAL', self.data.get_ds_temperature())
 
-            caput('13IDD:up_t_int', str(self.data.get_exp_data().get_us_roi_max()))
-            caput('13IDD:dn_t_int', str(self.data.get_exp_data().get_ds_roi_max()))
+            caput('13IDD:up_t_int', str(self.data.exp_data.get_us_roi_max()))
+            caput('13IDD:dn_t_int', str(self.data.exp_data.get_ds_roi_max()))
 
     def load_ds_calib_data(self, filename=None):
         if filename is None:
