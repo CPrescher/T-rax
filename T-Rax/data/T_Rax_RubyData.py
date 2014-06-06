@@ -147,6 +147,9 @@ class ExpRubyData(object):
         else:
             return self._img_data
 
+    def get_filename(self):
+        return self.filename
+
     def get_img_data(self):
         return self.img_data()
 
@@ -197,7 +200,7 @@ class ExpRubyData(object):
     def get_x_limits(self):
         return np.array([min(self.x_whole), max(self.x_whole)])
     
-    def get_file_information(self):
+    def get_file_information_string(self):
         return ('{exp_time:g}s, ' +\
                '{detector}, '+\
                '{grating}, ' +\
@@ -212,7 +215,7 @@ class DummyImg(ExpRubyData):
     def __init__(self, roi_data_manager):
         self.roi=roi_data_manager.get_roi_data([1300,100])
         self.create_img()
-        self.file_name = 'dummy_img.spe'
+        self.filename = 'dummy_img.spe'
         self.current_frame=0;
 
     def create_img(self):

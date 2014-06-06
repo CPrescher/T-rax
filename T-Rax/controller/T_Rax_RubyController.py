@@ -58,17 +58,17 @@ class TRaxRubyController(TRaxModuleController):
     def data_changed(self):
         self.main_view.ruby_axes.update_graph(self.data.get_exp_data().get_spectrum(), self.data.click_pos,
                                               self.data.get_fitted_spectrum())
-        self.main_view.set_ruby_filename(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-1])
+        self.main_view.set_ruby_filename(self.data.get_exp_data().get_filename().replace('\\', '/').split('/')[-1])
         self.main_view.set_ruby_foldername(
-            '/'.join(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-3:-1]))
+            '/'.join(self.data.get_exp_data().get_filename().replace('\\', '/').split('/')[-3:-1]))
         self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information_string())
 
     def roi_changed(self):
         self.main_view.ruby_axes.update_graph(self.data.get_exp_data().get_spectrum(), self.data.click_pos,
                                               self.data.get_fitted_spectrum())
-        self.main_view.set_ruby_filename(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-1])
+        self.main_view.set_ruby_filename(self.data.get_exp_data().get_filename().replace('\\', '/').split('/')[-1])
         self.main_view.set_ruby_foldername(
-            '/'.join(self.data.get_exp_data().file_name.replace('\\', '/').split('/')[-3:-1]))
+            '/'.join(self.data.get_exp_data().get_filename().replace('\\', '/').split('/')[-3:-1]))
 
     def ruby_pos_changed(self):
         self.main_view.ruby_axes.update_graph(self.data.get_exp_data().get_spectrum(), self.data.click_pos,
