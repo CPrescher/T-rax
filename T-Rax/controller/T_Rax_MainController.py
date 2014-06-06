@@ -27,7 +27,13 @@ class TRaxMainController(object):
         self.create_sub_controller()
         self.load_directories()
         self.temperature_btn_click()
+        self.raise_window()
+
+    def raise_window(self):
         self.main_view.show()
+        self.main_view.setWindowState(self.main_view.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.main_view.activateWindow()
+        self.main_view.raise_()
 
     def create_sub_controller(self):
         self.temperature_controller = TRaxTemperatureController(self,self.main_view)
