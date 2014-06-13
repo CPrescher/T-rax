@@ -29,8 +29,8 @@ class TraxDiamondData(TraxGeneralData):
         self.fitted_spectrum=Spectrum([],[])
         pub.sendMessage("EXP DIAMOND DATA CHANGED")
 
-    def read_exp_image_file(self, file_name):
-        img_file= SPE_File(file_name)
+    def read_exp_image_file(self, filename):
+        img_file= SPE_File(filename)
         return ExpDiamondData(img_file, self.roi_data_manager)
   
 #********************DIAMOND STUFF HERE***********************
@@ -167,7 +167,7 @@ class DummyImg(ExpDiamondData):
     def __init__(self, roi_data_manager):
         self.roi=roi_data_manager.get_roi_data([1300,100])
         self.create_img()
-        self.file_name = 'dummy_img.spe'
+        self.filename = 'dummy_img.spe'
         self.num_frames=1
         self.current_frame=0
 
@@ -195,7 +195,7 @@ class DummyImg(ExpDiamondData):
     def img_data(self):
         return self._img_data
     
-    def get_file_information_string(self):
+    def get_file_information(self):
         return '10s, dummy spec, 575nm'
 
 

@@ -62,7 +62,7 @@ class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
 
     def plot_img(self):
         self.axes.cla()
-        self.img_data = self.data.get_exp_data().get_img_data()
+        self.img_data = self.data.exp_data.get_img_data()
         y_max = len(self.img_data) - 1
         x_max = len(self.img_data[0]) - 1
         self.axes.set_ylim([0, y_max])

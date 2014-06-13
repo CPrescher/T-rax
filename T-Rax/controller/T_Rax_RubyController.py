@@ -61,7 +61,7 @@ class TRaxRubyController(TRaxModuleController):
         self.main_view.set_ruby_filename(self.data.exp_data.get_filename().replace('\\', '/').split('/')[-1])
         self.main_view.set_ruby_foldername(
             '/'.join(self.data.exp_data.get_filename().replace('\\', '/').split('/')[-3:-1]))
-        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information_string())
+        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
 
     def roi_changed(self):
         self.main_view.ruby_axes.update_graph(self.data.exp_data.get_spectrum(), self.data.click_pos,

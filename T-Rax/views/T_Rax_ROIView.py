@@ -102,7 +102,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
 
     def plot_img(self):
         self.img_axes.cla()
-        self.img_data = self.data.get_exp_data().get_img_data()
+        self.img_data = self.data.exp_data.get_img_data()
         self.img_max_intensity = np.max(np.max(self.img_data))
         self.img_min_intensity = np.min(np.min(self.img_data))
         self.img_range_intensity = self.img_max_intensity - self.img_min_intensity
@@ -122,13 +122,13 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
 
     def plot_histogram(self):
         self.histogram_axes.cla()
-        self.histogram_data = np.concatenate((np.ravel(self.data.get_exp_data().get_ds_roi_img()),
-                                              np.ravel(self.data.get_exp_data().get_us_roi_img())))
+        self.histogram_data = np.concatenate((np.ravel(self.data.exp_data.get_ds_roi_img()),
+                                              np.ravel(self.data.exp_data.get_us_roi_img())))
         self.histogram_axes.hist(self.histogram_data, bins=100,
                                  orientation='horizontal', normed=False, histtype='stepfilled',
                                  log=True, color=(0.40, 0.40, 0.4))
-        self.histogram_axes.set_ylim(np.min(np.min(self.data.get_exp_data().get_img_data())),
-                                     np.max(np.max(self.data.get_exp_data().get_img_data())))
+        self.histogram_axes.set_ylim(np.min(np.min(self.data.exp_data.get_img_data())),
+                                     np.max(np.max(self.data.exp_data.get_img_data())))
         self.histogram_axes.yaxis.set_visible(False)
         self.histogram_axes.xaxis.set_visible(False)
 

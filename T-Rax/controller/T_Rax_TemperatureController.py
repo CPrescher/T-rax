@@ -102,12 +102,12 @@ class TRaxTemperatureController(TRaxModuleController):
     def frame_changed(self):
         self.data.calculate_spectra()
         try:
-            us_calibration_filename_str = self.data.get_us_calibration_data().file_name
+            us_calibration_filename_str = self.data.get_us_calibration_data().filename
         except AttributeError:
             us_calibration_filename_str = 'Select File...'
 
         try:
-            ds_calibration_filename_str = self.data.get_ds_calibration_data().file_name
+            ds_calibration_filename_str = self.data.get_ds_calibration_data().filename
         except AttributeError:
             ds_calibration_filename_str = 'Select File...'
 
@@ -115,10 +115,10 @@ class TRaxTemperatureController(TRaxModuleController):
                                                      self.data.exp_data.get_ds_roi_max(),
                                                      self.data.exp_data.get_us_roi_max(),
                                                      ds_calibration_filename_str, us_calibration_filename_str)
-        self.main_view.set_temperature_filename(self.data.exp_data.file_name.replace('\\', '/').split('/')[-1])
+        self.main_view.set_temperature_filename(self.data.exp_data.filename.replace('\\', '/').split('/')[-1])
         self.main_view.set_temperature_foldername(
-            '/'.join(self.data.exp_data.file_name.replace('\\', '/').split('/')[-3:-1]))
-        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information_string())
+            '/'.join(self.data.exp_data.filename.replace('\\', '/').split('/')[-3:-1]))
+        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
         self.main_view.set_fit_limits(self.data.get_x_roi_limits())
         self.update_frames_widget()
         self.update_calibration_view()
@@ -155,12 +155,12 @@ class TRaxTemperatureController(TRaxModuleController):
 
     def update_calibration_view(self):
         try:
-            us_calibration_filename_str = self.data.get_us_calibration_data().file_name
+            us_calibration_filename_str = self.data.get_us_calibration_data().filename
         except AttributeError:
             us_calibration_filename_str = 'Select File...'
 
         try:
-            ds_calibration_filename_str = self.data.get_ds_calibration_data().file_name
+            ds_calibration_filename_str = self.data.get_ds_calibration_data().filename
         except AttributeError:
             ds_calibration_filename_str = 'Select File...'
 
@@ -188,12 +188,12 @@ class TRaxTemperatureController(TRaxModuleController):
         self.data.calculate_spectra()
 
         try:
-            us_calibration_filename_str = self.data.get_us_calibration_data().file_name
+            us_calibration_filename_str = self.data.get_us_calibration_data().filename
         except AttributeError:
             us_calibration_filename_str = 'Select File...'
 
         try:
-            ds_calibration_filename_str = self.data.get_ds_calibration_data().file_name
+            ds_calibration_filename_str = self.data.get_ds_calibration_data().filename
         except AttributeError:
             ds_calibration_filename_str = 'Select File...'
 

@@ -57,8 +57,8 @@ class TraxData(object):
         elif os.path.isfile(new_file_name_with_leading_zeros):
             self.load_exp_data(new_file_name_with_leading_zeros)
 
-    def read_exp_image_file(self, file_name):
-        img_file = SPE_File(file_name)
+    def read_exp_image_file(self, filename):
+        img_file = SPE_File(filename)
         if img_file.type == 'image':
             return ExpData(img_file, self.roi_data_manager)
         elif img_file.type == 'spectrum':
@@ -102,8 +102,8 @@ class TraxData(object):
         return ds_temperature, ds_temperature_err,\
                us_temperature, us_temperature_err
 
-    def load_ds_calib_data(self, file_name, send_message=True):
-        self.ds_calib_data = self.read_exp_image_file(file_name)
+    def load_ds_calib_data(self, filename, send_message=True):
+        self.ds_calib_data = self.read_exp_image_file(filename)
         self.calc_spectra()
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
@@ -129,8 +129,8 @@ class TraxData(object):
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def load_us_calib_data(self, file_name,send_message=True):
-        self.us_calib_data = self.read_exp_image_file(file_name)
+    def load_us_calib_data(self, filename,send_message=True):
+        self.us_calib_data = self.read_exp_image_file(filename)
         self.calc_spectra()
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")

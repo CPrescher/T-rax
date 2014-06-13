@@ -35,8 +35,8 @@ class TraxTemperatureData(TraxGeneralData):
         pub.sendMessage("EXP DATA CHANGED")
         pub.sendMessage("ROI CHANGED")
 
-    def _read_exp_image_file(self, file_name):
-        img_file = SPE_File(file_name)
+    def _read_exp_image_file(self, filename):
+        img_file = SPE_File(filename)
         return ExpData(img_file, self.roi_data_manager)
 
     def load_exp_file(self, filename):
@@ -53,14 +53,14 @@ class TraxTemperatureData(TraxGeneralData):
         self.calculate_spectra()
         pub.sendMessage("EXP DATA CHANGED")
 
-    def load_ds_calibration_data(self, file_name, send_message=True):
-        self.ds_calibration_data = self._read_exp_image_file(file_name)
+    def load_ds_calibration_data(self, filename, send_message=True):
+        self.ds_calibration_data = self._read_exp_image_file(filename)
         self.calculate_spectra()
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def load_us_calibration_data(self, file_name, send_message=True):
-        self.us_calibration_data = self._read_exp_image_file(file_name)
+    def load_us_calibration_data(self, filename, send_message=True):
+        self.us_calibration_data = self._read_exp_image_file(filename)
         self.calculate_spectra()
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
@@ -162,7 +162,7 @@ class GeneralData(object):
         self._img_file = img_file
         self.roi_data = roi_data_manager.get_roi_data(img_file.get_dimension())
 
-        self.file_name = self._img_file.filename
+        self.filename = self._img_file.filename
         self._img_data = self._img_file.img
         self.x_whole = self._img_file.x_calibration
         self.current_frame = 0
@@ -197,7 +197,7 @@ class GeneralData(object):
     def get_exposure_time(self):
         return self._img_file.exposure_time
 
-    def get_file_information_string(self):
+    def get_file_information(self):
         return ('{exp_time:g}s, ' +
                 '{detector}, ' +
                 '{grating}, ' +
@@ -278,8 +278,8 @@ class ExpData(ImgData):
         return self.us_corrected_spectrum
 
     def _get_file_name_info(self):
-        file_str = ''.join(self.file_name.split('.')[0:-1])
-        self._file_type = self.file_name.split('.')[-1]
+        file_str = ''.join(self.filename.split('.')[0:-1])
+        self._file_type = self.filename.split('.')[-1]
 
         self._file_number_str = self._get_ending_number(file_str)
         try:
@@ -336,7 +336,7 @@ class DummyImg(ExpData):
         self.current_frame = 0
         self.roi_data = roi_data_manager.get_roi_data([1300, 100])
         self.create_img()
-        self.file_name = 'dummy_img.spe'
+        self.filename = 'dummy_img.spe'
 
     def create_img(self):
         x = np.linspace(645, 850, 1024)
@@ -371,7 +371,7 @@ class DummyImg(ExpData):
     def get_img_dimension(self):
         return (1300, 100)
 
-    def get_file_information_string(self):
+    def get_file_information(self):
         return '10s, dummy spec, 550nm'
 
 
@@ -379,7 +379,7 @@ class ExpDataFromImgData(ExpData):
     def __init__(self, img_data, filename, x_calibration, roi_data_manager):
         self._img_data = img_data
         self.num_frames = 1
-        self.file_name = filename
+        self.filename = filename
         self.x_whole = x_calibration
         self.img_dimension = (np.size(self._img_data, 1), np.size(self._img_data, 0))
         self.roi_data = roi_data_manager.get_roi_data(self.get_img_dimension())
@@ -681,12 +681,12 @@ def gauss_curve_function(x, scaling, center, sigma):
 class TraxTemperatureSettings():
     def __init__(self, data):
         try:
-            us_calibration_filename_str = data.get_us_calibration_data().file_name
+            us_calibration_filename_str = data.get_us_calibration_data().filename
         except AttributeError:
             us_calibration_filename_str = 'Select File...'
 
         try:
-            ds_calibration_filename_str = data.get_ds_calibration_data().file_name
+            ds_calibration_filename_str = data.get_ds_calibration_data().filename
         except AttributeError:
             ds_calibration_filename_str = 'Select File...'
 

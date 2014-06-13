@@ -18,11 +18,11 @@ def convert_ui_files(folder='/UIFiles'):
     os.chdir(new_path)
     for file in os.listdir('.'):
         if file.endswith(".ui"):
-            file_name=str(file).split('.')[0]
+            filename=str(file).split('.')[0]
             if sys.platform == 'darwin':
-                cmd='pyuic4-2.7 '+file +' > '+file_name+'.py'
+                cmd='pyuic4-2.7 '+file +' > '+filename+'.py'
             else:
-                cmd='pyuic4-2.7 '+file +' > '+file_name+'.py'
+                cmd='pyuic4-2.7 '+file +' > '+filename+'.py'
             print cmd
             os.system(cmd)
     os.chdir(old_path)

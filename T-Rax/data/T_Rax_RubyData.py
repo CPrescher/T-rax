@@ -28,8 +28,8 @@ class TraxRubyData(TraxGeneralData):
         self.fitted_spectrum=Spectrum([],[])
         pub.sendMessage("EXP RUBY DATA CHANGED")
 
-    def read_exp_image_file(self, file_name):
-        img_file= SPE_File(file_name)
+    def read_exp_image_file(self, filename):
+        img_file= SPE_File(filename)
         return ExpRubyData(img_file, self.roi_data_manager)
     
 #********************RUBY STUFF HERE***********************
@@ -200,7 +200,7 @@ class ExpRubyData(object):
     def get_x_limits(self):
         return np.array([min(self.x_whole), max(self.x_whole)])
     
-    def get_file_information_string(self):
+    def get_file_information(self):
         return ('{exp_time:g}s, ' +\
                '{detector}, '+\
                '{grating}, ' +\
@@ -243,7 +243,7 @@ class DummyImg(ExpRubyData):
         return self._img_data
 
     
-    def get_file_information_string(self):
+    def get_file_information(self):
         return '10s, dummy spec, 700nm'
 
 
