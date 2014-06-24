@@ -11,10 +11,13 @@ class TemperatureControlWidget(QtGui.QWidget, Ui_temperature_control_widget):
         self.setupUi(self)
         self.set_initial_values()
         self.set_validator()
+        modify_combobox_look(self.settings_cb)
 
     def set_initial_values(self):
         self.ds_etalon_rb.toggle()
         self.us_etalon_rb.toggle()
+
+
 
     def set_validator(self):
         self.us_temperature_txt.setValidator(QtGui.QDoubleValidator())
@@ -36,6 +39,7 @@ class RubyControlWidget(QtGui.QWidget, Ui_ruby_control_widget):
         super(RubyControlWidget, self).__init__(parent)
         self.setupUi(self)
         self.set_validator()
+        modify_combobox_look(self.conditions_cb)
 
     def set_validator(self):
         self.reference_pos_txt.setValidator(QtGui.QDoubleValidator())
@@ -50,3 +54,8 @@ class DiamondControlWidget(QtGui.QWidget, Ui_diamond_control_widget):
     def set_validator(self):
         self.reference_pos_txt.setValidator(QtGui.QDoubleValidator())
         self.laser_line_txt.setValidator(QtGui.QDoubleValidator())
+
+
+def modify_combobox_look(combobox):
+    cleanlooks = QtGui.QStyleFactory.create('cleanlooks')
+    combobox.setStyle(cleanlooks)

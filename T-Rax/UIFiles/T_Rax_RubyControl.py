@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'T_Rax_RubyControl.ui'
 #
-# Created: Mon Feb 17 14:35:53 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Mon Jun 23 22:08:39 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,135 +26,12 @@ except AttributeError:
 class Ui_ruby_control_widget(object):
     def setupUi(self, ruby_control_widget):
         ruby_control_widget.setObjectName(_fromUtf8("ruby_control_widget"))
-        ruby_control_widget.resize(263, 436)
+        ruby_control_widget.resize(263, 491)
         ruby_control_widget.setMaximumSize(QtCore.QSize(263, 16777215))
-        ruby_control_widget.setStyleSheet(_fromUtf8(" #ruby_control_widget, #temperature_control_widget, #diamond_control_widget, QTabWidget::pane, QTabWidget::tab-bar,  \n"
-" #experiment_tab, #calibration_tab{  \n"
-"     background: #1E1E1E;      \n"
-" }  \n"
-"   \n"
-" #temperature_control_widget {  \n"
-"     padding-left: 5px;  \n"
-" }  \n"
-"   \n"
-" QLabel , QCheckBox, QGroupBox, QRadioButton, QComboBox  {  \n"
-"     color: #F1F1F1;  \n"
-"     font-weight: bold;  \n"
-" }  \n"
-" QCheckBox{  \n"
-"     border-radius: 5px;  \n"
-" }  \n"
-" QRadioButton {  \n"
-"     font-weight: normal;  \n"
-" }  \n"
-"   \n"
-" QLineEdit{  \n"
-"     border-radius: 5px;  \n"
-"     background: #F1F1F1;  \n"
-"     color: black;  \n"
-" }  \n"
-"\n"
-"\n"
-"QComboBox {\n"
-"    background: #2D2D30;\n"
-"    border-radius:5px;\n"
-"    font-weight: normal;\n"
-"    padding: 4px;\n"
-"    padding-left: 8px;\n"
-"    text-align: right;\n"
-"    margin:3px;\n"
-"}\n"
-"QComboBox QAbstractItemView{\n"
-"    background: #2D2D30;\n"
-"    margin-left: 10px;\n"
-"    color: #F1F1F1;\n"
-"    selection-background-color: rgba(221, 124, 40, 120);\n"
-"    border-radius: 5px;\n"
-"\n"
-"}\n"
-"   \n"
-" QPushButton{  \n"
-"     color:white;  \n"
-"     border-color: black;  \n"
-"     border: 1px solid rgba(241,241,241,255); \n"
-"     border-radius: 11px;  \n"
-"     font-weight: bold;  \n"
-"     padding: 5px;  \n"
-" }  \n"
-" #temperature_control_widget QPushButton {  \n"
-"     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(221, 124, 40, 180), stop:1 rgba(0, 0, 0, 50))\n"
-" }  \n"
-"   \n"
-" #ruby_control_widget QPushButton {  \n"
-"     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(197, 0, 3, 255), stop:1 rgba(0, 0, 0, 50))  \n"
-" }  \n"
-"   \n"
-" #diamond_control_widget QPushButton{  \n"
-"     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(27, 0, 134, 255), stop:1 rgba(0, 0, 0, 50))  \n"
-" }  \n"
-"   \n"
-" QPushButton::hover{  \n"
-"     border:1px solid #fff;  \n"
-"     padding: 5px;  \n"
-" }  \n"
-"   \n"
-" QPushPutton::pressed{  \n"
-"    border:2px solid #fff;  \n"
-"    padding: 5px;  \n"
-"    margin: 5px;  \n"
-" }  \n"
-"   \n"
-" QGroupBox {  \n"
-"     border: 1px solid #F1F1F1;  \n"
-"     border-radius: 5px;  \n"
-"     margin-top: 7px;  \n"
-"     padding: 0px  \n"
-" }  \n"
-" QGroupBox::title {  \n"
-"      subcontrol-origin: margin;  \n"
-"      left: 20px  \n"
-"  }  \n"
-"    \n"
-" QTabBar::tab {  \n"
-"     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(221, 124, 40, 180), stop:1 #1E1E1E);  \n"
-"     border: 1px solid  #F1F1F1;  \n"
-"     border-top-left-radius: 4px;  \n"
-"     border-top-right-radius: 10px;  \n"
-"     padding: 5px;  \n"
-"     padding-right: 10px;  \n"
-"     color: #FFF;  \n"
-"     font-weight: bold;  \n"
-"     width:85px;  \n"
-"     margin-left: 7px  \n"
-" }  \n"
-"   \n"
-" QTabBar::tab:hover {  \n"
-"     border-color: #fff;  \n"
-" }  \n"
-"   \n"
-" QTabBar::tab:selected {  \n"
-"     border:2px solid  #FFF;  \n"
-"     border-bottom-color: #1E1E1E;  \n"
-" }     \n"
-" QTabBar::tab:!selected {  \n"
-"     margin-top: 2px;  \n"
-" }  \n"
-"   \n"
-" #downstream_calib_box{  \n"
-"     color:  rgba(255,255,0,255);  \n"
-"     border: 1px solid rgba(255,255,0,255);  \n"
-" }  \n"
-" #upstream_calib_box {  \n"
-"     color: rgba(255,140,0,255);  \n"
-"     border: 1px solid rgba(255,140,0,255);  \n"
-" }  \n"
-"   \n"
-" #upstream_calib_box QPushButton, #downstream_calib_box QPushButton {  \n"
-"     background:qconicalgradient(cx:0.5, cy:0.5, angle:0, stop:0 rgba(30, 30, 30, 255), stop:1 rgba(60, 60, 64, 255))  \n"
-" }  "))
+        ruby_control_widget.setStyleSheet(_fromUtf8(""))
         self.verticalLayout_2 = QtGui.QVBoxLayout(ruby_control_widget)
-        self.verticalLayout_2.setSpacing(20)
-        self.verticalLayout_2.setMargin(20)
+        self.verticalLayout_2.setSpacing(12)
+        self.verticalLayout_2.setMargin(12)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.groupBox = QtGui.QGroupBox(ruby_control_widget)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -212,6 +89,8 @@ class Ui_ruby_control_widget(object):
         self.roi_setup_btn.setFlat(True)
         self.roi_setup_btn.setObjectName(_fromUtf8("roi_setup_btn"))
         self.verticalLayout_2.addWidget(self.roi_setup_btn)
+        spacerItem = QtGui.QSpacerItem(20, 8, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.verticalLayout_2.addItem(spacerItem)
         self.groupBox_2 = QtGui.QGroupBox(ruby_control_widget)
         self.groupBox_2.setFlat(True)
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
@@ -219,11 +98,12 @@ class Ui_ruby_control_widget(object):
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.formLayout.setItem(0, QtGui.QFormLayout.LabelRole, spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.formLayout.setItem(0, QtGui.QFormLayout.LabelRole, spacerItem1)
         self.conditions_cb = QtGui.QComboBox(self.groupBox_2)
         self.conditions_cb.setMinimumSize(QtCore.QSize(0, 26))
         self.conditions_cb.setMaximumSize(QtCore.QSize(250, 16777215))
+        self.conditions_cb.setFocusPolicy(QtCore.Qt.NoFocus)
         self.conditions_cb.setObjectName(_fromUtf8("conditions_cb"))
         self.conditions_cb.addItem(_fromUtf8(""))
         self.conditions_cb.addItem(_fromUtf8(""))
@@ -235,8 +115,8 @@ class Ui_ruby_control_widget(object):
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setSpacing(7)
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem1)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem2)
         self.reference_pos_txt = QtGui.QLineEdit(self.groupBox_2)
         self.reference_pos_txt.setMaximumSize(QtCore.QSize(80, 16777215))
         self.reference_pos_txt.setLayoutDirection(QtCore.Qt.RightToLeft)
@@ -254,8 +134,8 @@ class Ui_ruby_control_widget(object):
         self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_4)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_6.addItem(spacerItem2)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem3)
         self.temperature_txt = QtGui.QLineEdit(self.groupBox_2)
         self.temperature_txt.setMaximumSize(QtCore.QSize(80, 16777215))
         self.temperature_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
@@ -307,8 +187,8 @@ class Ui_ruby_control_widget(object):
         self.fit_ruby_btn.setFlat(True)
         self.fit_ruby_btn.setObjectName(_fromUtf8("fit_ruby_btn"))
         self.verticalLayout_2.addWidget(self.fit_ruby_btn)
-        spacerItem3 = QtGui.QSpacerItem(20, 49, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem3)
+        spacerItem4 = QtGui.QSpacerItem(20, 49, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem4)
 
         self.retranslateUi(ruby_control_widget)
         QtCore.QMetaObject.connectSlotsByName(ruby_control_widget)

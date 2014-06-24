@@ -14,52 +14,66 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#roi_selector_diamond_widget{
-	background: #1E1E1E;	
+   <string notr="true">QWidget{  
+     background: rgba(30, 30, 30, 255);      
+     color: #F1F1F1; 
+    font-size: 12px;
+ }  
+
+QGroupBox {  
+     border: 1px solid #ADADAD;  
+     border-radius: 4px;  
+     margin-top: 7px;  
+     padding: 0px  
+ }  
+
+QPushButton{  
+     color: #F1F1F1;
+     background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #505050);
+     border: 1px solid #5B5B5B;
+     border-radius: 5px; 
+     padding-left: 8px;
+height: 18px;
+    padding-right: 8px;   
+ }  
+QPushButton:pressed{
+        margin-top: 2,px;
+        margin-left: 2px;   
+}
+QPushButton::disabled{
 }
 
-QLabel ,QGroupBox{
-	color: #F1F1F1;
-	font-weight: bold;
+QPushButton::hover{  
+     border:1px solid #ADADAD; 
+ }  
+ 
+
+QPushButton::checked{
+    background: qlineargradient(
+        x1: 0, y1: 1, 
+        x2: 0, y2: 0,
+        stop: 0 #727272, 
+        stop: 1 #444444
+    );
+     border:1px solid  rgb(255, 120,00);
 }
 
-QLineEdit{
-	border-radius:5px;
-	background: #F1F1F1;
-	color: black;
+QPushButton::focus {
+    outline: None;
 }
 
-QPushButton{
-	color:white;
-	border-color: black;
-	border: 1px solid #F1F1F1;
-	border-radius: 11px;
-	font-weight: bold;
-	padding: 5px;
-	background:qconicalgradient(cx:0.5, cy:0.5, angle:0, stop:0 rgba(30, 30, 30, 255), stop:1 rgba(60, 60, 64, 255))
-}
+ QGroupBox::title {  
+      subcontrol-origin: margin;  
+      left: 20px  
+  }
 
-QPushButton::hover{
-    border:1px solid #fff;
-	margin: 0.5px;
-}
 
-QPushPutton::pressed{
-   border:1px solid #fff;
-	margin: 2px;
-}
-
-QGroupBox {
-	border: 1px solid #F1F1F1;
-	border-radius: 5px;
-	margin-top: 7px;
-	padding: 0px
-}
-QGroupBox::title {
-     subcontrol-origin: margin;
-     left: 20px;
-}
-
+ QLineEdit  {  
+     border-radius: 2px;  
+     background: #F1F1F1;  
+     color: black;  
+    height: 18 px;
+ }  
 #roi_box{
 	color: rgba(0, 127, 255, 255);
 	border: 1px solid rgba(0, 127, 255, 255);

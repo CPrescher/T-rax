@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'T_Rax_ROI_Ruby_Selector.ui'
 #
-# Created: Mon Feb 17 14:35:53 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Mon Jun 23 22:08:38 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,51 +27,66 @@ class Ui_roi_selector_ruby_widget(object):
     def setupUi(self, roi_selector_ruby_widget):
         roi_selector_ruby_widget.setObjectName(_fromUtf8("roi_selector_ruby_widget"))
         roi_selector_ruby_widget.resize(945, 504)
-        roi_selector_ruby_widget.setStyleSheet(_fromUtf8("#roi_selector_ruby_widget{\n"
-"    background: #1E1E1E;    \n"
+        roi_selector_ruby_widget.setStyleSheet(_fromUtf8("QWidget{  \n"
+"     background: rgba(30, 30, 30, 255);      \n"
+"     color: #F1F1F1; \n"
+"    font-size: 12px;\n"
+" }  \n"
+"\n"
+"QGroupBox {  \n"
+"     border: 1px solid #ADADAD;  \n"
+"     border-radius: 4px;  \n"
+"     margin-top: 7px;  \n"
+"     padding: 0px  \n"
+" }  \n"
+"\n"
+"QPushButton{  \n"
+"     color: #F1F1F1;\n"
+"     background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #505050);\n"
+"     border: 1px solid #5B5B5B;\n"
+"     border-radius: 5px; \n"
+"     padding-left: 8px;\n"
+"height: 18px;\n"
+"    padding-right: 8px;   \n"
+" }  \n"
+"QPushButton:pressed{\n"
+"        margin-top: 2,px;\n"
+"        margin-left: 2px;   \n"
+"}\n"
+"QPushButton::disabled{\n"
 "}\n"
 "\n"
-"QLabel ,QGroupBox{\n"
-"    color: #F1F1F1;\n"
-"    font-weight: bold;\n"
+"QPushButton::hover{  \n"
+"     border:1px solid #ADADAD; \n"
+" }  \n"
+" \n"
+"\n"
+"QPushButton::checked{\n"
+"    background: qlineargradient(\n"
+"        x1: 0, y1: 1, \n"
+"        x2: 0, y2: 0,\n"
+"        stop: 0 #727272, \n"
+"        stop: 1 #444444\n"
+"    );\n"
+"     border:1px solid  rgb(255, 120,00);\n"
 "}\n"
 "\n"
-"QLineEdit{\n"
-"    border-radius:5px;\n"
-"    background: #F1F1F1;\n"
-"    color: black;\n"
+"QPushButton::focus {\n"
+"    outline: None;\n"
 "}\n"
 "\n"
-"QPushButton{\n"
-"    color:white;\n"
-"    border-color: black;\n"
-"    border: 1px solid #F1F1F1;\n"
-"    border-radius: 11px;\n"
-"    font-weight: bold;\n"
-"    padding: 5px;\n"
-"    background:qconicalgradient(cx:0.5, cy:0.5, angle:0, stop:0 rgba(30, 30, 30, 255), stop:1 rgba(60, 60, 64, 255))\n"
-"}\n"
+" QGroupBox::title {  \n"
+"      subcontrol-origin: margin;  \n"
+"      left: 20px  \n"
+"  }\n"
 "\n"
-"QPushButton::hover{\n"
-"    border:2px solid #fff;\n"
-"    margin: 0.5px;\n"
-"}\n"
 "\n"
-"QPushPutton::pressed{\n"
-"   border:1px solid #fff;\n"
-"    margin: 2px;\n"
-"}\n"
-"\n"
-"QGroupBox {\n"
-"    border:1px solid #F1F1F1;\n"
-"    border-radius: 5px;\n"
-"    margin-top: 7px;\n"
-"    padding: 0px\n"
-"}\n"
-"QGroupBox::title {\n"
-"     subcontrol-origin: margin;\n"
-"     left: 20px;\n"
-"}\n"
+" QLineEdit  {  \n"
+"     border-radius: 2px;  \n"
+"     background: #F1F1F1;  \n"
+"     color: black;  \n"
+"    height: 18 px;\n"
+" }  \n"
 "\n"
 "#roi_box{\n"
 "    color:  rgba(197, 0, 3, 255);\n"
@@ -138,25 +153,24 @@ class Ui_roi_selector_ruby_widget(object):
         self.gridLayout.addWidget(self.y_max_txt, 1, 2, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
         self.verticalLayout_3.addWidget(self.roi_box)
-        self.frame_2 = QtGui.QFrame(self.frame)
-        self.frame_2.setMinimumSize(QtCore.QSize(180, 0))
-        self.frame_2.setMaximumSize(QtCore.QSize(180, 16777215))
-        self.frame_2.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
-        self.frame_2.setObjectName(_fromUtf8("frame_2"))
-        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.frame_2)
+        self.widget_2 = QtGui.QWidget(self.frame)
+        self.widget_2.setMinimumSize(QtCore.QSize(180, 0))
+        self.widget_2.setMaximumSize(QtCore.QSize(180, 16777215))
+        self.widget_2.setObjectName(_fromUtf8("widget_2"))
+        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.widget_2)
+        self.horizontalLayout_5.setMargin(0)
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem)
-        self.save_btn = QtGui.QPushButton(self.frame_2)
+        self.save_btn = QtGui.QPushButton(self.widget_2)
         self.save_btn.setMaximumSize(QtCore.QSize(80, 16777215))
         self.save_btn.setObjectName(_fromUtf8("save_btn"))
         self.horizontalLayout_5.addWidget(self.save_btn)
-        self.cancel_btn = QtGui.QPushButton(self.frame_2)
+        self.cancel_btn = QtGui.QPushButton(self.widget_2)
         self.cancel_btn.setMaximumSize(QtCore.QSize(80, 16777215))
         self.cancel_btn.setObjectName(_fromUtf8("cancel_btn"))
         self.horizontalLayout_5.addWidget(self.cancel_btn)
-        self.verticalLayout_3.addWidget(self.frame_2)
+        self.verticalLayout_3.addWidget(self.widget_2)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem1)
         self.horizontalLayout.addWidget(self.frame)

@@ -114,8 +114,8 @@ class TRaxMainView(QtGui.QMainWindow, Ui_T_Rax_MainWindow):
 
     def update_navigation_bar(self, new_color, sender):
         str1 = '#navigation_frame {background: qlineargradient(spread:reflect, x1:0, y1:0.5, x2:0, y2:0, stop:0.12 %s, stop:0.6 rgb(30, 30, 30));}' % new_color
-        str2 = '#QPushButton { border: 2px solid #999}'
-        str3 = '#%s { border: 4px solid #fff}' % sender
+        str2 = '#QPushButton { border: 1px solid #999}'
+        str3 = '#%s { border: 2px solid #fff}' % sender
         self.navigation_frame.setStyleSheet('\n'.join([str1, str2, str3]))
 
     def set_fit_limits(self, limits):

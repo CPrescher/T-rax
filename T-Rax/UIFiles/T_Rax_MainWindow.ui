@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
-    <height>564</height>
+    <width>888</width>
+    <height>654</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,55 +32,278 @@
    <string>T-Rax ver 0.203</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QMainWindow, #T_Rax_MainWindow{
-    background: rgb(44, 43, 43)
+   <string notr="true">QTabWidget, QTabWidget::tab-bar,  QTabWidget::panel, QWidget{  
+     background: rgba(30, 30, 30, 255);      
+ }  
+   
+ QLabel , QCheckBox, QGroupBox, QRadioButton, QComboBox  {  
+    background: rgba(0,0,0,0);
+     color: #F1F1F1;  
+ }  
+
+
+QTabWidget::tab-bar{ 
+    alignment: center;
 }
-#centralwidget{
-    background: rgb(30, 30, 30)
+
+QWidget{
+    color: #F1F1F1;
 }
-#status_bar {
-	background: rgb(44, 43, 43);
+
+
+QTabBar::tab:left, QTabBar::tab:right {  
+     background: qlineargradient(spread:pad, x1:1, y1:0, x2:0, y2:0, stop:0 rgba(30, 30, 30, 255), stop:1 #505050);
+     border: 1px solid  #5B5B5B;  
+    font: normal 14px;
+    color: #F1F1F1;
+     border-radius:2px;
+    
+    padding: 0px;
+     width: 20px;  
+    min-height:140px;
+ }  
+
+
+QTabBar::tab::top, QTabBar::tab::bottom {  
+     background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(30, 30, 30, 255), stop:1 #505050);
+     border: 1px solid  #5B5B5B;  
+    border-right: 0px solid white;
+      color: #F1F1F1; 
+    font: normal 11px;
+     border-radius:2px;
+     min-width: 80px;  
+    height: 19px;
+    padding: 0px;
+     margin-top: 1px ;
+    margin-right: 1px;
+ }  
+QTabBar::tab::left:last, QTabBar::tab::right:last{
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+QTabBar::tab:left:first, QTabBar::tab:right:first{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+QTabWidget, QTabWidget::tab-bar,  QTabWidget::panel, QWidget{  
+     background: rgba(30, 30, 30, 255);      
+ }  
+
+QTabWidget::tab-bar {
+    alignment: center;
+}
+
+ QTabBar::tab:hover {  
+     border: 1px solid #ADADAD;  
+ }  
+   
+ QTabBar:tab:selected{  
+
+    background: qlineargradient(
+        x1: 0, y1: 1, 
+        x2: 0, y2: 0,
+        stop: 0 #727272, 
+        stop: 1 #444444
+    );
+     border:1px solid  rgb(255, 120,00);/*#ADADAD; */ 
+}
+
+QTabBar::tab:bottom:last, QTabBar::tab:top:last{
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+QTabBar::tab:bottom:first, QTabBar::tab:top:first{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+ QTabBar::tab:top:!selected {  
+    margin-top: 1px;
+    padding-top:1px;
+ }  
+QTabBar::tab:bottom:!selected{
+    margin-bottom: 1px;
+    padding-bottom:1px;
+}
+
+QGraphicsView {
+    border-style: none;
+}
+
+ QLabel , QCheckBox, QGroupBox, QRadioButton, QListWidget::item, QPushButton, QToolBox::tab, QSpinBox, QDoubleSpinBox , QComboBox{  
+     color: #F1F1F1; 
+    font-size: 12px;
+ }  
+ QCheckBox{  
+     border-radius: 5px;  
+ }  
+ QRadioButton, QCheckBox {  
+     font-weight: normal;  
+    height: 15px;
+ }  
+ 
+ QLineEdit  {  
+     border-radius: 2px;  
+     background: #F1F1F1;  
+     color: black;  
+    height: 18 px;
+ }  
+
+QLineEdit::focus{
+    border-style: none;
+     border-radius: 2px;  
+     background: #F1F1F1;  
+     color: black;  
+}
+QSpinBox, QDoubleSpinBox {
+    background-color:  #F1F1F1; 
+    color: black;
+    margin-left: -15px;
+    margin-right: -2px;
+    height: 30px;
+}
+
+QComboBox QAbstractItemView{
+    background: #2D2D30;
+    color: #F1F1F1;
+    selection-background-color: rgba(221, 124, 40, 120);
+    border-radius: 5px;
 
 }
 
-QLabel ,QGroupBox{
-	color: #F1F1F1;
-	font-weight: bold;
-	font-size: 12px;
+QComboBox:!editable {
+    margin-left: 1px;
+    padding-left: 10px;
+    height: 23px;
+    background-color: rgba(30, 30, 30, 255);
 }
+
+QComboBox::item{
+    background-color: rgba(30, 30, 30, 255);
+}
+
+QComboBox::item::selected {
+    background-color: #505050;
+}
+QToolBox::tab:QToolButton{
+    background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(30, 30, 30, 255), stop:1 #505050);
+     border: 1px solid  #5B5B5B;  
+
+     border-radius:2px;
+     padding-right: 10px;  
+    
+      color: #F1F1F1; 
+    font-size: 12px;
+    padding: 3px;
+}
+QToolBox::tab:QToolButton{
+    background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(30, 30, 30, 255), stop:1 #505050);
+     border: 1px solid  #5B5B5B;  
+
+     border-radius:2px;
+     padding-right: 10px;  
+    
+      color: #F1F1F1; 
+    font-size: 12px;
+    padding: 3px;
+}
+  
+QPushButton{  
+     color: #F1F1F1;
+     background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #505050);
+     border: 1px solid #5B5B5B;
+     border-radius: 5px; 
+     padding-left: 8px;
+height: 18px;
+    padding-right: 8px;   
+ }  
+QPushButton:pressed{
+        margin-top: 2,px;
+        margin-left: 2px;   
+}
+QPushButton::disabled{
+}
+
+QPushButton::hover{  
+     border:1px solid #ADADAD; 
+ }  
+ 
+
+QPushButton::checked{
+    background: qlineargradient(
+        x1: 0, y1: 1, 
+        x2: 0, y2: 0,
+        stop: 0 #727272, 
+        stop: 1 #444444
+    );
+     border:1px solid  rgb(255, 120,00);
+}
+
+QPushButton::focus {
+    outline: None;
+}
+ QGroupBox {  
+     border: 1px solid #ADADAD;  
+     border-radius: 4px;  
+     margin-top: 7px;  
+     padding: 0px  
+ }  
+ QGroupBox::title {  
+      subcontrol-origin: margin;  
+      left: 20px  
+  }
+
+QSplitter::handle:hover {
+    background: rgba(30, 30, 30, 255);
+ }
+
+
+QGraphicsView{
+    border-style: none;
+}
+
+ QScrollBar:vertical {
+      border: 2px solid rgba(30, 30, 30, 255);
+      background: qlineargradient(spread:pad, x1:1, y1:0, x2:0, y2:0, stop:0 #323232, stop:1 #505050);
+      width: 12px;
+      margin: 0px 0px 0px 0px;
+  }
+  QScrollBar::handle:vertical {
+      background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 #969696, stop:1 #CACACA);
+     border-radius: 3px;
+      min-height: 20px;
+    padding: 15px;
+  }
+  QScrollBar::add-line:vertical {
+      border: 0px solid grey;
+      height: 0px;
+  }
+
+  QScrollBar::sub-line:vertical {
+      border: 0px solid grey;
+      height: 0px;
+  }
+  QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+      background: none;
+  }
+
 
 
 #navigation_frame {
     border: none;
     background: qlineargradient(spread:reflect, x1:0, y1:0.5, x2:0, y2:0, stop:0.114428 rgba(21, 134, 31, 255), stop:0.467662 rgba(12, 80, 18, 255), 
-	stop:0.726368 rgba(9, 60, 13, 255), stop:1 rgb(30, 30, 30))
+    stop:0.726368 rgba(9, 60, 13, 255), stop:1 rgba(0, 0, 0, 255))
 }
 
-
-
-QPushButton{
-    color:white;
-    border-color: black;
-    border: 2px solid #F1F1F1;
-    border-radius: 11px;
-    padding: 5px;
-}
-
-QPushButton::hover{
-    border:3px solid #fff;
-    margin: 0.5px;
-}
-
-QPushPutton::press{
-   border: 3px solid #fff;
-  margin: 2px;
-}
 
 
 #navigation_frame QPushButton{
     min-width: 104px;
     min-height: 20px;
+	font-size: 12px;
+	padding: 2px;
     font-weight: bold;
+    border-radius: 10px;
 }
 
 #temperature_btn {
@@ -96,20 +319,7 @@ QPushPutton::press{
 #raman_btn {
     background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.20398 rgba(21, 134, 31, 255), stop:1 rgba(0, 0, 0, 255))
 }
-
-#status_ds_calib_filename_lbl{  
-	color: #F1F1F1;  
- }  
- #status_us_calib_filename_lbl{  
-	color: #F1F1F1;
-}
-
-
- QLineEdit{  
-     border-radius: 5px;  
-     background: #F1F1F1;  
-     color: black;  
- }  </string>
+</string>
   </property>
   <property name="animated">
    <bool>false</bool>
@@ -151,12 +361,24 @@ QPushPutton::press{
          <property name="text">
           <string>Temperature</string>
          </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="ruby_btn">
          <property name="text">
           <string>Ruby</string>
+         </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -165,12 +387,24 @@ QPushPutton::press{
          <property name="text">
           <string>Diamond</string>
          </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="raman_btn">
          <property name="text">
           <string>Raman</string>
+         </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -212,6 +446,16 @@ QPushPutton::press{
         </layout>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="axes_frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
      </widget>
     </item>
     <item>
