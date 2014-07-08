@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_ROI_Selector.ui'
 #
-# Created: Tue Jul  8 13:23:57 2014
+# Created: Tue Jul  8 13:34:46 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_roi_selector_main_widget(object):
     def setupUi(self, roi_selector_main_widget):
         roi_selector_main_widget.setObjectName(_fromUtf8("roi_selector_main_widget"))
-        roi_selector_main_widget.setEnabled(False)
+        roi_selector_main_widget.setEnabled(True)
         roi_selector_main_widget.resize(945, 484)
         roi_selector_main_widget.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         roi_selector_main_widget.setStyleSheet(_fromUtf8("QWidget{  \n"
@@ -108,8 +108,9 @@ class Ui_roi_selector_main_widget(object):
         self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.axes_frame = QtGui.QFrame(roi_selector_main_widget)
-        self.axes_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.axes_frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.axes_frame.setEnabled(True)
+        self.axes_frame.setFrameShape(QtGui.QFrame.NoFrame)
+        self.axes_frame.setFrameShadow(QtGui.QFrame.Plain)
         self.axes_frame.setObjectName(_fromUtf8("axes_frame"))
         self.horizontalLayout.addWidget(self.axes_frame)
         self.widget = QtGui.QWidget(roi_selector_main_widget)

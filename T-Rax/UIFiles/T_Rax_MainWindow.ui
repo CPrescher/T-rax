@@ -78,12 +78,12 @@ QTabBar::tab::top, QTabBar::tab::bottom {
     margin-right: 1px;
  }  
 QTabBar::tab::left:last, QTabBar::tab::right:last{
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 QTabBar::tab:left:first, QTabBar::tab:right:first{
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
 }
 
 QTabWidget, QTabWidget::tab-bar,  QTabWidget::panel, QWidget{  
@@ -110,12 +110,12 @@ QTabWidget::tab-bar {
 }
 
 QTabBar::tab:bottom:last, QTabBar::tab:top:last{
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 QTabBar::tab:bottom:first, QTabBar::tab:top:first{
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
 }
  QTabBar::tab:top:!selected {  
     margin-top: 1px;
@@ -252,7 +252,7 @@ QPushButton::focus {
  QGroupBox {  
      border: 1px solid #ADADAD;  
      border-radius: 4px;  
-     /*margin-top: 7px;*/  
+     margin-top: 7px;
      padding: 0px  
  }  
  QGroupBox::title {  
@@ -457,6 +457,9 @@ QGraphicsView{
     </item>
     <item>
      <widget class="QFrame" name="axes_frame">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>

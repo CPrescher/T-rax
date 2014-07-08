@@ -3,7 +3,7 @@
  <class>roi_selector_main_widget</class>
  <widget class="QWidget" name="roi_selector_main_widget">
   <property name="enabled">
-   <bool>false</bool>
+   <bool>true</bool>
   </property>
   <property name="geometry">
    <rect>
@@ -104,11 +104,14 @@ QPushButton::focus {
    </property>
    <item>
     <widget class="QFrame" name="axes_frame">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Plain</enum>
      </property>
     </widget>
    </item>

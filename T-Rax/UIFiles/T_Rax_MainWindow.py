@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Tue Jul  8 13:23:57 2014
+# Created: Tue Jul  8 13:34:45 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,12 +80,12 @@ class Ui_T_Rax_MainWindow(object):
 "    margin-right: 1px;\n"
 " }  \n"
 "QTabBar::tab::left:last, QTabBar::tab::right:last{\n"
-"    border-bottom-left-radius: 10px;\n"
-"    border-bottom-right-radius: 10px;\n"
+"    border-bottom-left-radius: 2px;\n"
+"    border-bottom-right-radius: 2px;\n"
 "}\n"
 "QTabBar::tab:left:first, QTabBar::tab:right:first{\n"
-"    border-top-left-radius: 10px;\n"
-"    border-top-right-radius: 10px;\n"
+"    border-top-left-radius: 2px;\n"
+"    border-top-right-radius: 2px;\n"
 "}\n"
 "\n"
 "QTabWidget, QTabWidget::tab-bar,  QTabWidget::panel, QWidget{  \n"
@@ -112,12 +112,12 @@ class Ui_T_Rax_MainWindow(object):
 "}\n"
 "\n"
 "QTabBar::tab:bottom:last, QTabBar::tab:top:last{\n"
-"    border-top-right-radius: 10px;\n"
-"    border-bottom-right-radius: 10px;\n"
+"    border-top-right-radius: 2px;\n"
+"    border-bottom-right-radius: 2px;\n"
 "}\n"
 "QTabBar::tab:bottom:first, QTabBar::tab:top:first{\n"
-"    border-top-left-radius: 10px;\n"
-"    border-bottom-left-radius: 10px;\n"
+"    border-top-left-radius: 2px;\n"
+"    border-bottom-left-radius: 2px;\n"
 "}\n"
 " QTabBar::tab:top:!selected {  \n"
 "    margin-top: 1px;\n"
@@ -254,7 +254,7 @@ class Ui_T_Rax_MainWindow(object):
 " QGroupBox {  \n"
 "     border: 1px solid #ADADAD;  \n"
 "     border-radius: 4px;  \n"
-"     /*margin-top: 7px;*/  \n"
+"     margin-top: 7px;\n"
 "     padding: 0px  \n"
 " }  \n"
 " QGroupBox::title {  \n"
@@ -377,6 +377,7 @@ class Ui_T_Rax_MainWindow(object):
         self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.verticalLayout.addWidget(self.navigation_frame)
         self.axes_frame = QtGui.QFrame(self.centralwidget)
+        self.axes_frame.setStyleSheet(_fromUtf8(""))
         self.axes_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.axes_frame.setFrameShadow(QtGui.QFrame.Raised)
         self.axes_frame.setObjectName(_fromUtf8("axes_frame"))
