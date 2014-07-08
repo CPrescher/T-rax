@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 from UIFiles.T_Rax_TemperatureControl import Ui_temperature_control_widget
 from UIFiles.T_Rax_RubyControl import Ui_ruby_control_widget
 from UIFiles.T_Rax_DiamondControl import Ui_diamond_control_widget
@@ -57,5 +57,6 @@ class DiamondControlWidget(QtGui.QWidget, Ui_diamond_control_widget):
 
 
 def modify_combobox_look(combobox):
-    cleanlooks = QtGui.QStyleFactory.create('cleanlooks')
+    cleanlooks = QtGui.QStyleFactory.create('plastique')
     combobox.setStyle(cleanlooks)
+    combobox.view().setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)

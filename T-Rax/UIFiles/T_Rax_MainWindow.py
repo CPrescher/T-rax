@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Mon Jun 23 22:08:38 2014
+# Created: Tue Jul  8 07:28:05 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -165,9 +165,14 @@ class Ui_T_Rax_MainWindow(object):
 "    height: 30px;\n"
 "}\n"
 "\n"
+"QComboBox QAbstractItemView::item { \n"
+"    min-height: 40px; \n"
+"    min-width: 60px; \n"
+"}\n"
 "QComboBox QAbstractItemView{\n"
-"    background: #2D2D30;\n"
+"    background: rgba(35, 35, 35, 255);\n"
 "    color: #F1F1F1;\n"
+"    min-height: 50px;\n"
 "    selection-background-color: rgba(221, 124, 40, 120);\n"
 "    border-radius: 5px;\n"
 "\n"
@@ -177,16 +182,18 @@ class Ui_T_Rax_MainWindow(object):
 "    margin-left: 1px;\n"
 "    padding-left: 10px;\n"
 "    height: 23px;\n"
-"    background-color: rgba(30, 30, 30, 255);\n"
+"    background-color: rgba(35, 35, 35, 255);\n"
 "}\n"
 "\n"
 "QComboBox::item{\n"
-"    background-color: rgba(30, 30, 30, 255);\n"
+"    background-color: rgba(35, 35, 35, 255);\n"
 "}\n"
 "\n"
 "QComboBox::item::selected {\n"
 "    background-color: #505050;\n"
 "}\n"
+"\n"
+"\n"
 "QToolBox::tab:QToolButton{\n"
 "    background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(30, 30, 30, 255), stop:1 #505050);\n"
 "     border: 1px solid  #5B5B5B;  \n"

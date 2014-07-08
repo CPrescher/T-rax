@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
-# Created: Mon Jun 23 22:08:39 2014
+# Created: Tue Jul  8 07:28:06 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -383,7 +383,7 @@ class Ui_temperature_control_widget(object):
         self.verticalLayout_4.addWidget(self.tab_control)
 
         self.retranslateUi(temperature_control_widget)
-        self.tab_control.setCurrentIndex(1)
+        self.tab_control.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(temperature_control_widget)
 
     def retranslateUi(self, temperature_control_widget):
