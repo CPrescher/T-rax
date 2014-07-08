@@ -14,8 +14,8 @@ from data.T_Rax_TemperatureData import TraxTemperatureData, TraxTemperatureSetti
 class TRaxTemperatureController(TRaxModuleController):
     def __init__(self, parent, main_view):
         self.data = TraxTemperatureData()
-        self.parent = parent
         super(TRaxTemperatureController, self).__init__(parent, self.data, main_view.temperature_control_widget)
+        self.parent = parent
         self.main_view = main_view
         self.create_signals()
         pub.sendMessage("EXP DATA CHANGED")

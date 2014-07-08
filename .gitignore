@@ -13,6 +13,7 @@
 *.xml
 *.XML
 *.trs
+*.spe_xml.xml
 
 spe_xml.xml
 dist/
