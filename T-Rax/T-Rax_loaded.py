@@ -1,4 +1,4 @@
-from controller.T_Rax_MainController import TRaxMainController
+from Controller.MainController import TRaxMainController
 from PyQt4 import QtGui
 import sys
 from datetime import datetime

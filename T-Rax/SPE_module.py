@@ -51,7 +51,7 @@ class SPE_File(object):
             self._read_parameter_from_dom()
 
     def _read_size(self):
-        """reads the dimensions of the data from the header into the object
+        """reads the dimensions of the Model from the header into the object
         resulting object parameters are _xdim and _ydim"""
         self._xdim = np.int64(self._read_at(42, 1, np.int16)[0])
         self._ydim = np.int64(self._read_at(656, 1, np.int16)[0])
@@ -187,7 +187,7 @@ class SPE_File(object):
             self.detector = 'unspecified'
 
     def _read_grating_from_dom(self):
-        """Reads the type of grating from the dom data"""
+        """Reads the type of grating from the dom Model"""
         try:
             self._grating = self.dom.getElementsByTagName('Devices')[0].\
                                      getElementsByTagName('Spectrometer')[0].\
@@ -198,7 +198,7 @@ class SPE_File(object):
             self._read_grating_from_header()
 
     def _read_center_wavelength_from_dom(self):
-        """Reads the center wavelength from the dom data and saves it center_wavelength field"""
+        """Reads the center wavelength from the dom Model and saves it center_wavelength field"""
         try:
             self._center_wavelength = self.dom.getElementsByTagName('Devices')[0].\
                                                getElementsByTagName('Spectrometer')[0].\

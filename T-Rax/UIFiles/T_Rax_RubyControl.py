@@ -196,7 +196,7 @@ class Ui_ruby_control_widget(object):
     def retranslateUi(self, ruby_control_widget):
         ruby_control_widget.setWindowTitle(_translate("ruby_control_widget", "Form", None))
         self.groupBox.setTitle(_translate("ruby_control_widget", "Experiment", None))
-        self.load_exp_data_btn.setText(_translate("ruby_control_widget", "Load Data", None))
+        self.load_exp_data_btn.setText(_translate("ruby_control_widget", "Load Model", None))
         self.load_previous_exp_data_btn.setText(_translate("ruby_control_widget", "<--", None))
         self.load_next_exp_data_btn.setText(_translate("ruby_control_widget", "-->", None))
         self.auto_process_cb.setText(_translate("ruby_control_widget", "autoprocess", None))

@@ -31,7 +31,7 @@ class ImgView(QtCore.QObject):
     def create_graphics(self):
         self.img_view_box = self.pg_layout.addViewBox(0, 0)
 
-        #create the item handling the Data img
+        #create the item handling the Model img
         self.data_img_item = pg.ImageItem()
         self.img_view_box.addItem(self.data_img_item)
         self.img_histogram_LUT = VerHistogramLUTItem(self.data_img_item, orientation='vertical')

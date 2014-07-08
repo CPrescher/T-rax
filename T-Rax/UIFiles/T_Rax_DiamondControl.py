@@ -216,7 +216,7 @@ class Ui_diamond_control_widget(object):
     def retranslateUi(self, diamond_control_widget):
         diamond_control_widget.setWindowTitle(_translate("diamond_control_widget", "Form", None))
         self.groupBox.setTitle(_translate("diamond_control_widget", "Experiment", None))
-        self.load_exp_data_btn.setText(_translate("diamond_control_widget", "Load Data", None))
+        self.load_exp_data_btn.setText(_translate("diamond_control_widget", "Load Model", None))
         self.load_previous_exp_data_btn.setText(_translate("diamond_control_widget", "<--", None))
         self.load_next_exp_data_btn.setText(_translate("diamond_control_widget", "-->", None))
         self.auto_process_cb.setText(_translate("diamond_control_widget", "autoprocess", None))

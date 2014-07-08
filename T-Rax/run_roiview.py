@@ -3,11 +3,11 @@ from wx.lib.pubsub import pub
 from PyQt4 import QtGui, QtCore
 import sys
 
-from controller.T_Rax_ROISelectorTemperatureController import TRaxROITemperatureController
-from data.T_Rax_TemperatureData import TraxTemperatureData
+from Controller.RoiSelectorTemperatureController import TRaxROITemperatureController
+from Model.TemperatureData import TemperatureData
 
 app = QtGui.QApplication(sys.argv)
-data=TraxTemperatureData()
+data=TemperatureData()
 roi_controller = TRaxROITemperatureController(data)
 roi_controller.show()
 app.exec_()
