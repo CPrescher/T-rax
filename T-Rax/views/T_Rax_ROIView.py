@@ -1,6 +1,7 @@
 from UIFiles.T_Rax_ROI_Selector import Ui_roi_selector_main_widget
 from PyQt4 import QtGui, QtCore
 import sys
+from wx.lib.pubsub import setupkwargs
 from wx.lib.pubsub import pub
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
@@ -21,7 +22,7 @@ import numpy as np
 
 class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def __init__(self, data, parent=None):
-        super(TRaxROIView, self).__init__(None)
+        super(TRaxROIView, self).__init__(parent)
         self.data = data
         self.parent = parent
 
@@ -38,6 +39,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.setWindowTitle('Temperature ROI Selector')
         self.set_validator()
         self.create_graph()
+        self.dummy_group.hide()
         self.fitting_roi_box.hide()
         self.downstream_roi_box.hide()
         self.upstream_roi_box.hide()
@@ -715,8 +717,9 @@ class ResizeableRectangle:
 
 
 if __name__ == "__main__":
+    from data.T_Rax_TemperatureData import TraxTemperatureData
     app = QtGui.QApplication(sys.argv)
-    data = TraxData()
+    data = TraxTemperatureData()
     view = TRaxROIView(data)
     view.show()
     app.exec_()

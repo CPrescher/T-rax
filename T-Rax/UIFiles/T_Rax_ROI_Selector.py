@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_ROI_Selector.ui'
 #
-# Created: Tue Jul  8 07:28:06 2014
+# Created: Tue Jul  8 13:23:57 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,6 +26,7 @@ except AttributeError:
 class Ui_roi_selector_main_widget(object):
     def setupUi(self, roi_selector_main_widget):
         roi_selector_main_widget.setObjectName(_fromUtf8("roi_selector_main_widget"))
+        roi_selector_main_widget.setEnabled(False)
         roi_selector_main_widget.resize(945, 484)
         roi_selector_main_widget.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         roi_selector_main_widget.setStyleSheet(_fromUtf8("QWidget{  \n"
@@ -36,10 +37,10 @@ class Ui_roi_selector_main_widget(object):
 "\n"
 "QGroupBox {  \n"
 "     border: 1px solid #ADADAD;  \n"
-"     border-radius: 4px;  \n"
-"    padding-top: 10px;\n"
-"     margin-top: 5px;  \n"
-"     padding: 0px  \n"
+"     border-radius: 4px; \n"
+"     padding: 0px ;  \n"
+"     padding-top: 3px;\n"
+"     margin-top: 4px;  \n"
 " }  \n"
 "\n"
 "QPushButton{  \n"
@@ -100,6 +101,7 @@ class Ui_roi_selector_main_widget(object):
 "#upstream_roi_box{\n"
 "    color: rgba(255,140,0,255);\n"
 "    border: 1px solid rgba(255,140,0,255);\n"
+"    margin: 3px;\n"
 "}"))
         self.horizontalLayout = QtGui.QHBoxLayout(roi_selector_main_widget)
         self.horizontalLayout.setSpacing(0)
@@ -121,53 +123,77 @@ class Ui_roi_selector_main_widget(object):
         self.verticalLayout_3.setSpacing(24)
         self.verticalLayout_3.setContentsMargins(-1, 24, -1, -1)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.dummy_group = QtGui.QGroupBox(self.widget)
+        self.dummy_group.setObjectName(_fromUtf8("dummy_group"))
+        self.verticalLayout_3.addWidget(self.dummy_group)
         self.upstream_roi_box = QtGui.QGroupBox(self.widget)
         self.upstream_roi_box.setMinimumSize(QtCore.QSize(180, 86))
         self.upstream_roi_box.setMaximumSize(QtCore.QSize(180, 16777215))
-        self.upstream_roi_box.setStyleSheet(_fromUtf8(""))
+        self.upstream_roi_box.setFlat(True)
         self.upstream_roi_box.setObjectName(_fromUtf8("upstream_roi_box"))
-        self.gridLayout = QtGui.QGridLayout(self.upstream_roi_box)
-        self.gridLayout.setSpacing(12)
-        self.gridLayout.setMargin(0)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.label_3 = QtGui.QLabel(self.upstream_roi_box)
-        self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.gridLayout.addWidget(self.label_3, 0, 0, 1, 1)
+        self.gridLayout_5 = QtGui.QGridLayout(self.upstream_roi_box)
+        self.gridLayout_5.setSpacing(12)
+        self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
+        self.label_13 = QtGui.QLabel(self.upstream_roi_box)
+        self.label_13.setObjectName(_fromUtf8("label_13"))
+        self.gridLayout_5.addWidget(self.label_13, 1, 0, 1, 1)
         self.us_x_min_txt = QtGui.QLineEdit(self.upstream_roi_box)
         self.us_x_min_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.us_x_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
         self.us_x_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.us_x_min_txt.setObjectName(_fromUtf8("us_x_min_txt"))
-        self.gridLayout.addWidget(self.us_x_min_txt, 0, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.us_x_min_txt, 1, 1, 1, 1)
         self.us_x_max_txt = QtGui.QLineEdit(self.upstream_roi_box)
         self.us_x_max_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.us_x_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
         self.us_x_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.us_x_max_txt.setObjectName(_fromUtf8("us_x_max_txt"))
-        self.gridLayout.addWidget(self.us_x_max_txt, 0, 2, 1, 1)
-        self.label_4 = QtGui.QLabel(self.upstream_roi_box)
-        self.label_4.setObjectName(_fromUtf8("label_4"))
-        self.gridLayout.addWidget(self.label_4, 1, 0, 1, 1)
+        self.gridLayout_5.addWidget(self.us_x_max_txt, 1, 2, 1, 1)
+        self.label_14 = QtGui.QLabel(self.upstream_roi_box)
+        self.label_14.setObjectName(_fromUtf8("label_14"))
+        self.gridLayout_5.addWidget(self.label_14, 2, 0, 1, 1)
         self.us_y_min_txt = QtGui.QLineEdit(self.upstream_roi_box)
         self.us_y_min_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.us_y_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
         self.us_y_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.us_y_min_txt.setObjectName(_fromUtf8("us_y_min_txt"))
-        self.gridLayout.addWidget(self.us_y_min_txt, 1, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.us_y_min_txt, 2, 1, 1, 1)
         self.us_y_max_txt = QtGui.QLineEdit(self.upstream_roi_box)
         self.us_y_max_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.us_y_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
         self.us_y_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.us_y_max_txt.setObjectName(_fromUtf8("us_y_max_txt"))
-        self.gridLayout.addWidget(self.us_y_max_txt, 1, 2, 1, 1)
+        self.gridLayout_5.addWidget(self.us_y_max_txt, 2, 2, 1, 1)
         self.verticalLayout_3.addWidget(self.upstream_roi_box)
         self.downstream_roi_box = QtGui.QGroupBox(self.widget)
         self.downstream_roi_box.setMinimumSize(QtCore.QSize(180, 86))
         self.downstream_roi_box.setMaximumSize(QtCore.QSize(180, 16777215))
+        self.downstream_roi_box.setFlat(True)
         self.downstream_roi_box.setObjectName(_fromUtf8("downstream_roi_box"))
         self.gridLayout_2 = QtGui.QGridLayout(self.downstream_roi_box)
         self.gridLayout_2.setSpacing(12)
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        self.label_8 = QtGui.QLabel(self.downstream_roi_box)
+        self.label_8.setObjectName(_fromUtf8("label_8"))
+        self.gridLayout_2.addWidget(self.label_8, 1, 0, 1, 1)
+        self.ds_y_max_txt = QtGui.QLineEdit(self.downstream_roi_box)
+        self.ds_y_max_txt.setMinimumSize(QtCore.QSize(60, 22))
+        self.ds_y_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
+        self.ds_y_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.ds_y_max_txt.setObjectName(_fromUtf8("ds_y_max_txt"))
+        self.gridLayout_2.addWidget(self.ds_y_max_txt, 1, 2, 1, 1)
+        self.ds_x_max_txt = QtGui.QLineEdit(self.downstream_roi_box)
+        self.ds_x_max_txt.setMinimumSize(QtCore.QSize(60, 22))
+        self.ds_x_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
+        self.ds_x_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.ds_x_max_txt.setObjectName(_fromUtf8("ds_x_max_txt"))
+        self.gridLayout_2.addWidget(self.ds_x_max_txt, 0, 2, 1, 1)
+        self.ds_y_min_txt = QtGui.QLineEdit(self.downstream_roi_box)
+        self.ds_y_min_txt.setMinimumSize(QtCore.QSize(60, 22))
+        self.ds_y_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
+        self.ds_y_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.ds_y_min_txt.setObjectName(_fromUtf8("ds_y_min_txt"))
+        self.gridLayout_2.addWidget(self.ds_y_min_txt, 1, 1, 1, 1)
         self.label_7 = QtGui.QLabel(self.downstream_roi_box)
         self.label_7.setObjectName(_fromUtf8("label_7"))
         self.gridLayout_2.addWidget(self.label_7, 0, 0, 1, 1)
@@ -177,27 +203,6 @@ class Ui_roi_selector_main_widget(object):
         self.ds_x_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.ds_x_min_txt.setObjectName(_fromUtf8("ds_x_min_txt"))
         self.gridLayout_2.addWidget(self.ds_x_min_txt, 0, 1, 1, 1)
-        self.ds_x_max_txt = QtGui.QLineEdit(self.downstream_roi_box)
-        self.ds_x_max_txt.setMinimumSize(QtCore.QSize(60, 22))
-        self.ds_x_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.ds_x_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.ds_x_max_txt.setObjectName(_fromUtf8("ds_x_max_txt"))
-        self.gridLayout_2.addWidget(self.ds_x_max_txt, 0, 2, 1, 1)
-        self.label_8 = QtGui.QLabel(self.downstream_roi_box)
-        self.label_8.setObjectName(_fromUtf8("label_8"))
-        self.gridLayout_2.addWidget(self.label_8, 1, 0, 1, 1)
-        self.ds_y_min_txt = QtGui.QLineEdit(self.downstream_roi_box)
-        self.ds_y_min_txt.setMinimumSize(QtCore.QSize(60, 22))
-        self.ds_y_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.ds_y_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.ds_y_min_txt.setObjectName(_fromUtf8("ds_y_min_txt"))
-        self.gridLayout_2.addWidget(self.ds_y_min_txt, 1, 1, 1, 1)
-        self.ds_y_max_txt = QtGui.QLineEdit(self.downstream_roi_box)
-        self.ds_y_max_txt.setMinimumSize(QtCore.QSize(60, 22))
-        self.ds_y_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.ds_y_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.ds_y_max_txt.setObjectName(_fromUtf8("ds_y_max_txt"))
-        self.gridLayout_2.addWidget(self.ds_y_max_txt, 1, 2, 1, 1)
         self.verticalLayout_3.addWidget(self.downstream_roi_box)
         self.fitting_roi_box = QtGui.QGroupBox(self.widget)
         self.fitting_roi_box.setMinimumSize(QtCore.QSize(180, 0))
@@ -234,7 +239,7 @@ class Ui_roi_selector_main_widget(object):
         self.label_10 = QtGui.QLabel(self.fitting_roi_box)
         self.label_10.setObjectName(_fromUtf8("label_10"))
         self.horizontalLayout_10.addWidget(self.label_10)
-        self.gridLayout_4.addLayout(self.horizontalLayout_10, 0, 0, 1, 1)
+        self.gridLayout_4.addLayout(self.horizontalLayout_10, 1, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.fitting_roi_box)
         self.widget_2 = QtGui.QWidget(self.widget)
         self.widget_2.setMinimumSize(QtCore.QSize(180, 0))
@@ -263,20 +268,21 @@ class Ui_roi_selector_main_widget(object):
 
     def retranslateUi(self, roi_selector_main_widget):
         roi_selector_main_widget.setWindowTitle(_translate("roi_selector_main_widget", "Form", None))
+        self.dummy_group.setTitle(_translate("roi_selector_main_widget", "GroupBox", None))
         self.upstream_roi_box.setTitle(_translate("roi_selector_main_widget", "Upstream ROI", None))
-        self.label_3.setText(_translate("roi_selector_main_widget", "X:", None))
+        self.label_13.setText(_translate("roi_selector_main_widget", "X:", None))
         self.us_x_min_txt.setText(_translate("roi_selector_main_widget", "5", None))
         self.us_x_max_txt.setText(_translate("roi_selector_main_widget", "100", None))
-        self.label_4.setText(_translate("roi_selector_main_widget", "Y:", None))
+        self.label_14.setText(_translate("roi_selector_main_widget", "Y:", None))
         self.us_y_min_txt.setText(_translate("roi_selector_main_widget", "20", None))
         self.us_y_max_txt.setText(_translate("roi_selector_main_widget", "30", None))
         self.downstream_roi_box.setTitle(_translate("roi_selector_main_widget", "Downstream ROI", None))
+        self.label_8.setText(_translate("roi_selector_main_widget", "Y:", None))
+        self.ds_y_max_txt.setText(_translate("roi_selector_main_widget", "30", None))
+        self.ds_x_max_txt.setText(_translate("roi_selector_main_widget", "100", None))
+        self.ds_y_min_txt.setText(_translate("roi_selector_main_widget", "20", None))
         self.label_7.setText(_translate("roi_selector_main_widget", "X:", None))
         self.ds_x_min_txt.setText(_translate("roi_selector_main_widget", "5", None))
-        self.ds_x_max_txt.setText(_translate("roi_selector_main_widget", "100", None))
-        self.label_8.setText(_translate("roi_selector_main_widget", "Y:", None))
-        self.ds_y_min_txt.setText(_translate("roi_selector_main_widget", "20", None))
-        self.ds_y_max_txt.setText(_translate("roi_selector_main_widget", "30", None))
         self.fitting_roi_box.setTitle(_translate("roi_selector_main_widget", "Fit Limits", None))
         self.label_9.setText(_translate("roi_selector_main_widget", "-", None))
         self.label_10.setText(_translate("roi_selector_main_widget", "nm", None))

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_MainWindow.ui'
 #
-# Created: Tue Jul  8 07:28:05 2014
+# Created: Tue Jul  8 13:23:57 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -254,7 +254,7 @@ class Ui_T_Rax_MainWindow(object):
 " QGroupBox {  \n"
 "     border: 1px solid #ADADAD;  \n"
 "     border-radius: 4px;  \n"
-"     margin-top: 7px;  \n"
+"     /*margin-top: 7px;*/  \n"
 "     padding: 0px  \n"
 " }  \n"
 " QGroupBox::title {  \n"

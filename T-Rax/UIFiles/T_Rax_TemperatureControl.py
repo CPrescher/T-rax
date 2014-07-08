@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
-# Created: Tue Jul  8 07:28:06 2014
+# Created: Tue Jul  8 13:23:57 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_temperature_control_widget(object):
     def setupUi(self, temperature_control_widget):
         temperature_control_widget.setObjectName(_fromUtf8("temperature_control_widget"))
-        temperature_control_widget.resize(260, 575)
+        temperature_control_widget.resize(260, 582)
         temperature_control_widget.setMaximumSize(QtCore.QSize(260, 16777215))
         temperature_control_widget.setAutoFillBackground(True)
         temperature_control_widget.setStyleSheet(_fromUtf8("#downstream_calib_box{\n"

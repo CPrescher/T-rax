@@ -252,7 +252,7 @@ QPushButton::focus {
  QGroupBox {  
      border: 1px solid #ADADAD;  
      border-radius: 4px;  
-     margin-top: 7px;  
+     /*margin-top: 7px;*/  
      padding: 0px  
  }  
  QGroupBox::title {  
