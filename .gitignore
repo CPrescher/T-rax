@@ -13,7 +13,7 @@
 *.xml
 *.XML
 *.trs
-*.spe_xml.xml
+T-Rax/spe_xml.xml
 
 spe_xml.xml
 dist/

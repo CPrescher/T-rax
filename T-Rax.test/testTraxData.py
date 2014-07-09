@@ -1,17 +1,17 @@
 ﻿from wx.lib.pubsub import setupkwargs
 import unittest
-from data.T_Rax_TemperatureData import TraxTemperatureData, ROIData, ROIDataManager, TraxTemperatureSettings
+from Model.TemperatureData import TemperatureData, RoiData, RoiDataManager, TemperatureSettings
 
 
 class Test_T_Rax_Data_Test(unittest.TestCase):
     def test_ROI_data_manager(self):
-        self.roi_data_manager = ROIDataManager()
+        self.roi_data_manager = RoiDataManager()
         dimensions = [[100, 1000],
                       [100, 500],
                       [10, 300]]
-        rois = [ROIData([100, 850, 10, 20], [100, 850, 70, 80]),
-                ROIData([100, 850, 10, 20], [100, 850, 70, 80]),
-                ROIData([100, 850, 10, 20], [100, 850, 70, 80])]
+        rois = [RoiData([100, 850, 10, 20], [100, 850, 70, 80]),
+                RoiData([100, 850, 10, 20], [100, 850, 70, 80]),
+                RoiData([100, 850, 10, 20], [100, 850, 70, 80])]
         for ind in range(len(dimensions)):
             self.roi_data_manager._add(dimensions[ind], rois[ind])
 
@@ -31,15 +31,15 @@ class Test_T_Rax_Data_Test(unittest.TestCase):
         self.assertEqual(self.roi_data_manager.get_roi_data([1001, 101]).get_roi_data(),
                          [[250, 750, 80, 90], [250, 750, 10, 20]])
 
-        self.roi_data_manager._add([1001, 101], ROIData([100, 1000, 10, 20], [234, 789, 12, 34]))
+        self.roi_data_manager._add([1001, 101], RoiData([100, 1000, 10, 20], [234, 789, 12, 34]))
         self.assertEqual(self.roi_data_manager.get_roi_data([1001, 101]).get_roi_data(),
                          [[100, 1000, 10, 20], [234, 789, 12, 34]])
 
     def test_settings(self):
-        data = TraxTemperatureData()
+        data = TemperatureData()
         data.roi_data.ds_roi.set_roi([100, 500, 10, 20])
         data.roi_data.us_roi.set_roi([100, 500, 80, 90])
-        initial_settings = TraxTemperatureSettings(data)
+        initial_settings = TemperatureSettings(data)
         self.assertEqual(initial_settings.ds_calibration_temperature, 2000)
         self.assertEqual(initial_settings.us_calibration_temperature, 2000)
         self.assertEqual(initial_settings.ds_calib_file_name, 'Select File...')
@@ -56,12 +56,12 @@ class Test_T_Rax_Data_Test(unittest.TestCase):
         data.load_exp_file('unittest files/SPE_v2_PIXIS.SPE')
         data.get_ds_calibration_parameter().set_temperature(1500)
         data.get_ds_calibration_parameter().set_modus(0)
-        calib_settings = TraxTemperatureSettings(data)
+        calib_settings = TemperatureSettings(data)
 
         self.assertEqual(calib_settings.ds_calib_file_name, 'unittest files/dn_15.SPE')
         self.assertEqual(calib_settings.us_calib_file_name, 'unittest files/up_15.SPE')
 
-        TraxTemperatureSettings.load_settings(initial_settings, data)
+        TemperatureSettings.load_settings(initial_settings, data)
         self.assertEqual(data.get_ds_calibration_parameter().temp, 2000)
         self.assertNotEqual(data.get_roi_data().get_ds_roi(), [100, 500, 10, 20])
         self.assertNotEqual(data.get_roi_data().get_us_roi(), [100, 500, 80, 90])

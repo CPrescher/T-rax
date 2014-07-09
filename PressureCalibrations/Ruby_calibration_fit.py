@@ -3,8 +3,8 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 
-Mao_data=np.loadtxt('Data/Ruby/Mao_et_al_1986_Cu.txt',delimiter='\t')
-Zou_data=np.loadtxt('Data/Ruby/Zou_et_al_1982_Ag.txt',delimiter='\t')
+Mao_data=np.loadtxt('Model/Ruby/Mao_et_al_1986_Cu.txt',delimiter='\t')
+Zou_data=np.loadtxt('Model/Ruby/Zou_et_al_1982_Ag.txt',delimiter='\t')
 
 
 Mao_P = Mao_data.T[0]
