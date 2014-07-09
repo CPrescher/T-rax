@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>945</width>
-    <height>484</height>
+    <height>493</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -29,9 +29,9 @@
 QGroupBox {  
      border: 1px solid #ADADAD;  
      border-radius: 4px; 
-     padding: 0px ;  
-	 padding-top: 3px;
-     margin-top: 4px;  
+
+     margin-top: 7px;  
+     padding: 0px  
  }  
 
 QPushButton{  
@@ -86,13 +86,11 @@ QPushButton::focus {
 #downstream_roi_box{
 	color: rgba(255,255,0,255);
 	border: 1px solid rgba(255,255,0,255);
-	margin: 3px;
 }
 
 #upstream_roi_box{
 	color: rgba(255,140,0,255);
 	border: 1px solid rgba(255,140,0,255);
-	margin: 3px;
 }</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
