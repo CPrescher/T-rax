@@ -20,8 +20,11 @@ from Controller.RoiSelectorDiamondController import TRaxROIControllerDiamond
 
 
 class TRaxMainController(object):
-    def __init__(self):
+    def __init__(self, version = None):
         self.main_view = TRaxMainView()
+
+        if version is not None:
+            self.main_view.setWindowTitle('T-Rax v'+str(version))
         
         self.create_signals()
         self.create_sub_controller()

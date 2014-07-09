@@ -3,7 +3,10 @@ from PyQt4 import QtGui
 import sys
 from datetime import datetime
 import Model
+
 sys.modules['data'] = Model
+
+VERSION = 0.21
 
 
 class Logger(object):
@@ -15,16 +18,21 @@ class Logger(object):
         self.terminal.write(message)
         self.log.write(message)
 
-#redirect output:
+# redirect output:
 sys.stdout = Logger()
 sys.stderr = Logger()
 
-print ('*********************************************************\n'+
-       'T-Rax has been started at {time}\n'+
-       '*********************************************************').\
-       format(time = str(datetime.now()))
+print ('*********************************************************\n' +
+       'T-Rax has been started at {time}\n' +
+       '*********************************************************'). \
+    format(time=str(datetime.now()))
 
+from sys import platform as _platform
 app = QtGui.QApplication(sys.argv)
-controller = TRaxMainController()
+if _platform == "linux" or _platform == "linux2":
+    app.setStyle('plastique')
+elif _platform == "win32" or _platform == 'cygwin':
+    app.setStyle('plastique')
+controller = TRaxMainController(VERSION)
 controller.main_view.show()
 app.exec_()
