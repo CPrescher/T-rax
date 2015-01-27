@@ -107,10 +107,10 @@ class TemperatureData(GeneralData):
             return 0
 
     def get_x_roi_limits(self):
-        return self.calculate_wavelength(self.exp_data.roi_data.get_x_limits())
+        return self.get_wavelength_from(self.exp_data.roi_data.get_x_limits())
 
     def set_x_roi_limits_to(self, limits):
-        limits_ind = self.calculate_ind(limits)
+        limits_ind = self.get_index_from(limits)
         self.roi_data.set_x_limits(limits_ind)
 
     def get_roi_data(self):

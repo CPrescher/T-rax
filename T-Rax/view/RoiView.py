@@ -222,7 +222,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.graph = self.img_axes.plot(self.graph_spec.x, self.graph_spec.y, 'c-', lw=1)
 
     def plot_lines(self):
-        x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
+        x_limits = self.data.get_wavelength_from(self.data.roi_data.us_roi.get_x_limits())
         axes_xlim = self.img_axes.get_xlim()
         self.min_line = self.create_line(x_limits[0], [axes_xlim[0], x_limits[1] - 1], "MIN")
         self.max_line = self.create_line(x_limits[1], [x_limits[0] + 1, axes_xlim[1]], "MAX")
@@ -242,7 +242,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         increment = self.get_x_axis_increment()
         xlimits = np.ceil(xlimits / increment) * increment
         xtick_num = np.arange(xlimits[0], xlimits[1], increment)
-        xtick_pos = self.data.calculate_ind(xtick_num)
+        xtick_pos = self.data.get_index_from(xtick_num)
         self.img_axes.set_xticks(xtick_pos)
         self.img_axes.set_xticklabels((map(int, xtick_num)))
 
@@ -287,15 +287,15 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
             self.us_rect.set_roi(self.data.roi_data.us_roi)
             self.ds_rect.set_roi(self.data.roi_data.ds_roi)
         except:
-            self.min_line.set_pos(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_min))
-            self.max_line.set_pos(self.data.calculate_wavelength(self.data.roi_data.us_roi.x_max))
+            self.min_line.set_pos(self.data.get_wavelength_from(self.data.roi_data.us_roi.x_min))
+            self.max_line.set_pos(self.data.get_wavelength_from(self.data.roi_data.us_roi.x_max))
             self.redraw_figure()
 
     def update_txt_roi(self):
         ds_txt_roi = self.data.roi_data.ds_roi.get_roi_as_list()
         us_txt_roi = self.data.roi_data.us_roi.get_roi_as_list()
-        ds_txt_roi[:2] = self.data.calculate_wavelength(ds_txt_roi[:2])
-        us_txt_roi[:2] = self.data.calculate_wavelength(us_txt_roi[:2])
+        ds_txt_roi[:2] = self.data.get_wavelength_from(ds_txt_roi[:2])
+        us_txt_roi[:2] = self.data.get_wavelength_from(us_txt_roi[:2])
         self.set_ds_txt_roi(ds_txt_roi)
         self.set_us_txt_roi(us_txt_roi)
         self.set_fit_limits(ds_txt_roi[:2])

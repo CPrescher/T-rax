@@ -7,7 +7,7 @@ class GeneralData(object):
     def load_exp_file(self):
         raise NotImplementedError
 
-    def load_next_exp_file(self):
+    def load_next_data_file(self):
         new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
         if os.path.isfile(new_file_name):
             self.load_exp_file(new_file_name)
@@ -21,7 +21,12 @@ class GeneralData(object):
         elif os.path.isfile(new_file_name_with_leading_zeros):
             self.load_exp_file(new_file_name_with_leading_zeros)
 
-    def calculate_ind(self, wavelength):
+    def get_index_from(self, wavelength):
+        """
+        calculating image index for a given index
+        :param wavelength: wavelength in nm
+        :return: index
+        """
         result = []
         xdata = np.array(self.exp_data.x_whole)
         try:
@@ -43,36 +48,41 @@ class GeneralData(object):
                                 (xdata[base_ind + 1] - xdata[base_ind]) \
                                 + base_ind))
 
-    def calculate_wavelength(self, channel):
-        if isinstance(channel, list):
+    def get_wavelength_from(self, index):
+        """
+        Calculates the wavelength in nm from a given index.
+        :param index:
+        :return: wavelength in nm
+        """
+        if isinstance(index, list):
             result = []
-            for c in channel:
+            for c in index:
                 result.append(self.exp_data.x_whole[c])
             return np.array(result)
         else:
-            return self.exp_data.x_whole[channel]
+            return self.exp_data.x_whole[index]
 
-    def calculate_ind(self, wavelength):
-        result = []
-        xdata = np.array(self.exp_data.x_whole)
-        try:
-            for w in wavelength:
-                try:
-                    base_ind = max(max(np.where(xdata <= w)))
-                    if base_ind < len(xdata) - 1:
-                        result.append(int(np.round((w - xdata[base_ind]) / \
-                                                   (xdata[base_ind + 1] - xdata[base_ind]) \
-                                                   + base_ind)))
-                    else:
-                        result.append(base_ind)
-                except:
-                    result.append(0)
-            return np.array(result)
-        except TypeError:
-            base_ind = max(max(np.where(xdata <= wavelength)))
-            return int(np.round((wavelength - xdata[base_ind]) / \
-                                (xdata[base_ind + 1] - xdata[base_ind]) \
-                                + base_ind))
+    # def calculate_ind(self, wavelength):
+    #     result = []
+    #     xdata = np.array(self.exp_data.x_whole)
+    #     try:
+    #         for w in wavelength:
+    #             try:
+    #                 base_ind = max(max(np.where(xdata <= w)))
+    #                 if base_ind < len(xdata) - 1:
+    #                     result.append(int(np.round((w - xdata[base_ind]) / \
+    #                                                (xdata[base_ind + 1] - xdata[base_ind]) \
+    #                                                + base_ind)))
+    #                 else:
+    #                     result.append(base_ind)
+    #             except:
+    #                 result.append(0)
+    #         return np.array(result)
+    #     except TypeError:
+    #         base_ind = max(max(np.where(xdata <= wavelength)))
+    #         return int(np.round((wavelength - xdata[base_ind]) / \
+    #                             (xdata[base_ind + 1] - xdata[base_ind]) \
+    #                             + base_ind))
 
 
     def calc_spectra(self):
@@ -103,9 +113,9 @@ class GeneralData(object):
         return self.exp_data.get_x_limits()
 
     def get_x_roi_limits(self):
-        return self.calculate_wavelength(self.exp_data.roi.get_x_limits())
+        return self.get_wavelength_from(self.exp_data.roi.get_x_limits())
 
     def set_x_roi_limits_to(self, limits):
-        limits_ind = self.calculate_ind(limits)
+        limits_ind = self.get_index_from(limits)
         self.roi.set_x_limit(limits_ind)
 

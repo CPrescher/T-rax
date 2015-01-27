@@ -104,7 +104,7 @@ class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
         increment = self.get_x_axis_increment()
         xlimits = np.ceil(xlimits / increment) * increment
         xtick_num = np.arange(xlimits[0], xlimits[1], increment)
-        xtick_pos = self.data.calculate_ind(xtick_num)
+        xtick_pos = self.data.get_index_from(xtick_num)
         self.axes.set_xticks(xtick_pos)
         self.axes.set_xticklabels((map(int, xtick_num)))
 
@@ -131,7 +131,7 @@ class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
 
     def update_txt_roi(self):
         txt_roi = self.data.roi.get_roi_as_list()
-        txt_roi[:2] = self.data.calculate_wavelength(txt_roi[:2])
+        txt_roi[:2] = self.data.get_wavelength_from(txt_roi[:2])
         self.set_txt_roi(txt_roi)
 
     def set_txt_roi(self, roi):

@@ -71,7 +71,7 @@ class TestGui(unittest.TestCase):
         self.temperature_controller.load_roi_view()
         new_ds_roi = [100, 900, 80, 90]
         self.temperature_controller.data.roi_data.set_ds_roi(new_ds_roi)
-        new_ds_roi[:2] = np.round(self.temperature_controller.data.calculate_wavelength(new_ds_roi[:2]))
+        new_ds_roi[:2] = np.round(self.temperature_controller.data.get_wavelength_from(new_ds_roi[:2]))
         self.assertEqual(self.temperature_controller.roi_controller.view.get_ds_roi(),
                          new_ds_roi)
         self.assertEqual(self.temperature_controller.roi_controller.view.get_us_roi()[:2],
@@ -81,7 +81,7 @@ class TestGui(unittest.TestCase):
 
         new_us_roi = [120, 850, 7, 13]
         self.temperature_controller.data.roi_data.set_us_roi(new_ds_roi)
-        new_ds_roi[:2] = np.round(self.temperature_controller.data.calculate_wavelength(new_ds_roi[:2]))
+        new_ds_roi[:2] = np.round(self.temperature_controller.data.get_wavelength_from(new_ds_roi[:2]))
         self.assertEqual(self.temperature_controller.roi_controller.view.get_us_roi(),
                          new_ds_roi)
         self.assertEqual(self.temperature_controller.roi_controller.view.get_ds_roi()[:2],
@@ -93,7 +93,7 @@ class TestGui(unittest.TestCase):
         self.temperature_controller.roi_controller.view.set_ds_txt_roi(new_ds_roi)
         self.temperature_controller.roi_controller.ds_roi_txt_changed()
         data_ds_roi = self.temperature_controller.data.get_roi_data().get_ds_roi()
-        data_ds_roi[:2] = np.round(self.temperature_controller.data.calculate_wavelength(data_ds_roi[:2]))
+        data_ds_roi[:2] = np.round(self.temperature_controller.data.get_wavelength_from(data_ds_roi[:2]))
         self.assertEqual(data_ds_roi, new_ds_roi)
         self.assertEqual(self.temperature_controller.data.get_roi_data().get_ds_roi()[:2],
                          self.temperature_controller.data.get_roi_data().get_us_roi()[:2])
@@ -102,7 +102,7 @@ class TestGui(unittest.TestCase):
         self.temperature_controller.roi_controller.view.set_us_txt_roi(new_us_roi)
         self.temperature_controller.roi_controller.us_roi_txt_changed()
         data_us_roi = self.temperature_controller.data.get_roi_data().get_us_roi()
-        data_us_roi[:2] = np.round(self.temperature_controller.data.calculate_wavelength(data_us_roi[:2]))
+        data_us_roi[:2] = np.round(self.temperature_controller.data.get_wavelength_from(data_us_roi[:2]))
         self.assertEqual(data_us_roi, new_us_roi)
         self.assertEqual(self.temperature_controller.data.get_roi_data().get_us_roi()[:2],
                          self.temperature_controller.data.get_roi_data().get_ds_roi()[:2])

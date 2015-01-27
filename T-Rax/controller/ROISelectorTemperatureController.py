@@ -63,12 +63,12 @@ class TRaxROITemperatureController(object):
 
     def us_roi_txt_changed(self):
         us_roi = self.view.get_us_roi()
-        us_roi[:2] = self.data.calculate_ind(us_roi[:2])
+        us_roi[:2] = self.data.get_index_from(us_roi[:2])
         self.data.roi_data.set_us_roi(us_roi)
 
     def ds_roi_txt_changed(self):
         ds_roi = self.view.get_ds_roi()
-        ds_roi[:2] = self.data.calculate_ind(ds_roi[:2])
+        ds_roi[:2] = self.data.get_index_from(ds_roi[:2])
         self.data.roi_data.set_ds_roi(ds_roi)
 
     def key_pressed(self, event):
@@ -90,7 +90,7 @@ class TRaxROITemperatureController(object):
             self.data.roi_data.set_us_roi(us_roi)
 
     def fit_txt_changed(self):
-        converted_limits = self.data.calculate_ind(self.view.get_fit_x_limits())
+        converted_limits = self.data.get_index_from(self.view.get_fit_x_limits())
         self.data.roi_data.set_x_limits(converted_limits)
 
     def roi_changed(self):
@@ -111,12 +111,12 @@ class TRaxROITemperatureController(object):
         self.view.set_img_vmax(data)
 
     def min_roi_line_changed(self, data):
-        new_x_min = self.data.calculate_ind(data)
+        new_x_min = self.data.get_index_from(data)
         self.data.roi_data.set_x_min(new_x_min)
         self.view.graph_panel.update_line_limits()
 
     def max_roi_line_changed(self, data):
-        new_x_max = self.data.calculate_ind(data)
+        new_x_max = self.data.get_index_from(data)
         self.data.roi_data.set_x_max(new_x_max)
         self.view.graph_panel.update_line_limits()
 

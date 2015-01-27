@@ -42,7 +42,7 @@ class TRaxModuleController(object):
             self.data.load_exp_file(filename)
 
     def load_next_exp_data(self):
-        self.data.load_next_exp_file()
+        self.data.load_next_data_file()
 
     def load_previous_exp_data(self):
         self.data.load_previous_exp_file()

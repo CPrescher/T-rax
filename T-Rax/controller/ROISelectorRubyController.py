@@ -36,7 +36,7 @@ class TRaxROIControllerRuby(object):
 
     def roi_txt_changed(self):
         roi = self.view.get_roi()
-        roi[:2] = self.data.calculate_ind(roi[:2])
+        roi[:2] = self.data.get_index_from(roi[:2])
         self.data.roi.set_roi(roi)
         pub.sendMessage("RUBY ROI CHANGED")
 
