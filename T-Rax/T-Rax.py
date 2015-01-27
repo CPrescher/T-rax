@@ -38,5 +38,5 @@ if _platform == "linux" or _platform == "linux2":
 elif _platform == "win32" or _platform == 'cygwin':
     app.setStyle('plastique')
 controller = TRaxMainController(VERSION)
-controller.main_view.show()
+controller.show_window()
 app.exec_()

@@ -1,5 +1,4 @@
 ﻿import unittest
-import sys
 import os
 
 import numpy as np
@@ -10,15 +9,14 @@ from controller.MainController import TRaxMainController
 
 class TestGui(unittest.TestCase):
     def setUp(self):
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QtGui.QApplication([])
         self.main_controller = TRaxMainController()
         self.temperature_controller = self.main_controller.temperature_controller
         self.ruby_controller = self.main_controller.ruby_controller
         self.diamond_controller = self.main_controller.diamond_controller
 
     def tearDown(self):
-        self.app.closeAllWindows()
-        self.app.quit()
+        del self.app
 
     def test_temperature_load_exp_data(self):
         filename1 = 'unittest files/temper_010.spe'
@@ -138,7 +136,3 @@ class TestGui(unittest.TestCase):
         self.assertEqual(
             str(self.temperature_controller.main_view.temperature_control_widget.ds_calib_filename_lbl.text()),
             'dn_15.SPE')
-
-
-if __name__ == '__main__':
-    unittest.main()

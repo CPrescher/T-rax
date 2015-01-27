@@ -66,6 +66,3 @@ class Test_T_Rax_Data_Test(unittest.TestCase):
         self.assertNotEqual(data.get_roi_data().get_ds_roi(), [100, 500, 10, 20])
         self.assertNotEqual(data.get_roi_data().get_us_roi(), [100, 500, 80, 90])
 
-
-if __name__ == '__main__':
-    unittest.main()

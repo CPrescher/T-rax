@@ -3,8 +3,6 @@ import datetime
 import os
 
 from model.SPE_module import SPE_File
-
-
 unittest_folder = os.path.join(os.path.dirname(__file__), 'unittest files')
 
 
@@ -69,6 +67,3 @@ class TestSPEModule(unittest.TestCase):
     def test_multiple_frames(self):
         self.spe3_2frames_file = SPE_File(os.path.join(unittest_folder, 'SPE_v3_PIMAX_2frames.spe'))
 
-
-if __name__ == '__main__':
-    unittest.main()
