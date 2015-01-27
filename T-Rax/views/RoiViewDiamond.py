@@ -1,11 +1,11 @@
-from UIFiles.T_Rax_ROI_Diamond_Selector import Ui_roi_selector_diamond_widget
-from Views.RoiView import ResizeableRectangle
 from PyQt4 import QtGui, QtCore
-
-
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib as mpl
+
+from Views.UIFiles.T_Rax_ROI_Diamond_Selector import Ui_roi_selector_diamond_widget
+from Views.RoiView import ResizeableRectangle
+
 
 mpl.rcParams['font.size'] = 10
 mpl.rcParams['lines.linewidth'] = 0.5

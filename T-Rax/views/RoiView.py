@@ -1,13 +1,14 @@
-from UIFiles.T_Rax_ROI_Selector import Ui_roi_selector_main_widget
-from PyQt4 import QtGui, QtCore
 import sys
-from wx.lib.pubsub import setupkwargs
-from wx.lib.pubsub import pub
 
+from PyQt4 import QtGui, QtCore
+from wx.lib.pubsub import pub
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib import animation
 import matplotlib as mpl
+
+from Views.UIFiles.T_Rax_ROI_Selector import Ui_roi_selector_main_widget
+
 
 mpl.rcParams['font.size'] = 10
 mpl.rcParams['lines.linewidth'] = 0.5

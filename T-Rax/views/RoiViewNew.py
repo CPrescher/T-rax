@@ -1,10 +1,13 @@
 
 __author__ = 'Clemens Prescher'
 
-from UIFiles.ROI_Selector import Ui_roi_selector_main_widget
-from PyQt4 import QtCore, QtGui
 import sys
+
+from PyQt4 import QtCore, QtGui
+
+from Views.UIFiles.ROI_Selector import Ui_roi_selector_main_widget
 from ImgView import ImgView
+
 
 class RoiView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def __init__(self):

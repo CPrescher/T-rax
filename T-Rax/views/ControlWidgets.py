@@ -1,8 +1,9 @@
 from PyQt4 import QtGui, QtCore
+import numpy as np
+
 from UIFiles.T_Rax_TemperatureControl import Ui_temperature_control_widget
 from UIFiles.T_Rax_RubyControl import Ui_ruby_control_widget
-from UIFiles.T_Rax_DiamondControl import Ui_diamond_control_widget
-import numpy as np
+from Views.UIFiles.T_Rax_DiamondControl import Ui_diamond_control_widget
 
 
 class TemperatureControlWidget(QtGui.QWidget, Ui_temperature_control_widget):

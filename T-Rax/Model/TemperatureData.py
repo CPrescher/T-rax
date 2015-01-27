@@ -5,10 +5,6 @@ import numpy as np
 
 from SPE_module import SPE_File
 
-
-def dependencies_for_myprogram():
-
-
 from scipy.optimize import curve_fit
 
 from Model.GeneralData import GeneralData
