@@ -1,9 +1,9 @@
 ﻿﻿import unittest
 import datetime
-
 import os
 
-from SPE_module import SPE_File
+from Model.SPE_module import SPE_File
+
 
 unittest_folder=os.getcwd()+'\\unittest files\\'
 

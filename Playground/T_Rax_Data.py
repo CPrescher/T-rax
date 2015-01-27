@@ -1,10 +1,15 @@
-from wx.lib.pubsub import pub
-from SPE_module import SPE_File
 import os.path
-import numpy as np
 import random
+
+from wx.lib.pubsub import pub
+import numpy as np
+
+from Model.SPE_module import SPE_File
+
+
 def dependencies_for_myprogram():
-    from scipy.sparse.csgraph import _validation
+
+
 from scipy.optimize import curve_fit
 
 

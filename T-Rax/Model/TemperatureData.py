@@ -2,11 +2,9 @@ import random
 
 from wx.lib.pubsub import pub
 import numpy as np
-
-from SPE_module import SPE_File
-
 from scipy.optimize import curve_fit
 
+from Model.SPE_module import SPE_File
 from Model.GeneralData import GeneralData
 
 

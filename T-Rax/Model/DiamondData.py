@@ -1,9 +1,10 @@
-from wx.lib.pubsub import pub
-from SPE_module import SPE_File
-import numpy as np
 import random
+
+from wx.lib.pubsub import pub
+import numpy as np
 from scipy.ndimage import gaussian_filter1d
 
+from Model.SPE_module import SPE_File
 from Model.GeneralData import GeneralData
 from Model.TemperatureData import Roi, Spectrum, gauss_curve_function
 

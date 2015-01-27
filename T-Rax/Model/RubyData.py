@@ -1,9 +1,10 @@
-from wx.lib.pubsub import pub
-from SPE_module import SPE_File
-import numpy as np
 import random
+
+from wx.lib.pubsub import pub
+import numpy as np
 from scipy.optimize import minimize
 
+from Model.SPE_module import SPE_File
 from Model.TemperatureData import Roi, Spectrum, gauss_curve_function
 from Model.GeneralData import GeneralData
 
