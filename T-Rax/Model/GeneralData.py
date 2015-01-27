@@ -82,9 +82,6 @@ class GeneralData(object):
     def get_whole_spectrum(self):
         return self.exp_data.x, self.exp_data.y_whole_spectrum
 
-    def save_roi_data(self):
-        np.savetxt('roi_data.txt', self.roi.get_roi_data(), delimiter=',', fmt='%.0f')
-
     def get_x_limits(self):
         return self.exp_data.get_x_limits()
 

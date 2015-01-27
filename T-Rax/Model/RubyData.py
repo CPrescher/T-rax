@@ -5,7 +5,8 @@ import numpy as np
 from scipy.optimize import minimize
 
 from model.SpeFile import SpeFile
-from model.TemperatureData import Roi, Spectrum, gauss_curve_function
+from model.TemperatureData import Spectrum, gauss_curve_function
+from model.RoiData import Roi
 from model.GeneralData import GeneralData
 
 

@@ -6,7 +6,8 @@ from scipy.ndimage import gaussian_filter1d
 
 from model.SpeFile import SpeFile
 from model.GeneralData import GeneralData
-from model.TemperatureData import Roi, Spectrum, gauss_curve_function
+from model.TemperatureData import Spectrum, gauss_curve_function
+from model.RoiData import Roi
 
 
 class DiamondData(GeneralData):
