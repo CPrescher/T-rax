@@ -1,25 +1,24 @@
 import os
 
 import numpy as np
-
+from helper import FileNameIterator
 
 class GeneralData(object):
-    def load_exp_file(self):
+    def __init__(self):
+        self.file_name_iterator = FileNameIterator()
+
+    def load_exp_file(self, filename):
         raise NotImplementedError
 
     def load_next_data_file(self):
-        new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_next_file_names()
-        if os.path.isfile(new_file_name):
-            self.load_exp_file(new_file_name)
-        elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_exp_file(new_file_name_with_leading_zeros)
+        next_file_name = self.file_name_iterator.get_next_filename()
+        if next_file_name is not None:
+            self.load_exp_file(next_file_name)
 
-    def load_previous_exp_file(self):
-        new_file_name, new_file_name_with_leading_zeros = self.exp_data.get_previous_file_names()
-        if os.path.isfile(new_file_name):
-            self.load_exp_file(new_file_name)
-        elif os.path.isfile(new_file_name_with_leading_zeros):
-            self.load_exp_file(new_file_name_with_leading_zeros)
+    def load_previous_data_file(self):
+        previous_file_name = self.file_name_iterator.get_previous_filename()
+        if previous_file_name is not None:
+            self.load_exp_file(previous_file_name)
 
     def get_index_from(self, wavelength):
         """

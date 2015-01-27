@@ -6,8 +6,9 @@ from PyQt4 import QtGui
 
 from controller.MainController import TRaxMainController
 
+test_path = os.path.dirname(__file__)
 
-class TestGui(unittest.TestCase):
+class TestMainController(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication([])
         self.main_controller = TRaxMainController()
@@ -18,26 +19,35 @@ class TestGui(unittest.TestCase):
     def tearDown(self):
         del self.app
 
-    def test_temperature_load_exp_data(self):
-        filename1 = 'unittest files/temper_010.spe'
-        filename2 = 'unittest files/temper_011.spe'
+    def test_temperature_controller_file_browsing(self):
+        filename1 = os.path.join(test_path, 'unittest files', 'temper_010.spe')
+        filename2 = os.path.join(test_path, 'unittest files', 'temper_011.spe')
 
+        # make sure normal file loading works
         self.temperature_controller.load_exp_data(filename1)
         self.assertGreater(len(self.temperature_controller.data.exp_data.get_img_data()), 0)
+
+        # loading the next file and make sure it is correct
         self.temperature_controller.load_next_exp_data()
-        self.assertEqual(self.temperature_controller.data.exp_data.filename, filename2)
+        self.assertEqual(os.path.abspath(self.temperature_controller.data.exp_data.filename),
+                         os.path.abspath(filename2))
+
+        # going back
         self.temperature_controller.load_previous_exp_data()
         self.assertEqual(self.temperature_controller.data.exp_data.filename, filename1)
 
+    def test_temperature_controller_filename_lbl_are_correct(self):
+        filename = os.path.join(test_path, 'unittest files', 'temper_010.spe')
+        self.temperature_controller.load_exp_data(filename)
         self.assertEqual(str(self.temperature_controller.main_view.temperature_control_widget.exp_filename_lbl.text()),
-                         filename1.replace('\\', '/').split('/')[-1])
+                         filename.replace('\\', '/').split('/')[-1])
         self.assertEqual(
             str(self.temperature_controller.main_view.temperature_control_widget.exp_folder_name_lbl.text()),
-            '/'.join(filename1.replace('\\', '/').split('/')[-3:-1]))
+            '/'.join(filename.replace('\\', '/').split('/')[-3:-1]))
 
-    def test_ruby_load_exp_data(self):
-        filename1 = 'unittest files/temper_010.spe'
-        filename2 = 'unittest files/temper_011.spe'
+    def test_ruby_controller_file_browsing(self):
+        filename1 = os.path.join(test_path, 'unittest files', 'temper_010.spe')
+        filename2 = os.path.join(test_path, 'unittest files', 'temper_011.spe')
 
         self.ruby_controller.load_exp_data(filename1)
         self.assertGreater(len(self.ruby_controller.data.exp_data.get_img_data()), 0)
@@ -46,26 +56,36 @@ class TestGui(unittest.TestCase):
         self.ruby_controller.load_previous_exp_data()
         self.assertEqual(self.ruby_controller.data.exp_data.filename, filename1)
 
-        self.assertEqual(str(self.ruby_controller.main_view.ruby_control_widget.exp_filename_lbl.text()),
-                         filename1.replace('\\', '/').split('/')[-1])
-        self.assertEqual(str(self.ruby_controller.main_view.ruby_control_widget.exp_folder_name_lbl.text()),
-                         '/'.join(filename1.replace('\\', '/').split('/')[-3:-1]))
+    def test_ruby_controller_filename_labels_are_correct(self):
+        filename = os.path.join(test_path, 'unittest files', 'temper_010.spe')
+        self.ruby_controller.load_exp_data(filename)
 
-    def test_diamond_load_exp_data(self):
-        filename1 = 'unittest files/temper_010.spe'
-        filename2 = 'unittest files/temper_011.spe'
+        self.assertEqual(str(self.ruby_controller.main_view.ruby_control_widget.exp_filename_lbl.text()),
+                         filename.replace('\\', '/').split('/')[-1])
+        self.assertEqual(str(self.ruby_controller.main_view.ruby_control_widget.exp_folder_name_lbl.text()),
+                         '/'.join(filename.replace('\\', '/').split('/')[-3:-1]))
+
+    def test_diamond_controller_file_browsing(self):
+        filename1 = os.path.join(test_path, 'unittest files', 'temper_010.spe')
+        filename2 = os.path.join(test_path, 'unittest files', 'temper_011.spe')
 
         self.diamond_controller.load_exp_data(filename1)
         self.assertGreater(len(self.diamond_controller.data.exp_data.get_img_data()), 0)
         self.diamond_controller.load_next_exp_data()
-        self.assertEqual(self.diamond_controller.data.exp_data.filename, filename2)
+        self.assertEqual(os.path.abspath(self.diamond_controller.data.exp_data.filename),
+                         os.path.abspath(filename2))
         self.diamond_controller.load_previous_exp_data()
-        self.assertEqual(self.diamond_controller.data.exp_data.filename, filename1)
+        self.assertEqual(os.path.abspath(self.diamond_controller.data.exp_data.filename),
+                         os.path.abspath(filename1))
+
+    def test_diamond_controller_filename_labels_are_correct(self):
+        filename = os.path.join(test_path, 'unittest files', 'temper_010.spe')
+        self.diamond_controller.load_exp_data(filename)
 
         self.assertEqual(str(self.diamond_controller.main_view.diamond_control_widget.exp_filename_lbl.text()),
-                         filename1.replace('\\', '/').split('/')[-1])
+                         filename.replace('\\', '/').split('/')[-1])
         self.assertEqual(str(self.diamond_controller.main_view.diamond_control_widget.exp_folder_name_lbl.text()),
-                         '/'.join(filename1.replace('\\', '/').split('/')[-3:-1]))
+                         '/'.join(filename.replace('\\', '/').split('/')[-3:-1]))
 
     def test_temperature_roi_selector(self):
         self.temperature_controller.load_roi_view()

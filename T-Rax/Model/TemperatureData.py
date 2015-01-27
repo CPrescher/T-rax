@@ -10,6 +10,7 @@ from model.GeneralData import GeneralData
 
 class TemperatureData(GeneralData):
     def __init__(self):
+        super(TemperatureData, self).__init__()
         self.ds_calibration_data = None
         self.us_calibration_data = None
         self.ds_calibration_parameter = CalibrationParameter()
@@ -34,6 +35,8 @@ class TemperatureData(GeneralData):
         return ExpData(img_file, self.roi_data_manager)
 
     def load_exp_file(self, filename):
+        self.file_name_iterator.update_filename(filename)
+
         self.exp_data = self._read_exp_image_file(filename)
         self.roi_data = self.exp_data.roi_data
         try:

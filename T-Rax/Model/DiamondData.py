@@ -11,6 +11,7 @@ from model.TemperatureData import Roi, Spectrum, gauss_curve_function
 
 class DiamondData(GeneralData):
     def __init__(self):
+        super(DiamondData, self).__init__()
         self.roi_data_manager = ROIDiamondManager()
         self._create_dummy_img()
         self.click_pos = 1334
@@ -25,6 +26,7 @@ class DiamondData(GeneralData):
         self.roi = self.exp_data.roi
 
     def load_exp_file(self, filename):
+        self.file_name_iterator.update_filename(filename)
         self.exp_data = self.read_exp_image_file(filename)
         self.roi = self.exp_data.roi
         self.fitted_spectrum = Spectrum([], [])

@@ -45,7 +45,7 @@ class TRaxModuleController(object):
         self.data.load_next_data_file()
 
     def load_previous_exp_data(self):
-        self.data.load_previous_exp_file()
+        self.data.load_previous_data_file()
 
     def load_roi_view(self):
         raise NotImplementedError

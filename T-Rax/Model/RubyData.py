@@ -11,6 +11,7 @@ from model.GeneralData import GeneralData
 
 class RubyData(GeneralData):
     def __init__(self):
+        super(RubyData, self).__init__()
         self.roi_data_manager = RoiRubyManager()
         self._create_dummy_img()
         self.click_pos = 694.35
@@ -24,6 +25,7 @@ class RubyData(GeneralData):
         self.roi = self.exp_data.roi
 
     def load_exp_file(self, filename):
+        self.file_name_iterator.update_filename(filename)
         self.exp_data = self.read_exp_image_file(filename)
         self.roi = self.exp_data.roi
         self.fitted_spectrum = Spectrum([], [])
