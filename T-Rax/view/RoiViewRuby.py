@@ -83,7 +83,7 @@ class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
 
     def update_img(self):
         self.plot_img()
-        #need to reset the ResizeableRectangles like that, because the Garbage Collector is not fast enough to
+        # need to reset the ResizeableRectangles like that, because the Garbage Collector is not fast enough to
         #delete all the rectangles.
         self.rect.active = False
         ResizeableRectangle.reset()

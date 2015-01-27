@@ -1,8 +1,11 @@
-from Controller.MainController import TRaxMainController
-from PyQt4 import QtGui
 import sys
 from datetime import datetime
+
+from PyQt4 import QtGui
+
+from controller.MainController import TRaxMainController
 import Model
+
 
 sys.modules['data'] = Model
 
@@ -28,6 +31,7 @@ print ('*********************************************************\n' +
     format(time=str(datetime.now()))
 
 from sys import platform as _platform
+
 app = QtGui.QApplication(sys.argv)
 if _platform == "linux" or _platform == "linux2":
     app.setStyle('plastique')

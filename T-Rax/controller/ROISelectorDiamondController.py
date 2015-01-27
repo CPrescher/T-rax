@@ -1,14 +1,12 @@
-from PyQt4.QtCore import SIGNAL
-from PyQt4 import QtCore, QtGui
-import sys
 from wx.lib.pubsub import pub
 
-from Views.RoiViewDiamond import TRaxROIViewDiamond
+from view.RoiViewDiamond import TRaxROIViewDiamond
+
 
 class TRaxROIControllerDiamond(object):
     def __init__(self, data, parent=None):
-        self.parent=parent
-        self.view = TRaxROIViewDiamond(data,parent)
+        self.parent = parent
+        self.view = TRaxROIViewDiamond(data, parent)
         self.data = data
         self.create_signals()
         self.view.update_txt_roi()
@@ -35,8 +33,8 @@ class TRaxROIControllerDiamond(object):
         pub.subscribe(self.exp_data_changed, "EXP DIAMOND DATA CHANGED")
 
     def roi_txt_changed(self):
-        roi=self.view.get_roi()
-        roi[:2] = self.data.calculate_ind(roi[:2])  
+        roi = self.view.get_roi()
+        roi[:2] = self.data.calculate_ind(roi[:2])
         self.data.roi.set_roi(roi)
         pub.sendMessage("DIAMOND ROI CHANGED")
 
@@ -72,7 +70,7 @@ class TRaxROIControllerDiamond(object):
         self.save_roi_data()
         self.view.show()
         self.view.activateWindow()
-        self.view.move(self.parent.x(), 
-                       self.parent.y()+self.parent.height()+50)
-        self.view.resize(self.parent.size().width(),self.view.size().height())
+        self.view.move(self.parent.x(),
+                       self.parent.y() + self.parent.height() + 50)
+        self.view.resize(self.parent.size().width(), self.view.size().height())
 

@@ -6,12 +6,14 @@ FloatValidator - allowing only 1,2,3,4,5,6,7,8,9,0 and ',' and '.'
 
 '''
 
+import string
 
 import wx
-import string
+
 
 ALPHA_ONLY = 1
 DIGIT_ONLY = 2
+
 
 class IntValidator(wx.PyValidator):
     def __init__(self, flag=None, pyVar=None):
@@ -25,7 +27,7 @@ class IntValidator(wx.PyValidator):
     def Validate(self, win):
         tc = self.GetWindow()
         val = tc.GetValue()
-        
+
         for x in val:
             if x not in string.digits:
                 return False
@@ -39,8 +41,8 @@ class IntValidator(wx.PyValidator):
         if key < wx.WXK_SPACE or key == wx.WXK_DELETE or key > 255:
             event.Skip()
             return
-        
-        if  chr(key) in string.digits:
+
+        if chr(key) in string.digits:
             event.Skip()
             return
 

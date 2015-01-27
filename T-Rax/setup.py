@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 # Py2DeX - GUI program for fast processing of 2D X-ray Model
-#     Copyright (C) 2014  Clemens Prescher (clemens.prescher@gmail.com)
+# Copyright (C) 2014  Clemens Prescher (clemens.prescher@gmail.com)
 #     GSECARS, University of Chicago
 #
 #     This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,9 @@
 __author__ = 'Clemens Prescher'
 
 import sys
+
 from cx_Freeze import setup, Executable
+
 
 # Dependencies are automatically detected, but it might need fine tuning.
 options = {}
@@ -29,8 +31,8 @@ base = None
 if sys.platform == "win32":
     base = "Win32GUI"
 
-setup(  name = "T-Rax",
-        version = "0.1",
-        description = "Anlysis of 2 dimensional X-ray diffraction patterns.",
-        options = {"build_exe": options},
-        executables = [Executable("T-Rax.py", base=base)])
+setup(name="T-Rax",
+      version="0.1",
+      description="Anlysis of 2 dimensional X-ray diffraction patterns.",
+      options={"build_exe": options},
+      executables=[Executable("T-Rax.py", base=base)])

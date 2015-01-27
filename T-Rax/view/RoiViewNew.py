@@ -1,4 +1,3 @@
-
 __author__ = 'Clemens Prescher'
 
 import sys
@@ -40,6 +39,7 @@ class RoiView(QtGui.QWidget, Ui_roi_selector_main_widget):
 
 if __name__ == '__main__':
     from Model.SPE_module import SPE_File
+
     app = QtGui.QApplication(sys.argv)
     roi_view = RoiView()
     roi_view.raise_window()

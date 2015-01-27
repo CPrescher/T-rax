@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'ROI_Selector.ui'
 #
 # Created: Wed Jul  9 08:08:07 2014
-#      by: PyQt4 UI code generator 4.10.4
+# by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,11 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+
 
 class Ui_roi_selector_main_widget(object):
     def setupUi(self, roi_selector_main_widget):
@@ -29,77 +31,77 @@ class Ui_roi_selector_main_widget(object):
         roi_selector_main_widget.resize(945, 484)
         roi_selector_main_widget.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         roi_selector_main_widget.setStyleSheet(_fromUtf8("QWidget{  \n"
-"     background: rgba(30, 30, 30, 255);      \n"
-"     color: #F1F1F1; \n"
-"    font-size: 12px;\n"
-" }  \n"
-"\n"
-"QGroupBox {  \n"
-"     border: 1px solid #ADADAD;  \n"
-"     border-radius: 4px;  \n"
-"    padding-top: 10px;\n"
-"     margin-top: 5px;  \n"
-"     padding: 0px  \n"
-" }  \n"
-"\n"
-"QPushButton{  \n"
-"     color: #F1F1F1;\n"
-"     background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #505050);\n"
-"     border: 1px solid #5B5B5B;\n"
-"     border-radius: 5px; \n"
-"     padding-left: 8px;\n"
-"height: 18px;\n"
-"    padding-right: 8px;   \n"
-" }  \n"
-"QPushButton:pressed{\n"
-"        margin-top: 2,px;\n"
-"        margin-left: 2px;   \n"
-"}\n"
-"QPushButton::disabled{\n"
-"}\n"
-"\n"
-"QPushButton::hover{  \n"
-"     border:1px solid #ADADAD; \n"
-" }  \n"
-" \n"
-"\n"
-"QPushButton::checked{\n"
-"    background: qlineargradient(\n"
-"        x1: 0, y1: 1, \n"
-"        x2: 0, y2: 0,\n"
-"        stop: 0 #727272, \n"
-"        stop: 1 #444444\n"
-"    );\n"
-"     border:1px solid  rgb(255, 120,00);\n"
-"}\n"
-"\n"
-"QPushButton::focus {\n"
-"    outline: None;\n"
-"}\n"
-"\n"
-" QGroupBox::title {  \n"
-"      subcontrol-origin: margin;  \n"
-"      left: 20px  \n"
-"  }\n"
-"\n"
-"\n"
-" QLineEdit  {  \n"
-"     border-radius: 2px;  \n"
-"     background: #F1F1F1;  \n"
-"     color: black;  \n"
-"    height: 18 px;\n"
-" }  \n"
-"\n"
-"\n"
-"#downstream_roi_box{\n"
-"    color: rgba(255,255,0,255);\n"
-"    border: 1px solid rgba(255,255,0,255);\n"
-"}\n"
-"\n"
-"#upstream_roi_box{\n"
-"    color: rgba(255,140,0,255);\n"
-"    border: 1px solid rgba(255,140,0,255);\n"
-"}"))
+                                                         "     background: rgba(30, 30, 30, 255);      \n"
+                                                         "     color: #F1F1F1; \n"
+                                                         "    font-size: 12px;\n"
+                                                         " }  \n"
+                                                         "\n"
+                                                         "QGroupBox {  \n"
+                                                         "     border: 1px solid #ADADAD;  \n"
+                                                         "     border-radius: 4px;  \n"
+                                                         "    padding-top: 10px;\n"
+                                                         "     margin-top: 5px;  \n"
+                                                         "     padding: 0px  \n"
+                                                         " }  \n"
+                                                         "\n"
+                                                         "QPushButton{  \n"
+                                                         "     color: #F1F1F1;\n"
+                                                         "     background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #505050);\n"
+                                                         "     border: 1px solid #5B5B5B;\n"
+                                                         "     border-radius: 5px; \n"
+                                                         "     padding-left: 8px;\n"
+                                                         "height: 18px;\n"
+                                                         "    padding-right: 8px;   \n"
+                                                         " }  \n"
+                                                         "QPushButton:pressed{\n"
+                                                         "        margin-top: 2,px;\n"
+                                                         "        margin-left: 2px;   \n"
+                                                         "}\n"
+                                                         "QPushButton::disabled{\n"
+                                                         "}\n"
+                                                         "\n"
+                                                         "QPushButton::hover{  \n"
+                                                         "     border:1px solid #ADADAD; \n"
+                                                         " }  \n"
+                                                         " \n"
+                                                         "\n"
+                                                         "QPushButton::checked{\n"
+                                                         "    background: qlineargradient(\n"
+                                                         "        x1: 0, y1: 1, \n"
+                                                         "        x2: 0, y2: 0,\n"
+                                                         "        stop: 0 #727272, \n"
+                                                         "        stop: 1 #444444\n"
+                                                         "    );\n"
+                                                         "     border:1px solid  rgb(255, 120,00);\n"
+                                                         "}\n"
+                                                         "\n"
+                                                         "QPushButton::focus {\n"
+                                                         "    outline: None;\n"
+                                                         "}\n"
+                                                         "\n"
+                                                         " QGroupBox::title {  \n"
+                                                         "      subcontrol-origin: margin;  \n"
+                                                         "      left: 20px  \n"
+                                                         "  }\n"
+                                                         "\n"
+                                                         "\n"
+                                                         " QLineEdit  {  \n"
+                                                         "     border-radius: 2px;  \n"
+                                                         "     background: #F1F1F1;  \n"
+                                                         "     color: black;  \n"
+                                                         "    height: 18 px;\n"
+                                                         " }  \n"
+                                                         "\n"
+                                                         "\n"
+                                                         "#downstream_roi_box{\n"
+                                                         "    color: rgba(255,255,0,255);\n"
+                                                         "    border: 1px solid rgba(255,255,0,255);\n"
+                                                         "}\n"
+                                                         "\n"
+                                                         "#upstream_roi_box{\n"
+                                                         "    color: rgba(255,140,0,255);\n"
+                                                         "    border: 1px solid rgba(255,140,0,255);\n"
+                                                         "}"))
         self.horizontalLayout = QtGui.QHBoxLayout(roi_selector_main_widget)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setMargin(0)
@@ -133,13 +135,13 @@ class Ui_roi_selector_main_widget(object):
         self.us_x_max_txt = QtGui.QLineEdit(self.upstream_roi_box)
         self.us_x_max_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.us_x_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.us_x_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.us_x_max_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.us_x_max_txt.setObjectName(_fromUtf8("us_x_max_txt"))
         self.gridLayout.addWidget(self.us_x_max_txt, 0, 2, 1, 1)
         self.us_x_min_txt = QtGui.QLineEdit(self.upstream_roi_box)
         self.us_x_min_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.us_x_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.us_x_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.us_x_min_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.us_x_min_txt.setObjectName(_fromUtf8("us_x_min_txt"))
         self.gridLayout.addWidget(self.us_x_min_txt, 0, 1, 1, 1)
         self.label_4 = QtGui.QLabel(self.upstream_roi_box)
@@ -148,13 +150,13 @@ class Ui_roi_selector_main_widget(object):
         self.us_y_min_txt = QtGui.QLineEdit(self.upstream_roi_box)
         self.us_y_min_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.us_y_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.us_y_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.us_y_min_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.us_y_min_txt.setObjectName(_fromUtf8("us_y_min_txt"))
         self.gridLayout.addWidget(self.us_y_min_txt, 1, 1, 1, 1)
         self.us_y_max_txt = QtGui.QLineEdit(self.upstream_roi_box)
         self.us_y_max_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.us_y_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.us_y_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.us_y_max_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.us_y_max_txt.setObjectName(_fromUtf8("us_y_max_txt"))
         self.gridLayout.addWidget(self.us_y_max_txt, 1, 2, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
@@ -170,7 +172,7 @@ class Ui_roi_selector_main_widget(object):
         self.ds_x_max_txt = QtGui.QLineEdit(self.downstream_roi_box)
         self.ds_x_max_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.ds_x_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.ds_x_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.ds_x_max_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.ds_x_max_txt.setObjectName(_fromUtf8("ds_x_max_txt"))
         self.gridLayout_2.addWidget(self.ds_x_max_txt, 0, 2, 1, 1)
         self.label_7 = QtGui.QLabel(self.downstream_roi_box)
@@ -179,19 +181,19 @@ class Ui_roi_selector_main_widget(object):
         self.ds_x_min_txt = QtGui.QLineEdit(self.downstream_roi_box)
         self.ds_x_min_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.ds_x_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.ds_x_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.ds_x_min_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.ds_x_min_txt.setObjectName(_fromUtf8("ds_x_min_txt"))
         self.gridLayout_2.addWidget(self.ds_x_min_txt, 0, 1, 1, 1)
         self.ds_y_max_txt = QtGui.QLineEdit(self.downstream_roi_box)
         self.ds_y_max_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.ds_y_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.ds_y_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.ds_y_max_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.ds_y_max_txt.setObjectName(_fromUtf8("ds_y_max_txt"))
         self.gridLayout_2.addWidget(self.ds_y_max_txt, 1, 2, 1, 1)
         self.ds_y_min_txt = QtGui.QLineEdit(self.downstream_roi_box)
         self.ds_y_min_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.ds_y_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.ds_y_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.ds_y_min_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.ds_y_min_txt.setObjectName(_fromUtf8("ds_y_min_txt"))
         self.gridLayout_2.addWidget(self.ds_y_min_txt, 1, 1, 1, 1)
         self.label_8 = QtGui.QLabel(self.downstream_roi_box)
@@ -212,7 +214,7 @@ class Ui_roi_selector_main_widget(object):
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
         self.fit_from_txt = QtGui.QLineEdit(self.fitting_roi_box)
         self.fit_from_txt.setMaximumSize(QtCore.QSize(800, 16777215))
-        self.fit_from_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.fit_from_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.fit_from_txt.setObjectName(_fromUtf8("fit_from_txt"))
         self.horizontalLayout_11.addWidget(self.fit_from_txt)
         self.horizontalLayout_10.addLayout(self.horizontalLayout_11)
@@ -228,7 +230,7 @@ class Ui_roi_selector_main_widget(object):
         self.fit_to_txt = QtGui.QLineEdit(self.fitting_roi_box)
         self.fit_to_txt.setMaximumSize(QtCore.QSize(800, 16777215))
         self.fit_to_txt.setBaseSize(QtCore.QSize(50, 0))
-        self.fit_to_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.fit_to_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.fit_to_txt.setObjectName(_fromUtf8("fit_to_txt"))
         self.horizontalLayout_10.addWidget(self.fit_to_txt)
         self.label_10 = QtGui.QLabel(self.fitting_roi_box)
@@ -282,5 +284,6 @@ class Ui_roi_selector_main_widget(object):
         self.label_10.setText(_translate("roi_selector_main_widget", "nm", None))
         self.save_btn.setText(_translate("roi_selector_main_widget", "Save", None))
         self.cancel_btn.setText(_translate("roi_selector_main_widget", "Cancel", None))
+
 
 from pyqtgraph import GraphicsLayoutWidget

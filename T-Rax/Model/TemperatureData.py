@@ -4,8 +4,8 @@ from wx.lib.pubsub import pub
 import numpy as np
 from scipy.optimize import curve_fit
 
-from Model.SPE_module import SPE_File
-from Model.GeneralData import GeneralData
+from model.SPE_module import SPE_File
+from model.GeneralData import GeneralData
 
 
 class TemperatureData(GeneralData):
@@ -204,7 +204,7 @@ class GeneralData(object):
 class ImgData(GeneralData):
     def calc_spectra(self):
         x = self.x_whole[self.roi_data.us_roi.x_min:
-                         self.roi_data.us_roi.x_max + 1]
+        self.roi_data.us_roi.x_max + 1]
         self.ds_spectrum = Spectrum(x, self._calc_spectrum(self.roi_data.ds_roi))
         self.us_spectrum = Spectrum(x, self._calc_spectrum(self.roi_data.us_roi))
 
@@ -386,7 +386,7 @@ class ExpDataFromImgData(ExpData):
 class CalibrationParameter(object):
     def __init__(self):
         self.modus = 1
-        #modi: 0 - given temperature
+        # modi: 0 - given temperature
         #       1 - etalon spectrum
 
         self.temp = 2000
@@ -416,7 +416,7 @@ class CalibrationParameter(object):
                     data = np.loadtxt(fname, delimiter='\t')
         self._etalon_x = data.T[0]
         self._etalon_y = data.T[1]
-        #self.etalon_spectrum_func = ip.interp1d(Model.T[0], Model.T[1], 'cubic')
+        # self.etalon_spectrum_func = ip.interp1d(Model.T[0], Model.T[1], 'cubic')
         # not used because scipy.interpolate is supported by pyinstaller...
         self.etalon_file_name = fname
         if send_message:
@@ -428,7 +428,7 @@ class CalibrationParameter(object):
             return y / max(y)
         elif self.modus == 1:
             try:
-                #return self.etalon_spectrum_func(wavelength)
+                # return self.etalon_spectrum_func(wavelength)
                 # not used because scipy.interpolate is supported by pyinstaller...
                 return np.interp(wavelength, self._etalon_x, self._etalon_y)
             except ValueError:
@@ -448,7 +448,7 @@ class CalibrationParameter(object):
         try:
             self._etalon_x = spectrum.x
             self._etalon_y = spectrum.y
-            #self.etalon_spectrum_func = ip.interp1d(spectrum.x, spectrum.y, 'cubic')
+            # self.etalon_spectrum_func = ip.interp1d(spectrum.x, spectrum.y, 'cubic')
         except AttributeError:
             pass
 
@@ -754,5 +754,6 @@ class TemperatureSettings():
         data.get_us_calibration_parameter().set_temperature(settings.us_calibration_temperature, False)
         data.calculate_spectra()
         pub.sendMessage("EXP DATA CHANGED")
+
 
 TraxTemperatureSettings = TemperatureSettings

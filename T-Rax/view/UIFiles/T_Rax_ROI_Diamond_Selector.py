@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'T_Rax_ROI_Diamond_Selector.ui'
 #
 # Created: Wed Jul  9 08:08:07 2014
-#      by: PyQt4 UI code generator 4.10.4
+# by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,81 +17,83 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_roi_selector_diamond_widget(object):
     def setupUi(self, roi_selector_diamond_widget):
         roi_selector_diamond_widget.setObjectName(_fromUtf8("roi_selector_diamond_widget"))
         roi_selector_diamond_widget.resize(945, 484)
         roi_selector_diamond_widget.setStyleSheet(_fromUtf8("QWidget{  \n"
-"     background: rgba(30, 30, 30, 255);      \n"
-"     color: #F1F1F1; \n"
-"    font-size: 12px;\n"
-" }  \n"
-"\n"
-"QGroupBox {  \n"
-"     border: 1px solid #ADADAD;  \n"
-"     border-radius: 4px;  \n"
-"     margin-top: 7px;  \n"
-"     padding: 0px  \n"
-" }  \n"
-"\n"
-"QPushButton{  \n"
-"     color: #F1F1F1;\n"
-"     background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #505050);\n"
-"     border: 1px solid #5B5B5B;\n"
-"     border-radius: 5px; \n"
-"     padding-left: 8px;\n"
-"height: 18px;\n"
-"    padding-right: 8px;   \n"
-" }  \n"
-"QPushButton:pressed{\n"
-"        margin-top: 2,px;\n"
-"        margin-left: 2px;   \n"
-"}\n"
-"QPushButton::disabled{\n"
-"}\n"
-"\n"
-"QPushButton::hover{  \n"
-"     border:1px solid #ADADAD; \n"
-" }  \n"
-" \n"
-"\n"
-"QPushButton::checked{\n"
-"    background: qlineargradient(\n"
-"        x1: 0, y1: 1, \n"
-"        x2: 0, y2: 0,\n"
-"        stop: 0 #727272, \n"
-"        stop: 1 #444444\n"
-"    );\n"
-"     border:1px solid  rgb(255, 120,00);\n"
-"}\n"
-"\n"
-"QPushButton::focus {\n"
-"    outline: None;\n"
-"}\n"
-"\n"
-" QGroupBox::title {  \n"
-"      subcontrol-origin: margin;  \n"
-"      left: 20px  \n"
-"  }\n"
-"\n"
-"\n"
-" QLineEdit  {  \n"
-"     border-radius: 2px;  \n"
-"     background: #F1F1F1;  \n"
-"     color: black;  \n"
-"    height: 18 px;\n"
-" }  \n"
-"#roi_box{\n"
-"    color: rgba(0, 127, 255, 255);\n"
-"    border: 1px solid rgba(0, 127, 255, 255);\n"
-"}\n"
-""))
+                                                            "     background: rgba(30, 30, 30, 255);      \n"
+                                                            "     color: #F1F1F1; \n"
+                                                            "    font-size: 12px;\n"
+                                                            " }  \n"
+                                                            "\n"
+                                                            "QGroupBox {  \n"
+                                                            "     border: 1px solid #ADADAD;  \n"
+                                                            "     border-radius: 4px;  \n"
+                                                            "     margin-top: 7px;  \n"
+                                                            "     padding: 0px  \n"
+                                                            " }  \n"
+                                                            "\n"
+                                                            "QPushButton{  \n"
+                                                            "     color: #F1F1F1;\n"
+                                                            "     background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #505050);\n"
+                                                            "     border: 1px solid #5B5B5B;\n"
+                                                            "     border-radius: 5px; \n"
+                                                            "     padding-left: 8px;\n"
+                                                            "height: 18px;\n"
+                                                            "    padding-right: 8px;   \n"
+                                                            " }  \n"
+                                                            "QPushButton:pressed{\n"
+                                                            "        margin-top: 2,px;\n"
+                                                            "        margin-left: 2px;   \n"
+                                                            "}\n"
+                                                            "QPushButton::disabled{\n"
+                                                            "}\n"
+                                                            "\n"
+                                                            "QPushButton::hover{  \n"
+                                                            "     border:1px solid #ADADAD; \n"
+                                                            " }  \n"
+                                                            " \n"
+                                                            "\n"
+                                                            "QPushButton::checked{\n"
+                                                            "    background: qlineargradient(\n"
+                                                            "        x1: 0, y1: 1, \n"
+                                                            "        x2: 0, y2: 0,\n"
+                                                            "        stop: 0 #727272, \n"
+                                                            "        stop: 1 #444444\n"
+                                                            "    );\n"
+                                                            "     border:1px solid  rgb(255, 120,00);\n"
+                                                            "}\n"
+                                                            "\n"
+                                                            "QPushButton::focus {\n"
+                                                            "    outline: None;\n"
+                                                            "}\n"
+                                                            "\n"
+                                                            " QGroupBox::title {  \n"
+                                                            "      subcontrol-origin: margin;  \n"
+                                                            "      left: 20px  \n"
+                                                            "  }\n"
+                                                            "\n"
+                                                            "\n"
+                                                            " QLineEdit  {  \n"
+                                                            "     border-radius: 2px;  \n"
+                                                            "     background: #F1F1F1;  \n"
+                                                            "     color: black;  \n"
+                                                            "    height: 18 px;\n"
+                                                            " }  \n"
+                                                            "#roi_box{\n"
+                                                            "    color: rgba(0, 127, 255, 255);\n"
+                                                            "    border: 1px solid rgba(0, 127, 255, 255);\n"
+                                                            "}\n"
+                                                            ""))
         self.horizontalLayout = QtGui.QHBoxLayout(roi_selector_diamond_widget)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setMargin(0)
@@ -126,13 +128,13 @@ class Ui_roi_selector_diamond_widget(object):
         self.x_min_txt = QtGui.QLineEdit(self.roi_box)
         self.x_min_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.x_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.x_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.x_min_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.x_min_txt.setObjectName(_fromUtf8("x_min_txt"))
         self.gridLayout.addWidget(self.x_min_txt, 0, 1, 1, 1)
         self.x_max_txt = QtGui.QLineEdit(self.roi_box)
         self.x_max_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.x_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.x_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.x_max_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.x_max_txt.setObjectName(_fromUtf8("x_max_txt"))
         self.gridLayout.addWidget(self.x_max_txt, 0, 2, 1, 1)
         self.label_4 = QtGui.QLabel(self.roi_box)
@@ -141,13 +143,13 @@ class Ui_roi_selector_diamond_widget(object):
         self.y_min_txt = QtGui.QLineEdit(self.roi_box)
         self.y_min_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.y_min_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.y_min_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.y_min_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.y_min_txt.setObjectName(_fromUtf8("y_min_txt"))
         self.gridLayout.addWidget(self.y_min_txt, 1, 1, 1, 1)
         self.y_max_txt = QtGui.QLineEdit(self.roi_box)
         self.y_max_txt.setMinimumSize(QtCore.QSize(60, 22))
         self.y_max_txt.setMaximumSize(QtCore.QSize(60, 16777215))
-        self.y_max_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.y_max_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.y_max_txt.setObjectName(_fromUtf8("y_max_txt"))
         self.gridLayout.addWidget(self.y_max_txt, 1, 2, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)

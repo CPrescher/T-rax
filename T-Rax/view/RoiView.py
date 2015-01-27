@@ -224,11 +224,11 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
     def plot_lines(self):
         x_limits = self.data.calculate_wavelength(self.data.roi_data.us_roi.get_x_limits())
         axes_xlim = self.img_axes.get_xlim()
-        self.min_line = self.create_line(x_limits[0], [axes_xlim[0], x_limits[1] - 1],"MIN")
-        self.max_line = self.create_line(x_limits[1], [x_limits[0] + 1, axes_xlim[1]],"MAX")
+        self.min_line = self.create_line(x_limits[0], [axes_xlim[0], x_limits[1] - 1], "MIN")
+        self.max_line = self.create_line(x_limits[1], [x_limits[0] + 1, axes_xlim[1]], "MAX")
 
     def create_line(self, pos, limits, flag):
-        return MoveableLine(self, self.img_axes, self.canvas,pos, limits, flag)
+        return MoveableLine(self, self.img_axes, self.canvas, pos, limits, flag)
 
     def create_histogram_line(self, pos, limits, flag):
         return MoveableLine(self, self.histogram_axes, self.canvas, pos, limits, flag)
@@ -266,7 +266,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.update_rect_pick_limits(new_size.width(), new_size.height())
 
     def axes_leave_event(self, event):
-        #QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        # QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         QtGui.QApplication.restoreOverrideCursor()
 
     def update_rect_pick_limits(self, graph_width, graph_height):
@@ -351,7 +351,7 @@ class MoveableLine:
         self.line, = axes.plot(self.xlim, [pos, pos], color=(1, 1, 1), lw=2)
         self.limit = limit
 
-        self.active = True  #needed because of garbage collection issues
+        self.active = True  # needed because of garbage collection issues
         self.press = None
         self.mode = None
         self.is_animated = False
@@ -491,7 +491,7 @@ class MoveableLine:
 
 
 class ResizeableRectangle:
-    lock = None  #only one rect can be animated at a time
+    lock = None  # only one rect can be animated at a time
     rects = []
 
     def __init__(self, parent, axes, canvas, init_rect, color, flag):
@@ -515,7 +515,7 @@ class ResizeableRectangle:
 
         ResizeableRectangle.rects.append(self.rect)
 
-        self.active = True  #needed because of garbage collection issues
+        self.active = True  # needed because of garbage collection issues
         self.press = None
         self.mode = None
         self.is_animated = False
@@ -719,6 +719,7 @@ class ResizeableRectangle:
 
 if __name__ == "__main__":
     from Model.TemperatureData import TemperatureData
+
     app = QtGui.QApplication(sys.argv)
     data = TemperatureData()
     view = TRaxROIView(data)

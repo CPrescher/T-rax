@@ -1,6 +1,6 @@
 import numpy as np
 
-from Views.OutputGraphView import TRaxOutputGraphView
+from view.OutputGraphView import TRaxOutputGraphView
 
 
 class TRaxOutputGraphController(object):
@@ -33,8 +33,8 @@ class TRaxOutputGraphController(object):
         combined_temperature_avg = np.mean(us_temperature + ds_temperature)
         combined_temperature_std_err = np.std(us_temperature + ds_temperature)
         self.view.combined_temperature_lbl.setText('{T:1.0f} +- {T_err:1.0f} K'
-                                          .format(T=combined_temperature_avg,
-                                                  T_err=combined_temperature_std_err))
+                                                   .format(T=combined_temperature_avg,
+                                                           T_err=combined_temperature_std_err))
 
         self.view.set_axis_labels('Time (s)', 'Temperature (K)')
         self.view.adjust_axes_limits()

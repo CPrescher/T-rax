@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'T_Rax_RubyControl.ui'
 #
 # Created: Wed Jul  9 08:08:08 2014
-#      by: PyQt4 UI code generator 4.10.4
+# by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,11 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+
 
 class Ui_ruby_control_widget(object):
     def setupUi(self, ruby_control_widget):
@@ -109,7 +111,7 @@ class Ui_ruby_control_widget(object):
         self.conditions_cb.addItem(_fromUtf8(""))
         self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.conditions_cb)
         self.label = QtGui.QLabel(self.groupBox_2)
-        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
@@ -120,7 +122,7 @@ class Ui_ruby_control_widget(object):
         self.reference_pos_txt = QtGui.QLineEdit(self.groupBox_2)
         self.reference_pos_txt.setMaximumSize(QtCore.QSize(80, 16777215))
         self.reference_pos_txt.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.reference_pos_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.reference_pos_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.reference_pos_txt.setObjectName(_fromUtf8("reference_pos_txt"))
         self.horizontalLayout_4.addWidget(self.reference_pos_txt)
         self.label_5 = QtGui.QLabel(self.groupBox_2)
@@ -138,7 +140,7 @@ class Ui_ruby_control_widget(object):
         self.horizontalLayout_6.addItem(spacerItem3)
         self.temperature_txt = QtGui.QLineEdit(self.groupBox_2)
         self.temperature_txt.setMaximumSize(QtCore.QSize(80, 16777215))
-        self.temperature_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.temperature_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.temperature_txt.setObjectName(_fromUtf8("temperature_txt"))
         self.horizontalLayout_6.addWidget(self.temperature_txt)
         self.label_7 = QtGui.QLabel(self.groupBox_2)
@@ -147,14 +149,14 @@ class Ui_ruby_control_widget(object):
         self.horizontalLayout_6.addWidget(self.label_7)
         self.formLayout.setLayout(2, QtGui.QFormLayout.FieldRole, self.horizontalLayout_6)
         self.label_2 = QtGui.QLabel(self.groupBox_2)
-        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_2.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_2)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.measured_pos_lbl = QtGui.QLabel(self.groupBox_2)
         self.measured_pos_lbl.setMinimumSize(QtCore.QSize(0, 18))
-        self.measured_pos_lbl.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.measured_pos_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.measured_pos_lbl.setObjectName(_fromUtf8("measured_pos_lbl"))
         self.horizontalLayout_3.addWidget(self.measured_pos_lbl)
         self.label_8 = QtGui.QLabel(self.groupBox_2)
@@ -164,7 +166,7 @@ class Ui_ruby_control_widget(object):
         self.horizontalLayout_3.addWidget(self.label_8)
         self.formLayout.setLayout(3, QtGui.QFormLayout.FieldRole, self.horizontalLayout_3)
         self.label_3 = QtGui.QLabel(self.groupBox_2)
-        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_3.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_3)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -172,7 +174,7 @@ class Ui_ruby_control_widget(object):
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.pressure_lbl = QtGui.QLabel(self.groupBox_2)
         self.pressure_lbl.setMinimumSize(QtCore.QSize(0, 18))
-        self.pressure_lbl.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.pressure_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.pressure_lbl.setObjectName(_fromUtf8("pressure_lbl"))
         self.horizontalLayout_5.addWidget(self.pressure_lbl)
         self.label_6 = QtGui.QLabel(self.groupBox_2)

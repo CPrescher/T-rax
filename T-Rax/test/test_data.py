@@ -1,6 +1,6 @@
-﻿from wx.lib.pubsub import setupkwargs
-import unittest
-from Model.TemperatureData import TemperatureData, RoiData, RoiDataManager, TemperatureSettings
+﻿import unittest
+
+from model.TemperatureData import TemperatureData, RoiData, RoiDataManager, TemperatureSettings
 
 
 class Test_T_Rax_Data_Test(unittest.TestCase):

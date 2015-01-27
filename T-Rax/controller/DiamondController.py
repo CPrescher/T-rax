@@ -1,15 +1,12 @@
-import sys
 import os
-import pickle
-from wx.lib.pubsub import setupkwargs
+
 from wx.lib.pubsub import pub
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import SIGNAL
 import numpy as np
 
-from Controller.ModuleController import TRaxModuleController
-from Controller.RoiSelectorDiamondController import TRaxROIControllerDiamond
-from Model.DiamondData import DiamondData
+from controller.ModuleController import TRaxModuleController
+from controller.RoiSelectorDiamondController import TRaxROIControllerDiamond
+from model.DiamondData import DiamondData
 
 
 class TRaxDiamondController(TRaxModuleController):
@@ -64,7 +61,7 @@ class TRaxDiamondController(TRaxModuleController):
         if filename is not '':
             self._exp_working_dir = '/'.join(str(filename).replace('\\', '/').split('/')[0:-1]) + '/'
             self._files_before = dict(
-                [(f, None) for f in os.listdir(self._exp_working_dir)])  #reset for the autoprocessing
+                [(f, None) for f in os.listdir(self._exp_working_dir)])  # reset for the autoprocessing
             self.data.load_exp_file(filename)
 
     def load_roi_view(self):
@@ -121,10 +118,10 @@ class TRaxDiamondController(TRaxModuleController):
         curr_xlim = self.main_view.diamond_axes.axes.get_xlim()
         base_scale = 1.5
         if event.button == 'up':
-            #zoom in
+            # zoom in
             scale_factor = 1 / base_scale
         elif event.button == 'down':
-            #zoom out
+            # zoom out
             scale_factor = base_scale
         else:
             scale_factor = 1

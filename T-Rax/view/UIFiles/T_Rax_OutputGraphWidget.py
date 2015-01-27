@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'T_Rax_OutputGraphWidget.ui'
 #
 # Created: Wed Jul  9 08:08:07 2014
-#      by: PyQt4 UI code generator 4.10.4
+# by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,38 +17,40 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_output_graph_widget(object):
     def setupUi(self, output_graph_widget):
         output_graph_widget.setObjectName(_fromUtf8("output_graph_widget"))
         output_graph_widget.resize(1014, 585)
         output_graph_widget.setStyleSheet(_fromUtf8(" #output_graph_widget, #information_frame{  \n"
-"     background: #1E1E1E;      \n"
-" }  \n"
-"   \n"
-" QLabel  {  \n"
-"     color: #F1F1F1;  \n"
-"     font: bold 16px;  \n"
-" }  \n"
-"   \n"
-" #ds_lbl{  \n"
-"     color:  rgba(255,255,0,255);  \n"
-"     font-weight: bold;\n"
-" }  \n"
-" #us_lbl {  \n"
-"     color: rgba(255,140,0,255);  \n"
-"     font-weight: bold;\n"
-" }  \n"
-"  \n"
-"#combined_lbl{\n"
-"    color: rgba(255, 197,0,255)\n"
-"\n"
-"}"))
+                                                    "     background: #1E1E1E;      \n"
+                                                    " }  \n"
+                                                    "   \n"
+                                                    " QLabel  {  \n"
+                                                    "     color: #F1F1F1;  \n"
+                                                    "     font: bold 16px;  \n"
+                                                    " }  \n"
+                                                    "   \n"
+                                                    " #ds_lbl{  \n"
+                                                    "     color:  rgba(255,255,0,255);  \n"
+                                                    "     font-weight: bold;\n"
+                                                    " }  \n"
+                                                    " #us_lbl {  \n"
+                                                    "     color: rgba(255,140,0,255);  \n"
+                                                    "     font-weight: bold;\n"
+                                                    " }  \n"
+                                                    "  \n"
+                                                    "#combined_lbl{\n"
+                                                    "    color: rgba(255, 197,0,255)\n"
+                                                    "\n"
+                                                    "}"))
         self.verticalLayout = QtGui.QVBoxLayout(output_graph_widget)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setMargin(0)

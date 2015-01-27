@@ -1,5 +1,7 @@
 import os
+
 import numpy as np
+
 
 class GeneralData(object):
     def load_exp_file(self):
@@ -21,15 +23,15 @@ class GeneralData(object):
 
     def calculate_ind(self, wavelength):
         result = []
-        xdata = np.array( self.exp_data.x_whole)
+        xdata = np.array(self.exp_data.x_whole)
         try:
             for w in wavelength:
                 try:
                     base_ind = max(max(np.where(xdata <= w)))
-                    if base_ind < len(xdata)-1:
+                    if base_ind < len(xdata) - 1:
                         result.append(int(np.round((w - xdata[base_ind]) / \
-                            (xdata[base_ind + 1] - xdata[base_ind]) \
-                            + base_ind)))
+                                                   (xdata[base_ind + 1] - xdata[base_ind]) \
+                                                   + base_ind)))
                     else:
                         result.append(base_ind)
                 except:
@@ -38,11 +40,11 @@ class GeneralData(object):
         except TypeError:
             base_ind = max(max(np.where(xdata <= wavelength)))
             return int(np.round((wavelength - xdata[base_ind]) / \
-                    (xdata[base_ind + 1] - xdata[base_ind]) \
-                    + base_ind))
+                                (xdata[base_ind + 1] - xdata[base_ind]) \
+                                + base_ind))
 
-    def calculate_wavelength(self,channel):
-        if isinstance(channel,list):
+    def calculate_wavelength(self, channel):
+        if isinstance(channel, list):
             result = []
             for c in channel:
                 result.append(self.exp_data.x_whole[c])
@@ -52,15 +54,15 @@ class GeneralData(object):
 
     def calculate_ind(self, wavelength):
         result = []
-        xdata = np.array( self.exp_data.x_whole)
+        xdata = np.array(self.exp_data.x_whole)
         try:
             for w in wavelength:
                 try:
                     base_ind = max(max(np.where(xdata <= w)))
-                    if base_ind < len(xdata)-1:
+                    if base_ind < len(xdata) - 1:
                         result.append(int(np.round((w - xdata[base_ind]) / \
-                            (xdata[base_ind + 1] - xdata[base_ind]) \
-                            + base_ind)))
+                                                   (xdata[base_ind + 1] - xdata[base_ind]) \
+                                                   + base_ind)))
                     else:
                         result.append(base_ind)
                 except:
@@ -69,10 +71,10 @@ class GeneralData(object):
         except TypeError:
             base_ind = max(max(np.where(xdata <= wavelength)))
             return int(np.round((wavelength - xdata[base_ind]) / \
-                    (xdata[base_ind + 1] - xdata[base_ind]) \
-                    + base_ind))
+                                (xdata[base_ind + 1] - xdata[base_ind]) \
+                                + base_ind))
 
-    
+
     def calc_spectra(self):
         self.exp_data.calc_spectra()
 
@@ -84,7 +86,7 @@ class GeneralData(object):
 
     def get_exp_graph_data(self):
         return self.exp_data.get_ds_spectrum()
-             
+
     def get_spectrum(self):
         return self.exp_data.get_spectrum()
 
@@ -95,8 +97,8 @@ class GeneralData(object):
         return self.exp_data.x, self.exp_data.y_whole_spectrum
 
     def save_roi_data(self):
-        np.savetxt('roi_data.txt', self.roi.get_roi_data(), delimiter=',', fmt='%.0f')     
-        
+        np.savetxt('roi_data.txt', self.roi.get_roi_data(), delimiter=',', fmt='%.0f')
+
     def get_x_limits(self):
         return self.exp_data.get_x_limits()
 
@@ -104,6 +106,6 @@ class GeneralData(object):
         return self.calculate_wavelength(self.exp_data.roi.get_x_limits())
 
     def set_x_roi_limits_to(self, limits):
-        limits_ind=self.calculate_ind(limits)
+        limits_ind = self.calculate_ind(limits)
         self.roi.set_x_limit(limits_ind)
 

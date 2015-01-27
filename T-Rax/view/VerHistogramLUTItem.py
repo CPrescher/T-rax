@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 # Py2DeX - GUI program for fast processing of 2D X-ray Model
-#     Copyright (C) 2014  Clemens Prescher (clemens.prescher@gmail.com)
+# Copyright (C) 2014  Clemens Prescher (clemens.prescher@gmail.com)
 #     GSECARS, University of Chicago
 #
 #     This program is free software: you can redistribute it and/or modify
@@ -20,15 +20,12 @@
 GraphicsWidget displaying an image histogram along with gradient editor. Can be used to adjust the appearance of images.
 """
 
-from pyqtgraph.Qt import QtGui, QtCore
-import pyqtgraph.functions as fn
+from pyqtgraph.Qt import QtGui
 from pyqtgraph.graphicsItems.GraphicsWidget import GraphicsWidget
 from pyqtgraph.graphicsItems.ViewBox import *
 from pyqtgraph.graphicsItems.GradientEditorItem import *
 from pyqtgraph.graphicsItems.LinearRegionItem import *
 from pyqtgraph.graphicsItems.PlotDataItem import *
-from pyqtgraph.graphicsItems.AxisItem import *
-from pyqtgraph.graphicsItems.GridItem import *
 from pyqtgraph.Point import Point
 import pyqtgraph.functions as fn
 import pyqtgraph as pg
@@ -149,12 +146,12 @@ class VerHistogramLUTItem(GraphicsWidget):
             self.vb.setXRange(mn, mx, padding)
         elif self.orientation == 'vertical':
             self.vb.setYrange(mn, mx, padding)
-        #mn -= d*padding
-        #mx += d*padding
-        #self.range = [mn,mx]
-        #self.updateRange()
-        #self.vb.setMouseEnabled(False, True)
-        #self.region.setBounds([mn,mx])
+            #mn -= d*padding
+            #mx += d*padding
+            #self.range = [mn,mx]
+            #self.updateRange()
+            #self.vb.setMouseEnabled(False, True)
+            #self.region.setBounds([mn,mx])
 
     def autoHistogramRange(self):
         """Enable auto-scaling on the histogram plot."""

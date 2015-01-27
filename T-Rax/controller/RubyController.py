@@ -1,15 +1,10 @@
-import sys
-import os
-import pickle
-from wx.lib.pubsub import setupkwargs
 from wx.lib.pubsub import pub
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import SIGNAL
+from PyQt4 import QtCore
 import numpy as np
 
-from Controller.ModuleController import TRaxModuleController
-from Controller.RoiSelectorRubyController import TRaxROIControllerRuby
-from Model.RubyData import RubyData
+from controller.ModuleController import TRaxModuleController
+from controller.RoiSelectorRubyController import TRaxROIControllerRuby
+from model.RubyData import RubyData
 
 
 class TRaxRubyController(TRaxModuleController):
@@ -102,10 +97,10 @@ class TRaxRubyController(TRaxModuleController):
         curr_xlim = self.main_view.ruby_axes.axes.get_xlim()
         base_scale = 1.5
         if event.button == 'up':
-            #zoom in
+            # zoom in
             scale_factor = 1 / base_scale
         elif event.button == 'down':
-            #zoom out
+            # zoom out
             scale_factor = base_scale
         else:
             scale_factor = 1

@@ -1,7 +1,7 @@
-
 __author__ = 'Clemens Prescher'
 
 import pyqtgraph as pg
+
 pg.setConfigOption('useOpenGL', True)
 pg.setConfigOption('leftButtonPan', False)
 pg.setConfigOption('background', 'k')
@@ -9,7 +9,7 @@ pg.setConfigOption('foreground', 'w')
 pg.setConfigOption('antialias', True)
 from  pyqtgraph.exporters.ImageExporter import ImageExporter
 import numpy as np
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 from VerHistogramLUTItem import VerHistogramLUTItem
 
 
@@ -31,7 +31,7 @@ class ImgView(QtCore.QObject):
     def create_graphics(self):
         self.img_view_box = self.pg_layout.addViewBox(0, 0)
 
-        #create the item handling the Model img
+        # create the item handling the Model img
         self.data_img_item = pg.ImageItem()
         self.img_view_box.addItem(self.data_img_item)
         self.img_histogram_LUT = VerHistogramLUTItem(self.data_img_item, orientation='vertical')
@@ -39,8 +39,7 @@ class ImgView(QtCore.QObject):
 
         #create axis:
         self.axis = pg.AxisItem(orientation='bottom', linkView=self.img_view_box)
-        self.pg_layout.addItem(self.axis, 1,0)
-
+        self.pg_layout.addItem(self.axis, 1, 0)
 
         self.pg_layout.addItem(self.img_histogram_LUT, 0, 1)
 
@@ -66,7 +65,7 @@ class ImgView(QtCore.QObject):
 
 
     def modify_mouse_behavior(self):
-        #different mouse handlers
+        # different mouse handlers
         self.img_view_box.setMouseMode(self.img_view_box.RectMode)
 
         self.pg_layout.scene().sigMouseMoved.connect(self.mouseMoved)
@@ -105,7 +104,7 @@ class ImgView(QtCore.QObject):
             self.mouse_left_double_clicked.emit(pos.x(), pos.y())
 
     def myMouseDragEvent(self, ev, axis=None):
-        #most of this code is copied behavior of left click mouse drag from the original code
+        # most of this code is copied behavior of left click mouse drag from the original code
         ev.accept()
         pos = ev.pos()
         lastPos = ev.lastPos()

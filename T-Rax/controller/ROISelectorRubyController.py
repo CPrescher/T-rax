@@ -1,14 +1,12 @@
-from PyQt4.QtCore import SIGNAL
-from PyQt4 import QtCore, QtGui
-import sys
 from wx.lib.pubsub import pub
 
-from Views.RoiViewRuby import TRaxROIViewRuby
+from view.RoiViewRuby import TRaxROIViewRuby
+
 
 class TRaxROIControllerRuby(object):
     def __init__(self, data, parent=None):
-        self.parent=parent
-        self.view = TRaxROIViewRuby(data,parent)
+        self.parent = parent
+        self.view = TRaxROIViewRuby(data, parent)
         self.data = data
         self.create_signals()
         self.view.update_txt_roi()
@@ -37,8 +35,8 @@ class TRaxROIControllerRuby(object):
         pub.subscribe(self.exp_data_changed, "EXP RUBY DATA CHANGED")
 
     def roi_txt_changed(self):
-        roi=self.view.get_roi()
-        roi[:2] = self.data.calculate_ind(roi[:2])  
+        roi = self.view.get_roi()
+        roi[:2] = self.data.calculate_ind(roi[:2])
         self.data.roi.set_roi(roi)
         pub.sendMessage("RUBY ROI CHANGED")
 
@@ -74,6 +72,6 @@ class TRaxROIControllerRuby(object):
         self.save_roi_data()
         self.view.show()
         self.view.activateWindow()
-        self.view.move(self.parent.x(), 
-                       self.parent.y()+self.parent.height()+50)
-        self.view.resize(self.parent.size().width(),self.view.size().height())
+        self.view.move(self.parent.x(),
+                       self.parent.y() + self.parent.height() + 50)
+        self.view.resize(self.parent.size().width(), self.view.size().height())

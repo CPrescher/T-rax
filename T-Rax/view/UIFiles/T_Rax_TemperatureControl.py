@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'T_Rax_TemperatureControl.ui'
 #
 # Created: Wed Jul  9 08:08:08 2014
-#      by: PyQt4 UI code generator 4.10.4
+# by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,11 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+
 
 class Ui_temperature_control_widget(object):
     def setupUi(self, temperature_control_widget):
@@ -30,14 +32,14 @@ class Ui_temperature_control_widget(object):
         temperature_control_widget.setMaximumSize(QtCore.QSize(260, 16777215))
         temperature_control_widget.setAutoFillBackground(True)
         temperature_control_widget.setStyleSheet(_fromUtf8("#downstream_calib_box{\n"
-"    color: rgba(255,255,0,255);\n"
-"    border: 1px solid rgba(255,255,0,255);\n"
-"}\n"
-"\n"
-"#upstream_calib_box{\n"
-"    color: rgba(255,140,0,255);\n"
-"    border: 1px solid rgba(255,140,0,255);\n"
-"}"))
+                                                           "    color: rgba(255,255,0,255);\n"
+                                                           "    border: 1px solid rgba(255,255,0,255);\n"
+                                                           "}\n"
+                                                           "\n"
+                                                           "#upstream_calib_box{\n"
+                                                           "    color: rgba(255,140,0,255);\n"
+                                                           "    border: 1px solid rgba(255,140,0,255);\n"
+                                                           "}"))
         self.verticalLayout_4 = QtGui.QVBoxLayout(temperature_control_widget)
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setMargin(0)
@@ -214,7 +216,7 @@ class Ui_temperature_control_widget(object):
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
         self.fit_from_txt = QtGui.QLineEdit(self.groupBox_2)
         self.fit_from_txt.setMaximumSize(QtCore.QSize(800, 16777215))
-        self.fit_from_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.fit_from_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.fit_from_txt.setObjectName(_fromUtf8("fit_from_txt"))
         self.horizontalLayout_11.addWidget(self.fit_from_txt)
         self.horizontalLayout_10.addLayout(self.horizontalLayout_11)
@@ -230,7 +232,7 @@ class Ui_temperature_control_widget(object):
         self.fit_to_txt = QtGui.QLineEdit(self.groupBox_2)
         self.fit_to_txt.setMaximumSize(QtCore.QSize(800, 16777215))
         self.fit_to_txt.setBaseSize(QtCore.QSize(50, 0))
-        self.fit_to_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.fit_to_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.fit_to_txt.setObjectName(_fromUtf8("fit_to_txt"))
         self.horizontalLayout_10.addWidget(self.fit_to_txt)
         self.label_8 = QtGui.QLabel(self.groupBox_2)
@@ -308,7 +310,7 @@ class Ui_temperature_control_widget(object):
         self.horizontalLayout_7 = QtGui.QHBoxLayout()
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
         self.ds_temperature_txt = QtGui.QLineEdit(self.downstream_calib_box)
-        self.ds_temperature_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.ds_temperature_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.ds_temperature_txt.setObjectName(_fromUtf8("ds_temperature_txt"))
         self.horizontalLayout_7.addWidget(self.ds_temperature_txt)
         self.label_11 = QtGui.QLabel(self.downstream_calib_box)
@@ -336,7 +338,7 @@ class Ui_temperature_control_widget(object):
         self.gridLayout_3.setSpacing(12)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.us_calib_filename_lbl = QtGui.QLabel(self.upstream_calib_box)
-        self.us_calib_filename_lbl.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
+        self.us_calib_filename_lbl.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.us_calib_filename_lbl.setObjectName(_fromUtf8("us_calib_filename_lbl"))
         self.gridLayout_3.addWidget(self.us_calib_filename_lbl, 0, 1, 1, 1)
         self.line = QtGui.QFrame(self.upstream_calib_box)
@@ -359,7 +361,7 @@ class Ui_temperature_control_widget(object):
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.us_temperature_txt = QtGui.QLineEdit(self.upstream_calib_box)
-        self.us_temperature_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.us_temperature_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.us_temperature_txt.setObjectName(_fromUtf8("us_temperature_txt"))
         self.horizontalLayout_5.addWidget(self.us_temperature_txt)
         self.label_9 = QtGui.QLabel(self.upstream_calib_box)
@@ -406,7 +408,8 @@ class Ui_temperature_control_widget(object):
         self.load_settings_btn.setText(_translate("temperature_control_widget", "Load", None))
         self.save_settings_btn.setText(_translate("temperature_control_widget", "Save", None))
         self.epics_connection_cb.setText(_translate("temperature_control_widget", "Connected to Epics", None))
-        self.tab_control.setTabText(self.tab_control.indexOf(self.experiment_tab), _translate("temperature_control_widget", "Experiment", None))
+        self.tab_control.setTabText(self.tab_control.indexOf(self.experiment_tab),
+                                    _translate("temperature_control_widget", "Experiment", None))
         self.downstream_calib_box.setTitle(_translate("temperature_control_widget", "Downstream", None))
         self.ds_calib_filename_lbl.setText(_translate("temperature_control_widget", "Select File...", None))
         self.load_ds_calib_data_btn.setText(_translate("temperature_control_widget", "Load Data", None))
@@ -425,5 +428,6 @@ class Ui_temperature_control_widget(object):
         self.us_temperature_txt.setText(_translate("temperature_control_widget", "2000", None))
         self.label_9.setText(_translate("temperature_control_widget", "K", None))
         self.us_etalon_btn.setText(_translate("temperature_control_widget", "...", None))
-        self.tab_control.setTabText(self.tab_control.indexOf(self.calibration_tab), _translate("temperature_control_widget", "Calibration", None))
+        self.tab_control.setTabText(self.tab_control.indexOf(self.calibration_tab),
+                                    _translate("temperature_control_widget", "Calibration", None))
 

@@ -1,16 +1,14 @@
 import os
 import pickle
-import Model
-import Model.TemperatureData as T_Rax_TemperatureData
-from wx.lib.pubsub import setupkwargs
+
 from wx.lib.pubsub import pub
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 import numpy as np
 from epics import caput, PV
 
-from Controller.ModuleController import TRaxModuleController
-from Controller.RoiSelectorTemperatureController import TRaxROITemperatureController
-from Model.TemperatureData import TemperatureData, TemperatureSettings
+from controller.ModuleController import TRaxModuleController
+from controller.RoiSelectorTemperatureController import TRaxROITemperatureController
+from model.TemperatureData import TemperatureData, TemperatureSettings
 
 
 class TRaxTemperatureController(TRaxModuleController):
@@ -229,7 +227,7 @@ class TRaxTemperatureController(TRaxModuleController):
 
     def update_pv_names(self):
         if self.epics_is_connected:
-            #self.pv_us_temperature.put(self.Model.get_us_temp())
+            # self.pv_us_temperature.put(self.Model.get_us_temp())
             #self.pv_ds_temperature.put(self.Model.get_ds_temp())
             #self.pv_us_int.put(self.Model.get_us_roi_max())
             #self.pv_ds_int.put(self.Model.get_ds_roi_max())
@@ -366,7 +364,7 @@ class TRaxTemperatureController(TRaxModuleController):
 
     def settings_cb_changed(self):
         current_index = self.main_view.temperature_control_widget.settings_cb.currentIndex()
-        if not current_index == 0:  #is the None index
+        if not current_index == 0:  # is the None index
             new_file_name = self._settings_working_dir + self._settings_files_list[
                 current_index - 1]  # therefore also one has to be deleted
             self.load_settings_btn_click(new_file_name)

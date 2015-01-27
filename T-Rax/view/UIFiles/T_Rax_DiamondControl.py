@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'T_Rax_DiamondControl.ui'
 #
 # Created: Wed Jul  9 08:08:07 2014
-#      by: PyQt4 UI code generator 4.10.4
+# by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,11 +17,13 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+
 
 class Ui_diamond_control_widget(object):
     def setupUi(self, diamond_control_widget):
@@ -104,7 +106,7 @@ class Ui_diamond_control_widget(object):
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
         self.label = QtGui.QLabel(self.groupBox_2)
-        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label.setObjectName(_fromUtf8("label"))
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
@@ -115,7 +117,7 @@ class Ui_diamond_control_widget(object):
         self.reference_pos_txt = QtGui.QLineEdit(self.groupBox_2)
         self.reference_pos_txt.setMaximumSize(QtCore.QSize(80, 16777215))
         self.reference_pos_txt.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.reference_pos_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.reference_pos_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.reference_pos_txt.setObjectName(_fromUtf8("reference_pos_txt"))
         self.horizontalLayout_4.addWidget(self.reference_pos_txt)
         self.label_5 = QtGui.QLabel(self.groupBox_2)
@@ -126,14 +128,14 @@ class Ui_diamond_control_widget(object):
         self.formLayout.setLayout(0, QtGui.QFormLayout.FieldRole, self.horizontalLayout_4)
         self.label_2 = QtGui.QLabel(self.groupBox_2)
         self.label_2.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_2.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_2)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.measured_pos_lbl = QtGui.QLabel(self.groupBox_2)
         self.measured_pos_lbl.setMinimumSize(QtCore.QSize(0, 18))
-        self.measured_pos_lbl.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.measured_pos_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.measured_pos_lbl.setObjectName(_fromUtf8("measured_pos_lbl"))
         self.horizontalLayout_3.addWidget(self.measured_pos_lbl)
         self.label_8 = QtGui.QLabel(self.groupBox_2)
@@ -149,7 +151,7 @@ class Ui_diamond_control_widget(object):
         sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy)
         self.label_3.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_3.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_3)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -157,7 +159,7 @@ class Ui_diamond_control_widget(object):
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.pressure_lbl = QtGui.QLabel(self.groupBox_2)
         self.pressure_lbl.setMinimumSize(QtCore.QSize(0, 18))
-        self.pressure_lbl.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.pressure_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.pressure_lbl.setObjectName(_fromUtf8("pressure_lbl"))
         self.horizontalLayout_5.addWidget(self.pressure_lbl)
         self.label_6 = QtGui.QLabel(self.groupBox_2)
@@ -176,12 +178,12 @@ class Ui_diamond_control_widget(object):
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
         self.label_14 = QtGui.QLabel(self.groupBox_4)
-        self.label_14.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_14.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.label_14.setObjectName(_fromUtf8("label_14"))
         self.horizontalLayout_8.addWidget(self.label_14)
         self.laser_line_txt = QtGui.QLineEdit(self.groupBox_4)
         self.laser_line_txt.setMaximumSize(QtCore.QSize(50, 16777215))
-        self.laser_line_txt.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.laser_line_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.laser_line_txt.setObjectName(_fromUtf8("laser_line_txt"))
         self.horizontalLayout_8.addWidget(self.laser_line_txt)
         self.label_15 = QtGui.QLabel(self.groupBox_4)
@@ -199,7 +201,8 @@ class Ui_diamond_control_widget(object):
         self.label_9.setObjectName(_fromUtf8("label_9"))
         self.horizontalLayout_10.addWidget(self.label_9)
         self.derivative_smoothing_sb = QtGui.QSpinBox(self.groupBox_4)
-        self.derivative_smoothing_sb.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.derivative_smoothing_sb.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.derivative_smoothing_sb.setObjectName(_fromUtf8("derivative_smoothing_sb"))
         self.horizontalLayout_10.addWidget(self.derivative_smoothing_sb)
         self.verticalLayout_5.addLayout(self.horizontalLayout_10)

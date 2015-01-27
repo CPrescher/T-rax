@@ -1,9 +1,11 @@
 ﻿import unittest
 import sys
 import os
+
 import numpy as np
 from PyQt4 import QtGui
-from Controller.MainController import TRaxMainController
+
+from controller.MainController import TRaxMainController
 
 
 class TestGui(unittest.TestCase):
