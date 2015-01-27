@@ -19,12 +19,10 @@ class TestSPEModule(unittest.TestCase):
         self.assertGreater(len(self.vers2_converted_spe_file.x_calibration), 0)
 
     def test_time(self):
-        self.assertEqual(self.vers2_spe_file.date_time, \
-                         datetime.datetime(2013, 7, 13, 19, 42, 23))
-        self.assertEqual(self.vers3_spe_file.date_time, \
-                         datetime.datetime(2013, 9, 6, 16, 50, 39, 445678,
-                                           self.vers3_spe_file.date_time.tzinfo))
-        self.assertEqual(self.vers2_converted_spe_file.date_time, \
+        self.assertEqual(self.vers2_spe_file.date_time, datetime.datetime(2013, 7, 13, 19, 42, 23))
+        self.assertEqual(self.vers3_spe_file.date_time, datetime.datetime(2013, 9, 6, 16, 50, 39, 445678,
+                                                                          self.vers3_spe_file.date_time.tzinfo))
+        self.assertEqual(self.vers2_converted_spe_file.date_time,
                          datetime.datetime(2013, 5, 10, 10, 34, 27, 0,
                                            self.vers2_converted_spe_file.date_time.tzinfo))
 
