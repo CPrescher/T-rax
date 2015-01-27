@@ -4,12 +4,13 @@ from datetime import datetime
 from PyQt4 import QtGui
 
 from controller.MainController import TRaxMainController
-import Model
+import model
 
 
-sys.modules['data'] = Model
+sys.modules['data'] = model
+sys.modules['Model'] = model
 
-VERSION = 0.21
+__version__ = 0.24
 
 
 class Logger(object):

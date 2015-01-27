@@ -62,29 +62,6 @@ class GeneralData(object):
         else:
             return self.exp_data.x_whole[index]
 
-    # def calculate_ind(self, wavelength):
-    #     result = []
-    #     xdata = np.array(self.exp_data.x_whole)
-    #     try:
-    #         for w in wavelength:
-    #             try:
-    #                 base_ind = max(max(np.where(xdata <= w)))
-    #                 if base_ind < len(xdata) - 1:
-    #                     result.append(int(np.round((w - xdata[base_ind]) / \
-    #                                                (xdata[base_ind + 1] - xdata[base_ind]) \
-    #                                                + base_ind)))
-    #                 else:
-    #                     result.append(base_ind)
-    #             except:
-    #                 result.append(0)
-    #         return np.array(result)
-    #     except TypeError:
-    #         base_ind = max(max(np.where(xdata <= wavelength)))
-    #         return int(np.round((wavelength - xdata[base_ind]) / \
-    #                             (xdata[base_ind + 1] - xdata[base_ind]) \
-    #                             + base_ind))
-
-
     def calc_spectra(self):
         self.exp_data.calc_spectra()
 

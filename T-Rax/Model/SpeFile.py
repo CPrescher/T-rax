@@ -29,9 +29,16 @@ from dateutil import parser
 
 
 class SpeFile(object):
-    def __init__(self, filename):
-        """Opens the SPE file and loads its content"""
+    def __init__(self, filename, debug=False):
+        """Opens the PI SPE file and loads its content
+
+        :param filename: filename of the PI SPE to open
+        :param debug: if set to true, will automatically save <filename>.xml files for version 3 spe files in the spe
+        directory
+        """
+        """"""
         self.filename = filename
+        self.debug = debug
         self._fid = open(filename, 'rb')
         self._read_parameter()
         self._read_img()
@@ -139,10 +146,11 @@ class SpeFile(object):
         xml_size = self.get_file_size() - self.xml_offset
         xml = self._read_at(self.xml_offset, xml_size, np.byte)
         self.xml_string = ''.join([chr(i) for i in xml])
-        fid = open('spe_xml.xml', 'w')
-        for line in self.xml_string:
-            fid.write(line)
-        fid.close()
+        if self.debug:
+            fid = open(self.filename+'.xml', 'w')
+            for line in self.xml_string:
+                fid.write(line)
+            fid.close()
 
     def _read_date_time_from_dom(self):
         """Reads the time of collection and saves it date_time field"""
