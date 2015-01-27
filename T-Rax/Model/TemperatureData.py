@@ -1,12 +1,12 @@
-from wx.lib.pubsub import pub
-from SPE_module import SPE_File
-import numpy as np
 import random
-import T_Rax_Data # needs to be important in order to let old setting files work...
+
+from wx.lib.pubsub import pub
+import numpy as np
+
+from SPE_module import SPE_File
 
 
 def dependencies_for_myprogram():
-    from scipy.sparse.csgraph import _validation
 
 
 from scipy.optimize import curve_fit
