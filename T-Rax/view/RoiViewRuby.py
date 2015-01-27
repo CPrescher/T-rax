@@ -3,8 +3,8 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib as mpl
 
-from Views.UIFiles.T_Rax_ROI_Ruby_Selector import Ui_roi_selector_ruby_widget
-from Views.RoiView import ResizeableRectangle
+from view.UIFiles.T_Rax_ROI_Ruby_Selector import Ui_roi_selector_ruby_widget
+from view.RoiView import ResizeableRectangle
 
 
 mpl.rcParams['font.size'] = 10

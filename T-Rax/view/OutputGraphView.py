@@ -4,7 +4,7 @@ from PyQt4 import QtGui, QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from Views.UIFiles.T_Rax_OutputGraphWidget import Ui_output_graph_widget
+from view.UIFiles.T_Rax_OutputGraphWidget import Ui_output_graph_widget
 
 
 class TRaxOutputGraphView(QtGui.QWidget, Ui_output_graph_widget):

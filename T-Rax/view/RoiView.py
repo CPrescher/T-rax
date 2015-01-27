@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 from matplotlib import animation
 import matplotlib as mpl
 
-from Views.UIFiles.T_Rax_ROI_Selector import Ui_roi_selector_main_widget
+from view.UIFiles.T_Rax_ROI_Selector import Ui_roi_selector_main_widget
 
 
 mpl.rcParams['font.size'] = 10
