@@ -4,7 +4,7 @@ from wx.lib.pubsub import pub
 import numpy as np
 from scipy.optimize import minimize
 
-from model.SPE_module import SPE_File
+from model.SpeFile import SpeFile
 from model.TemperatureData import Roi, Spectrum, gauss_curve_function
 from model.GeneralData import GeneralData
 
@@ -30,7 +30,7 @@ class RubyData(GeneralData):
         pub.sendMessage("EXP RUBY DATA CHANGED")
 
     def read_exp_image_file(self, filename):
-        img_file = SPE_File(filename)
+        img_file = SpeFile(filename)
         return ExpRubyData(img_file, self.roi_data_manager)
 
         # ********************RUBY STUFF HERE***********************

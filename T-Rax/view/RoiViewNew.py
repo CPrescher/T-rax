@@ -38,11 +38,11 @@ class RoiView(QtGui.QWidget, Ui_roi_selector_main_widget):
 
 
 if __name__ == '__main__':
-    from Model.SPE_module import SPE_File
+    from Model.SpeFile import SpeFile
 
     app = QtGui.QApplication(sys.argv)
     roi_view = RoiView()
     roi_view.raise_window()
-    img_file = SPE_File('../sample files/Leonid spe files/Pt_42.SPE')
+    img_file = SpeFile('../sample files/Leonid spe files/Pt_42.SPE')
     roi_view.img_view.plot_image(img_file.img, True)
     app.exec_()

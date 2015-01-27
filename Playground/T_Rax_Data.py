@@ -4,7 +4,7 @@ import random
 from wx.lib.pubsub import pub
 import numpy as np
 
-from Model.SPE_module import SPE_File
+from Model.SpeFile import SpeFile
 
 
 def dependencies_for_myprogram():
@@ -63,7 +63,7 @@ class TraxData(object):
             self.load_exp_data(new_file_name_with_leading_zeros)
 
     def read_exp_image_file(self, filename):
-        img_file = SPE_File(filename)
+        img_file = SpeFile(filename)
         if img_file.type == 'image':
             return ExpData(img_file, self.roi_data_manager)
         elif img_file.type == 'spectrum':

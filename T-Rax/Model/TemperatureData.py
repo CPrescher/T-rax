@@ -4,7 +4,7 @@ from wx.lib.pubsub import pub
 import numpy as np
 from scipy.optimize import curve_fit
 
-from model.SPE_module import SPE_File
+from model.SpeFile import SpeFile
 from model.GeneralData import GeneralData
 
 
@@ -30,7 +30,7 @@ class TemperatureData(GeneralData):
         pub.sendMessage("ROI CHANGED")
 
     def _read_exp_image_file(self, filename):
-        img_file = SPE_File(filename)
+        img_file = SpeFile(filename)
         return ExpData(img_file, self.roi_data_manager)
 
     def load_exp_file(self, filename):

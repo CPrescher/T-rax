@@ -21,16 +21,14 @@ can be requested from the object.
 """
 
 import datetime
-import time
 from xml.dom.minidom import parseString
 
 import numpy as np
 from numpy.polynomial.polynomial import polyval
 from dateutil import parser
-from matplotlib import tight_layout
 
 
-class SPE_File(object):
+class SpeFile(object):
     def __init__(self, filename):
         """Opens the SPE file and loads its content"""
         self.filename = filename
@@ -306,9 +304,3 @@ class SPE_File(object):
         self._fid.seek(0, 2)
         self.file_size = self._fid.tell()
         return self.file_size
-
-
-if __name__ == "__main__":
-    # spe_file = SPE_File('spe files\Pt_38.SPE')
-    spe_file = SPE_File('D:\\Programming\\VS Projects\\T-Rax\\T-Rax\\SPE test vers3\\test_073.spe')
-    #spe_file = SPE_File('binary files\lamp_15_up(v3.0).SPE')
