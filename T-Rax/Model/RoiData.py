@@ -1,8 +1,6 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-import random
-
 from wx.lib.pubsub import pub
 import numpy as np
 
@@ -86,18 +84,50 @@ class RoiDataManager():
         return None
 
     def get_roi_data(self, img_dimension):
+        """
+        Tries to get stored RoiData information for the provided image dimension. If the
+        image dimensions have not been used before the roi will be initialized by 2 stripes
+        :param img_dimension: len 2 array with width and height)
+        :return: RoiData object
+        :type: RoiData
+        """
         if self._exists(img_dimension):
             return self._roi_data_list[self._get_dimension_ind(img_dimension)]
         else:
-            ds_limits = np.array([0.25 * (img_dimension[0] - 1), 0.75 * (img_dimension[0] - 1),
-                                  0.8 * (img_dimension[1] - 1), 0.9 * (img_dimension[1] - 1)])
-            us_limits = np.array([0.25 * (img_dimension[0] - 1), 0.75 * (img_dimension[0] - 1),
-                                  0.1 * (img_dimension[1] - 1), 0.2 * (img_dimension[1] - 1)])
+            ds_limits = np.array([0.25 * (img_dimension[0]) - 1, 0.75 * (img_dimension[0]) - 1,
+                                  0.8 * (img_dimension[1]) - 1, 0.9 * (img_dimension[1]) - 1])
+            us_limits = np.array([0.25 * (img_dimension[0]) - 1, 0.75 * (img_dimension[0]) - 1,
+                                  0.1 * (img_dimension[1]) - 1, 0.2 * (img_dimension[1]) - 1])
             ds_limits = np.round(ds_limits)
             us_limits = np.round(us_limits)
 
             self._add(img_dimension, RoiData(ds_limits, us_limits))
             return self._roi_data_list[self._get_dimension_ind(img_dimension)]
+
+    def set_roi_data(self, img_dimension, ds_limits, us_limits):
+        if self._exists(img_dimension):
+            self._roi_data_list[self._get_dimension_ind(img_dimension)].set_ds_roi(ds_limits)
+            self._roi_data_list[self._get_dimension_ind(img_dimension)].set_us_roi(us_limits)
+        else:
+            self._add(img_dimension, RoiData(ds_limits, us_limits))
+
+    def set_us_roi(self, img_dimension, us_limits):
+        if self._exists(img_dimension):
+            self._roi_data_list[self._get_dimension_ind(img_dimension)].set_us_roi(us_limits)
+        else:
+            ds_limits = np.array([0.25 * (img_dimension[0]) - 1, 0.75 * (img_dimension[0]) - 1,
+                                  0.8 * (img_dimension[1]) - 1, 0.9 * (img_dimension[1]) - 1])
+
+            self._add(img_dimension, RoiData(ds_limits=ds_limits, us_limits=us_limits))
+
+    def set_ds_roi(self, img_dimension, ds_limits):
+        if self._exists(img_dimension):
+            self._roi_data_list[self._get_dimension_ind(img_dimension)].set_ds_roi(ds_limits)
+        else:
+            us_limits = np.array([0.25 * (img_dimension[0]) - 1, 0.75 * (img_dimension[0]) - 1,
+                                  0.8 * (img_dimension[1]) - 1, 0.9 * (img_dimension[1]) - 1])
+
+            self._add(img_dimension, RoiData(ds_limits=ds_limits, us_limits=us_limits))
 
     def get_current_roi(self):
         return self._roi_data_list[self._current]

@@ -7,7 +7,8 @@ from scipy.optimize import curve_fit
 from model.SpeFile import SpeFile
 from model.GeneralData import GeneralData
 
-from model.RoiData import RoiData, RoiDataManager
+from model.RoiData import RoiDataManager
+
 
 class TemperatureData(GeneralData):
     def __init__(self):
@@ -349,8 +350,8 @@ class ExpDataFromImgData(ExpData):
 
 
 class CalibrationParameter(object):
-    def __init__(self):
-        self.modus = 1
+    def __init__(self, modus=1):
+        self.modus = modus
         # modi: 0 - given temperature
         #       1 - etalon spectrum
 
@@ -368,22 +369,21 @@ class CalibrationParameter(object):
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
-    def load_etalon_spectrum(self, fname, send_message=True):
+    def load_etalon_spectrum(self, filename, send_message=True):
         try:
-            data = np.loadtxt(fname, delimiter=',')
+            data = np.loadtxt(filename, delimiter=',')
         except ValueError:
             try:
-                data = np.loadtxt(fname, delimiter=' ')
+                data = np.loadtxt(filename, delimiter=' ')
             except ValueError:
                 try:
-                    data = np.loadtxt(fname, delimiter=';')
+                    data = np.loadtxt(filename, delimiter=';')
                 except ValueError:
-                    data = np.loadtxt(fname, delimiter='\t')
+                    data = np.loadtxt(filename, delimiter='\t')
         self._etalon_x = data.T[0]
         self._etalon_y = data.T[1]
-        # self.etalon_spectrum_func = ip.interp1d(Model.T[0], Model.T[1], 'cubic')
-        # not used because scipy.interpolate is supported by pyinstaller...
-        self.etalon_file_name = fname
+
+        self.etalon_file_name = filename
         if send_message:
             pub.sendMessage("EXP DATA CHANGED")
 
@@ -400,6 +400,9 @@ class CalibrationParameter(object):
                 pub.sendMessage("INTERPOLATION RANGE ERROR")
                 return np.ones(np.size(wavelength))
 
+    def get_lamp_spectrum(self, wavelength):
+        return Spectrum(wavelength, )
+
     def get_etalon_filename(self):
         return self.etalon_file_name
 
@@ -413,7 +416,6 @@ class CalibrationParameter(object):
         try:
             self._etalon_x = spectrum.x
             self._etalon_y = spectrum.y
-            # self.etalon_spectrum_func = ip.interp1d(spectrum.x, spectrum.y, 'cubic')
         except AttributeError:
             pass
 
@@ -467,88 +469,6 @@ def gauss_curve_function(x, scaling, center, sigma):
     return scaling * np.exp(-(x - float(center)) ** 2 / (2 * sigma ** 2))
 
 
-class TemperatureSettings():
-    def __init__(self, data):
-        try:
-            us_calibration_filename_str = data.get_us_calibration_data().filename
-        except AttributeError:
-            us_calibration_filename_str = 'Select File...'
-
-        try:
-            ds_calibration_filename_str = data.get_ds_calibration_data().filename
-        except AttributeError:
-            ds_calibration_filename_str = 'Select File...'
-
-        self.ds_calib_file_name = ds_calibration_filename_str
-        self.us_calib_file_name = us_calibration_filename_str
-
-        self.ds_etalon_file_name = data.get_ds_calibration_parameter().get_etalon_filename()
-
-        try:
-            self.ds_etalon_spectrum = data.ds_calibration_parameter.get_etalon_spectrum()
-        except AttributeError:
-            self.ds_etalon_spectrum = []
-
-        self.us_etalon_file_name = data.get_us_calibration_parameter().get_etalon_filename()
-
-        try:
-            self.us_etalon_spectrum = data.us_calibration_parameter.get_etalon_spectrum()
-        except AttributeError:
-            self.us_etalon_spectrum = []
-
-        self.ds_calibration_modus = data.get_ds_calibration_parameter().modus
-        self.us_calibration_modus = data.get_us_calibration_parameter().modus
-
-        self.ds_calibration_temperature = data.get_ds_calibration_parameter().temp
-        self.us_calibration_temperature = data.get_us_calibration_parameter().temp
-
-        self.ds_roi = data.get_roi_data().get_ds_roi()
-        self.us_roi = data.get_roi_data().get_us_roi()
-
-        if not data.ds_calibration_data is None:
-            try:
-                self.ds_img_data = data.ds_calibration_data.get_img_data()
-            except:
-                self.ds_calibration_spectrum = data.ds_calibration_data.img_data
-            self.ds_x_calibration = data.ds_calibration_data.x_whole
-
-        if not data.us_calibration_data is None:
-            try:
-                self.us_img_data = data.us_calibration_data.get_img_data()
-            except:
-                self.us_calibration_spectrum = data.us_calibration_data.img_data
-            self.us_x_calibration = data.us_calibration_data.x_whole
-        self.img_dimension = data.exp_data.get_img_dimension()
-
-    @staticmethod
-    def load_settings(settings, data):
-        data.roi_data_manager._add(settings.img_dimension, RoiData(settings.ds_roi, settings.us_roi))
-        data.roi_data = data.roi_data_manager.get_roi_data(data.exp_data.get_img_dimension())
-        data.exp_data.roi_data = data.roi_data
-
-        if not settings.ds_calib_file_name == 'Select File...':
-            data.ds_calibration_data = ExpDataFromImgData(settings.ds_img_data, settings.ds_calib_file_name,
-                                                          settings.ds_x_calibration, data.roi_data_manager)
-        else:
-            data.ds_calibration_data = None
-
-        if not settings.us_calib_file_name == 'Select File...':
-            data.us_calibration_data = ExpDataFromImgData(settings.us_img_data, settings.us_calib_file_name,
-                                                          settings.us_x_calibration, data.roi_data_manager)
-        else:
-            data.us_calibration_data = None
-
-        data.ds_calibration_parameter.set_etalon_filename(settings.ds_etalon_file_name)
-        data.us_calibration_parameter.set_etalon_filename(settings.us_etalon_file_name)
-        data.ds_calibration_parameter.set_etalon_function_from_spectrum(settings.ds_etalon_spectrum)
-        data.us_calibration_parameter.set_etalon_function_from_spectrum(settings.us_etalon_spectrum)
-
-        data.get_ds_calibration_parameter().set_modus(settings.ds_calibration_modus, False)
-        data.get_us_calibration_parameter().set_modus(settings.us_calibration_modus, False)
-        data.get_ds_calibration_parameter().set_temperature(settings.ds_calibration_temperature, False)
-        data.get_us_calibration_parameter().set_temperature(settings.us_calibration_temperature, False)
-        data.calculate_spectra()
-        pub.sendMessage("EXP DATA CHANGED")
-
-
+# to enable legacy setting files:
+from model.TemperatureSettings import TemperatureSettings
 TraxTemperatureSettings = TemperatureSettings

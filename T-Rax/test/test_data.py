@@ -1,7 +1,7 @@
 ﻿import unittest
 
-from model.TemperatureData import TemperatureData, RoiData, RoiDataManager, TemperatureSettings
-
+from model.TemperatureData import TemperatureData, TemperatureSettings
+from model.RoiData import RoiData, RoiDataManager
 
 class Test_T_Rax_Data_Test(unittest.TestCase):
     def test_ROI_data_manager(self):

@@ -1,0 +1,228 @@
+# -*- coding: utf8 -*-
+__author__ = 'Clemens Prescher'
+
+from PyQt4 import QtCore
+import numpy as np
+from scipy.optimize import curve_fit
+
+
+from .Spectrum import Spectrum
+from .RoiData import RoiDataManager
+from .SpeFile import SpeFile
+
+class TemperatureModel(QtCore.QObject):
+    
+    def __init__(self):
+        super(TemperatureModel, self).__init__()
+        self.us_data_spectrum = Spectrum([],[])
+        self.ds_data_spectrum = Spectrum([],[])
+
+        self.us_calibration_spectrum = Spectrum([],[])
+        self.ds_calibration_spectrum = Spectrum([],[])
+
+        self.us_calibration_parameter = CalibrationParameter()
+        self.ds_calibration_parameter = CalibrationParameter()
+
+        self.us_fit_spectrum = Spectrum([],[])
+        self.ds_fit_spectrum = Spectrum([],[])
+
+        self.data_img_file = None
+        self.roi_data_manager = RoiDataManager()
+
+        self.us_calibration_img_file = None
+        self.ds_calibration_img_file = None
+
+        self.us_temperature = np.NaN
+        self.us_temperature_error = np.NaN
+        self.ds_temperature = np.NaN
+        self.ds_temperature_error = np.NaN
+
+    # loading spectrum text files
+    #########################################################################
+    def load_us_data_spectrum(self, filename):
+        self.us_data_spectrum.load(filename)
+
+    def load_ds_data_spectrum(self, filename):
+        self.ds_data_spectrum.load(filename)
+
+    def load_us_calibration_spectrum(self, filename):
+        self.us_calibration_spectrum.load(filename)
+
+    def load_ds_calibration_spectrum(self, filename):
+        self.ds_calibration_spectrum.load(filename)
+
+    # loading spe image files:
+    #########################################################################
+    def load_data_image(self, filename):
+        self.data_img_file = SpeFile(filename)
+        self._update_data_spectra()
+
+    def load_us_calibration_image(self, filename):
+        self.us_calibration_img_file = SpeFile(filename)
+        self._update_us_calibration_spectrum()
+
+    def load_ds_calibration_image(self, filename):
+        self.ds_calibration_img_file = SpeFile(filename)
+        self._update_ds_calibration_spectrum()
+
+    # setting etalon interface
+    #########################################################################
+    def load_us_etalon_spectrum(self, filename):
+        self.us_calibration_parameter.load_etalon_spectrum(filename)
+
+    def load_ds_etalon_spectrum(self, filename):
+        self.ds_calibration_parameter.load_etalon_spectrum(filename)
+
+    # updating roi values
+    def set_us_roi(self, us_limits):
+        self.roi_data_manager.set_us_roi(self.data_img_file.get_dimension(), us_limits)
+        self._update_data_spectra()
+
+    def set_ds_roi(self, ds_limits):
+        self.roi_data_manager.set_ds_roi(self.data_img_file.get_dimension(), ds_limits)
+        self._update_data_spectra()
+
+    def set_rois(self, ds_limits, us_limits):
+        self.roi_data_manager.set_roi_data(self.data_img_file.get_dimension(), ds_limits, us_limits)
+        self._update_data_spectra()
+
+
+    # spectrum calculations
+    ########################################################################
+    def update_spectra_from_img(self):
+        self._update_data_spectra()
+        self._update_us_calibration_spectrum()
+        self._update_ds_calibration_spectrum()
+
+    def _update_data_spectra(self):
+        roi_data = self.roi_data_manager.get_roi_data(self.data_img_file.get_dimension())
+        us_data_x = self.data_img_file.x_calibration[roi_data.us_roi.x_min:roi_data.us_roi.x_max + 1]
+        ds_data_x = self.data_img_file.x_calibration[roi_data.ds_roi.x_min:roi_data.ds_roi.x_max + 1]
+
+        ds_data_y = self._get_roi_sum(self.data_img_file.img, roi_data.ds_roi)
+        us_data_y = self._get_roi_sum(self.data_img_file.img, roi_data.us_roi)
+
+        self.us_data_spectrum.data = us_data_x, us_data_y
+        self.ds_data_spectrum.data = ds_data_x, ds_data_y
+
+    def _update_us_calibration_spectrum(self):
+        if self.us_calibration_img_file is not None:
+            roi_data = self.roi_data_manager.get_roi_data(self.us_calibration_img_file.get_dimension())
+
+            us_calibration_x = self.us_calibration_img_file.x_calibration[roi_data.ds_roi.x_min:roi_data.ds_roi.x_max + 1]
+            us_calibration_y = self._get_roi_sum(self.us_calibration_img_file.img, roi_data.ds_roi)
+
+            self.us_calibration_spectrum.data = us_calibration_x, us_calibration_y
+
+    def _update_ds_calibration_spectrum(self):
+        if self.ds_calibration_img_file is not None:
+            roi_data = self.roi_data_manager.get_roi_data(self.ds_calibration_img_file.get_dimension())
+
+            ds_calibration_x = self.ds_calibration_img_file.x_calibration[roi_data.ds_roi.x_min:roi_data.ds_roi.x_max + 1]
+            ds_calibration_y = self._get_roi_sum(self.ds_calibration_img_file.img, roi_data.ds_roi)
+
+            self.ds_calibration_spectrum.data = ds_calibration_x, ds_calibration_y
+
+    def _get_roi_sum(self, img, roi):
+        roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
+        return np.sum(roi_img, 0) / np.float(np.size(roi_img, 0))
+
+
+    # finally the fitting function
+    ##################################################################
+    def fit_data(self):
+        us_lamp_spectrum = Spectrum(self.us_calibration_parameter)
+        us_real_spectrum = calculate_real_spectrum(self.us_data_spectrum,
+                                                   self.us_calibration_spectrum,
+                                                   self.us_calibration_parameter.get_etalon_spectrum())
+
+
+
+def calculate_real_spectrum(data_spectrum, calibration_spectrum, etalon_spectrum):
+    response_y = calibration_spectrum.y / etalon_spectrum.y
+    response_y[np.where(response_y == 0)] = np.NaN
+    corrected_y = data_spectrum.y / response_y
+    corrected_y = corrected_y / np.max(corrected_y) * np.max(data_spectrum.y)
+    return Spectrum(data_spectrum.x, corrected_y)
+
+def fit_black_body_function(spectrum):
+    try:
+        param, cov = curve_fit(black_body_function, spectrum.x, spectrum.y, p0=[2000, 1e-11])
+        T = param[0]
+        T_err = np.sqrt(cov[0, 0])
+
+        x = spectrum.x
+        return T, T_err, Spectrum(spectrum.x, black_body_function(x, param[0], param[1]))
+    except (RuntimeError, TypeError):
+        return np.NaN, np.NaN, Spectrum([], [])
+
+
+def black_body_function(wavelength, temp, scaling):
+    wavelength = np.array(wavelength) * 1e-9
+    c1 = 3.7418e-16
+    c2 = 0.014388
+    return scaling * c1 * wavelength ** -5 / (np.exp(c2 / (wavelength * temp)) - 1)
+
+
+class CalibrationParameter(object):
+    def __init__(self, modus=1):
+        self.modus = modus
+        # modi: 0 - given temperature
+        #       1 - etalon spectrum
+
+        self.temperature = 2000
+        self.etalon_spectrum_func = None
+        self.etalon_file_name = 'Select File...'
+
+    def set_modus(self, modus):
+        self.modus = modus
+
+    def set_temperature(self, temperature):
+        self.temperature = temperature
+
+    def load_etalon_spectrum(self, filename):
+        try:
+            data = np.loadtxt(filename, delimiter=',')
+        except ValueError:
+            try:
+                data = np.loadtxt(filename, delimiter=' ')
+            except ValueError:
+                try:
+                    data = np.loadtxt(filename, delimiter=';')
+                except ValueError:
+                    data = np.loadtxt(filename, delimiter='\t')
+        self._etalon_x = data.T[0]
+        self._etalon_y = data.T[1]
+
+        self.etalon_file_name = filename
+
+    def get_lamp_y(self, wavelength):
+        if self.modus == 0:
+            y = black_body_function(wavelength, self.temperature, 1)
+            return y / max(y)
+        elif self.modus == 1:
+            try:
+                # return self.etalon_spectrum_func(wavelength)
+                # not used because scipy.interpolate is supported by pyinstaller...
+                return np.interp(wavelength, self._etalon_x, self._etalon_y)
+            except ValueError:
+                return np.ones(np.size(wavelength))
+
+    def get_lamp_spectrum(self, wavelength):
+        return Spectrum(wavelength, self.get_lamp_y(wavelength))
+
+    def get_etalon_filename(self):
+        return self.etalon_file_name
+
+    def set_etalon_filename(self, filename):
+        self.etalon_file_name = filename
+
+    def get_etalon_spectrum(self):
+        return Spectrum(self._etalon_x, self._etalon_y)
+
+    def set_etalon_function_from_spectrum(self, spectrum):
+        try:
+            self._etalon_x = spectrum.x
+            self._etalon_y = spectrum.y
+        except AttributeError:
+            pass
