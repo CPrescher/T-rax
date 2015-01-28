@@ -76,16 +76,15 @@ class TemperatureModel(QtCore.QObject):
     # updating roi values
     def set_us_roi(self, us_limits):
         self.roi_data_manager.set_us_roi(self.data_img_file.get_dimension(), us_limits)
-        self._update_data_spectra()
+        self.update_spectra_from_img()
 
     def set_ds_roi(self, ds_limits):
         self.roi_data_manager.set_ds_roi(self.data_img_file.get_dimension(), ds_limits)
-        self._update_data_spectra()
+        self.update_spectra_from_img()
 
     def set_rois(self, ds_limits, us_limits):
         self.roi_data_manager.set_roi_data(self.data_img_file.get_dimension(), ds_limits, us_limits)
-        self._update_data_spectra()
-
+        self.update_spectra_from_img()
 
     # spectrum calculations
     ########################################################################
@@ -109,8 +108,8 @@ class TemperatureModel(QtCore.QObject):
         if self.us_calibration_img_file is not None:
             roi_data = self.roi_data_manager.get_roi_data(self.us_calibration_img_file.get_dimension())
 
-            us_calibration_x = self.us_calibration_img_file.x_calibration[roi_data.ds_roi.x_min:roi_data.ds_roi.x_max + 1]
-            us_calibration_y = self._get_roi_sum(self.us_calibration_img_file.img, roi_data.ds_roi)
+            us_calibration_x = self.us_calibration_img_file.x_calibration[roi_data.us_roi.x_min:roi_data.us_roi.x_max + 1]
+            us_calibration_y = self._get_roi_sum(self.us_calibration_img_file.img, roi_data.us_roi)
 
             self.us_calibration_spectrum.data = us_calibration_x, us_calibration_y
 
@@ -131,28 +130,36 @@ class TemperatureModel(QtCore.QObject):
     # finally the fitting function
     ##################################################################
     def fit_data(self):
-        us_lamp_spectrum = Spectrum(self.us_calibration_parameter)
+        us_x, _ = self.us_data_spectrum.data
+        ds_x, _ = self.ds_data_spectrum.data
+        us_lamp_spectrum = self.us_calibration_parameter.get_lamp_spectrum(us_x)
+        ds_lamp_spectrum = self.ds_calibration_parameter.get_lamp_spectrum(ds_x)
+
         us_real_spectrum = calculate_real_spectrum(self.us_data_spectrum,
                                                    self.us_calibration_spectrum,
-                                                   self.us_calibration_parameter.get_etalon_spectrum())
+                                                   us_lamp_spectrum)
+        ds_real_spectrum = calculate_real_spectrum(self.ds_data_spectrum,
+                                                   self.ds_calibration_spectrum,
+                                                   ds_lamp_spectrum)
 
+        print fit_black_body_function(us_real_spectrum)
+        print fit_black_body_function(ds_real_spectrum)
 
 
 def calculate_real_spectrum(data_spectrum, calibration_spectrum, etalon_spectrum):
-    response_y = calibration_spectrum.y / etalon_spectrum.y
+    response_y = calibration_spectrum._y / etalon_spectrum._y
     response_y[np.where(response_y == 0)] = np.NaN
-    corrected_y = data_spectrum.y / response_y
-    corrected_y = corrected_y / np.max(corrected_y) * np.max(data_spectrum.y)
-    return Spectrum(data_spectrum.x, corrected_y)
+    corrected_y = data_spectrum._y / response_y
+    corrected_y = corrected_y / np.max(corrected_y) * np.max(data_spectrum._y)
+    return Spectrum(data_spectrum._x, corrected_y)
 
 def fit_black_body_function(spectrum):
     try:
-        param, cov = curve_fit(black_body_function, spectrum.x, spectrum.y, p0=[2000, 1e-11])
+        param, cov = curve_fit(black_body_function, spectrum._x, spectrum._y, p0=[2000, 1e-11])
         T = param[0]
         T_err = np.sqrt(cov[0, 0])
 
-        x = spectrum.x
-        return T, T_err, Spectrum(spectrum.x, black_body_function(x, param[0], param[1]))
+        return T, T_err, Spectrum(spectrum._x, black_body_function(spectrum._x, param[0], param[1]))
     except (RuntimeError, TypeError):
         return np.NaN, np.NaN, Spectrum([], [])
 

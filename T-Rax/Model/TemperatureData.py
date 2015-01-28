@@ -93,6 +93,7 @@ class TemperatureData(GeneralData):
                                                                               self.us_calibration_parameter.get_calibration_y(
                                                                                   x))
                 self.us_fitted_spectrum = FitSpectrum(corrected_spectrum)
+                print self.roi_data_manager.get_roi_data(self.exp_data.get_img_dimension()).get_us_roi()
                 return [corrected_spectrum, self.us_fitted_spectrum]
             else:
                 return self.exp_data.us_spectrum

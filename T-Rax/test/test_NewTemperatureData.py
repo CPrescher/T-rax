@@ -78,8 +78,12 @@ class TestTemperatureModel(unittest.TestCase):
 
         self.assertNotEqual(len(us_data_y), len(after_us_data_y))
         self.assertNotEqual(len(ds_data_y), len(after_ds_data_y))
-        self.assertEqual(len(us_calibration_y), len(after_us_calibration_y))
-        self.assertEqual(len(ds_calibration_y), len(after_ds_calibration_y))
+        self.assertNotEqual(len(us_calibration_y), len(after_us_calibration_y))
+        self.assertNotEqual(len(ds_calibration_y), len(after_ds_calibration_y))
+
+        self.assertEqual(len(after_us_data_y), len(after_ds_data_y))
+        self.assertEqual(len(after_us_data_y), len(after_ds_calibration_y))
+        self.assertEqual(len(after_us_data_y), len(after_us_calibration_y))
 
     def test_changing_ds_roi_values(self):
         self.model.load_data_image(os.path.join(unittest_files_path, 'temper_009.spe'))
@@ -102,8 +106,12 @@ class TestTemperatureModel(unittest.TestCase):
 
         self.assertNotEqual(len(us_data_y), len(after_us_data_y))
         self.assertNotEqual(len(ds_data_y), len(after_ds_data_y))
-        self.assertEqual(len(us_calibration_y), len(after_us_calibration_y))
-        self.assertEqual(len(ds_calibration_y), len(after_ds_calibration_y))
+        self.assertNotEqual(len(us_calibration_y), len(after_us_calibration_y))
+        self.assertNotEqual(len(ds_calibration_y), len(after_ds_calibration_y))
+
+        self.assertEqual(len(after_us_data_y), len(after_ds_data_y))
+        self.assertEqual(len(after_us_data_y), len(after_ds_calibration_y))
+        self.assertEqual(len(after_us_data_y), len(after_us_calibration_y))
 
     def test_changing_aggregate_roi_values(self):
         self.model.load_data_image(os.path.join(unittest_files_path, 'temper_009.spe'))
@@ -116,7 +124,7 @@ class TestTemperatureModel(unittest.TestCase):
         _, us_calibration_y = self.model.us_calibration_spectrum.data
         _, ds_calibration_y = self.model.ds_calibration_spectrum.data
 
-        self.model.set_rois ([123,500, 30, 40], [123,500, 60, 90])
+        self.model.set_rois([123, 500, 30, 40], [123, 500, 60, 90])
 
         _, after_us_data_y = self.model.us_data_spectrum.data
         _, after_ds_data_y = self.model.ds_data_spectrum.data
@@ -126,11 +134,47 @@ class TestTemperatureModel(unittest.TestCase):
 
         self.assertNotEqual(len(us_data_y), len(after_us_data_y))
         self.assertNotEqual(len(ds_data_y), len(after_ds_data_y))
-        self.assertEqual(len(us_calibration_y), len(after_us_calibration_y))
-        self.assertEqual(len(ds_calibration_y), len(after_ds_calibration_y))
+        self.assertNotEqual(len(us_calibration_y), len(after_us_calibration_y))
+        self.assertNotEqual(len(ds_calibration_y), len(after_ds_calibration_y))
+
+
+        self.assertEqual(len(after_us_data_y), len(after_ds_data_y))
+        self.assertEqual(len(after_us_data_y), len(after_ds_calibration_y))
+        self.assertEqual(len(after_us_data_y), len(after_us_calibration_y))
 
     def test_fitting_temperature(self):
-        pass
-        #loading
+        # loading files
+        temperature_fitting_path = os.path.join(
+            unittest_files_path,'temperature fitting')
+        self.model.load_data_image(os.path.join(
+            temperature_fitting_path,
+            'test_measurement.spe'))
+        self.model.load_us_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'us_calibration.spe'))
+        self.model.load_ds_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'ds_calibration.spe'))
 
 
+        # load correct etalon files:
+        self.model.load_us_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+
+        self.model.load_ds_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+
+        # set the correct roi
+        x_limits_wavelength = [666, 836]
+        x_limits_ind = self.model.data_img_file.get_index_from(x_limits_wavelength)
+
+        print x_limits_ind
+
+        self.model.set_rois([x_limits_ind[0], x_limits_ind[1], 152, 163],
+                            [x_limits_ind[0], x_limits_ind[1], 99, 110])
+
+        self.model.fit_data()

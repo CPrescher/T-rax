@@ -299,6 +299,33 @@ class SpeFile(object):
             img = self._read_at(pos, self._xdim * self._ydim, np.uint16)
         return img.reshape((self._ydim, self._xdim))
 
+    def get_index_from(self, wavelength):
+        """
+        calculating image index for a given index
+        :param wavelength: wavelength in nm
+        :return: index
+        """
+        result = []
+        xdata = self.x_calibration
+        try:
+            for w in wavelength:
+                try:
+                    base_ind = max(max(np.where(xdata <= w)))
+                    if base_ind < len(xdata) - 1:
+                        result.append(int(np.round((w - xdata[base_ind]) / \
+                                                   (xdata[base_ind + 1] - xdata[base_ind]) \
+                                                   + base_ind)))
+                    else:
+                        result.append(base_ind)
+                except:
+                    result.append(0)
+            return np.array(result)
+        except TypeError:
+            base_ind = max(max(np.where(xdata <= wavelength)))
+            return int(np.round((wavelength - xdata[base_ind]) / \
+                                (xdata[base_ind + 1] - xdata[base_ind]) \
+                                + base_ind))
+
     def get_dimension(self):
         """Returns (xdim, ydim)"""
         return (self._xdim, self._ydim)
