@@ -10,6 +10,7 @@ from controller.TemperatureController import TRaxTemperatureController
 from controller.DiamondController import TRaxDiamondController
 from controller.RubyController import TRaxRubyController
 from controller.OutputGraphController import TRaxOutputGraphController
+from controller.NewTemperatureController import NewTemperatureController
 
 
 class TRaxMainController(object):
@@ -32,7 +33,7 @@ class TRaxMainController(object):
         self.main_view.raise_()
 
     def create_sub_controller(self):
-        self.temperature_controller = TRaxTemperatureController(self, self.main_view)
+        self.temperature_controller = NewTemperatureController(self, self.main_view)
         self.ruby_controller = TRaxRubyController(self, self.main_view)
         self.diamond_controller = TRaxDiamondController(self, self.main_view)
         self.output_graph_controller = TRaxOutputGraphController(self, self.main_view)
@@ -85,8 +86,7 @@ class TRaxMainController(object):
 
     def temperature_btn_click(self):
         self.main_view.navigate_to('temperature_btn')
-        self.main_view.status_file_information_lbl.setText(
-            self.temperature_controller.data.exp_data.get_file_information())
+        self.main_view.status_file_information_lbl.setText('')
         self.mode = "temperature"
 
     def ruby_btn_click(self):

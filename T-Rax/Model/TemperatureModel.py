@@ -11,6 +11,7 @@ from .SpeFile import SpeFile
 
 
 class TemperatureModel(QtCore.QObject):
+    data_changed = QtCore.pyqtSignal()
     def __init__(self):
         super(TemperatureModel, self).__init__()
         self.us_data_spectrum = Spectrum([], [])
@@ -27,6 +28,9 @@ class TemperatureModel(QtCore.QObject):
 
         self.data_img_file = None
         self._data_img = None
+        self.us_data_roi_max = 0
+        self.ds_data_roi_max = 0
+
         self.current_frame = 0
         self.roi_data_manager = RoiDataManager()
 
@@ -67,6 +71,7 @@ class TemperatureModel(QtCore.QObject):
             self.current_frame = 0
         else:
             self.data_img = self.data_img_file.img
+        self.data_changed.emit()
 
     def load_next_img_frame(self):
         return self.set_img_frame_number_to(self.current_frame+1)
@@ -79,6 +84,7 @@ class TemperatureModel(QtCore.QObject):
             return False
         self.current_frame = frame_number
         self.data_img = self.data_img_file.img[frame_number]
+        self.data_changed.emit()
         return True
 
     @property
@@ -146,6 +152,9 @@ class TemperatureModel(QtCore.QObject):
         ds_data_y = self._get_roi_sum(self.data_img, roi_data.ds_roi)
         us_data_y = self._get_roi_sum(self.data_img, roi_data.us_roi)
 
+        self.us_data_roi_max = self._get_roi_max(self.data_img, roi_data.us_roi)
+        self.ds_data_roi_max = self._get_roi_max(self.data_img, roi_data.ds_roi)
+
         self.us_data_spectrum.data = us_data_x, us_data_y
         self.ds_data_spectrum.data = ds_data_x, ds_data_y
 
@@ -201,6 +210,10 @@ class TemperatureModel(QtCore.QObject):
     def _get_roi_sum(self, img, roi):
         roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
         return np.sum(roi_img, 0) / np.float(np.size(roi_img, 0))
+
+    def _get_roi_max(self, img, roi):
+        roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
+        return np.max(roi_img)
 
 
     # finally the fitting function

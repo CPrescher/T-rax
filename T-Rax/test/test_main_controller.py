@@ -128,7 +128,7 @@ class TestMainController(unittest.TestCase):
                          self.temperature_controller.data.get_roi_data().get_ds_roi()[:2])
 
     def test_temperature_calibration_tab(self):
-        self.temperature_controller.load_ds_calib_data('unittest files/dn_15.SPE')
+        self.temperature_controller.load_ds_calibration_data('unittest files/dn_15.SPE')
         self.temperature_controller.load_us_calib_data('unittest files/up_15.SPE')
         self.assertEqual(self.temperature_controller.main_view.temperature_control_widget.ds_calib_filename_lbl.text(),
                          'dn_15.SPE')
@@ -144,7 +144,7 @@ class TestMainController(unittest.TestCase):
     def test_settings(self):
         self.temperature_controller.save_settings_btn_click('unittest files/setting1.trs')
         self.temperature_controller.load_settings_btn_click('unittest files/setting1.trs')
-        self.temperature_controller.load_ds_calib_data('unittest files/dn_15.SPE')
+        self.temperature_controller.load_ds_calibration_data('unittest files/dn_15.SPE')
         self.temperature_controller.load_us_calib_data('unittest files/up_15.SPE')
         self.temperature_controller.save_settings_btn_click('unittest files/setting2.trs')
         self.temperature_controller.load_settings_btn_click('unittest files/setting1.trs')

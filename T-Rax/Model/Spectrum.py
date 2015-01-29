@@ -104,6 +104,27 @@ class Spectrum(object):
         else:
             self._scaling = value
 
+    def get_x_limits(self):
+        return min(self._x), max(self._x)
+
+    # TODO: theses need to be removed, only for legacy purpose
+    def get_y_limits(self):
+        return min(self._y), max(self._y)
+
+    def get_x_range(self):
+        return np.max(self._x) - np.min(self._x)
+
+    def get_y_range(self):
+        return np.max(self._y) - np.min(self._y)
+
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def y(self):
+        return self._y
+
     # Operators:
     def __sub__(self, other):
         orig_x, orig_y = self.data

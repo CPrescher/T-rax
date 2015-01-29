@@ -247,26 +247,26 @@ class T_Rax_2axes_temperature_graph():
         self.us_calib_fname = us_calib_fname
 
     def update_data_line(self):
-        self.ds_data_line.set_data(self.ds_exp_spectrum.get_data())
-        self.us_data_line.set_data(self.us_exp_spectrum.get_data())
+        self.ds_data_line.set_data(self.ds_exp_spectrum.data)
+        self.us_data_line.set_data(self.us_exp_spectrum.data)
 
     def update_plot_limits(self):
-        self.us_axes.set_xlim(self.us_exp_spectrum.get_x_plot_limits())
-        self.us_axes.set_ylim(self.us_exp_spectrum.get_y_plot_limits())
-        self.ds_axes.set_xlim(self.ds_exp_spectrum.get_x_plot_limits())
-        self.ds_axes.set_ylim(self.ds_exp_spectrum.get_y_plot_limits())
+        self.us_axes.set_xlim(self.us_exp_spectrum.get_x_limits())
+        self.us_axes.set_ylim(self.us_exp_spectrum.get_y_limits())
+        self.ds_axes.set_xlim(self.ds_exp_spectrum.get_x_limits())
+        self.ds_axes.set_ylim(self.ds_exp_spectrum.get_y_limits())
 
     def get_ds_x_absolute_position(self, relative_x_position):
-        return min(self.ds_exp_spectrum.x) + relative_x_position * self.ds_exp_spectrum.get_x_range()
+        return min(self.ds_exp_spectrum._x) + relative_x_position * self.ds_exp_spectrum.get_x_range()
 
     def get_ds_y_absolute_position(self, relative_y_position):
-        return min(self.ds_exp_spectrum.y) + relative_y_position * self.ds_exp_spectrum.get_y_range() * 1.05
+        return min(self.ds_exp_spectrum._y) + relative_y_position * self.ds_exp_spectrum.get_y_range() * 1.05
 
     def get_us_x_absolute_position(self, relative_x_position):
-        return min(self.us_exp_spectrum.x) + relative_x_position * self.us_exp_spectrum.get_x_range()
+        return min(self.us_exp_spectrum._x) + relative_x_position * self.us_exp_spectrum.get_x_range()
 
     def get_us_y_absolute_position(self, relative_y_position):
-        return min(self.us_exp_spectrum.y) + relative_y_position * self.us_exp_spectrum.get_y_range() * 1.05
+        return min(self.us_exp_spectrum._y) + relative_y_position * self.us_exp_spectrum.get_y_range() * 1.05
 
     def update_temperature_labels(self):
         if self.ds_fit_spectrum == None:
