@@ -42,14 +42,14 @@ class TRaxMainController(object):
         try:
             fid = open('parameters.txt', 'r')
             self.temperature_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
-            self.temperature_controller._calib_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
+            self.temperature_controller._calibration_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             self.temperature_controller._settings_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             self.ruby_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             self.diamond_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
             fid.close()
         except IOError:
             self.temperature_controller._exp_working_dir = os.getcwd()
-            self.temperature_controller._calib_working_dir = os.getcwd()
+            self.temperature_controller._calibration_working_dir = os.getcwd()
             self.temperature_controller._settings_working_dir = os.getcwd()
             self.ruby_controller._exp_working_dir = os.getcwd()
             self.diamond_controller._exp_working_dir = os.getcwd()
@@ -132,7 +132,7 @@ class TRaxMainController(object):
         fid = open('parameters.txt', 'w')
         output_str = \
             'Temperature Working directory: ' + self.temperature_controller._exp_working_dir + '\n' + \
-            'Temperature Calibration directory: ' + self.temperature_controller._calib_working_dir + '\n' + \
+            'Temperature Calibration directory: ' + self.temperature_controller._calibration_working_dir + '\n' + \
             'Temperature Settings directory: ' + self.temperature_controller._settings_working_dir + '\n' + \
             'Ruby Working directory: ' + self.ruby_controller._exp_working_dir + '\n' + \
             'Diamond Working directory: ' + self.diamond_controller._exp_working_dir + ''

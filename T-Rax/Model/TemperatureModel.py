@@ -8,6 +8,7 @@ from scipy.optimize import curve_fit
 from .Spectrum import Spectrum
 from .RoiData import RoiDataManager
 from .SpeFile import SpeFile
+from .helper import FileNameIterator
 
 
 class TemperatureModel(QtCore.QObject):
@@ -28,6 +29,8 @@ class TemperatureModel(QtCore.QObject):
 
         self.data_img_file = None
         self._data_img = None
+        self._filename_iterator = FileNameIterator()
+
         self.us_data_roi_max = 0
         self.ds_data_roi_max = 0
 
@@ -71,7 +74,18 @@ class TemperatureModel(QtCore.QObject):
             self.current_frame = 0
         else:
             self.data_img = self.data_img_file.img
+        self._filename_iterator.update_filename(filename)
         self.data_changed.emit()
+
+    def load_next_data_image(self):
+        new_filename = self._filename_iterator.get_next_filename()
+        if new_filename is not None:
+            self.load_data_image(new_filename)
+
+    def load_previous_data_image(self):
+        new_filename = self._filename_iterator.get_previous_filename()
+        if new_filename is not None:
+            self.load_data_image(new_filename)
 
     def load_next_img_frame(self):
         return self.set_img_frame_number_to(self.current_frame+1)
@@ -105,20 +119,24 @@ class TemperatureModel(QtCore.QObject):
         self.us_calibration_img_file = SpeFile(filename)
         self._update_us_calibration_spectrum()
         self._update_us_corrected_spectrum()
+        self.data_changed.emit()
 
     def load_ds_calibration_image(self, filename):
         self.ds_calibration_img_file = SpeFile(filename)
         self._update_ds_calibration_spectrum()
         self._update_ds_corrected_spectrum()
+        self.data_changed.emit()
 
 
     # setting etalon interface
     #########################################################################
     def load_us_etalon_spectrum(self, filename):
         self.us_calibration_parameter.load_etalon_spectrum(filename)
+        self.data_changed.emit()
 
     def load_ds_etalon_spectrum(self, filename):
         self.ds_calibration_parameter.load_etalon_spectrum(filename)
+        self.data_changed.emit()
 
     # updating roi values
     def set_us_roi(self, us_limits):
@@ -132,6 +150,20 @@ class TemperatureModel(QtCore.QObject):
     def set_rois(self, ds_limits, us_limits):
         self.roi_data_manager.set_roi_data(self.data_img_file.get_dimension(), ds_limits, us_limits)
         self.update_spectra_from_img()
+
+    @property
+    def roi_data(self):
+        return self.roi_data_manager.get_roi_data(self.data_img_file.get_dimension())
+
+    # TODO: Think aboout refactoring this function away from here
+    def get_wavelength_from(self, index):
+        return self.data_img_file.get_wavelength_from(index)
+
+    def get_index_from(self, wavelength):
+        return self.data_img_file.get_index_from(wavelength)
+
+    def get_x_limits(self):
+        return np.array([self.data_img_file.x_calibration[0], self.data_img_file.x_calibration[-1]])
 
     # spectrum calculations
     ########################################################################
@@ -178,7 +210,6 @@ class TemperatureModel(QtCore.QObject):
 
             self.ds_calibration_spectrum.data = ds_calibration_x, ds_calibration_y
 
-
     def _update_us_corrected_spectrum(self):
         if len(self.us_data_spectrum) is 0:
             self.us_corrected_spectrum = Spectrum([], [])
@@ -215,7 +246,6 @@ class TemperatureModel(QtCore.QObject):
         roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
         return np.max(roi_img)
 
-
     # finally the fitting function
     ##################################################################
     def fit_data(self):
@@ -247,6 +277,10 @@ class TemperatureModel(QtCore.QObject):
         self.blockSignals(False)
 
         return us_temperature, us_temperature_error, ds_temperature, ds_temperature_error
+
+# HELPER FUNCTIONS
+###############################################
+###############################################
 
 
 def calculate_real_spectrum(data_spectrum, calibration_spectrum, etalon_spectrum):

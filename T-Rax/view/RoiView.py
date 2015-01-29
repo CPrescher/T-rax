@@ -22,6 +22,8 @@ import numpy as np
 
 
 class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
+    rois_changed = QtCore.pyqtSignal(list, list)
+
     def __init__(self, data, parent=None):
         super(TRaxROIView, self).__init__(parent)
         self.data = data
@@ -88,24 +90,19 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
                                   QtGui.QSizePolicy.Expanding)
         self.canvas.updateGeometry()
 
-        self.gs = mpl.gridspec.GridSpec(1, 2, width_ratios=[6, 1])
+        self.gs = mpl.gridspec.GridSpec(1, 2, width_ratios=[6, 0])
         self.img_axes = self.figure.add_subplot(self.gs[0, 0])
-        self.histogram_axes = self.figure.add_subplot(self.gs[0, 1])
 
-        self.canvas.mpl_connect('button_press_event', self.reset_limits)
 
     def draw_image(self):
         self.plot_img()
         self.plot_rects()
         self.redraw_figure()
         self.connect_rectangles()
-        self.plot_histogram()
-        self.plot_histogram_lines()
-        self.connect_histogram_lines()
 
     def plot_img(self):
         self.img_axes.cla()
-        self.img_data = self.data.exp_data.get_img_data()
+        self.img_data = self.data.data_img
         self.img_max_intensity = np.max(np.max(self.img_data))
         self.img_min_intensity = np.min(np.min(self.img_data))
         self.img_range_intensity = self.img_max_intensity - self.img_min_intensity
@@ -123,62 +120,12 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.img_axes.invert_yaxis()
         self.create_wavelength_x_axis()
 
-    def plot_histogram(self):
-        self.histogram_axes.cla()
-        self.histogram_data = np.concatenate((np.ravel(self.data.exp_data.get_ds_roi_img()),
-                                              np.ravel(self.data.exp_data.get_us_roi_img())))
-        self.histogram_axes.hist(self.histogram_data, bins=100,
-                                 orientation='horizontal', normed=False, histtype='stepfilled',
-                                 log=True, color=(0.40, 0.40, 0.4))
-        self.histogram_axes.set_ylim(np.min(np.min(self.data.exp_data.get_img_data())),
-                                     np.max(np.max(self.data.exp_data.get_img_data())))
-        self.histogram_axes.yaxis.set_visible(False)
-        self.histogram_axes.xaxis.set_visible(False)
-
-    def plot_histogram_lines(self):
-        histogram_limits = self.histogram_axes.get_ylim()
-        img_vmin = self.img_vmin_rel * self.img_range_intensity + self.img_min_intensity
-        img_vmax = self.img_vmax_rel * self.img_range_intensity + self.img_min_intensity
-        self.histogram_min_line = self.create_histogram_line(img_vmin, [histogram_limits[0], img_vmax - 1],
-                                                             "HISTOGRAM MIN")
-        self.histogram_max_line = self.create_histogram_line(img_vmax, [img_vmin + 1, histogram_limits[1]],
-                                                             "HISTOGRAM MAX")
-
-    def update_histogram(self):
-        MoveableLine.reset()
-        self.histogram_min_line.active = False
-        self.histogram_max_line.active = False
-        self.plot_histogram()
-        self.plot_histogram_lines()
-        self.connect_histogram_lines()
-        self.repaint()
-
-    def connect_histogram_lines(self):
-        self.histogram_min_line.connect()
-        self.histogram_max_line.connect()
-
-    def reset_limits(self, event):
-        if event.inaxes == self.histogram_axes:
-            if event.button != 1:
-                self.setup_data()
-                vmin = self.img_vmin_rel * self.img_range_intensity + self.img_min_intensity
-                vmax = self.img_vmax_rel * self.img_range_intensity + self.img_min_intensity
-                self.histogram_max_line.set_limit( \
-                    [vmin + 1, self.histogram_axes.get_ylim()[1]])
-                self.histogram_min_line.set_limit(
-                    [self.histogram_axes.get_ylim()[0], vmax - 1])
-                self.histogram_min_line.set_pos(vmin)
-                self.histogram_max_line.set_pos(vmax)
-                self.redraw_img()
-
-
     def plot_rects(self):
         self.us_rect = self.create_rectangle(self.data.roi_data.us_roi, (1, 0.55, 0), 'US')
         self.ds_rect = self.create_rectangle(self.data.roi_data.ds_roi, (1, 1, 0), 'DS')
 
     def update_with_new_img(self):
         self.update_img()
-        self.update_histogram()
         self.redraw_figure()
 
     def update_img(self):
@@ -189,10 +136,6 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
         self.plot_rects()
         self.connect_rectangles()
 
-    def set_img_vmin(self, vmin):
-        self.img_vmin_rel = float(vmin - self.img_min_intensity) / self.img_range_intensity
-        self.redraw_img()
-        self.histogram_max_line.set_limit([vmin + 1, self.histogram_axes.get_ylim()[1]])
 
     def set_img_vmax(self, vmax):
         self.img_vmax_rel = float(vmax - self.img_min_intensity) / self.img_range_intensity
@@ -333,7 +276,7 @@ class TRaxROIView(QtGui.QWidget, Ui_roi_selector_main_widget):
                 int(str(self.fit_to_txt.text()))]
 
 
-class MoveableLine:
+class MoveableLine(QtCore.QObject):
     lock = None  # only one can be animated at a time
     lines = []
 

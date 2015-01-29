@@ -46,15 +46,11 @@ class TRaxROITemperatureController(object):
         self.view.keyPressEvent = self.key_pressed
 
     def create_pub_signals(self):
+        self.data.data_changed.connect(self.exp_data_changed)
+
+
         pub.subscribe(self.ds_roi_graph_changed, "DS ROI GRAPH CHANGED")
         pub.subscribe(self.us_roi_graph_changed, "US ROI GRAPH CHANGED")
-
-        pub.subscribe(self.histogram_min_roi_line_changed, "HISTOGRAM MIN ROI LINE CHANGED")
-        pub.subscribe(self.histogram_max_roi_line_changed, "HISTOGRAM MAX ROI LINE CHANGED")
-
-        pub.subscribe(self.min_roi_line_changed, "MIN ROI LINE CHANGED")
-        pub.subscribe(self.max_roi_line_changed, "MAX ROI LINE CHANGED")
-
         pub.subscribe(self.roi_changed, "ROI CHANGED")
         pub.subscribe(self.img_loaded, "IMG LOADED")
         pub.subscribe(self.graph_loaded, "GRAPH LOADED")
@@ -95,7 +91,6 @@ class TRaxROITemperatureController(object):
 
     def roi_changed(self):
         self.view.update_graph_roi()
-        self.view.update_histogram()
         self.view.update_txt_roi()
 
     def ds_roi_graph_changed(self, data):
@@ -103,22 +98,6 @@ class TRaxROITemperatureController(object):
 
     def us_roi_graph_changed(self, data):
         self.data.roi_data.set_us_roi(data)
-
-    def histogram_min_roi_line_changed(self, data):
-        self.view.set_img_vmin(data)
-
-    def histogram_max_roi_line_changed(self, data):
-        self.view.set_img_vmax(data)
-
-    def min_roi_line_changed(self, data):
-        new_x_min = self.data.get_index_from(data)
-        self.data.roi_data.set_x_min(new_x_min)
-        self.view.graph_panel.update_line_limits()
-
-    def max_roi_line_changed(self, data):
-        new_x_max = self.data.get_index_from(data)
-        self.data.roi_data.set_x_max(new_x_max)
-        self.view.graph_panel.update_line_limits()
 
     def exp_data_changed(self):
         self.view.update_with_new_img()

@@ -326,6 +326,16 @@ class SpeFile(object):
                                 (xdata[base_ind + 1] - xdata[base_ind]) \
                                 + base_ind))
 
+    def get_wavelength_from(self, index):
+        if isinstance(index, list):
+            result = []
+            for c in index:
+                result.append(self.x_calibration[c])
+            return np.array(result)
+        else:
+            return self.x_calibration[index]
+
+
     def get_dimension(self):
         """Returns (xdim, ydim)"""
         return (self._xdim, self._ydim)

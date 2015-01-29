@@ -40,6 +40,32 @@ class TestTemperatureModel(unittest.TestCase):
         self.array_almost_equal(x1, x2)
         self.array_not_almost_equal(y1, y2)
 
+    def test_file_browsing(self):
+        self.model.load_data_image(os.path.join(unittest_files_path, 'temper_009.spe'))
+
+        us_data_x_1, us_data_y_1 = self.model.us_data_spectrum.data
+        ds_data_x_1, ds_data_y_1 = self.model.ds_data_spectrum.data
+        self.model.load_next_data_image()
+
+        us_data_x_2, us_data_y_2 = self.model.us_data_spectrum.data
+        ds_data_x_2, ds_data_y_2 = self.model.ds_data_spectrum.data
+
+        self.array_almost_equal(us_data_x_1, us_data_x_2)
+        self.array_almost_equal(ds_data_x_1, ds_data_x_2)
+
+        self.array_not_almost_equal(ds_data_y_1, ds_data_y_2)
+        self.array_not_almost_equal(us_data_y_1, us_data_y_2)
+
+        self.model.load_previous_data_image()
+
+        us_data_x_3, us_data_y_3 = self.model.us_data_spectrum.data
+        ds_data_x_3, ds_data_y_3 = self.model.ds_data_spectrum.data
+
+        self.array_almost_equal(us_data_x_1, us_data_x_3)
+        self.array_almost_equal(ds_data_x_1, ds_data_x_3)
+        self.array_almost_equal(ds_data_y_1, ds_data_y_3)
+        self.array_almost_equal(us_data_y_1, us_data_y_3)
+
 
     def test_loading_data_img_and_retrieve_upstream_and_down_stream_spectrum(self):
         self.model.load_data_image(os.path.join(unittest_files_path, 'temper_009.spe'))
@@ -380,6 +406,4 @@ class TestTemperatureModel(unittest.TestCase):
         self.array_not_almost_equal(np.array(us_temperature), np.array(ds_temperature))
         self.array_not_almost_equal(np.array(us_temperature_error), np.array(ds_temperature_error))
 
-        print us_temperature
-        print ds_temperature
 

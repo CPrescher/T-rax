@@ -28,7 +28,7 @@ class NewTemperatureController(QtCore.QObject):
 
         self.create_temperature_model_listeners()
         self.create_calibration_signals()
-        self.create_fit_range_signals()
+        self.create_roi_signals()
         self.create_settings_signals()
 
         self.main_view.temperature_control_widget.epics_connection_cb.clicked.connect(self.epics_connection_cb_clicked)
@@ -59,6 +59,10 @@ class NewTemperatureController(QtCore.QObject):
 
     def create_data_signals(self):
         self.connect_click_function(self.main_view.temperature_control_widget.load_exp_data_btn, self.load_exp_data)
+        self.connect_click_function(self.main_view.temperature_control_widget.load_next_exp_data_btn,
+                                    self.load_next_exp_data)
+        self.connect_click_function(self.main_view.temperature_control_widget.load_previous_exp_data_btn,
+                                    self.load_previous_exp_data)
 
     def create_frame_signals(self):
         self.main_view.temperature_control_widget.frame_number_txt.editingFinished.connect(self.frame_txt_value_changed)
@@ -83,9 +87,10 @@ class NewTemperatureController(QtCore.QObject):
         self.main_view.temperature_control_widget.us_temperature_txt.editingFinished.connect(
             self.us_temperature_changed)
 
-    def create_fit_range_signals(self):
+    def create_roi_signals(self):
         self.main_view.temperature_control_widget.fit_from_txt.editingFinished.connect(self.fit_txt_changed)
         self.main_view.temperature_control_widget.fit_to_txt.editingFinished.connect(self.fit_txt_changed)
+        self.connect_click_function(self.main_view.temperature_control_widget.roi_setup_btn, self.load_roi_view)
 
     def create_settings_signals(self):
         self.connect_click_function(self.main_view.temperature_control_widget.save_settings_btn,
@@ -107,12 +112,10 @@ class NewTemperatureController(QtCore.QObject):
             self.data.load_data_image(filename)
 
     def load_next_exp_data(self):
-        return
-        self.data.load_next_data_file()
+        self.data.load_next_data_image()
 
     def load_previous_exp_data(self):
-        return
-        self.data.load_previous_data_file()
+        self.data.load_previous_data_image()
 
     def load_roi_view(self):
         try:
