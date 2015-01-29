@@ -5,37 +5,44 @@ from PyQt4 import QtCore
 import numpy as np
 from scipy.optimize import curve_fit
 
-
 from .Spectrum import Spectrum
 from .RoiData import RoiDataManager
 from .SpeFile import SpeFile
 
+
 class TemperatureModel(QtCore.QObject):
-    
     def __init__(self):
         super(TemperatureModel, self).__init__()
-        self.us_data_spectrum = Spectrum([],[])
-        self.ds_data_spectrum = Spectrum([],[])
+        self.us_data_spectrum = Spectrum([], [])
+        self.ds_data_spectrum = Spectrum([], [])
 
-        self.us_calibration_spectrum = Spectrum([],[])
-        self.ds_calibration_spectrum = Spectrum([],[])
+        self.us_calibration_spectrum = Spectrum([], [])
+        self.ds_calibration_spectrum = Spectrum([], [])
 
-        self.us_calibration_parameter = CalibrationParameter()
-        self.ds_calibration_parameter = CalibrationParameter()
+        self.us_corrected_spectrum = Spectrum([], [])
+        self.ds_corrected_spectrum = Spectrum([], [])
 
-        self.us_fit_spectrum = Spectrum([],[])
-        self.ds_fit_spectrum = Spectrum([],[])
+        self.us_fit_spectrum = Spectrum([], [])
+        self.ds_fit_spectrum = Spectrum([], [])
 
         self.data_img_file = None
+        self._data_img = None
+        self.current_frame = 0
         self.roi_data_manager = RoiDataManager()
 
         self.us_calibration_img_file = None
         self.ds_calibration_img_file = None
 
+        self.us_calibration_parameter = CalibrationParameter()
+        self.ds_calibration_parameter = CalibrationParameter()
+
         self.us_temperature = np.NaN
         self.us_temperature_error = np.NaN
+        self.us_fit_spectrum = Spectrum([], [])
+
         self.ds_temperature = np.NaN
         self.ds_temperature_error = np.NaN
+        self.ds_fit_spectrum = Spectrum([], [])
 
     # loading spectrum text files
     #########################################################################
@@ -55,15 +62,49 @@ class TemperatureModel(QtCore.QObject):
     #########################################################################
     def load_data_image(self, filename):
         self.data_img_file = SpeFile(filename)
+        if self.data_img_file.num_frames > 1:
+            self.data_img = self.data_img_file.img[0]
+            self.current_frame = 0
+        else:
+            self.data_img = self.data_img_file.img
+
+    def load_next_img_frame(self):
+        return self.set_img_frame_number_to(self.current_frame+1)
+
+    def load_previous_img_frame(self):
+        return self.set_img_frame_number_to(self.current_frame-1)
+
+    def set_img_frame_number_to(self, frame_number):
+        if frame_number < 0 or frame_number >= self.data_img_file.num_frames:
+            return False
+        self.current_frame = frame_number
+        self.data_img = self.data_img_file.img[frame_number]
+        return True
+
+    @property
+    def data_img(self):
+        return self._data_img
+
+    @data_img.setter
+    def data_img(self, value):
+        self._data_img = value
         self._update_data_spectra()
+        self._update_us_corrected_spectrum()
+        self._update_ds_corrected_spectrum()
+
+    # calibration image files:
+    #########################################################################
 
     def load_us_calibration_image(self, filename):
         self.us_calibration_img_file = SpeFile(filename)
         self._update_us_calibration_spectrum()
+        self._update_us_corrected_spectrum()
 
     def load_ds_calibration_image(self, filename):
         self.ds_calibration_img_file = SpeFile(filename)
         self._update_ds_calibration_spectrum()
+        self._update_ds_corrected_spectrum()
+
 
     # setting etalon interface
     #########################################################################
@@ -90,16 +131,20 @@ class TemperatureModel(QtCore.QObject):
     ########################################################################
     def update_spectra_from_img(self):
         self._update_data_spectra()
+
         self._update_us_calibration_spectrum()
         self._update_ds_calibration_spectrum()
+
+        self._update_us_corrected_spectrum()
+        self._update_ds_corrected_spectrum()
 
     def _update_data_spectra(self):
         roi_data = self.roi_data_manager.get_roi_data(self.data_img_file.get_dimension())
         us_data_x = self.data_img_file.x_calibration[roi_data.us_roi.x_min:roi_data.us_roi.x_max + 1]
         ds_data_x = self.data_img_file.x_calibration[roi_data.ds_roi.x_min:roi_data.ds_roi.x_max + 1]
 
-        ds_data_y = self._get_roi_sum(self.data_img_file.img, roi_data.ds_roi)
-        us_data_y = self._get_roi_sum(self.data_img_file.img, roi_data.us_roi)
+        ds_data_y = self._get_roi_sum(self.data_img, roi_data.ds_roi)
+        us_data_y = self._get_roi_sum(self.data_img, roi_data.us_roi)
 
         self.us_data_spectrum.data = us_data_x, us_data_y
         self.ds_data_spectrum.data = ds_data_x, ds_data_y
@@ -108,7 +153,8 @@ class TemperatureModel(QtCore.QObject):
         if self.us_calibration_img_file is not None:
             roi_data = self.roi_data_manager.get_roi_data(self.us_calibration_img_file.get_dimension())
 
-            us_calibration_x = self.us_calibration_img_file.x_calibration[roi_data.us_roi.x_min:roi_data.us_roi.x_max + 1]
+            us_calibration_x = self.us_calibration_img_file.x_calibration[
+                               roi_data.us_roi.x_min:roi_data.us_roi.x_max + 1]
             us_calibration_y = self._get_roi_sum(self.us_calibration_img_file.img, roi_data.us_roi)
 
             self.us_calibration_spectrum.data = us_calibration_x, us_calibration_y
@@ -117,10 +163,40 @@ class TemperatureModel(QtCore.QObject):
         if self.ds_calibration_img_file is not None:
             roi_data = self.roi_data_manager.get_roi_data(self.ds_calibration_img_file.get_dimension())
 
-            ds_calibration_x = self.ds_calibration_img_file.x_calibration[roi_data.ds_roi.x_min:roi_data.ds_roi.x_max + 1]
+            ds_calibration_x = self.ds_calibration_img_file.x_calibration[
+                               roi_data.ds_roi.x_min:roi_data.ds_roi.x_max + 1]
             ds_calibration_y = self._get_roi_sum(self.ds_calibration_img_file.img, roi_data.ds_roi)
 
             self.ds_calibration_spectrum.data = ds_calibration_x, ds_calibration_y
+
+
+    def _update_us_corrected_spectrum(self):
+        if len(self.us_data_spectrum) is 0:
+            self.us_corrected_spectrum = Spectrum([], [])
+            return
+
+        if len(self.us_calibration_spectrum) == len(self.us_data_spectrum):
+            us_x, _ = self.us_data_spectrum.data
+            us_lamp_spectrum = self.us_calibration_parameter.get_lamp_spectrum(us_x)
+            self.us_corrected_spectrum = calculate_real_spectrum(self.us_data_spectrum,
+                                                                 self.us_calibration_spectrum,
+                                                                 us_lamp_spectrum)
+        else:
+            self.us_corrected_spectrum = self.us_data_spectrum
+
+    def _update_ds_corrected_spectrum(self):
+        if len(self.ds_data_spectrum) is 0:
+            self.ds_corrected_spectrum = Spectrum([], [])
+            return
+
+        if len(self.ds_calibration_spectrum) == len(self.ds_data_spectrum):
+            ds_x, _ = self.ds_data_spectrum.data
+            ds_lamp_spectrum = self.ds_calibration_parameter.get_lamp_spectrum(ds_x)
+            self.ds_corrected_spectrum = calculate_real_spectrum(self.ds_data_spectrum,
+                                                                 self.ds_calibration_spectrum,
+                                                                 ds_lamp_spectrum)
+        else:
+            self.ds_corrected_spectrum = self.ds_data_spectrum
 
     def _get_roi_sum(self, img, roi):
         roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
@@ -130,20 +206,34 @@ class TemperatureModel(QtCore.QObject):
     # finally the fitting function
     ##################################################################
     def fit_data(self):
-        us_x, _ = self.us_data_spectrum.data
-        ds_x, _ = self.ds_data_spectrum.data
-        us_lamp_spectrum = self.us_calibration_parameter.get_lamp_spectrum(us_x)
-        ds_lamp_spectrum = self.ds_calibration_parameter.get_lamp_spectrum(ds_x)
+        self.us_temperature, self.us_temperature_error, self.us_fit_spectrum = \
+            fit_black_body_function(self.us_corrected_spectrum)
+        self.ds_temperature, self.ds_temperature_error, self.ds_fit_spectrum = \
+            fit_black_body_function(self.ds_corrected_spectrum)
 
-        us_real_spectrum = calculate_real_spectrum(self.us_data_spectrum,
-                                                   self.us_calibration_spectrum,
-                                                   us_lamp_spectrum)
-        ds_real_spectrum = calculate_real_spectrum(self.ds_data_spectrum,
-                                                   self.ds_calibration_spectrum,
-                                                   ds_lamp_spectrum)
+    def fit_all_frames(self):
+        cur_frame = self.current_frame
+        self.blockSignals(True)
 
-        print fit_black_body_function(us_real_spectrum)
-        print fit_black_body_function(ds_real_spectrum)
+        us_temperature = []
+        ds_temperature = []
+
+        us_temperature_error = []
+        ds_temperature_error = []
+
+        for frame_ind in range(self.data_img_file.num_frames):
+            self.set_img_frame_number_to(frame_ind)
+            self.fit_data()
+            us_temperature.append(self.us_temperature)
+            ds_temperature.append(self.ds_temperature)
+
+            us_temperature_error.append(self.us_temperature_error)
+            ds_temperature_error.append(self.ds_temperature_error)
+
+        self.set_img_frame_number_to(cur_frame)
+        self.blockSignals(False)
+
+        return us_temperature, us_temperature_error, ds_temperature, ds_temperature_error
 
 
 def calculate_real_spectrum(data_spectrum, calibration_spectrum, etalon_spectrum):
@@ -152,6 +242,7 @@ def calculate_real_spectrum(data_spectrum, calibration_spectrum, etalon_spectrum
     corrected_y = data_spectrum._y / response_y
     corrected_y = corrected_y / np.max(corrected_y) * np.max(data_spectrum._y)
     return Spectrum(data_spectrum._x, corrected_y)
+
 
 def fit_black_body_function(spectrum):
     try:
@@ -172,10 +263,10 @@ def black_body_function(wavelength, temp, scaling):
 
 
 class CalibrationParameter(object):
-    def __init__(self, modus=1):
+    def __init__(self, modus=0):
         self.modus = modus
         # modi: 0 - given temperature
-        #       1 - etalon spectrum
+        # 1 - etalon spectrum
 
         self.temperature = 2000
         self.etalon_spectrum_func = None
