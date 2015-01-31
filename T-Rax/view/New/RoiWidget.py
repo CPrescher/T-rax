@@ -3,22 +3,29 @@ __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
-from functools import partial
 import numpy as np
+from functools import partial
 from pyqtgraph.graphicsItems.ROI import Handle
 
+pg.setConfigOption('useOpenGL', False)
+pg.setConfigOption('leftButtonPan', False)
+pg.setConfigOption('background', (30,30,30))
+pg.setConfigOption('foreground', 'w')
+pg.setConfigOption('antialias', True)
 
-class NewRoiView(QtGui.QWidget):
+
+class NewRoiWidget(QtGui.QWidget):
     rois_changed = QtCore.pyqtSignal(list)
 
     def __init__(self, roi_num=1, roi_titles = ('',), roi_colors=((255, 255, 0)), *args, **kwargs):
-        super(NewRoiView, self).__init__(*args, **kwargs)
+        super(NewRoiWidget, self).__init__(*args, **kwargs)
         self.roi_num = roi_num
         self.roi_titles = roi_titles
         self.roi_colors = roi_colors
 
         self._main_horizontal_layout = QtGui.QHBoxLayout()
 
+        self.img_widget = ImageWidget(roi_num=roi_num, roi_colors=roi_colors)
 
         self._roi_gbs_layout = QtGui.QVBoxLayout()
         self.roi_gbs = []
@@ -28,10 +35,11 @@ class NewRoiView(QtGui.QWidget):
                                                             QtGui.QSizePolicy.Expanding))
 
 
-        self.img_widget = ImageWidget(roi_num=roi_num, roi_colors=roi_colors)
         self._main_horizontal_layout.addWidget(self.img_widget)
-
         self._main_horizontal_layout.addLayout(self._roi_gbs_layout)
+
+        self._main_horizontal_layout.setStretch(0,1)
+        self._main_horizontal_layout.setStretch(1,0)
         self.setLayout(self._main_horizontal_layout)
 
         self.create_signals()
@@ -91,7 +99,7 @@ class RoiGroupBox(QtGui.QGroupBox):
         self.setLayout(self._grid_layout)
         style_str = "color: {0}; border: 1px solid {0};".format(self.color)
         self.setStyleSheet('QGroupBox {'+style_str+'}')
-
+        self.setMaximumWidth(230)
         self.create_signals()
 
     def create_signals(self):
@@ -310,7 +318,7 @@ if __name__ == '__main__':
     import numpy as np
 
     app = QtGui.QApplication([])
-    view = NewRoiView(2, ['Downstream ROI', 'Upstream_ROI'],
+    view = NewRoiWidget(2, ['Downstream ROI', 'Upstream_ROI'],
         ('#FFFF00','#FF9900'))
 
     data = np.identity(200)

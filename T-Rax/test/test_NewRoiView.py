@@ -1,19 +1,18 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-
 import unittest
+
 import numpy as np
 from PyQt4 import QtGui
 
-from view.NewRoiView import NewRoiView
-
+from view.New import RoiWidget
 
 
 class TestNewRoiView(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication([])
-        self.view = NewRoiView()
+        self.view = RoiWidget()
         self.img_roi = self.view.img_widget.rois[0]
         self.roi_gb = self.view.roi_gbs[0]
 
