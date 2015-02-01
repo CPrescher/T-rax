@@ -115,8 +115,8 @@ class TRaxROITemperatureController(object):
         self.data.roi_data.set_us_roi(self.initial_us_row)
 
     def save_roi_data(self):
-        self.initial_ds_row = self.data.roi_data.ds_roi.get_roi_as_list()
-        self.initial_us_row = self.data.roi_data.us_roi.get_roi_as_list()
+        self.initial_ds_row = self.data.roi_data.ds_roi.as_list()
+        self.initial_us_row = self.data.roi_data.us_roi.as_list()
 
     def shut_down_window(self):
         self.view.close()

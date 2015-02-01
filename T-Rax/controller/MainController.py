@@ -6,11 +6,10 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import SIGNAL
 
 from view.MainView import TRaxMainView
-from controller.TemperatureController import TRaxTemperatureController
 from controller.DiamondController import TRaxDiamondController
 from controller.RubyController import TRaxRubyController
 from controller.OutputGraphController import TRaxOutputGraphController
-from controller.NewTemperatureController import NewTemperatureController
+from controller.new import NewTemperatureController
 
 
 class TRaxMainController(object):

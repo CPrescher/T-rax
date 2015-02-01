@@ -73,6 +73,12 @@ class NewRoiWidget(QtGui.QWidget):
             self.update_img_roi(ind, rois_list[ind])
         self.blockSignals(False)
 
+    def get_rois(self):
+        return self.img_widget.get_roi_limits()
+
+    def plot_img(self, img_data):
+        self.img_widget.plot_image(img_data)
+
 
 
 class RoiGroupBox(QtGui.QGroupBox):

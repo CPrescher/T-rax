@@ -61,7 +61,7 @@ class TRaxROIControllerDiamond(object):
         self.data.roi.set_roi(self.initial_roi)
 
     def save_roi_data(self):
-        self.initial_roi = self.data.roi.get_roi_as_list()
+        self.initial_roi = self.data.roi.as_list()
 
     def shut_down_window(self):
         self.view.close()

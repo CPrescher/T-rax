@@ -11,7 +11,7 @@ class TemperatureWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
         super(TemperatureWidget, self).__init__(*args, **kwargs)
         self._main_layout = QtGui.QVBoxLayout()
-        self._main_layout.setContentsMargins(0,0,0,0)
+        self._main_layout.setContentsMargins(0, 0, 0, 0)
         self._main_layout.setSpacing(0)
         self._main_splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
 
@@ -22,7 +22,7 @@ class TemperatureWidget(QtGui.QWidget):
         self.graph_widget = TemperatureGraphWidget()
         self.control_widget = ControlWidget()
         self.roi_widget = NewRoiWidget(2, ['Downstream', 'upstream'],
-                                       roi_colors = [(255,140,0),(255,255,0)])
+                                       roi_colors=[(255, 140, 0), (255, 255, 0)])
 
         self._graph_control_layout.addWidget(self.graph_widget)
         self._graph_control_layout.addWidget(self.control_widget)
@@ -39,6 +39,21 @@ class TemperatureWidget(QtGui.QWidget):
 
         self.setLayout(self._main_layout)
 
+        self.create_shortcuts()
+
+    def create_shortcuts(self):
+        self.load_data_file_btn = self.control_widget.experiment_tab.file_gb.load_file_btn
+        self.load_next_data_file_btn = self.control_widget.experiment_tab.file_gb.load_next_file_btn
+        self.load_previous_data_file_btn = self.control_widget.experiment_tab.file_gb.load_previous_file_btn
+
+        self.load_next_frame_btn = self.control_widget.experiment_tab.file_gb.load_next_frame_btn
+        self.load_previous_frame_btn = self.control_widget.experiment_tab.file_gb.load_previous_frame_btn
+
+        self.auto_process_cb = self.control_widget.experiment_tab.file_gb.autoprocess_cb
+        self.filename_lbl = self.control_widget.experiment_tab.file_gb.filename_lbl
+        self.dirname_lbl = self.control_widget.experiment_tab.file_gb.dirname_lbl
+
+        self.roi_img_item = self.roi_widget.img_widget.pg_img_item
 
 
 class ControlWidget(QtGui.QWidget):

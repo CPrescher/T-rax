@@ -6,12 +6,11 @@ import pickle
 
 from PyQt4 import QtGui, QtCore
 import numpy as np
-from epics import caput, PV
 
-from controller.ModuleController import TRaxModuleController
+from epics import caput, PV
 from controller.RoiSelectorTemperatureController import TRaxROITemperatureController
 from model.TemperatureData import TemperatureSettings
-from model.TemperatureModel import TemperatureModel
+from model.new import TemperatureModel
 
 
 class NewTemperatureController(QtCore.QObject):

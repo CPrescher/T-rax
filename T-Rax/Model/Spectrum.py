@@ -13,11 +13,11 @@ class Spectrum(object):
         if x is None:
             self._x = np.linspace(0.1, 15, 100)
         else:
-            self._x = x
+            self._x = np.asarray(x)
         if y is None:
             self._y = np.log(self._x ** 2) - (self._x * 0.2) ** 2
         else:
-            self._y = y
+            self._y = np.asarray(y)
         self.name = name
         self.offset = 0
         self._scaling = 1

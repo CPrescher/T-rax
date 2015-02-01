@@ -129,7 +129,7 @@ class TRaxROIViewDiamond(QtGui.QWidget, Ui_roi_selector_diamond_widget):
         self.rect.set_roi(self.data.roi)
 
     def update_txt_roi(self):
-        txt_roi = self.data.roi.get_roi_as_list()
+        txt_roi = self.data.roi.as_list()
         txt_roi[:2] = self.data.get_wavelength_from(txt_roi[:2])
         self.set_txt_roi(txt_roi)
 

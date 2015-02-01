@@ -279,10 +279,10 @@ class TraxData(object):
             return 0
 
     def get_ds_roi(self):
-        return self.roi_data.ds_roi.get_roi_as_list()
+        return self.roi_data.ds_roi.as_list()
 
     def get_us_roi(self):
-        return self.roi_data.us_roi.get_roi_as_list()
+        return self.roi_data.us_roi.as_list()
 
     def get_whole_spectrum(self):
         return self.exp_data.x, self.exp_data.y_whole_spectrum
