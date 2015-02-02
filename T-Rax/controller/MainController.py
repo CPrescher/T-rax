@@ -9,7 +9,7 @@ from view.MainView import TRaxMainView
 from controller.DiamondController import TRaxDiamondController
 from controller.RubyController import TRaxRubyController
 from controller.OutputGraphController import TRaxOutputGraphController
-from controller.new import NewTemperatureController
+from controller.new.NewTemperatureController import NewTemperatureController
 
 
 class TRaxMainController(object):

@@ -10,7 +10,7 @@ import numpy as np
 from epics import caput, PV
 from controller.RoiSelectorTemperatureController import TRaxROITemperatureController
 from model.TemperatureData import TemperatureSettings
-from model.new import TemperatureModel
+from model.new.TemperatureModel import TemperatureModel
 
 
 class NewTemperatureController(QtCore.QObject):

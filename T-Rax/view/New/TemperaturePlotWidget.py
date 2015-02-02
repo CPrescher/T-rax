@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtGui
+import numpy as np
 
 import matplotlib as mpl
 mpl.rcParams['font.size'] = 10
@@ -153,16 +154,24 @@ class TemperatureGraphWidget(QtGui.QWidget):
         self.ds_axes.set_ylim(self.ds_exp_spectrum.get_y_limits())
 
     def get_ds_x_absolute_position(self, relative_x_position):
-        return min(self.ds_exp_spectrum._x) + relative_x_position * self.ds_exp_spectrum.get_x_range()
+        if len(self.ds_exp_spectrum):
+            return min(self.ds_exp_spectrum._x) + relative_x_position * self.ds_exp_spectrum.get_x_range()
+        return 0
 
     def get_ds_y_absolute_position(self, relative_y_position):
-        return min(self.ds_exp_spectrum._y) + relative_y_position * self.ds_exp_spectrum.get_y_range() * 1.05
+        if len(self.ds_exp_spectrum):
+            return min(self.ds_exp_spectrum._y) + relative_y_position * self.ds_exp_spectrum.get_y_range() * 1.05
+        return 0
 
     def get_us_x_absolute_position(self, relative_x_position):
-        return min(self.us_exp_spectrum._x) + relative_x_position * self.us_exp_spectrum.get_x_range()
+        if len(self.us_exp_spectrum):
+            return min(self.us_exp_spectrum._x) + relative_x_position * self.us_exp_spectrum.get_x_range()
+        return 0
 
     def get_us_y_absolute_position(self, relative_y_position):
-        return min(self.us_exp_spectrum._y) + relative_y_position * self.us_exp_spectrum.get_y_range() * 1.05
+        if len(self.us_exp_spectrum):
+            return min(self.us_exp_spectrum._y) + relative_y_position * self.us_exp_spectrum.get_y_range() * 1.05
+        return 0
 
     def update_temperature_labels(self):
         if self.ds_fit_spectrum == None:
@@ -185,6 +194,25 @@ class TemperatureGraphWidget(QtGui.QWidget):
             self.us_temp_txt.set_x(self.get_us_x_absolute_position(0.07))
             self.us_temp_txt.set_y(self.get_us_y_absolute_position(0.9))
 
+    def plot_ds_temperature_fit(self, ds_temperature, ds_temperature_error, ds_fit_spectrum):
+        self.ds_temp_txt.set_text(
+                '{0:.0f} K $\pm$ {1:.0f}'.format(ds_temperature,
+                                             ds_temperature_error))
+        self.ds_temp_txt.set_x(self.get_ds_x_absolute_position(0.07))
+        self.ds_temp_txt.set_y(self.get_ds_y_absolute_position(0.9))
+
+        self.ds_fit_line.set_data(ds_fit_spectrum.data)
+
+    def plot_us_temperature_fit(self, us_temperature, us_temperature_error, us_fit_spectrum):
+        self.us_temp_txt.set_text(
+                '{0:.0f} K $\pm$ {1:.0f}'.format(us_temperature,
+                                                 us_temperature_error))
+        self.us_temp_txt.set_x(self.get_us_x_absolute_position(0.07))
+        self.us_temp_txt.set_y(self.get_us_y_absolute_position(0.9))
+
+        self.us_fit_line.set_data(us_fit_spectrum.data)
+
+
     def update_maximum_intensity_labels(self):
         self.ds_int_txt.set_text('Max Int: {0:.0f}'.format(self.ds_max_int))
         self.ds_int_txt.set_x(self.get_ds_x_absolute_position(0.97))
@@ -195,6 +223,8 @@ class TemperatureGraphWidget(QtGui.QWidget):
         self.us_int_txt.set_y(self.get_us_y_absolute_position(0.03))
 
     def update_intensity_indicator_bar(self, width, height):
+        if not (len(self.ds_exp_spectrum) and len(self.us_exp_spectrum)):
+            return
         self.ds_indicator_rectangle_line.set_x(min(self.ds_exp_spectrum.x))
         self.ds_indicator_rectangle_line.set_y(min(self.ds_exp_spectrum.y))
         self.ds_indicator_rectangle_line.set_width(width * self.ds_exp_spectrum.get_x_range())

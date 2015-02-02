@@ -22,7 +22,7 @@ class TemperatureWidget(QtGui.QWidget):
         self.graph_widget = TemperatureGraphWidget()
         self.control_widget = ControlWidget()
         self.roi_widget = NewRoiWidget(2, ['Downstream', 'upstream'],
-                                       roi_colors=[(255, 140, 0), (255, 255, 0)])
+                                       roi_colors=[(255, 255, 0), (255, 140, 0)])
 
         self._graph_control_layout.addWidget(self.graph_widget)
         self._graph_control_layout.addWidget(self.control_widget)
@@ -48,10 +48,28 @@ class TemperatureWidget(QtGui.QWidget):
 
         self.load_next_frame_btn = self.control_widget.experiment_tab.file_gb.load_next_frame_btn
         self.load_previous_frame_btn = self.control_widget.experiment_tab.file_gb.load_previous_frame_btn
+        self.frame_num_txt = self.control_widget.experiment_tab.file_gb.frame_txt
+        self.frame_widget = self.control_widget.experiment_tab.file_gb.frame_control_widget
 
         self.auto_process_cb = self.control_widget.experiment_tab.file_gb.autoprocess_cb
         self.filename_lbl = self.control_widget.experiment_tab.file_gb.filename_lbl
         self.dirname_lbl = self.control_widget.experiment_tab.file_gb.dirname_lbl
+
+        self.load_ds_calibration_file_btn = self.control_widget.calibration_tab.downstream_gb.load_file_btn
+        self.load_us_calibration_file_btn = self.control_widget.calibration_tab.upstream_gb.load_file_btn
+        self.ds_calibration_filename_lbl = self.control_widget.calibration_tab.downstream_gb.file_lbl
+        self.us_calibration_filename_lbl = self.control_widget.calibration_tab.upstream_gb.file_lbl
+
+        self.ds_temperature_rb = self.control_widget.calibration_tab.downstream_gb.temperature_rb
+        self.us_temperature_rb = self.control_widget.calibration_tab.upstream_gb.temperature_rb
+        self.ds_etalon_rb = self.control_widget.calibration_tab.downstream_gb.etalon_rb
+        self.us_etalon_rb = self.control_widget.calibration_tab.upstream_gb.etalon_rb
+        self.ds_load_etalon_file_btn = self.control_widget.calibration_tab.downstream_gb.load_etalon_btn
+        self.us_load_etalon_file_btn = self.control_widget.calibration_tab.upstream_gb.load_etalon_btn
+        self.ds_etalon_filename_lbl = self.control_widget.calibration_tab.downstream_gb.etalon_file_lbl
+        self.us_etalon_filename_lbl = self.control_widget.calibration_tab.upstream_gb.etalon_file_lbl
+        self.ds_temperature_txt = self.control_widget.calibration_tab.downstream_gb.temperature_txt
+        self.us_temperature_txt = self.control_widget.calibration_tab.upstream_gb.temperature_txt
 
         self.roi_img_item = self.roi_widget.img_widget.pg_img_item
 
@@ -199,8 +217,8 @@ class CalibrationTab(QtGui.QWidget):
         super(CalibrationTab, self).__init__(*args, **kwargs)
         self._layout = QtGui.QVBoxLayout()
 
-        self.downstream_gb = CalibrationGB('Upstream', 'rgba(255, 255, 0, 255)')
-        self.upstream_gb = CalibrationGB('Downstream', 'rgba(255, 140, 0, 255)')
+        self.downstream_gb = CalibrationGB('Downstream', 'rgba(255, 255, 0, 255)')
+        self.upstream_gb = CalibrationGB('Upstream', 'rgba(255, 140, 0, 255)')
 
         self._layout.addWidget(self.downstream_gb)
         self._layout.addWidget(self.upstream_gb)
@@ -249,6 +267,8 @@ class CalibrationGB(QtGui.QGroupBox):
 
         self.temperature_txt.setValidator(QtGui.QDoubleValidator())
         self.temperature_txt.setAlignment(QtCore.Qt.AlignRight)
+
+        self.temperature_rb.toggle()
 
     def set_stylesheet(self):
         style_str = "QGroupBox { color: %s; border: 1px solid %s}" % (self.color, self.color)

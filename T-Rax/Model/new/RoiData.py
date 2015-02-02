@@ -91,6 +91,9 @@ class RoiDataManager():
         :return: RoiData object
         :type: RoiData
         """
+        if img_dimension is None:
+            img_dimension = (1, 1)
+
         if self._exists(img_dimension):
             return self._rois_list[self._get_dimension_ind(img_dimension)]
         else:
@@ -108,7 +111,7 @@ class RoiDataManager():
             return self._rois_list[self._get_dimension_ind(img_dimension)]
 
     def get_roi(self, index, img_dimension):
-        return self.get_rois(img_dimension)[index]
+         return self.get_rois(img_dimension)[index]
 
     def set_roi(self, index, img_dimension, limits):
         if self._exists(img_dimension):

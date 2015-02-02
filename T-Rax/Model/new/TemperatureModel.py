@@ -6,7 +6,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 from model.Spectrum import Spectrum
-from model.new.RoiData import RoiDataManager
+from model.new.RoiData import RoiDataManager, Roi
 from model.SpeFile import SpeFile
 from model.helper import FileNameIterator
 
@@ -136,7 +136,10 @@ class TemperatureModel(QtCore.QObject):
     # updating roi values
     @property
     def ds_roi(self):
-        return self.roi_data_manager.get_roi(0, self.data_img_file.get_dimension())
+        try:
+            return  self.roi_data_manager.get_roi(0, self.data_img_file.get_dimension())
+        except AttributeError:
+            return Roi([0,0,0,0])
 
     @ds_roi.setter
     def ds_roi(self, ds_limits):
@@ -146,7 +149,10 @@ class TemperatureModel(QtCore.QObject):
 
     @property
     def us_roi(self):
-        return self.roi_data_manager.get_roi(1, self.data_img_file.get_dimension())
+        try:
+            return self.roi_data_manager.get_roi(1, self.data_img_file.get_dimension())
+        except:
+            return Roi([0,0,0,0])
 
     @us_roi.setter
     def us_roi(self, us_limits):
@@ -157,6 +163,7 @@ class TemperatureModel(QtCore.QObject):
     def set_rois(self, ds_limits, us_limits):
         self.ds_roi = ds_limits
         self.us_roi = us_limits
+        self.data_changed.emit()
 
     def get_roi_data_list(self):
         ds_roi = self.ds_roi.as_list()
@@ -215,6 +222,14 @@ class TemperatureModel(QtCore.QObject):
     @property
     def us_temperature_error(self):
         return self.us_temperature_model.temperature_error
+
+    @property
+    def ds_etalon_filename(self):
+        return self.ds_temperature_model.calibration_parameter.etalon_file_name
+
+    @property
+    def us_etalon_filename(self):
+        return self.us_temperature_model.calibration_parameter.etalon_file_name
 
     # TODO: Think aboout refactoring this function away from here
     def get_wavelength_from(self, index):
@@ -334,13 +349,14 @@ class SingleTemperatureModel(QtCore.QObject):
     #########################################################################
 
     def _update_data_spectrum(self):
-        roi = self.roi_data_manager.get_roi(self.ind, self._data_img_dimension)
+        if self._data_img is not None:
+            roi = self.roi_data_manager.get_roi(self.ind, self._data_img_dimension)
 
-        data_x = self._data_img_x_calibration[roi.x_min:roi.x_max + 1]
-        data_y = self._get_roi_sum(self.data_img, roi)
+            data_x = self._data_img_x_calibration[roi.x_min:roi.x_max + 1]
+            data_y = self._get_roi_sum(self.data_img, roi)
 
-        self.data_roi_max = self._get_roi_max(self.data_img, roi)
-        self.data_spectrum.data = data_x, data_y
+            self.data_roi_max = self._get_roi_max(self.data_img, roi)
+            self.data_spectrum.data = data_x, data_y
 
     def _update_calibration_spectrum(self):
         if self.calibration_img is not None:

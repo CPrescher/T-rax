@@ -105,17 +105,25 @@ class Spectrum(object):
             self._scaling = value
 
     def get_x_limits(self):
-        return min(self._x), max(self._x)
+        if len(self):
+            return np.min(self._x), np.max(self._x)
+        return 0, 0
 
     # TODO: theses need to be removed, only for legacy purpose
     def get_y_limits(self):
-        return min(self._y), max(self._y)
+        if len(self):
+            return np.min(self._y), np.max(self._y)
+        return 0, 0
 
     def get_x_range(self):
-        return np.max(self._x) - np.min(self._x)
+        if len(self):
+            return np.max(self._x) - np.min(self._x)
+        return 0
 
     def get_y_range(self):
-        return np.max(self._y) - np.min(self._y)
+        if len(self):
+            return np.max(self._y) - np.min(self._y)
+        return 0
 
     @property
     def x(self):
