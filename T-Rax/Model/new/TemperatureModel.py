@@ -13,6 +13,9 @@ from model.helper import FileNameIterator
 
 class TemperatureModel(QtCore.QObject):
     data_changed = QtCore.pyqtSignal()
+    ds_calculations_changed = QtCore.pyqtSignal()
+    us_calculations_changed = QtCore.pyqtSignal()
+
     def __init__(self):
         super(TemperatureModel, self).__init__()
 
@@ -59,10 +62,10 @@ class TemperatureModel(QtCore.QObject):
             self.load_data_image(new_filename)
 
     def load_next_img_frame(self):
-        return self.set_img_frame_number_to(self.current_frame+1)
+        return self.set_img_frame_number_to(self.current_frame + 1)
 
     def load_previous_img_frame(self):
-        return self.set_img_frame_number_to(self.current_frame-1)
+        return self.set_img_frame_number_to(self.current_frame - 1)
 
     def set_img_frame_number_to(self, frame_number):
         if frame_number < 0 or frame_number >= self.data_img_file.num_frames:
@@ -87,6 +90,7 @@ class TemperatureModel(QtCore.QObject):
     def data_img(self, value):
         self._data_img = value
         self._update_temperature_models_data()
+        self.data_changed.emit()
 
     # calibration image files:
     #########################################################################
@@ -95,7 +99,7 @@ class TemperatureModel(QtCore.QObject):
         self._ds_calibration_img = self.ds_calibration_img_file.img
         self.ds_temperature_model.set_calibration_data(self._ds_calibration_img,
                                                        self.ds_calibration_img_file.x_calibration)
-        self.data_changed.emit()
+        self.ds_calculations_changed.emit()
 
 
     def load_us_calibration_image(self, filename):
@@ -103,67 +107,67 @@ class TemperatureModel(QtCore.QObject):
         self._us_calibration_img = self.us_calibration_img_file.img
         self.us_temperature_model.set_calibration_data(self._us_calibration_img,
                                                        self.us_calibration_img_file.x_calibration)
-        self.data_changed.emit()
-
+        self.us_calculations_changed.emit()
 
 
     # setting etalon interface
     #########################################################################
     def load_ds_etalon_spectrum(self, filename):
         self.ds_temperature_model.load_etalon_spectrum(filename)
-        self.data_changed.emit()
+        self.ds_calculations_changed.emit()
 
     def load_us_etalon_spectrum(self, filename):
         self.us_temperature_model.load_etalon_spectrum(filename)
-        self.data_changed.emit()
+        self.us_calculations_changed.emit()
 
     def set_ds_calibration_modus(self, modus):
         self.ds_temperature_model.set_calibration_modus(modus)
-        self.data_changed.emit()
+        self.ds_calculations_changed.emit()
 
     def set_us_calibration_modus(self, modus):
         self.us_temperature_model.set_calibration_modus(modus)
-        self.data_changed.emit()
+        self.us_calculations_changed.emit()
 
     def set_ds_calibration_temperature(self, temperature):
         self.ds_temperature_model.set_calibration_temperature(temperature)
-        self.data_changed.emit()
+        self.ds_calculations_changed.emit()
 
     def set_us_calibration_temperature(self, temperature):
         self.us_temperature_model.set_calibration_temperature(temperature)
-        self.data_changed.emit()
+        self.us_calculations_changed.emit()
 
     # updating roi values
     @property
     def ds_roi(self):
         try:
-            return  self.roi_data_manager.get_roi(0, self.data_img_file.get_dimension())
+            return self.roi_data_manager.get_roi(0, self.data_img_file.get_dimension())
         except AttributeError:
-            return Roi([0,0,0,0])
+            return Roi([0, 0, 0, 0])
 
     @ds_roi.setter
     def ds_roi(self, ds_limits):
         self.roi_data_manager.set_roi(0, self.data_img_file.get_dimension(), ds_limits)
         self.ds_temperature_model._update_all_spectra()
         self.ds_temperature_model.fit_data()
+        self.ds_calculations_changed.emit()
 
     @property
     def us_roi(self):
         try:
             return self.roi_data_manager.get_roi(1, self.data_img_file.get_dimension())
         except:
-            return Roi([0,0,0,0])
+            return Roi([0, 0, 0, 0])
 
     @us_roi.setter
     def us_roi(self, us_limits):
         self.roi_data_manager.set_roi(1, self.data_img_file.get_dimension(), us_limits)
         self.us_temperature_model._update_all_spectra()
         self.us_temperature_model.fit_data()
+        self.us_calculations_changed.emit()
 
     def set_rois(self, ds_limits, us_limits):
-        self.ds_roi = ds_limits
         self.us_roi = us_limits
-        self.data_changed.emit()
+        self.ds_roi = ds_limits
 
     def get_roi_data_list(self):
         ds_roi = self.ds_roi.as_list()
@@ -269,6 +273,7 @@ class TemperatureModel(QtCore.QObject):
 
 class SingleTemperatureModel(QtCore.QObject):
     data_changed = QtCore.pyqtSignal()
+
     def __init__(self, ind, roi_data_manager):
         super(SingleTemperatureModel, self).__init__()
         self.ind = ind
@@ -403,8 +408,7 @@ class SingleTemperatureModel(QtCore.QObject):
         else:
             self.temperature = np.NaN
             self.temperature_error = np.NaN
-            self.fit_spectrum = Spectrum([],[])
-
+            self.fit_spectrum = Spectrum([], [])
 
 
 # HELPER FUNCTIONS

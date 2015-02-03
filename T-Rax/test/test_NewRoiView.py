@@ -54,7 +54,7 @@ class TestNewRoiView(unittest.TestCase):
         self.counter = 0
         def incr_counter():
             self.counter += 1
-        self.view.rois_changed.connect(incr_counter)
+        self.view.widget_rois_changed.connect(incr_counter)
         self.view.set_rois([[10,100,11,101]])
 
         self.assertEqual(self.counter, 0)

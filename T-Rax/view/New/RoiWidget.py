@@ -6,6 +6,7 @@ import pyqtgraph as pg
 import numpy as np
 from functools import partial
 from pyqtgraph.graphicsItems.ROI import Handle
+from view.new.HistogramLUTItem import HistogramLUTItem
 
 pg.setConfigOption('useOpenGL', False)
 pg.setConfigOption('leftButtonPan', False)
@@ -174,6 +175,9 @@ class ImageWidget(QtGui.QWidget):
 
         self.pg_img_item = pg.ImageItem()
         self.pg_viewbox.addItem(self.pg_img_item)
+
+        self.pg_hist_item = HistogramLUTItem(self.pg_img_item, orientation='vertical')
+        self.pg_layout.addItem(self.pg_hist_item, 1, 2, 1, 3)
 
         self._layout = QtGui.QHBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
