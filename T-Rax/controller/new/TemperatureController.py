@@ -48,8 +48,8 @@ class TemperatureController(QtCore.QObject):
 
         # model signals
         self.model.data_changed.connect(self.data_changed)
-        self.model.ds_calculations_changed.connect(self.calculations_changed)
-        self.model.us_calculations_changed.connect(self.calculations_changed)
+        self.model.ds_calculations_changed.connect(self.ds_calculations_changed)
+        self.model.us_calculations_changed.connect(self.us_calculations_changed)
 
         self.widget.roi_widget.rois_changed.connect(self.widget_rois_changed)
 
@@ -158,15 +158,8 @@ class TemperatureController(QtCore.QObject):
             us_plot_spectrum = self.model.us_data_spectrum
 
 
-        self.widget.graph_widget.update_graph(ds_plot_spectrum, us_plot_spectrum,
-                                              ds_data_roi_max, us_data_roi_max,
-                                              '', '')
-
-        self.widget.graph_widget.plot_ds_temperature_fit(
-            self.model.ds_temperature,
-            self.model.ds_temperature_error,
-            self.model.ds_fit_spectrum
-        )
+        self.widget.graph_widget.plot_ds_data_spectrum(ds_plot_spectrum)
+        self.widget.graph_widget.plot_ds_fit_spectrum(self.model.ds_fit_spectrum)
 
     def us_calculations_changed(self):
         try:
@@ -192,20 +185,10 @@ class TemperatureController(QtCore.QObject):
             us_plot_spectrum = self.model.us_data_spectrum
 
 
-        self.widget.graph_widget.update_graph(ds_plot_spectrum, us_plot_spectrum,
-                                              ds_data_roi_max, us_data_roi_max,
-                                              '', '')
 
-        self.widget.graph_widget.plot_us_temperature_fit(
-            self.model.us_temperature,
-            self.model.us_temperature_error,
-            self.model.us_fit_spectrum
-        )
+        self.widget.graph_widget.plot_us_data_spectrum(us_plot_spectrum)
+        self.widget.graph_widget.plot_us_fit_spectrum(self.model.us_fit_spectrum)
 
-    def calculations_changed(self):
-        self.us_calculations_changed()
-        self.ds_calculations_changed()
-        self.widget.graph_widget.redraw_figure()
 
     def widget_rois_changed(self, roi_list):
         self.model.set_rois(roi_list[0], roi_list[1])

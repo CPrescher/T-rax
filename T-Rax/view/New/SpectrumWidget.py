@@ -11,6 +11,14 @@ pg.setConfigOption('background', 'k')
 pg.setConfigOption('foreground', 'w')
 pg.setConfigOption('antialias', True)
 
+
+plot_colors = {
+    'data_pen': '#ffffff',
+    'data_brush': '#FFF',
+    'fit_pen': 'r',
+}
+
+
 class SpectrumWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
         super(SpectrumWidget, self).__init__(*args, **kwargs)
@@ -30,20 +38,27 @@ class SpectrumWidget(QtGui.QWidget):
         self._us_plot = ModifiedPlotItem()
         self._ds_plot = ModifiedPlotItem()
 
-        self._pg_layout.addItem(self._us_plot,0,0)
-        self._pg_layout.addItem(self._ds_plot,0,1)
+        self._pg_layout.addItem(self._ds_plot,0,0)
+        self._pg_layout.addItem(self._us_plot,0,1)
 
         self._pg_layout_widget.addItem(self._pg_layout)
         self._layout.addWidget(self._pg_layout_widget)
 
     def create_data_items(self):
-        self._us_data_item = pg.ScatterPlotItem()
-        self._us_fit_item = pg.PlotDataItem()
+        self._us_data_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['data_pen'], width=1),
+                                                brush=pg.mkBrush(plot_colors['data_brush']),
+                                                size=3,
+                                                symbol ='o')
+        self._us_fit_item = pg.PlotDataItem(pen = pg.mkPen(plot_colors['fit_pen'], width = 3))
+
         self._us_plot.addItem(self._us_data_item)
         self._us_plot.addItem(self._us_fit_item)
 
-        self._ds_data_item = pg.ScatterPlotItem()
-        self._ds_fit_item = pg.PlotDataItem()
+        self._ds_data_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['data_pen'], width=1),
+                                                brush=pg.mkBrush(plot_colors['data_brush']),
+                                                size=3,
+                                                symbol ='o')
+        self._ds_fit_item = pg.PlotDataItem(pen = pg.mkPen(plot_colors['fit_pen'], width = 3))
         self._ds_plot.addItem(self._ds_data_item)
         self._ds_plot.addItem(self._ds_fit_item)
 

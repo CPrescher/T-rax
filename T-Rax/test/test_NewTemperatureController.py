@@ -168,8 +168,8 @@ class TestNewTemperatureController(unittest.TestCase):
         self.controller.load_data_file(data_filename)
         self.controller.load_ds_calibration_file(calibration_filename)
 
-        self.assertNotEqual(self.widget.graph_widget.ds_temp_txt.get_text(), u'')
-        self.array_almost_equal(np.array(self.widget.graph_widget.ds_fit_line.get_data()),
+        # self.assertNotEqual(self.widget.graph_widget.ds_temp_txt.get_text(), u'')
+        self.array_almost_equal(np.array(self.widget.graph_widget._ds_fit_item.getData()),
                                 np.array(self.model.ds_fit_spectrum.data))
 
     def test_us_temperature_fitting_is_shown_in_graph(self):
@@ -178,8 +178,8 @@ class TestNewTemperatureController(unittest.TestCase):
         self.controller.load_data_file(data_filename)
         self.controller.load_us_calibration_file(calibration_filename)
 
-        self.assertNotEqual(self.widget.graph_widget.us_temp_txt.get_text(), u'')
-        self.array_almost_equal(np.array(self.widget.graph_widget.us_fit_line.get_data()),
+        # self.assertNotEqual(self.widget.graph_widget.us_temp_txt.get_text(), u'')
+        self.array_almost_equal(np.array(self.widget.graph_widget._us_fit_item.getData()),
                                 np.array(self.model.us_fit_spectrum.data))
 
 
