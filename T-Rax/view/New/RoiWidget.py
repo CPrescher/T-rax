@@ -79,7 +79,7 @@ class NewRoiWidget(QtGui.QWidget):
 
     def plot_img(self, img_data):
         if img_data is not None:
-            self.img_widget.plot_image(np.rot90(img_data))
+            self.img_widget.plot_image(img_data.T)
 
 
 
