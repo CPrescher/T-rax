@@ -188,6 +188,7 @@ class IntensityIndicator(pg.GraphicsWidget):
 
     def set_intensity(self, int):
         self._intensity_level = int
+        self.__geometryChanged()
 
 
 
