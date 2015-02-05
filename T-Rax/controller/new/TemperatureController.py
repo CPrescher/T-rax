@@ -145,21 +145,16 @@ class TemperatureController(QtCore.QObject):
 
 
         ds_data_roi_max = self.model.ds_temperature_model.data_roi_max
-        us_data_roi_max = self.model.us_temperature_model.data_roi_max
 
         if len(self.model.ds_corrected_spectrum):
             ds_plot_spectrum = self.model.ds_corrected_spectrum
         else:
             ds_plot_spectrum = self.model.ds_data_spectrum
 
-        if len(self.model.us_corrected_spectrum):
-            us_plot_spectrum = self.model.us_corrected_spectrum
-        else:
-            us_plot_spectrum = self.model.us_data_spectrum
-
-
-        self.widget.graph_widget.plot_ds_data_spectrum(ds_plot_spectrum)
-        self.widget.graph_widget.plot_ds_fit_spectrum(self.model.ds_fit_spectrum)
+        self.widget.graph_widget.plot_ds_data(*ds_plot_spectrum.data)
+        self.widget.graph_widget.plot_ds_fit(*self.model.ds_fit_spectrum.data)
+        self.widget.graph_widget.update_ds_temperature_txt(self.model.ds_temperature,
+                                                        self.model.ds_temperature_error)
 
     def us_calculations_changed(self):
         try:
@@ -171,23 +166,17 @@ class TemperatureController(QtCore.QObject):
         self.widget.us_etalon_filename_lbl.setText(os.path.basename(self.model.us_etalon_filename))
 
 
-        ds_data_roi_max = self.model.ds_temperature_model.data_roi_max
         us_data_roi_max = self.model.us_temperature_model.data_roi_max
-
-        if len(self.model.ds_corrected_spectrum):
-            ds_plot_spectrum = self.model.ds_corrected_spectrum
-        else:
-            ds_plot_spectrum = self.model.ds_data_spectrum
 
         if len(self.model.us_corrected_spectrum):
             us_plot_spectrum = self.model.us_corrected_spectrum
         else:
             us_plot_spectrum = self.model.us_data_spectrum
 
-
-
-        self.widget.graph_widget.plot_us_data_spectrum(us_plot_spectrum)
-        self.widget.graph_widget.plot_us_fit_spectrum(self.model.us_fit_spectrum)
+        self.widget.graph_widget.plot_us_data(*us_plot_spectrum.data)
+        self.widget.graph_widget.plot_us_fit(*self.model.us_fit_spectrum.data)
+        self.widget.graph_widget.update_us_temperature_txt(self.model.us_temperature,
+                                                        self.model.us_temperature_error)
 
 
     def widget_rois_changed(self, roi_list):

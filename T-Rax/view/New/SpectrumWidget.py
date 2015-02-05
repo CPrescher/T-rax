@@ -5,6 +5,8 @@ from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
 
+from view.new.ModifiedPlotItem import ModifiedPlotItem
+
 pg.setConfigOption('useOpenGL', False)
 pg.setConfigOption('leftButtonPan', False)
 pg.setConfigOption('background', 'k')
@@ -36,7 +38,18 @@ class SpectrumWidget(QtGui.QWidget):
         self._pg_layout.setContentsMargins(0,0,0,0)
 
         self._us_plot = ModifiedPlotItem()
+        self._us_plot.showAxis('top', show=True)
+        self._us_plot.showAxis('right', show=True)
+        self._us_plot.getAxis('top').setStyle(showValues=False)
+        self._us_plot.getAxis('right').setStyle(showValues=False)
+        self._us_plot.getAxis('left').setStyle(showValues=False)
+
         self._ds_plot = ModifiedPlotItem()
+        self._ds_plot.showAxis('top', show=True)
+        self._ds_plot.showAxis('right', show=True)
+        self._ds_plot.getAxis('top').setStyle(showValues=False)
+        self._ds_plot.getAxis('right').setStyle(showValues=False)
+        self._ds_plot.getAxis('left').setStyle(showValues=False)
 
         self._pg_layout.addItem(self._ds_plot,0,0)
         self._pg_layout.addItem(self._us_plot,0,1)
@@ -54,13 +67,39 @@ class SpectrumWidget(QtGui.QWidget):
         self._us_plot.addItem(self._us_data_item)
         self._us_plot.addItem(self._us_fit_item)
 
+        self._us_temperature_txt_item = pg.LabelItem()
+        self._us_temperature_txt_item.setParentItem(self._us_plot.vb)
+        self._us_temperature_txt_item.anchor(itemPos=(0, 0), parentPos=(0, 0), offset=(15, 10))
+
+        self._us_roi_max_txt_item = pg.LabelItem()
+        self._us_roi_max_txt_item.setParentItem(self._us_plot.vb)
+        self._us_roi_max_txt_item.anchor(itemPos=(1,1), parentPos=(1,1), offset=(-10,-10))
+
+
+        self._us_intensity_indicator = IntensityIndicator()
+        self._us_intensity_indicator.setParentItem(self._us_plot)
+
+
         self._ds_data_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['data_pen'], width=1),
                                                 brush=pg.mkBrush(plot_colors['data_brush']),
                                                 size=3,
                                                 symbol ='o')
         self._ds_fit_item = pg.PlotDataItem(pen = pg.mkPen(plot_colors['fit_pen'], width = 3))
+
         self._ds_plot.addItem(self._ds_data_item)
         self._ds_plot.addItem(self._ds_fit_item)
+
+        self._ds_temperature_txt_item = pg.LabelItem()
+        self._ds_temperature_txt_item.setParentItem(self._ds_plot.vb)
+        self._ds_temperature_txt_item.anchor(itemPos=(0, 0), parentPos=(0, 0), offset=(15, 10))
+
+        self._ds_roi_max_txt_item = pg.LabelItem()
+        self._ds_roi_max_txt_item.setParentItem(self._ds_plot.vb)
+        self._ds_roi_max_txt_item.anchor(itemPos=(1,1), parentPos=(1,1), offset=(-10,-10))
+
+        self._ds_intensity_indicator = IntensityIndicator()
+        self._ds_intensity_indicator.setParentItem(self._ds_plot)
+
 
     def plot_ds_data(self, x, y):
         self._ds_data_item.setData(x, y)
@@ -74,125 +113,83 @@ class SpectrumWidget(QtGui.QWidget):
     def plot_us_fit(self, x, y):
         self._us_fit_item.setData(x, y)
 
-    def plot_ds_data_spectrum(self, spectrum):
-        self.plot_ds_data(*spectrum.data)
+    def update_us_temperature_txt(self, temperature, temperature_error):
+        self._us_temperature_txt_item.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
+                                                                                  temperature_error),
+                                              size='30pt',
+                                              color='FF9900')
 
-    def plot_us_data_spectrum(self, spectrum):
-        self.plot_us_data(*spectrum.data)
+    def update_ds_temperature_txt(self, temperature, temperature_error):
+        self._ds_temperature_txt_item.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
+                                                                                  temperature_error),
+                                              size='30pt',
+                                              color='FFFF00')
 
-    def plot_ds_fit_spectrum(self, spectrum):
-        self.plot_ds_fit(*spectrum.data)
+    def update_us_roi_max_txt(self, roi_max, format_max=65536):
+        self._us_roi_max_txt_item.setText('Max Int {0:.0f}'.format(roi_max),
+                                          size='22pt',
+                                          color='33CC00')
+        self._us_intensity_indicator.set_intensity(float(roi_max)/format_max)
 
-    def plot_us_fit_spectrum(self, spectrum):
-        self.plot_us_fit(*spectrum.data)
+    def update_ds_roi_max_txt(self, roi_max, format_max=65536):
+        self._ds_roi_max_txt_item.setText('Max Int {0:.0f}'.format(roi_max),
+                                          size='22pt',
+                                          color='33CC00')
+        self._ds_intensity_indicator.set_intensity(float(roi_max)/format_max)
+
+from pyqtgraph import Point
+
+class IntensityIndicator(pg.GraphicsWidget):
+    def __init__(self):
+        pg.GraphicsWidget.__init__(self)
+        self.outside_rect = QtGui.QGraphicsRectItem(0,0,100,100)
+        self.inside_rect = QtGui.QGraphicsRectItem(0,0,50,50)
+
+        self._layout=QtGui.QGraphicsGridLayout()
+
+        self.outside_rect.setPen(pg.mkPen(color=(255, 255, 255), width=1))
+        self.inside_rect.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 150)))
+
+        self.__parent = None
+        self.__parentAnchor = None
+        self.__itemAnchor = None
+        self.__offset = (0,0)
+
+        self.inside_rect.setParentItem(self)
+        self.outside_rect.setParentItem(self)
+        self.inside_rect.setZValue(-100000)
+        self.outside_rect.setZValue(200)
+
+        self._intensity_level = 0
+
+    def setParentItem(self, parent):
+        pg.GraphicsWidget.setParentItem(self, parent)
+        parent = self.parentItem()
+        self.__parent = parent
+        parent.geometryChanged.connect(self.__geometryChanged)
+        self.__geometryChanged()
+
+    def __geometryChanged(self):
+        if self.__parent is None:
+            return
+
+        bounding_rect = self.__parent.vb.boundingRect()
+        bar_width = 12
+        self.outside_rect.setRect(bounding_rect.x()+1,
+                                 bounding_rect.y()+1,
+                                 bar_width,
+                                 bounding_rect.height())
+
+        self.inside_rect.setRect(1,
+                                 bounding_rect.height()*(1-self._intensity_level)+1,
+                                 bar_width,
+                                 bounding_rect.height()*self._intensity_level)
 
 
-class ModifiedPlotItem(pg.PlotItem):
-    mouse_moved = QtCore.pyqtSignal(float, float)
-    mouse_left_clicked = QtCore.pyqtSignal(float, float)
-    range_changed = QtCore.pyqtSignal(list)
+    def set_intensity(self, int):
+        self._intensity_level = int
 
-    def __init__(self, *args, **kwargs):
-        super(ModifiedPlotItem, self).__init__(*args, **kwargs)
 
-        self.modify_mouse_behavior()
-
-    def modify_mouse_behavior(self):
-        self.vb.mouseClickEvent = self.mouse_click_event
-        self.vb.mouseDragEvent = self.mouse_drag_event
-        self.vb.mouseDoubleClickEvent = self.mouse_double_click_event
-        self.vb.wheelEvent = self.wheel_event
-        self.range_changed_timer = QtCore.QTimer()
-        self.range_changed_timer.timeout.connect(self.emit_sig_range_changed)
-        self.range_changed_timer.setInterval(30)
-
-        self.cur_mouse_position_x = 0
-        self.cur_mouse_position_y = 0
-
-        self.mouse_moved.connect(self.update_cur_mouse_position)
-        self.last_view_range = np.array(self.vb.viewRange())
-
-    def connect_mouse_move_event(self):
-        self.scene().sigMouseMoved.connect(self.mouse_move_event)
-
-    def mouse_move_event(self, pos):
-        if self.sceneBoundingRect().contains(pos):
-            pos = self.vb.mapSceneToView(pos)
-            self.mouse_moved.emit(pos.x(), pos.y())
-
-    def mouse_click_event(self, ev):
-        if ev.button() == QtCore.Qt.RightButton or \
-                (ev.button() == QtCore.Qt.LeftButton and
-                         ev.modifiers() & QtCore.Qt.ControlModifier):
-            self.vb.scaleBy(2)
-            self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
-        elif ev.button() == QtCore.Qt.LeftButton:
-            if self.sceneBoundingRect().contains(ev.pos()):
-                pos = self.vb.mapToView(ev.pos())
-                x = pos.x()
-                y = pos.y()
-                self.mouse_left_clicked.emit(x, y)
-
-    def update_cur_mouse_position(self, x, y):
-        self.cur_mouse_position_x = x
-        self.cur_mouse_position_y = y
-
-    def get_mouse_position(self):
-        return self.cur_mouse_position_x, self.cur_mouse_position_y
-
-    def mouse_double_click_event(self, ev):
-        if (ev.button() == QtCore.Qt.RightButton) or (ev.button() == QtCore.Qt.LeftButton and
-                                                              ev.modifiers() & QtCore.Qt.ControlModifier):
-            self.vb.autoRange()
-            self.vb.enableAutoRange()
-            self._auto_range = True
-            self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
-
-    def mouse_drag_event(self, ev, axis=None):
-        # most of this code is copied behavior mouse drag from the original code
-        ev.accept()
-        pos = ev.pos()
-        last_pos = ev.lastPos()
-        dif = pos - last_pos
-        dif *= -1
-
-        if ev.button() == QtCore.Qt.RightButton or \
-                (ev.button() == QtCore.Qt.LeftButton and ev.modifiers() & QtCore.Qt.ControlModifier):
-            # determine the amount of translation
-            tr = dif
-            tr = self.vb.mapToView(tr) - self.vb.mapToView(pg.Point(0, 0))
-            x = tr.x()
-            y = tr.y()
-            self.vb.translateBy(x=x, y=y)
-            if ev.start:
-                self.range_changed_timer.start()
-            if ev.isFinish():
-                self.range_changed_timer.stop()
-                self.emit_sig_range_changed()
-        else:
-            if ev.isFinish():  # This is the final move in the drag; change the view scale now
-                self._auto_range = False
-                self.vb.enableAutoRange(enable=False)
-                self.vb.rbScaleBox.hide()
-                ax = QtCore.QRectF(pg.Point(ev.buttonDownPos(ev.button())), pg.Point(pos))
-                ax = self.vb.childGroup.mapRectFromParent(ax)
-                self.vb.showAxRect(ax)
-                self.vb.axHistoryPointer += 1
-                self.vb.axHistory = self.vb.axHistory[:self.vb.axHistoryPointer] + [ax]
-                self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
-            else:
-                # update shape of scale box
-                self.vb.updateScaleBox(ev.buttonDownPos(), ev.pos())
-
-    def emit_sig_range_changed(self):
-        new_view_range = np.array(self.vb.viewRange())
-        if not np.array_equal(self.last_view_range, new_view_range):
-            self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
-            self.last_view_range = new_view_range
-
-    def wheel_event(self, ev, axis=None, *args):
-        pg.ViewBox.wheelEvent(self.vb, ev, axis)
-        self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
 
 
 if __name__ == '__main__':
@@ -200,4 +197,7 @@ if __name__ == '__main__':
     widget = SpectrumWidget()
     widget.show()
     widget.raise_()
+    widget.update_us_temperature_txt(20, 3)
+    widget.update_ds_roi_max_txt(2000)
+    # widget._us_temperature_txt_item.setText('12415123')
     app.exec_()
