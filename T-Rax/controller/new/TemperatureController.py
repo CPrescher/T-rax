@@ -143,9 +143,6 @@ class TemperatureController(QtCore.QObject):
         self.widget.ds_calibration_filename_lbl.setText(ds_calibration_filename_str)
         self.widget.ds_etalon_filename_lbl.setText(os.path.basename(self.model.ds_etalon_filename))
 
-
-        ds_data_roi_max = self.model.ds_temperature_model.data_roi_max
-
         if len(self.model.ds_corrected_spectrum):
             ds_plot_spectrum = self.model.ds_corrected_spectrum
         else:
@@ -155,6 +152,7 @@ class TemperatureController(QtCore.QObject):
         self.widget.graph_widget.plot_ds_fit(*self.model.ds_fit_spectrum.data)
         self.widget.graph_widget.update_ds_temperature_txt(self.model.ds_temperature,
                                                         self.model.ds_temperature_error)
+        self.widget.graph_widget.update_ds_roi_max_txt(self.model.ds_temperature_model.data_roi_max)
 
     def us_calculations_changed(self):
         try:
@@ -165,9 +163,6 @@ class TemperatureController(QtCore.QObject):
         self.widget.us_calibration_filename_lbl.setText(us_calibration_filename_str)
         self.widget.us_etalon_filename_lbl.setText(os.path.basename(self.model.us_etalon_filename))
 
-
-        us_data_roi_max = self.model.us_temperature_model.data_roi_max
-
         if len(self.model.us_corrected_spectrum):
             us_plot_spectrum = self.model.us_corrected_spectrum
         else:
@@ -177,6 +172,7 @@ class TemperatureController(QtCore.QObject):
         self.widget.graph_widget.plot_us_fit(*self.model.us_fit_spectrum.data)
         self.widget.graph_widget.update_us_temperature_txt(self.model.us_temperature,
                                                         self.model.us_temperature_error)
+        self.widget.graph_widget.update_us_roi_max_txt(self.model.us_temperature_model.data_roi_max)
 
 
     def widget_rois_changed(self, roi_list):
