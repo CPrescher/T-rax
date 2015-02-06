@@ -1,18 +1,16 @@
 from wx.lib.pubsub import pub
 
-from view.RoiViewRuby import TRaxROIViewRuby
+from view.old.RoiViewDiamond import TRaxROIViewDiamond
 
 
-class TRaxROIControllerRuby(object):
+class TRaxROIControllerDiamond(object):
     def __init__(self, data, parent=None):
         self.parent = parent
-        self.view = TRaxROIViewRuby(data, parent)
+        self.view = TRaxROIViewDiamond(data, parent)
         self.data = data
         self.create_signals()
         self.view.update_txt_roi()
         self.save_roi_data()
-        self.mode = "temperature"
-
 
     def create_signals(self):
         self.create_btn_signals()
@@ -30,15 +28,15 @@ class TRaxROIControllerRuby(object):
         self.view.y_max_txt.editingFinished.connect(self.roi_txt_changed)
 
     def create_pub_signals(self):
-        pub.subscribe(self.roi_graph_changed, "SINGLE ROI GRAPH CHANGED")
-        pub.subscribe(self.roi_changed, "RUBY ROI CHANGED")
-        pub.subscribe(self.exp_data_changed, "EXP RUBY DATA CHANGED")
+        pub.subscribe(self.roi_graph_changed, "DIAMOND ROI GRAPH CHANGED")
+        pub.subscribe(self.roi_changed, "DIAMOND ROI CHANGED")
+        pub.subscribe(self.exp_data_changed, "EXP DIAMOND DATA CHANGED")
 
     def roi_txt_changed(self):
         roi = self.view.get_roi()
         roi[:2] = self.data.get_index_from(roi[:2])
         self.data.roi.set_roi(roi)
-        pub.sendMessage("RUBY ROI CHANGED")
+        pub.sendMessage("DIAMOND ROI CHANGED")
 
     def roi_changed(self):
         self.view.update_graph_roi()
@@ -46,7 +44,7 @@ class TRaxROIControllerRuby(object):
 
     def roi_graph_changed(self, data):
         self.data.roi.set_roi(data)
-        pub.sendMessage("RUBY ROI CHANGED")
+        pub.sendMessage("DIAMOND ROI CHANGED")
 
 
     def exp_data_changed(self):
@@ -75,3 +73,4 @@ class TRaxROIControllerRuby(object):
         self.view.move(self.parent.x(),
                        self.parent.y() + self.parent.height() + 50)
         self.view.resize(self.parent.size().width(), self.view.size().height())
+

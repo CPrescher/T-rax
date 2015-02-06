@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from wx.lib.pubsub import pub
 
-from view.RoiView import TRaxROIView
+from view.old.RoiView import TRaxROIView
 
 
 class TRaxROITemperatureController(object):

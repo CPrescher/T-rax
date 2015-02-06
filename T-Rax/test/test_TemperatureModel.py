@@ -6,7 +6,7 @@ import os
 
 import numpy as np
 
-from model.new.TemperatureModel import TemperatureModel
+from model import TemperatureModel
 
 
 unittest_path = os.path.dirname(__file__)

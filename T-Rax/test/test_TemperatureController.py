@@ -8,7 +8,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtTest import QTest
 import numpy as np
 
-from controller.new.TemperatureController import TemperatureController
+from controller import TemperatureController
 from view.new.TemperatureWidget import TemperatureWidget
 
 

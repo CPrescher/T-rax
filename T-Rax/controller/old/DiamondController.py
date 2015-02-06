@@ -5,8 +5,8 @@ from PyQt4 import QtGui, QtCore
 import numpy as np
 
 from controller.ModuleController import TRaxModuleController
-from controller.RoiSelectorDiamondController import TRaxROIControllerDiamond
-from model.DiamondData import DiamondData
+from controller.old.RoiSelectorDiamondController import TRaxROIControllerDiamond
+from model.old import DiamondData
 
 
 class TRaxDiamondController(TRaxModuleController):

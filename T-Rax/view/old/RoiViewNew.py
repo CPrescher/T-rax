@@ -5,7 +5,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 
 from Views.UIFiles.ROI_Selector import Ui_roi_selector_main_widget
-from ImgView import ImgView
+from view.old import ImgView
 
 
 class RoiView(QtGui.QWidget, Ui_roi_selector_main_widget):

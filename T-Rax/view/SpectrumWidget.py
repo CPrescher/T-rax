@@ -5,7 +5,7 @@ from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
 
-from view.new.ModifiedPlotItem import ModifiedPlotItem
+from view.ModifiedPlotItem import ModifiedPlotItem
 
 pg.setConfigOption('useOpenGL', False)
 pg.setConfigOption('leftButtonPan', False)

@@ -661,7 +661,7 @@ class ResizeableRectangle:
 
 
 if __name__ == "__main__":
-    from Model.TemperatureData import TemperatureData
+    from model.old import TemperatureData
 
     app = QtGui.QApplication(sys.argv)
     data = TemperatureData()

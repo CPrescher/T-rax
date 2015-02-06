@@ -6,8 +6,7 @@ from scipy.optimize import curve_fit
 
 from model.SpeFile import SpeFile
 from model.GeneralData import GeneralData
-
-from model.RoiData import RoiDataManager
+from model.old.RoiData import RoiDataManager
 
 
 class TemperatureData(GeneralData):
@@ -471,5 +470,6 @@ def gauss_curve_function(x, scaling, center, sigma):
 
 
 # to enable legacy setting files:
-from model.TemperatureSettings import TemperatureSettings
+from model.old import TemperatureSettings
+
 TraxTemperatureSettings = TemperatureSettings

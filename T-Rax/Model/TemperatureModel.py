@@ -4,11 +4,10 @@ __author__ = 'Clemens Prescher'
 from PyQt4 import QtCore
 import numpy as np
 from scipy.optimize import curve_fit
-import pickle
 import h5py
 
 from model.Spectrum import Spectrum
-from model.new.RoiData import RoiDataManager, Roi
+from model.RoiData import RoiDataManager, Roi
 from model.SpeFile import SpeFile
 from model.helper import FileNameIterator
 

@@ -3,8 +3,8 @@ from PyQt4 import QtCore
 import numpy as np
 
 from controller.ModuleController import TRaxModuleController
-from controller.RoiSelectorRubyController import TRaxROIControllerRuby
-from model.RubyData import RubyData
+from controller.old.RoiSelectorRubyController import TRaxROIControllerRuby
+from model.old import RubyData
 
 
 class TRaxRubyController(TRaxModuleController):

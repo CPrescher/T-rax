@@ -5,7 +5,7 @@ import os
 from PyQt4 import QtCore, QtGui
 from functools import partial
 
-from view.new.TemperatureWidget import TemperatureWidget
+from view.TemperatureWidget import TemperatureWidget
 
 module_path = os.path.dirname(__file__)
 

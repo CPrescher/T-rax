@@ -2,7 +2,9 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
-from model.RoiData import RoiDataManager
+
+from model.old.RoiData import RoiDataManager
+
 
 class TestRoiDataManager(unittest.TestCase):
     def setUp(self):

@@ -2,8 +2,8 @@ import sys
 
 from PyQt4 import QtGui
 
-from controller.RoiSelectorTemperatureController import TRaxROITemperatureController
-from Model.TemperatureData import TemperatureData
+from controller.old.RoiSelectorTemperatureController import TRaxROITemperatureController
+from model.old import TemperatureData
 
 
 app = QtGui.QApplication(sys.argv)

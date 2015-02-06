@@ -1,382 +1,243 @@
+# -*- coding: utf8 -*-
+__author__ = 'Clemens Prescher'
+
 import os
-import pickle
 
-from wx.lib.pubsub import pub
-from PyQt4 import QtGui
-import numpy as np
-from epics import caput, PV
+from PyQt4 import QtGui, QtCore
 
-from controller.ModuleController import TRaxModuleController
-from controller.RoiSelectorTemperatureController import TRaxROITemperatureController
-from model.TemperatureData import TemperatureData, TemperatureSettings
+from view.TemperatureWidget import TemperatureWidget
+from model.TemperatureModel import TemperatureModel
 
 
-class TRaxTemperatureController(TRaxModuleController):
-    def __init__(self, parent, main_view):
-        self.data = TemperatureData()
-        super(TRaxTemperatureController, self).__init__(parent, self.data, main_view.temperature_control_widget)
-        self.parent = parent
-        self.main_view = main_view
+class TemperatureController(QtCore.QObject):
+    def __init__(self, temperature_widget):
+        """
+        :param temperature_widget: reference to the temperature widget
+        :type temperature_widget: TemperatureWidget
+        :return:
+        """
+        super(TemperatureController, self).__init__()
+        self.widget = temperature_widget
+        self.model = TemperatureModel()
+
         self.create_signals()
-        pub.sendMessage("EXP DATA CHANGED")
-        pub.sendMessage("ROI CHANGED")
+
+        self._exp_working_dir = ''
+        self._setting_working_dir = ''
 
     def create_signals(self):
-        self.create_frame_signals()
+        # File signals
+        self.connect_click_function(self.widget.load_data_file_btn, self.load_data_file)
+        self.widget.load_next_data_file_btn.clicked.connect(self.model.load_next_data_image)
+        self.widget.load_previous_data_file_btn.clicked.connect(self.model.load_previous_data_image)
+        self.widget.load_next_frame_btn.clicked.connect(self.model.load_next_img_frame)
+        self.widget.load_previous_frame_btn.clicked.connect(self.model.load_previous_img_frame)
 
-        self.create_temperature_pub_listeners()
-        self.create_calibration_signals()
-        self.create_fit_range_signals()
-        self.create_settings_signals()
+        # Calibration signals
+        self.connect_click_function(self.widget.load_ds_calibration_file_btn, self.load_ds_calibration_file)
+        self.connect_click_function(self.widget.load_us_calibration_file_btn, self.load_us_calibration_file)
 
-        self.main_view.temperature_control_widget.epics_connection_cb.clicked.connect(self.epics_connection_cb_clicked)
-        self.epics_is_connected = False
+        self.widget.ds_etalon_rb.toggled.connect(self.model.set_ds_calibration_modus)
+        self.widget.us_etalon_rb.toggled.connect(self.model.set_us_calibration_modus)
 
-    def load_settings(self):
+        self.connect_click_function(self.widget.ds_load_etalon_file_btn, self.load_ds_etalon_file)
+        self.connect_click_function(self.widget.us_load_etalon_file_btn, self.load_us_etalon_file)
+
+        self.widget.ds_temperature_txt.editingFinished.connect(self.ds_temperature_txt_changed)
+        self.widget.us_temperature_txt.editingFinished.connect(self.us_temperature_txt_changed)
+
+        #Setting signals
+        self.connect_click_function(self.widget.load_setting_btn, self.load_setting_file)
+        self.connect_click_function(self.widget.save_setting_btn, self.save_setting_file)
+        self.widget.settings_cb.currentIndexChanged.connect(self.settings_cb_changed)
+
+        # model signals
+        self.model.data_changed.connect(self.data_changed)
+        self.model.ds_calculations_changed.connect(self.ds_calculations_changed)
+        self.model.us_calculations_changed.connect(self.us_calculations_changed)
+
+        self.widget.roi_widget.rois_changed.connect(self.widget_rois_changed)
+
+
+
+    def connect_click_function(self, emitter, function):
+        self.widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
+
+    def load_data_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load Experiment SPE",
+                                                             directory=self._exp_working_dir))
+
+        if filename is not '':
+            self._exp_working_dir = os.path.dirname(filename)
+            self.model.load_data_image(filename)
+
+    def load_ds_calibration_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load Downstream Calibration SPE",
+                                                             directory=self._exp_working_dir))
+
+        if filename is not '':
+            self._exp_working_dir = os.path.dirname(filename)
+            self.model.load_ds_calibration_image(filename)
+
+    def load_us_calibration_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load Upstream Calibration SPE",
+                                                             directory=self._exp_working_dir))
+
+        if filename is not '':
+            self._exp_working_dir = os.path.dirname(filename)
+            self.model.load_us_calibration_image(filename)
+
+    def ds_temperature_txt_changed(self):
+        new_temperature = float(str(self.widget.ds_temperature_txt.text()))
+        self.model.set_ds_calibration_temperature(new_temperature)
+
+    def us_temperature_txt_changed(self):
+        new_temperature = float(str(self.widget.us_temperature_txt.text()))
+        self.model.set_us_calibration_temperature(new_temperature)
+
+    def load_ds_etalon_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load Downstream Etalon Spectrum",
+                                                             directory=self._exp_working_dir))
+
+        if filename is not '':
+            self._exp_working_dir = os.path.dirname(filename)
+            self.model.load_ds_etalon_spectrum(filename)
+
+    def load_us_etalon_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load Upstream Etalon Spectrum",
+                                                             directory=self._exp_working_dir))
+
+        if filename is not '':
+            self._exp_working_dir = os.path.dirname(filename)
+            self.model.load_us_etalon_spectrum(filename)
+
+    def save_setting_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getSaveFileName(self.widget, caption="Save setting file",
+                                                             directory=self._setting_working_dir))
+
+        if filename is not '':
+            self._setting_working_dir = os.path.dirname(filename)
+            self.model.save_setting(filename)
+            self.update_setting_combobox()
+
+    def load_setting_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load setting file",
+                                                             directory=self._setting_working_dir))
+
+        if filename is not '':
+            self._setting_working_dir = os.path.dirname(filename)
+            self.model.load_setting(filename)
+            self.update_setting_combobox()
+
+    def update_setting_combobox(self):
         self._settings_files_list = []
         self._settings_file_names_list = []
         try:
-            for file in os.listdir(self._settings_working_dir):
+            for file in os.listdir(self._setting_working_dir):
                 if file.endswith('.trs'):
                     self._settings_files_list.append(file)
                     self._settings_file_names_list.append(file.split('.')[:-1][0])
         except:
             pass
-        self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
-        self.main_view.temperature_control_widget.settings_cb.clear()
-        self.main_view.temperature_control_widget.settings_cb.addItem('None')
-        self.main_view.temperature_control_widget.settings_cb.addItems(self._settings_file_names_list)
-        self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
-
-    def create_temperature_pub_listeners(self):
-        pub.subscribe(self.data_changed, "EXP DATA CHANGED")
-        pub.subscribe(self.frame_changed, "EXP DATA FRAME CHANGED")
-        pub.subscribe(self.roi_changed, "ROI CHANGED")
-
-    def create_frame_signals(self):
-        self.main_view.temperature_control_widget.frame_number_txt.editingFinished.connect(self.frame_txt_value_changed)
-        self.connect_click_function(self.main_view.temperature_control_widget.next_frame_btn, self.load_next_frame)
-        self.connect_click_function(self.main_view.temperature_control_widget.previous_frame_btn,
-                                    self.load_previous_frame)
-        self.connect_click_function(self.main_view.temperature_control_widget.time_lapse_btn, self.start_time_lapse)
-
-    def create_calibration_signals(self):
-        self.connect_click_function(self.main_view.temperature_control_widget.load_ds_calib_data_btn,
-                                    self.load_ds_calib_data)
-        self.connect_click_function(self.main_view.temperature_control_widget.load_us_calib_data_btn,
-                                    self.load_us_calib_data)
-        self.main_view.temperature_control_widget.ds_temperature_rb.clicked.connect(self.ds_temperature_rb_clicked)
-        self.main_view.temperature_control_widget.us_temperature_rb.clicked.connect(self.us_temperature_rb_clicked)
-        self.main_view.temperature_control_widget.ds_etalon_rb.clicked.connect(self.ds_etalon_rb_clicked)
-        self.main_view.temperature_control_widget.us_etalon_rb.clicked.connect(self.us_etalon_rb_clicked)
-        self.connect_click_function(self.main_view.temperature_control_widget.ds_etalon_btn, self.load_ds_etalon_data)
-        self.connect_click_function(self.main_view.temperature_control_widget.us_etalon_btn, self.load_us_etalon_data)
-        self.main_view.temperature_control_widget.ds_temperature_txt.editingFinished.connect(
-            self.ds_temperature_changed)
-        self.main_view.temperature_control_widget.us_temperature_txt.editingFinished.connect(
-            self.us_temperature_changed)
-
-    def create_fit_range_signals(self):
-        self.main_view.temperature_control_widget.fit_from_txt.editingFinished.connect(self.fit_txt_changed)
-        self.main_view.temperature_control_widget.fit_to_txt.editingFinished.connect(self.fit_txt_changed)
-
-    def create_settings_signals(self):
-        self.connect_click_function(self.main_view.temperature_control_widget.save_settings_btn,
-                                    self.save_settings_btn_click)
-        self.connect_click_function(self.main_view.temperature_control_widget.load_settings_btn,
-                                    self.load_settings_btn_click)
-        self.main_view.temperature_control_widget.settings_cb.currentIndexChanged.connect(self.settings_cb_changed)
-
-    def load_roi_view(self):
-        try:
-            self.roi_controller.show()
-        except AttributeError:
-            self.roi_controller = TRaxROITemperatureController(self.data, parent=self.main_view)
-            self.roi_controller.show()
-
-    def data_changed(self):
-        self.frame_changed()
-        self.update_pv_names()
-        self.update_time_lapse()
-
-    def frame_changed(self):
-        self.data.calculate_spectra()
-        try:
-            us_calibration_filename_str = self.data.get_us_calibration_data().filename
-        except AttributeError:
-            us_calibration_filename_str = 'Select File...'
-
-        try:
-            ds_calibration_filename_str = self.data.get_ds_calibration_data().filename
-        except AttributeError:
-            ds_calibration_filename_str = 'Select File...'
-
-        self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
-                                                     self.data.exp_data.get_ds_roi_max(),
-                                                     self.data.exp_data.get_us_roi_max(),
-                                                     ds_calibration_filename_str, us_calibration_filename_str)
-        self.main_view.set_temperature_filename(self.data.exp_data.filename.replace('\\', '/').split('/')[-1])
-        self.main_view.set_temperature_foldername(
-            '/'.join(self.data.exp_data.filename.replace('\\', '/').split('/')[-3:-1]))
-        self.main_view.status_file_information_lbl.setText(self.data.exp_data.get_file_information())
-        self.main_view.set_fit_limits(self.data.get_x_roi_limits())
-        self.update_frames_widget()
-        self.update_calibration_view()
-
-    def update_frames_widget(self):
-        if self.data.exp_data.num_frames > 1:
-            self.main_view.temperature_control_widget.frames_widget.show()
-            self.main_view.temperature_control_widget.frame_line.show()
-            self.main_view.temperature_control_widget.frame_number_txt.blockSignals(True)
-            self.main_view.temperature_control_widget.frame_number_txt.setText(
-                str(self.data.exp_data.current_frame + 1))
-            if self.data.exp_data.current_frame + 1 == self.data.exp_data.num_frames:
-                self.main_view.temperature_control_widget.next_frame_btn.setDisabled(True)
-            else:
-                self.main_view.temperature_control_widget.next_frame_btn.setDisabled(False)
-            if self.data.exp_data.current_frame == 0:
-                self.main_view.temperature_control_widget.previous_frame_btn.setDisabled(True)
-            else:
-                self.main_view.temperature_control_widget.previous_frame_btn.setDisabled(False)
-            self.main_view.temperature_control_widget.frame_number_txt.blockSignals(False)
-        else:
-            self.main_view.temperature_control_widget.frames_widget.hide()
-            self.main_view.temperature_control_widget.frame_line.hide()
-
-    def update_time_lapse(self):
-        if self.data.exp_data.num_frames > 1:
-            try:
-                if self._time_lapse_is_on:
-                    self.plot_time_lapse()
-            except:
-                pass
-        else:
-            self.parent.output_graph_controller.hide()
-
-    def update_calibration_view(self):
-        try:
-            us_calibration_filename_str = self.data.get_us_calibration_data().filename
-        except AttributeError:
-            us_calibration_filename_str = 'Select File...'
-
-        try:
-            ds_calibration_filename_str = self.data.get_ds_calibration_data().filename
-        except AttributeError:
-            ds_calibration_filename_str = 'Select File...'
-
-        self.main_view.set_calib_filenames(ds_calibration_filename_str.replace('\\', '/').split('/')[-1],
-                                           us_calibration_filename_str.replace('\\', '/').split('/')[-1])
-        self.main_view.temperature_control_widget.ds_etalon_lbl.setText(self.data.get_ds_calibration_parameter().
-            get_etalon_filename().replace('\\', '/').
-            split('/')[-1])
-        self.main_view.temperature_control_widget.us_etalon_lbl.setText(self.data.get_us_calibration_parameter().
-            get_etalon_filename().replace('\\', '/').
-            split('/')[-1])
-        ds_modus = self.data.get_ds_calibration_parameter().modus
-        us_modus = self.data.get_us_calibration_parameter().modus
-        if us_modus == 0:
-            self.main_view.temperature_control_widget.us_temperature_rb.toggle()
-        elif us_modus == 1:
-            self.main_view.temperature_control_widget.us_etalon_rb.toggle()
-
-        if ds_modus == 0:
-            self.main_view.temperature_control_widget.ds_temperature_rb.toggle()
-        elif ds_modus == 1:
-            self.main_view.temperature_control_widget.ds_etalon_rb.toggle()
-
-    def roi_changed(self):
-        self.data.calculate_spectra()
-
-        try:
-            us_calibration_filename_str = self.data.get_us_calibration_data().filename
-        except AttributeError:
-            us_calibration_filename_str = 'Select File...'
-
-        try:
-            ds_calibration_filename_str = self.data.get_ds_calibration_data().filename
-        except AttributeError:
-            ds_calibration_filename_str = 'Select File...'
-
-        self.main_view.temperature_axes.update_graph(self.data.get_ds_spectrum(), self.data.get_us_spectrum(),
-                                                     self.data.exp_data.get_ds_roi_max(),
-                                                     self.data.exp_data.get_us_roi_max(),
-                                                     ds_calibration_filename_str, us_calibration_filename_str)
-        self.main_view.set_fit_limits(self.data.get_x_roi_limits())
-
-    def frame_txt_value_changed(self):
-        self.data.exp_data.set_current_frame(
-            int(self.main_view.temperature_control_widget.frame_number_txt.text()) - 1)
-
-    def load_next_frame(self):
-        self.data.exp_data.load_next_frame()
-
-    def load_previous_frame(self):
-        self.data.exp_data.load_previous_frame()
-
-    def start_time_lapse(self):
-        self._time_lapse_is_on = True
-        self.plot_time_lapse()
-
-
-    def plot_time_lapse(self):
-        ds_temperature, ds_temperature_err, us_temperature, us_temperature_err = self.data.calculate_time_lapse()
-        self.parent.output_graph_controller.show()
-        self.parent.output_graph_controller.plot_temperature_series(self.data.exp_data.get_exposure_time(), \
-                                                                    ds_temperature, ds_temperature_err, us_temperature,
-                                                                    us_temperature_err)
-
-    def update_pv_names(self):
-        if self.epics_is_connected:
-            # self.pv_us_temperature.put(self.Model.get_us_temp())
-            #self.pv_ds_temperature.put(self.Model.get_ds_temp())
-            #self.pv_us_int.put(self.Model.get_us_roi_max())
-            #self.pv_ds_int.put(self.Model.get_ds_roi_max())
-            caput('13IDD:us_las_temp.VAL', self.data.get_us_temperature())
-            caput('13IDD:ds_las_temp.VAL', self.data.get_ds_temperature())
-
-            caput('13IDD:up_t_int', str(self.data.exp_data.get_us_roi_max()))
-            caput('13IDD:dn_t_int', str(self.data.exp_data.get_ds_roi_max()))
-
-    def load_ds_calib_data(self, filename=None):
-        if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Downstream calibration SPE",
-                                                             directory=self._calib_working_dir))
-
-        if filename is not '':
-            self._calib_working_dir = '/'.join(str(filename).replace('\\', '/').split('/')[0:-1]) + '/'
-            self.data.load_ds_calibration_data(filename)
-
-    def load_us_calib_data(self, filename=None):
-        if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Upstream calibration SPE",
-                                                             directory=self._calib_working_dir))
-
-        if filename is not '':
-            self._calib_working_dir = '/'.join(str(filename).replace('\\', '/').split('/')[0:-1]) + '/'
-            self.data.load_us_calibration_data(filename)
-
-    def ds_temperature_rb_clicked(self):
-        self.data.get_ds_calibration_parameter().set_modus(0)
-
-    def us_temperature_rb_clicked(self):
-        self.data.get_us_calibration_parameter().set_modus(0)
-
-    def ds_etalon_rb_clicked(self):
-        self.data.get_ds_calibration_parameter().set_modus(1)
-
-    def us_etalon_rb_clicked(self):
-        self.data.get_us_calibration_parameter().set_modus(1)
-
-    def load_ds_etalon_data(self, filename=None):
-        if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Downstream Etalaon Spectrum",
-                                                             directory=self._calib_working_dir))
-
-        if filename is not '':
-            self.data.get_ds_calibration_parameter().load_etalon_spectrum(filename)
-
-    def load_us_etalon_data(self, filename=None):
-        if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load Upstream Etalaon Spectrum",
-                                                             directory=self._calib_working_dir))
-
-        if filename is not '':
-            self.data.get_us_calibration_parameter().load_etalon_spectrum(filename)
-
-    def ds_temperature_changed(self):
-        self.data.get_ds_calibration_parameter().set_temperature(
-            np.double(self.main_view.temperature_control_widget.ds_temperature_txt.text()))
-
-    def us_temperature_changed(self):
-        self.data.get_us_calibration_parameter().set_temperature(
-            np.double(self.main_view.temperature_control_widget.us_temperature_txt.text()))
-
-    def fit_txt_changed(self):
-        limits = self.main_view.temperature_control_widget.get_fit_limits()
-        self.data.set_x_roi_limits_to(limits)
-
-
-    def save_settings_btn_click(self, filename=None):
-        if filename is None:
-            filename = str(QtGui.QFileDialog.getSaveFileName(self.main_view, caption="Save current settings",
-                                                             directory=self._settings_working_dir, filter='*.trs'))
-
-        if filename is not '':
-            pickle.dump(TemperatureSettings(self.data), open(filename, 'wb'))
-            self._settings_working_dir = '/'.join(str(filename).replace('\\', '/').split('/')[0:-1]) + '/'
-            self.load_settings()
-            try:
-                ind = self.main_view.temperature_control_widget.settings_cb.findText(
-                    filename.replace('\\', '/').split('/')[-1].split('.')[:-1][0])
-                self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
-                self.main_view.temperature_control_widget.settings_cb.setCurrentIndex(ind)
-                self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
-            except:
-                pass
-
-    def load_settings_btn_click(self, filename=None):
-        """
-
-        :type self: object
-        """
-        if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_view, caption="Load new setting",
-                                                             directory=self._settings_working_dir, filter='*.trs'))
-
-        if filename is not '':
-            settings = pickle.load(open(filename, 'rb'))
-            self._settings_working_dir = '/'.join(str(filename).replace('\\', '/').split('/')[0:-1]) + '/'
-            self.load_settings()
-            self.main_view.temperature_control_widget.ds_temperature_txt.setText(
-                str(int(settings.ds_calibration_temperature)))
-            self.main_view.temperature_control_widget.us_temperature_txt.setText(
-                str(int(settings.us_calibration_temperature)))
-
-            self.main_view.temperature_control_widget.ds_temperature_rb.blockSignals(True)
-            self.main_view.temperature_control_widget.us_temperature_rb.blockSignals(True)
-            self.main_view.temperature_control_widget.ds_etalon_rb.blockSignals(True)
-            self.main_view.temperature_control_widget.us_etalon_rb.blockSignals(True)
-            if settings.ds_calibration_modus == 0:
-                self.main_view.temperature_control_widget.ds_temperature_rb.toggle()
-            else:
-                self.main_view.temperature_control_widget.ds_etalon_rb.toggle()
-
-            if settings.us_calibration_modus == 0:
-                self.main_view.temperature_control_widget.us_temperature_rb.toggle()
-            else:
-                self.main_view.temperature_control_widget.us_etalon_rb.toggle()
-
-            self.main_view.temperature_control_widget.ds_temperature_rb.blockSignals(False)
-            self.main_view.temperature_control_widget.us_temperature_rb.blockSignals(False)
-            self.main_view.temperature_control_widget.ds_etalon_rb.blockSignals(False)
-            self.main_view.temperature_control_widget.us_etalon_rb.blockSignals(False)
-
-            TemperatureSettings.load_settings(settings, self.data)
-            try:
-                ind = self.main_view.temperature_control_widget.settings_cb.findText(
-                    filename.replace('\\', '/').split('/')[-1].split('.')[:-1][0])
-                self.main_view.temperature_control_widget.settings_cb.blockSignals(True)
-                self.main_view.temperature_control_widget.settings_cb.setCurrentIndex(ind)
-                self.main_view.temperature_control_widget.settings_cb.blockSignals(False)
-            except:
-                pass
-
+        self.widget.settings_cb.blockSignals(True)
+        self.widget.settings_cb.clear()
+        self.widget.settings_cb.addItems(self._settings_file_names_list)
+        self.widget.settings_cb.blockSignals(False)
 
     def settings_cb_changed(self):
-        current_index = self.main_view.temperature_control_widget.settings_cb.currentIndex()
-        if not current_index == 0:  # is the None index
-            new_file_name = self._settings_working_dir + self._settings_files_list[
-                current_index - 1]  # therefore also one has to be deleted
-            self.load_settings_btn_click(new_file_name)
+        current_index = self.widget.settings_cb.currentIndex()
+        new_file_name = os.path.join(self._setting_working_dir, self._settings_files_list[current_index])# therefore also one has to be deleted
+        self.load_setting_file(new_file_name)
+        self.widget.settings_cb.blockSignals(True)
+        self.widget.settings_cb.setCurrentIndex(current_index)
+        self.widget.settings_cb.blockSignals(False)
 
 
-    def epics_connection_cb_clicked(self):
-        if self.main_view.temperature_control_widget.epics_connection_cb.isChecked():
-            self.pv_us_temperature = PV('13IDD:us_las_temp.VAL')
-            self.pv_ds_temperature = PV('13IDD:ds_las_temp.VAL')
-            self.pv_us_int = PV('13IDD:up_t_int')
-            self.pv_ds_int = PV('13IDD:dn_t_int')
-            self.epics_is_connected = True
-            self.update_pv_names()
+    def data_changed(self):
+        self.widget.roi_widget.plot_img(self.model.data_img)
+        self.widget.roi_widget.set_rois(self.model.get_roi_data_list())
+
+        # update exp data widget
+        #####################################
+
+        if self.model.data_img_file is not None:
+            self.widget.filename_lbl.setText(os.path.basename(self.model.data_img_file.filename))
+            dirname = os.path.sep.join(os.path.dirname(self.model.data_img_file.filename).split(os.path.sep)[-2:])
+            self.widget.dirname_lbl.setText(dirname)
+            if self.model.data_img_file.num_frames > 1:
+                self.widget.frame_widget.setVisible(True)
+            else:
+                self.widget.frame_widget.setVisible(False)
+            self.widget.frame_num_txt.setText(str(self.model.current_frame+1))
         else:
-            self.epics_is_connected = False
+            self.widget.filename_lbl.setText('Select File...')
+            self.widget.dirname_lbl.setText('')
+            self.widget.frame_widget.setVisible(False)
+
+        self.ds_calculations_changed()
+        self.us_calculations_changed()
+
+
+    def ds_calculations_changed(self):
+        if self.model.ds_calibration_filename is not None:
+            self.widget.ds_calibration_filename_lbl.setText(os.path.basename(self.model.ds_calibration_filename))
+        else:
+            self.widget.ds_calibration_filename_lbl.setText('Select File...')
+
+
+        self.widget.ds_etalon_filename_lbl.setText(os.path.basename(self.model.ds_etalon_filename))
+        self.widget.ds_etalon_rb.setChecked(self.model.ds_temperature_model.calibration_parameter.modus)
+        self.widget.ds_temperature_txt.setText(str(self.model.ds_temperature_model.calibration_parameter.temperature))
+
+        if len(self.model.ds_corrected_spectrum):
+            ds_plot_spectrum = self.model.ds_corrected_spectrum
+        else:
+            ds_plot_spectrum = self.model.ds_data_spectrum
+
+        self.widget.graph_widget.plot_ds_data(*ds_plot_spectrum.data)
+        self.widget.graph_widget.plot_ds_fit(*self.model.ds_fit_spectrum.data)
+
+        self.widget.graph_widget.update_ds_temperature_txt(self.model.ds_temperature,
+                                                           self.model.ds_temperature_error)
+        self.widget.graph_widget.update_ds_roi_max_txt(self.model.ds_temperature_model.data_roi_max)
+
+    def us_calculations_changed(self):
+        if self.model.us_calibration_filename is not None:
+            self.widget.us_calibration_filename_lbl.setText(os.path.basename(self.model.us_calibration_filename))
+        else:
+            self.widget.us_calibration_filename_lbl.setText('Select File...')
+
+        self.widget.us_etalon_filename_lbl.setText(os.path.basename(self.model.us_etalon_filename))
+        self.widget.us_etalon_rb.setChecked(self.model.us_temperature_model.calibration_parameter.modus)
+        self.widget.us_temperature_txt.setText(str(self.model.us_temperature_model.calibration_parameter.temperature))
+
+        if len(self.model.us_corrected_spectrum):
+            us_plot_spectrum = self.model.us_corrected_spectrum
+        else:
+            us_plot_spectrum = self.model.us_data_spectrum
+
+        self.widget.graph_widget.plot_us_data(*us_plot_spectrum.data)
+        self.widget.graph_widget.plot_us_fit(*self.model.us_fit_spectrum.data)
+        self.widget.graph_widget.update_us_temperature_txt(self.model.us_temperature,
+                                                           self.model.us_temperature_error)
+        self.widget.graph_widget.update_us_roi_max_txt(self.model.us_temperature_model.data_roi_max)
+
+
+    def widget_rois_changed(self, roi_list):
+        self.model.set_rois(roi_list[0], roi_list[1])
+
+
+if __name__ == '__main__':
+    app = QtGui.QApplication([])
+    widget = TemperatureWidget()
+    controller = TemperatureController(widget)
+    widget.show()
+    widget.raise_()
+    app.exec_()

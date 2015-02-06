@@ -4,14 +4,14 @@ import os
 import numpy as np
 from PyQt4 import QtGui
 
-from controller.MainController import TRaxMainController
+from controller.MainController import MainController
 
 test_path = os.path.dirname(__file__)
 
 class TestMainController(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication([])
-        self.main_controller = TRaxMainController()
+        self.main_controller = MainController()
         self.temperature_controller = self.main_controller.temperature_controller
         self.ruby_controller = self.main_controller.ruby_controller
         self.diamond_controller = self.main_controller.diamond_controller

@@ -2,8 +2,10 @@
 __author__ = 'Clemens Prescher'
 
 from wx.lib.pubsub import pub
-from model.RoiData import RoiData
-from .TemperatureData import ExpDataFromImgData
+
+from model.old import RoiData
+from model.old.TemperatureData import ExpDataFromImgData
+
 
 class TemperatureSettings():
     def __init__(self, data):

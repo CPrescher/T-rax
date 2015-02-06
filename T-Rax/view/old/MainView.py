@@ -4,7 +4,7 @@ from PyQt4 import QtGui
 import matplotlib as mpl
 
 from view.UIFiles.T_Rax_MainWindow import Ui_T_Rax_MainWindow
-from view.ControlWidgets import DiamondControlWidget, RubyControlWidget, TemperatureControlWidget
+from view.old.ControlWidgets import DiamondControlWidget, RubyControlWidget, TemperatureControlWidget
 
 
 mpl.rcParams['font.size'] = 10

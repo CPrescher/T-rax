@@ -6,7 +6,7 @@ import pyqtgraph as pg
 import numpy as np
 from functools import partial
 from pyqtgraph.graphicsItems.ROI import Handle
-from view.new.HistogramLUTItem import HistogramLUTItem
+from view.HistogramLUTItem import HistogramLUTItem
 
 pg.setConfigOption('useOpenGL', False)
 pg.setConfigOption('leftButtonPan', False)

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from PyQt4 import QtGui
 
-from controller.MainController import TRaxMainController
+from controller.MainController import MainController
 import model
 
 # legacy issues
@@ -38,6 +38,6 @@ if _platform == "linux" or _platform == "linux2":
     app.setStyle('plastique')
 elif _platform == "win32" or _platform == 'cygwin':
     app.setStyle('plastique')
-controller = TRaxMainController(__version__)
+controller = MainController(__version__)
 controller.show_window()
 app.exec_()

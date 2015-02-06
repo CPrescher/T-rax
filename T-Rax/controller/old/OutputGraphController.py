@@ -1,6 +1,6 @@
 import numpy as np
 
-from view.OutputGraphView import TRaxOutputGraphView
+from view.old.OutputGraphView import TRaxOutputGraphView
 
 
 class TRaxOutputGraphController(object):

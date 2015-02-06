@@ -3,9 +3,8 @@ __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore, QtGui
 
-from view.new.TemperaturePlotWidget import TemperatureGraphWidget
-from view.new.SpectrumWidget import SpectrumWidget
-from view.new.RoiWidget import NewRoiWidget
+from view.SpectrumWidget import SpectrumWidget
+from view.RoiWidget import NewRoiWidget
 
 
 class TemperatureWidget(QtGui.QWidget):

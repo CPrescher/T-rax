@@ -3,8 +3,8 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib as mpl
 
-from view.UIFiles.T_Rax_ROI_Ruby_Selector import Ui_roi_selector_ruby_widget
-from view.RoiView import ResizeableRectangle
+from view.UIFiles.T_Rax_ROI_Diamond_Selector import Ui_roi_selector_diamond_widget
+from view.old.RoiView import ResizeableRectangle
 
 
 mpl.rcParams['font.size'] = 10
@@ -18,12 +18,12 @@ mpl.rc('figure', facecolor='#1E1E1E', edgecolor='black')
 import numpy as np
 
 
-class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
+class TRaxROIViewDiamond(QtGui.QWidget, Ui_roi_selector_diamond_widget):
     def __init__(self, data, parent=None):
-        super(TRaxROIViewRuby, self).__init__(None)
+        super(TRaxROIViewDiamond, self).__init__(None)
         self.data = data
         self.setupUi(self)
-        self.setWindowTitle('Ruby ROI Selector')
+        self.setWindowTitle('Diamond ROI Selector')
         self.set_validator()
         self.create_graph()
         self.draw_image()
@@ -59,7 +59,6 @@ class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
         self.plot_rects()
         self.redraw_figure()
         self.connect_rectangles()
-        self.mode = 'IMG'
 
     def plot_img(self):
         self.axes.cla()
@@ -79,7 +78,7 @@ class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
         self.create_wavelength_x_axis()
 
     def plot_rects(self):
-        self.rect = self.create_rectangle(self.data.roi, (0.77, 0, 0.01), 'SINGLE')
+        self.rect = self.create_rectangle(self.data.roi, (0, 0.5, 1), 'DIAMOND')
 
     def update_img(self):
         self.plot_img()
@@ -100,17 +99,17 @@ class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
         self.rect.connect()
 
     def create_wavelength_x_axis(self):
-        xlimits = self.data.get_x_limits()
+        xlimits = self.data.convert_wavelength_to_reverse_cm(self.data.get_x_limits())
         increment = self.get_x_axis_increment()
         xlimits = np.ceil(xlimits / increment) * increment
         xtick_num = np.arange(xlimits[0], xlimits[1], increment)
-        xtick_pos = self.data.get_index_from(xtick_num)
+        xtick_pos = self.data.get_index_from(self.data.convert_reverse_cm_to_wavelength(xtick_num))
         self.axes.set_xticks(xtick_pos)
-        self.axes.set_xticklabels((map(int, xtick_num)))
+        self.axes.set_xticklabels(map(int, xtick_num))
 
     def get_x_axis_increment(self):
-        data_x_limits = self.data.get_x_limits()
-        possible_increments = [50, 25, 10, 5, 2, 1]
+        data_x_limits = self.data.convert_wavelength_to_reverse_cm(self.data.get_x_limits())
+        possible_increments = [1000, 500, 200, 100, 50, 25, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02]
         for increment in possible_increments:
             x_tick_num = np.arange(data_x_limits[0], data_x_limits[1], increment)
             if len(x_tick_num) > 5:
@@ -135,13 +134,16 @@ class TRaxROIViewRuby(QtGui.QWidget, Ui_roi_selector_ruby_widget):
         self.set_txt_roi(txt_roi)
 
     def set_txt_roi(self, roi):
+        roi[:2] = self.data.convert_wavelength_to_reverse_cm(roi[:2])
         self.x_min_txt.setText(str(int(np.round(roi[0]))))
         self.x_max_txt.setText(str(int(np.round(roi[1]))))
         self.y_min_txt.setText(str(int(np.round(roi[2]))))
         self.y_max_txt.setText(str(int(np.round(roi[3]))))
 
     def get_roi(self):
-        return [int(str(self.x_min_txt.text())),
-                int(str(self.x_max_txt.text())),
-                int(str(self.y_min_txt.text())),
-                int(str(self.y_max_txt.text()))]
+        roi = [int(str(self.x_min_txt.text())),
+               int(str(self.x_max_txt.text())),
+               int(str(self.y_min_txt.text())),
+               int(str(self.y_max_txt.text()))]
+        roi[:2] = self.data.convert_reverse_cm_to_wavelength(roi[:2])
+        return roi
