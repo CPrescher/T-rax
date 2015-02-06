@@ -55,10 +55,20 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._ds_plot.setTitle("Downstream", color='FFFF00', size='20pt')
         self._ds_plot.setMinimumWidth(120)
 
+        self._time_lapse_plot = ModifiedPlotItem()
+        self._time_lapse_plot.showAxis('top', show=True)
+        self._time_lapse_plot.showAxis('right', show=True)
+        self._time_lapse_plot.getAxis('top').setStyle(showValues=False)
+        self._time_lapse_plot.getAxis('right').setStyle(showValues=False)
+
+
         self._pg_layout.addItem(self._ds_plot,0,0)
         self._pg_layout.addItem(self._us_plot,0,1)
+        self._pg_layout.addItem(self._time_lapse_plot, 1, 0, 1, 2)
         self._pg_layout.layout.setColumnStretchFactor(0, 1)
         self._pg_layout.layout.setColumnStretchFactor(1, 1)
+        self._pg_layout.layout.setRowStretchFactor(0, 3)
+        self._pg_layout.layout.setRowStretchFactor(1, 2)
 
         self._pg_layout_widget.addItem(self._pg_layout)
         self._layout.addWidget(self._pg_layout_widget)
@@ -105,6 +115,28 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
 
         self._ds_intensity_indicator = IntensityIndicator()
         self._ds_intensity_indicator.setParentItem(self._ds_plot)
+
+        self._time_lapse_ds_data_item = pg.PlotDataItem()
+        self._time_lapse_us_data_item = pg.PlotDataItem()
+
+        self._time_lapse_plot.addItem(self._time_lapse_ds_data_item)
+        self._time_lapse_plot.addItem(self._time_lapse_us_data_item)
+
+        self._time_lapse_ds_temperature_txt = pg.LabelItem()
+        self._time_lapse_us_temperature_txt = pg.LabelItem()
+        self._time_lapse_combined_temperature_txt = pg.LabelItem()
+
+        self._time_lapse_ds_temperature_txt.setParentItem(self._time_lapse_plot.vb)
+        self._time_lapse_us_temperature_txt.setParentItem(self._time_lapse_plot.vb)
+        self._time_lapse_combined_temperature_txt.setParentItem(self._time_lapse_plot.vb)
+
+        self._time_lapse_ds_temperature_txt.anchor(itemPos=(0, 0), parentPos=(0, 0), offset=(15, 10))
+        self._time_lapse_us_temperature_txt.anchor(itemPos=(1, 0), parentPos=(1, 0), offset=(-15, 10))
+        self._time_lapse_combined_temperature_txt.anchor(itemPos=(0.5, 0), parentPos=(0.5, 0), offset=(0, 10))
+
+        self._time_lapse_combined_temperature_txt.setText('combined:')
+        self._time_lapse_us_temperature_txt.setText('US:')
+        self._time_lapse_ds_temperature_txt.setText('DS:')
 
 
     def plot_ds_data(self, x, y):
