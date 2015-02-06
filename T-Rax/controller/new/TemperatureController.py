@@ -23,6 +23,7 @@ class TemperatureController(QtCore.QObject):
         self.create_signals()
 
         self._exp_working_dir = ''
+        self._setting_working_dir = ''
 
     def create_signals(self):
         # File signals
@@ -45,6 +46,10 @@ class TemperatureController(QtCore.QObject):
         self.widget.ds_temperature_txt.editingFinished.connect(self.ds_temperature_txt_changed)
         self.widget.us_temperature_txt.editingFinished.connect(self.us_temperature_txt_changed)
 
+        #Setting signals
+        self.connect_click_function(self.widget.load_setting_btn, self.load_setting_file)
+        self.connect_click_function(self.widget.save_setting_btn, self.save_setting_file)
+        self.widget.settings_cb.currentIndexChanged.connect(self.settings_cb_changed)
 
         # model signals
         self.model.data_changed.connect(self.data_changed)
@@ -52,6 +57,8 @@ class TemperatureController(QtCore.QObject):
         self.model.us_calculations_changed.connect(self.us_calculations_changed)
 
         self.widget.roi_widget.rois_changed.connect(self.widget_rois_changed)
+
+
 
     def connect_click_function(self, emitter, function):
         self.widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
@@ -109,6 +116,50 @@ class TemperatureController(QtCore.QObject):
             self._exp_working_dir = os.path.dirname(filename)
             self.model.load_us_etalon_spectrum(filename)
 
+    def save_setting_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getSaveFileName(self.widget, caption="Save setting file",
+                                                             directory=self._setting_working_dir))
+
+        if filename is not '':
+            self._setting_working_dir = os.path.dirname(filename)
+            self.model.save_setting(filename)
+            self.update_setting_combobox()
+
+    def load_setting_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load setting file",
+                                                             directory=self._setting_working_dir))
+
+        if filename is not '':
+            self._setting_working_dir = os.path.dirname(filename)
+            self.model.load_setting(filename)
+            self.update_setting_combobox()
+
+    def update_setting_combobox(self):
+        self._settings_files_list = []
+        self._settings_file_names_list = []
+        try:
+            for file in os.listdir(self._setting_working_dir):
+                if file.endswith('.trs'):
+                    self._settings_files_list.append(file)
+                    self._settings_file_names_list.append(file.split('.')[:-1][0])
+        except:
+            pass
+        self.widget.settings_cb.blockSignals(True)
+        self.widget.settings_cb.clear()
+        self.widget.settings_cb.addItems(self._settings_file_names_list)
+        self.widget.settings_cb.blockSignals(False)
+
+    def settings_cb_changed(self):
+        current_index = self.widget.settings_cb.currentIndex()
+        new_file_name = os.path.join(self._setting_working_dir, self._settings_files_list[current_index])# therefore also one has to be deleted
+        self.load_setting_file(new_file_name)
+        self.widget.settings_cb.blockSignals(True)
+        self.widget.settings_cb.setCurrentIndex(current_index)
+        self.widget.settings_cb.blockSignals(False)
+
+
     def data_changed(self):
         self.widget.roi_widget.plot_img(self.model.data_img)
         self.widget.roi_widget.set_rois(self.model.get_roi_data_list())
@@ -135,13 +186,15 @@ class TemperatureController(QtCore.QObject):
 
 
     def ds_calculations_changed(self):
-        try:
-            ds_calibration_filename_str = os.path.basename(self.model.ds_calibration_img_file.filename)
-        except AttributeError as e:
-            ds_calibration_filename_str = 'Select File...'
+        if self.model.ds_calibration_filename is not None:
+            self.widget.ds_calibration_filename_lbl.setText(os.path.basename(self.model.ds_calibration_filename))
+        else:
+            self.widget.ds_calibration_filename_lbl.setText('Select File...')
 
-        self.widget.ds_calibration_filename_lbl.setText(ds_calibration_filename_str)
+
         self.widget.ds_etalon_filename_lbl.setText(os.path.basename(self.model.ds_etalon_filename))
+        self.widget.ds_etalon_rb.setChecked(self.model.ds_temperature_model.calibration_parameter.modus)
+        self.widget.ds_temperature_txt.setText(str(self.model.ds_temperature_model.calibration_parameter.temperature))
 
         if len(self.model.ds_corrected_spectrum):
             ds_plot_spectrum = self.model.ds_corrected_spectrum
@@ -150,18 +203,20 @@ class TemperatureController(QtCore.QObject):
 
         self.widget.graph_widget.plot_ds_data(*ds_plot_spectrum.data)
         self.widget.graph_widget.plot_ds_fit(*self.model.ds_fit_spectrum.data)
+
         self.widget.graph_widget.update_ds_temperature_txt(self.model.ds_temperature,
-                                                        self.model.ds_temperature_error)
+                                                           self.model.ds_temperature_error)
         self.widget.graph_widget.update_ds_roi_max_txt(self.model.ds_temperature_model.data_roi_max)
 
     def us_calculations_changed(self):
-        try:
-            us_calibration_filename_str = os.path.basename(self.model.us_calibration_img_file.filename)
-        except AttributeError as e:
-            us_calibration_filename_str = 'Select File...'
+        if self.model.us_calibration_filename is not None:
+            self.widget.us_calibration_filename_lbl.setText(os.path.basename(self.model.us_calibration_filename))
+        else:
+            self.widget.us_calibration_filename_lbl.setText('Select File...')
 
-        self.widget.us_calibration_filename_lbl.setText(us_calibration_filename_str)
         self.widget.us_etalon_filename_lbl.setText(os.path.basename(self.model.us_etalon_filename))
+        self.widget.us_etalon_rb.setChecked(self.model.us_temperature_model.calibration_parameter.modus)
+        self.widget.us_temperature_txt.setText(str(self.model.us_temperature_model.calibration_parameter.temperature))
 
         if len(self.model.us_corrected_spectrum):
             us_plot_spectrum = self.model.us_corrected_spectrum
@@ -171,7 +226,7 @@ class TemperatureController(QtCore.QObject):
         self.widget.graph_widget.plot_us_data(*us_plot_spectrum.data)
         self.widget.graph_widget.plot_us_fit(*self.model.us_fit_spectrum.data)
         self.widget.graph_widget.update_us_temperature_txt(self.model.us_temperature,
-                                                        self.model.us_temperature_error)
+                                                           self.model.us_temperature_error)
         self.widget.graph_widget.update_us_roi_max_txt(self.model.us_temperature_model.data_roi_max)
 
 

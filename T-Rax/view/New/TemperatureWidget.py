@@ -72,6 +72,11 @@ class TemperatureWidget(QtGui.QWidget):
         self.ds_temperature_txt = self.control_widget.calibration_tab.downstream_gb.temperature_txt
         self.us_temperature_txt = self.control_widget.calibration_tab.upstream_gb.temperature_txt
 
+        self.load_setting_btn = self.control_widget.experiment_tab.settings_gb.load_setting_btn
+        self.save_setting_btn = self.control_widget.experiment_tab.settings_gb.save_setting_btn
+
+        self.settings_cb = self.control_widget.experiment_tab.settings_gb.settings_cb
+
         self.roi_img_item = self.roi_widget.img_widget.pg_img_item
 
 
@@ -193,20 +198,20 @@ class SettingsGroupBox(QtGui.QGroupBox):
         self._layout.setHorizontalSpacing(8)
 
         self.settings_cb = QtGui.QComboBox()
-        self.load_settings_btn = QtGui.QPushButton('Load')
-        self.save_settings_btn = QtGui.QPushButton('Save')
+        self.load_setting_btn = QtGui.QPushButton('Load')
+        self.save_setting_btn = QtGui.QPushButton('Save')
 
         self._layout.addWidget(self.settings_cb, 0, 0, 1, 2)
-        self._layout.addWidget(self.load_settings_btn, 1, 0)
-        self._layout.addWidget(self.save_settings_btn, 1, 1)
+        self._layout.addWidget(self.load_setting_btn, 1, 0)
+        self._layout.addWidget(self.save_setting_btn, 1, 1)
 
         self.style_widgets()
 
         self.setLayout(self._layout)
 
     def style_widgets(self):
-        self.load_settings_btn.setFlat(True)
-        self.save_settings_btn.setFlat(True)
+        self.load_setting_btn.setFlat(True)
+        self.save_setting_btn.setFlat(True)
 
         cleanlooks = QtGui.QStyleFactory.create('plastique')
         self.settings_cb.setStyle(cleanlooks)

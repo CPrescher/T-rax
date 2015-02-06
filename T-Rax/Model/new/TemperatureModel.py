@@ -176,13 +176,21 @@ class TemperatureModel(QtCore.QObject):
             self.ds_temperature_model.set_calibration_data(ds_group['image'][...],
                                                            ds_group['image'].attrs['x_calibration'][...])
             self.ds_calibration_filename = ds_group['image'].attrs['filename']
+            img_dimension = (self.ds_temperature_model.calibration_img.shape[1],
+                             self.ds_temperature_model.calibration_img.shape[0])
+            self.roi_data_manager.set_roi(0, img_dimension, ds_group['roi'][...])
+            self.ds_temperature_model._update_all_spectra()
         else:
             self.ds_temperature_model.reset_calibration_data()
             self.ds_calibration_filename = None
+            self.ds_roi = [0,0,0,0]
 
         etalon_data = ds_group['etalon_spectrum'][...]
         self.ds_temperature_model.calibration_parameter.set_etalon_spectrum(Spectrum(etalon_data[0,:],
                                                                                      etalon_data[1,:]))
+        self.ds_temperature_model.calibration_parameter.etalon_file_name = \
+            ds_group['etalon_spectrum'].attrs['filename']
+
         modus = ds_group['modus'][...]
         self.ds_temperature_model.calibration_parameter.set_modus(modus)
         temperature = ds_group['temperature'][...]
@@ -193,21 +201,30 @@ class TemperatureModel(QtCore.QObject):
             self.us_temperature_model.set_calibration_data(us_group['image'][...],
                                                            us_group['image'].attrs['x_calibration'][...])
             self.us_calibration_filename = us_group['image'].attrs['filename']
+            img_dimension = (self.us_temperature_model.calibration_img.shape[1],
+                             self.us_temperature_model.calibration_img.shape[0])
+            self.roi_data_manager.set_roi(1, img_dimension, us_group['roi'][...])
+            self.us_temperature_model._update_all_spectra()
         else:
             self.us_temperature_model.reset_calibration_data()
             self.us_calibration_filename = None
+            self.us_roi = [0,0,0,0]
 
         etalon_data = us_group['etalon_spectrum'][...]
         self.us_temperature_model.calibration_parameter.set_etalon_spectrum(Spectrum(etalon_data[0,:],
                                                                                      etalon_data[1,:]))
+        self.us_temperature_model.calibration_parameter.etalon_file_name = \
+            us_group['etalon_spectrum'].attrs['filename']
+
         self.us_temperature_model.calibration_parameter.set_modus(us_group['modus'][...])
         self.us_temperature_model.calibration_parameter.set_temperature(us_group['temperature'][...])
 
-        self.set_rois(ds_group['roi'][...], us_group['roi'][...])
+        self.ds_temperature_model.fit_data()
+        self.us_temperature_model.fit_data()
 
-        self.data_changed.emit()
         self.us_calculations_changed.emit()
         self.ds_calculations_changed.emit()
+        self.data_changed.emit()
 
 
 

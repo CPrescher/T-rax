@@ -182,4 +182,30 @@ class TestNewTemperatureController(unittest.TestCase):
         self.array_almost_equal(np.array(self.widget.graph_widget._us_fit_item.getData()),
                                 np.array(self.model.us_fit_spectrum.data))
 
+    def test_loading_settings(self):
+        filename = os.path.join(temperature_fitting_path, 'test_measurement.spe')
+        self.controller.load_data_file(filename)
+        setting_filename = os.path.join(temperature_fitting_path, 'PiMax.trs')
+        self.controller.load_setting_file(setting_filename)
+
+        self.assertEqual(self.widget.graph_widget._ds_temperature_txt_item.text,
+                         '1047 K &plusmn; 15')
+        self.assertEqual(self.widget.graph_widget._us_temperature_txt_item.text,
+                         '1414 K &plusmn; 2')
+
+        self.assertEqual(self.widget.ds_calibration_filename_lbl.text(),
+                         'ds_calibration.spe')
+        self.assertEqual(self.widget.us_calibration_filename_lbl.text(),
+                         'us_calibration.spe')
+
+        self.assertEqual(self.widget.ds_etalon_filename_lbl.text(),
+                         '15A_lamp.txt')
+        self.assertEqual(self.widget.us_etalon_filename_lbl.text(),
+                         '15A_lamp.txt')
+
+        self.assertEqual(self.widget.ds_temperature_txt.text(), '2500')
+        self.assertEqual(self.widget.us_temperature_txt.text(), '2300')
+
+        self.assertEqual(self.widget.settings_cb.count(), 1)
+
 
