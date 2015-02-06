@@ -1,10 +1,14 @@
-from Controller.MainController import TRaxMainController
-from PyQt4 import QtGui
 import sys
 from datetime import datetime
-import Model
 
-sys.modules['data'] = Model
+from PyQt4 import QtGui
+
+from controller.MainController import TRaxMainController
+import model
+
+
+sys.modules['data'] = model
+sys.modules['Model'] = model
 
 VERSION = 0.21
 

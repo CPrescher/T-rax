@@ -1,9 +1,11 @@
 import sys
-from PyQt4 import QtGui
-from UIFiles.T_Rax_MainWindow import Ui_T_Rax_MainWindow
-from Views.ControlWidgets import DiamondControlWidget, RubyControlWidget, TemperatureControlWidget
 
+from PyQt4 import QtGui
 import matplotlib as mpl
+
+from UIFiles.T_Rax_MainWindow import Ui_T_Rax_MainWindow
+from views.ControlWidgets import DiamondControlWidget, RubyControlWidget, TemperatureControlWidget
+
 
 mpl.rcParams['font.size'] = 10
 mpl.rcParams['lines.linewidth'] = 0.5

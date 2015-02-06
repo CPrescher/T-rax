@@ -1,9 +1,8 @@
-from PyQt4.QtCore import SIGNAL
 from PyQt4 import QtCore, QtGui
-import sys
 from wx.lib.pubsub import pub
 
-from Views.RoiView import TRaxROIView
+from views.RoiView import TRaxROIView
+
 
 class TRaxROITemperatureController(object):
     def __init__(self, data, parent=None):

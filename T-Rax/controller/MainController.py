@@ -1,22 +1,15 @@
 import sys
 import os
-import pickle
-from wx.lib.pubsub import setupkwargs
+
 from wx.lib.pubsub import pub
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import SIGNAL
 
-import numpy as np
-
-from Views.MainView import TRaxMainView
-
-from Controller.TemperatureController import TRaxTemperatureController
-from Controller.DiamondController import TRaxDiamondController
-from Controller.RubyController import TRaxRubyController
-from Controller.OutputGraphController import TRaxOutputGraphController
-from Controller.RoiSelectorTemperatureController import TRaxROITemperatureController
-from Controller.RoiSelectorRubyController import TRaxROIControllerRuby
-from Controller.RoiSelectorDiamondController import TRaxROIControllerDiamond
+from views.MainView import TRaxMainView
+from controller.TemperatureController import TRaxTemperatureController
+from controller.DiamondController import TRaxDiamondController
+from controller.RubyController import TRaxRubyController
+from controller.OutputGraphController import TRaxOutputGraphController
 
 
 class TRaxMainController(object):

@@ -1,15 +1,13 @@
-import sys
 import os
-import pickle
-from wx.lib.pubsub import setupkwargs
+
 from wx.lib.pubsub import pub
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import SIGNAL
 import numpy as np
 
-from Controller.ModuleController import TRaxModuleController
-from Controller.RoiSelectorDiamondController import TRaxROIControllerDiamond
-from Model.DiamondData import DiamondData
+from controller.ModuleController import TRaxModuleController
+
+from controller.ROISelectorDiamondController import TRaxROIControllerDiamond
+from model.DiamondData import DiamondData
 
 
 class TRaxDiamondController(TRaxModuleController):

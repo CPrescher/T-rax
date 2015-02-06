@@ -1,15 +1,12 @@
-import sys
-import os
-import pickle
-from wx.lib.pubsub import setupkwargs
 from wx.lib.pubsub import pub
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import SIGNAL
+
+from PyQt4 import QtCore
 import numpy as np
 
-from Controller.ModuleController import TRaxModuleController
-from Controller.RoiSelectorRubyController import TRaxROIControllerRuby
-from Model.RubyData import RubyData
+from controller.ModuleController import TRaxModuleController
+
+from controller.ROISelectorRubyController import TRaxROIControllerRuby
+from model.RubyData import RubyData
 
 
 class TRaxRubyController(TRaxModuleController):

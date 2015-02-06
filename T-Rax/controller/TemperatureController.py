@@ -1,16 +1,14 @@
 import os
 import pickle
-import Model
-import Model.TemperatureData as T_Rax_TemperatureData
-from wx.lib.pubsub import setupkwargs
+
 from wx.lib.pubsub import pub
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 import numpy as np
 from epics import caput, PV
 
-from Controller.ModuleController import TRaxModuleController
-from Controller.RoiSelectorTemperatureController import TRaxROITemperatureController
-from Model.TemperatureData import TemperatureData, TemperatureSettings
+from controller.ModuleController import TRaxModuleController
+from controller.ROISelectorTemperatureController import TRaxROITemperatureController
+from model.TemperatureData import TemperatureData, TemperatureSettings
 
 
 class TRaxTemperatureController(TRaxModuleController):

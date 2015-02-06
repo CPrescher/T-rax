@@ -1,10 +1,11 @@
-from UIFiles.T_Rax_ROI_Ruby_Selector import Ui_roi_selector_ruby_widget
-from Views.RoiView import ResizeableRectangle
 from PyQt4 import QtGui, QtCore
-
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib as mpl
+
+from UIFiles.T_Rax_ROI_Ruby_Selector import Ui_roi_selector_ruby_widget
+from views.RoiView import ResizeableRectangle
+
 
 mpl.rcParams['font.size'] = 10
 mpl.rcParams['lines.linewidth'] = 0.5
