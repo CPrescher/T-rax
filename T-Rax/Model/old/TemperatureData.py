@@ -5,7 +5,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 from model.SpeFile import SpeFile
-from model.GeneralData import GeneralData
+from model.old.GeneralData import GeneralData
 from model.old.RoiData import RoiDataManager
 
 

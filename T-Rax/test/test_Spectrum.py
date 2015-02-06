@@ -21,20 +21,6 @@ class SpectrumTest(unittest.TestCase):
     def array_not_almost_equal(self, array1, array2, places=7):
         self.assertNotAlmostEqual(np.sum(array1 - array2), 0, places=places)
 
-    def test_loading_chi_files(self):
-        spec = Spectrum()
-        x, y = spec.data
-
-        spec.load('TestData/dummy.chi'),
-        new_x, new_y = spec.data
-
-        self.assertNotEqual(len(x), len(new_x))
-        self.assertNotEqual(len(y), len(new_y))
-
-    def test_loading_invalid_file(self):
-        spec = Spectrum()
-        self.assertEqual(-1, spec.load("TestData/wrong_file_format.txt"))
-
     def test_saving_a_file(self):
         x = np.linspace(-5, 5, 100)
         y = x ** 2

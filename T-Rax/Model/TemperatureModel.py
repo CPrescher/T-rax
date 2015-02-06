@@ -97,7 +97,7 @@ class TemperatureModel(QtCore.QObject):
     #########################################################################
     def load_ds_calibration_image(self, filename):
         self.ds_calibration_img_file = SpeFile(filename)
-        self.ds_calculations_filename = filename
+        self.ds_calibration_filename = filename
         self.ds_temperature_model.set_calibration_data(self.ds_calibration_img_file.img,
                                                        self.ds_calibration_img_file.x_calibration)
         self.ds_calculations_changed.emit()
@@ -217,6 +217,9 @@ class TemperatureModel(QtCore.QObject):
 
         self.us_temperature_model.calibration_parameter.set_modus(us_group['modus'][...])
         self.us_temperature_model.calibration_parameter.set_temperature(us_group['temperature'][...])
+
+        self.ds_temperature_model._update_all_spectra()
+        self.us_temperature_model._update_all_spectra()
 
         self.ds_temperature_model.fit_data()
         self.us_temperature_model.fit_data()

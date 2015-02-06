@@ -1,12 +1,14 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
+from functools import partial
+
 from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
-import numpy as np
-from functools import partial
 from pyqtgraph.graphicsItems.ROI import Handle
+
 from view.HistogramLUTItem import HistogramLUTItem
+
 
 pg.setConfigOption('useOpenGL', False)
 pg.setConfigOption('leftButtonPan', False)
@@ -15,11 +17,11 @@ pg.setConfigOption('foreground', 'w')
 pg.setConfigOption('antialias', True)
 
 
-class NewRoiWidget(QtGui.QWidget):
+class RoiWidget(QtGui.QWidget):
     rois_changed = QtCore.pyqtSignal(list)
 
     def __init__(self, roi_num=1, roi_titles = ('',), roi_colors=((255, 255, 0)), *args, **kwargs):
-        super(NewRoiWidget, self).__init__(*args, **kwargs)
+        super(RoiWidget, self).__init__(*args, **kwargs)
         self.roi_num = roi_num
         self.roi_titles = roi_titles
         self.roi_colors = roi_colors

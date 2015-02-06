@@ -1,7 +1,7 @@
-import os
-
 import numpy as np
-from helper import FileNameIterator
+
+from model.helper import FileNameIterator
+
 
 class GeneralData(object):
     def __init__(self):

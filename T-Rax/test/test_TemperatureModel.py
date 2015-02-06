@@ -6,7 +6,7 @@ import os
 
 import numpy as np
 
-from model import TemperatureModel
+from model.TemperatureModel import TemperatureModel
 
 
 unittest_path = os.path.dirname(__file__)
@@ -485,6 +485,8 @@ class TestTemperatureModel(unittest.TestCase):
 
         self.model2.load_setting(setting_filename)
 
+        print self.model.ds_roi.as_list()
+        print self.model2.ds_roi.as_list()
         self.assertEqual(self.model.ds_temperature, self.model2.ds_temperature)
         self.assertEqual(self.model.us_temperature, self.model2.us_temperature)
 

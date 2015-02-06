@@ -6,7 +6,7 @@ import os
 
 import numpy as np
 
-from model.new.TemperatureModel import SingleTemperatureModel
+from model.TemperatureModel import SingleTemperatureModel
 from model.RoiData import RoiDataManager
 from model.SpeFile import SpeFile
 

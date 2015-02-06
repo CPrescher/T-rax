@@ -4,7 +4,7 @@ __author__ = 'Clemens Prescher'
 from PyQt4 import QtCore, QtGui
 
 from view.SpectrumWidget import SpectrumWidget
-from view.RoiWidget import NewRoiWidget
+from view.RoiWidget import RoiWidget
 
 
 class TemperatureWidget(QtGui.QWidget):
@@ -21,7 +21,7 @@ class TemperatureWidget(QtGui.QWidget):
 
         self.graph_widget = SpectrumWidget()
         self.control_widget = ControlWidget()
-        self.roi_widget = NewRoiWidget(2, ['Downstream', 'upstream'],
+        self.roi_widget = RoiWidget(2, ['Downstream', 'Upstream'],
                                        roi_colors=[(255, 255, 0), (255, 140, 0)])
 
         self._graph_control_layout.addWidget(self.graph_widget)

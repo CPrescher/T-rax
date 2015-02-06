@@ -8,8 +8,8 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtTest import QTest
 import numpy as np
 
-from controller import TemperatureController
-from view.new.TemperatureWidget import TemperatureWidget
+from controller.TemperatureController import TemperatureController
+from view.TemperatureWidget import TemperatureWidget
 
 
 unittest_path = os.path.dirname(__file__)
@@ -17,7 +17,7 @@ unittest_files_path = os.path.join(unittest_path, 'unittest files')
 temperature_fitting_path = os.path.join(unittest_files_path, 'temperature fitting')
 
 
-class TestNewTemperatureController(unittest.TestCase):
+class TestTemperatureController(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = QtGui.QApplication([])
@@ -168,7 +168,7 @@ class TestNewTemperatureController(unittest.TestCase):
         self.controller.load_data_file(data_filename)
         self.controller.load_ds_calibration_file(calibration_filename)
 
-        self.assertNotEqual(self.widget.graph_widget._us_temperature_txt_item.textItem.toPlainText(), u'')
+        self.assertNotEqual(self.widget.graph_widget._us_temperature_txt_item.text, u'')
         self.array_almost_equal(np.array(self.widget.graph_widget._ds_fit_item.getData()),
                                 np.array(self.model.ds_fit_spectrum.data))
 
@@ -178,7 +178,7 @@ class TestNewTemperatureController(unittest.TestCase):
         self.controller.load_data_file(data_filename)
         self.controller.load_us_calibration_file(calibration_filename)
 
-        self.assertNotEqual(self.widget.graph_widget._us_temperature_txt_item.textItem.toPlainText(), u'')
+        self.assertNotEqual(self.widget.graph_widget._us_temperature_txt_item.text, u'')
         self.array_almost_equal(np.array(self.widget.graph_widget._us_fit_item.getData()),
                                 np.array(self.model.us_fit_spectrum.data))
 

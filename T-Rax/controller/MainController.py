@@ -1,12 +1,9 @@
 import sys
 import os
 
-from wx.lib.pubsub import pub
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import SIGNAL
 
 from view.MainWidget import MainWidget
-from view.TemperatureWidget import TemperatureWidget
 from controller.TemperatureController import TemperatureController
 
 
@@ -20,7 +17,6 @@ class MainController(object):
         self.create_signals()
         self.create_sub_controller()
         self.load_directories()
-        self.temperature_btn_click()
 
     def show_window(self):
         self.main_widget.show()
@@ -48,20 +44,12 @@ class MainController(object):
     def create_signals(self):
         self.main_widget.closeEvent = self.closeEvent
 
-
-    def temperature_btn_click(self):
-        pass
-        # self.main_widget.navigate_to('temperature_btn')
-        # self.main_widget.status_file_information_lbl.setText('')
-        # self.mode = "temperature"
-
-
     def save_directories(self):
         fid = open('parameters.txt', 'w')
         output_str = \
             'Temperature Working directory: ' + self.temperature_controller._exp_working_dir + '\n' + \
             'Temperature Calibration directory: ' + self.temperature_controller._calibration_working_dir + '\n' + \
-            'Temperature Settings directory: ' + self.temperature_controller._settings_working_dir + '\n' + \
+            'Temperature Settings directory: ' + self.temperature_controller._setting_working_dir + '\n'
         fid.write(output_str)
         fid.close()
 
@@ -78,5 +66,5 @@ class MainController(object):
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     controller = MainController()
-    controller.main_widget.show()
+    controller.show_window()
     app.exec_()

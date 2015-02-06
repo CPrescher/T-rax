@@ -6,15 +6,15 @@ import unittest
 import numpy as np
 from PyQt4 import QtGui
 
-from view.New import RoiWidget
+from view.RoiWidget import RoiWidget
 
 
 class TestNewRoiView(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication([])
-        self.view = RoiWidget()
-        self.img_roi = self.view.img_widget.rois[0]
-        self.roi_gb = self.view.roi_gbs[0]
+        self.roi_widget = RoiWidget()
+        self.img_roi = self.roi_widget.img_widget.rois[0]
+        self.roi_gb = self.roi_widget.roi_gbs[0]
 
     def tearDown(self):
         del self.app
@@ -54,8 +54,9 @@ class TestNewRoiView(unittest.TestCase):
         self.counter = 0
         def incr_counter():
             self.counter += 1
-        self.view.widget_rois_changed.connect(incr_counter)
-        self.view.set_rois([[10,100,11,101]])
+
+        self.roi_widget.rois_changed.connect(incr_counter)
+        self.roi_widget.set_rois([[10, 100, 11, 101]])
 
         self.assertEqual(self.counter, 0)
 
