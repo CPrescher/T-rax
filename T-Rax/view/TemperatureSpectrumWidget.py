@@ -1,11 +1,11 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 import pyqtgraph as pg
-import numpy as np
 
 from view.ModifiedPlotItem import ModifiedPlotItem
+
 
 pg.setConfigOption('useOpenGL', False)
 pg.setConfigOption('leftButtonPan', False)
@@ -21,9 +21,9 @@ plot_colors = {
 }
 
 
-class SpectrumWidget(QtGui.QWidget):
+class TemperatureSpectrumWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
-        super(SpectrumWidget, self).__init__(*args, **kwargs)
+        super(TemperatureSpectrumWidget, self).__init__(*args, **kwargs)
         self._layout = QtGui.QVBoxLayout()
         self._layout.setContentsMargins(0,0,0,0)
 
@@ -43,6 +43,8 @@ class SpectrumWidget(QtGui.QWidget):
         self._us_plot.getAxis('top').setStyle(showValues=False)
         self._us_plot.getAxis('right').setStyle(showValues=False)
         self._us_plot.getAxis('left').setStyle(showValues=False)
+        self._us_plot.setTitle("Upstream", color='FF9900', size='20pt')
+        self._us_plot.setMinimumWidth(120)
 
         self._ds_plot = ModifiedPlotItem()
         self._ds_plot.showAxis('top', show=True)
@@ -50,9 +52,13 @@ class SpectrumWidget(QtGui.QWidget):
         self._ds_plot.getAxis('top').setStyle(showValues=False)
         self._ds_plot.getAxis('right').setStyle(showValues=False)
         self._ds_plot.getAxis('left').setStyle(showValues=False)
+        self._ds_plot.setTitle("Downstream", color='FFFF00', size='20pt')
+        self._ds_plot.setMinimumWidth(120)
 
         self._pg_layout.addItem(self._ds_plot,0,0)
         self._pg_layout.addItem(self._us_plot,0,1)
+        self._pg_layout.layout.setColumnStretchFactor(0, 1)
+        self._pg_layout.layout.setColumnStretchFactor(1, 1)
 
         self._pg_layout_widget.addItem(self._pg_layout)
         self._layout.addWidget(self._pg_layout_widget)
@@ -137,7 +143,6 @@ class SpectrumWidget(QtGui.QWidget):
                                           color='33CC00')
         self._ds_intensity_indicator.set_intensity(float(roi_max)/format_max)
 
-from pyqtgraph import Point
 
 class IntensityIndicator(pg.GraphicsWidget):
     def __init__(self):
@@ -174,14 +179,15 @@ class IntensityIndicator(pg.GraphicsWidget):
             return
 
         bounding_rect = self.__parent.vb.boundingRect()
+        title_label_height = self.__parent.titleLabel.boundingRect().height()
         bar_width = 12
-        self.outside_rect.setRect(bounding_rect.x()+1,
-                                 bounding_rect.y()+1,
+        self.outside_rect.setRect(1,
+                                  title_label_height + 1,
                                  bar_width,
                                  bounding_rect.height())
 
         self.inside_rect.setRect(1,
-                                 bounding_rect.height()*(1-self._intensity_level)+1,
+                                 title_label_height + bounding_rect.height() * (1 - self._intensity_level) + 1,
                                  bar_width,
                                  bounding_rect.height()*self._intensity_level)
 
@@ -195,7 +201,7 @@ class IntensityIndicator(pg.GraphicsWidget):
 
 if __name__ == '__main__':
     app = QtGui.QApplication([])
-    widget = SpectrumWidget()
+    widget = TemperatureSpectrumWidget()
     widget.show()
     widget.raise_()
     widget.update_us_temperature_txt(20, 3)
