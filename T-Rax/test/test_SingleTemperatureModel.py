@@ -5,7 +5,7 @@ import unittest
 import os
 import numpy as np
 
-from model.new.TemperatureModel import SingleTemperatureModel
+from model.new.TemperatureModel import SingleTemperatureModel, TemperatureModel
 from model.new.RoiData import RoiDataManager
 from model.SpeFile import SpeFile
 
@@ -100,5 +100,4 @@ class TestSingleTemperatureModel(unittest.TestCase):
         self.model.fit_data()
 
         self.assertEqual(np.round(self.model.temperature), 1047)
-
 

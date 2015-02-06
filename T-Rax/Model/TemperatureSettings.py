@@ -78,8 +78,8 @@ class TemperatureSettings():
 
         data.ds_calibration_parameter.set_etalon_filename(settings.ds_etalon_file_name)
         data.us_calibration_parameter.set_etalon_filename(settings.us_etalon_file_name)
-        data.ds_calibration_parameter.set_etalon_function_from_spectrum(settings.ds_etalon_spectrum)
-        data.us_calibration_parameter.set_etalon_function_from_spectrum(settings.us_etalon_spectrum)
+        data.ds_calibration_parameter.set_etalon_spectrum(settings.ds_etalon_spectrum)
+        data.us_calibration_parameter.set_etalon_spectrum(settings.us_etalon_spectrum)
 
         data.get_ds_calibration_parameter().set_modus(settings.ds_calibration_modus, False)
         data.get_us_calibration_parameter().set_modus(settings.us_calibration_modus, False)

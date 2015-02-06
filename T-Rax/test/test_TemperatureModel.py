@@ -381,9 +381,111 @@ class TestTemperatureModel(unittest.TestCase):
         self.array_not_almost_equal(np.array(us_temperature_error), np.array(ds_temperature_error))
 
 
-class TestSingleTemperatureModel(unittest.TestCase):
-    def setUp(self):
-        pass
+    def test_saving_and_loading_empty_settings(self):
+        filename = os.path.join(unittest_files_path, 'empty.trs')
 
-    def tearDown(self):
-        pass
+        self.model.save_setting(filename)
+
+        temperature_fitting_path = os.path.join(
+            unittest_files_path, 'temperature fitting')
+        self.model.load_data_image(os.path.join(
+            temperature_fitting_path,
+            'test_measurement_multiple.spe'))
+
+        self.model.load_us_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'us_calibration.spe'))
+        self.model.load_ds_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'ds_calibration.spe'))
+
+        # load correct etalon files:
+        self.model.load_us_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+
+        self.model.load_ds_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+
+
+        self.model.set_ds_calibration_temperature(2500)
+        self.model.set_us_calibration_temperature(2300)
+        self.model.set_ds_calibration_modus(1)
+        self.model.set_us_calibration_modus(1)
+
+        self.model.load_setting(filename)
+
+        self.assertEqual(self.model.ds_calibration_filename, None)
+        self.assertEqual(self.model.us_calibration_filename, None)
+        self.assertEqual(self.model.ds_temperature_model.calibration_parameter.temperature, 2000)
+        self.assertEqual(self.model.us_temperature_model.calibration_parameter.temperature, 2000)
+        self.assertEqual(self.model.ds_temperature_model.calibration_parameter.modus, 0)
+        self.assertEqual(self.model.us_temperature_model.calibration_parameter.modus, 0)
+
+        self.assertTrue(self.model.ds_temperature is np.NaN)
+        self.assertTrue(self.model.ds_temperature_error is np.NaN)
+        self.assertTrue(self.model.us_temperature is np.NaN)
+        self.assertTrue(self.model.us_temperature_error is np.NaN)
+
+        self.assertEqual(self.model.ds_roi.as_list(), [0,0,0,0])
+        self.assertEqual(self.model.us_roi.as_list(), [0,0,0,0])
+
+    def test_saving_and_loading_a_complete_setting(self):
+        setting_filename = os.path.join(unittest_files_path, 'complete.trs')
+
+        temperature_fitting_path = os.path.join(
+            unittest_files_path, 'temperature fitting')
+        self.model.load_data_image(os.path.join(
+            temperature_fitting_path,
+            'test_measurement.spe'))
+
+        self.model.load_us_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'us_calibration.spe'))
+        self.model.load_ds_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'ds_calibration.spe'))
+
+        # load correct etalon files:
+        self.model.load_us_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+
+        self.model.load_ds_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+
+
+        self.model.set_ds_calibration_temperature(2500)
+        self.model.set_us_calibration_temperature(2300)
+        self.model.set_ds_calibration_modus(1)
+        self.model.set_us_calibration_modus(1)
+
+        # set the correct roi
+        x_limits_wavelength = [666, 836]
+        x_limits_ind = self.model.data_img_file.get_index_from(x_limits_wavelength)
+
+        ds_roi_limits = [x_limits_ind[0], x_limits_ind[1], 152, 163]
+        us_roi_limits = [x_limits_ind[0], x_limits_ind[1], 99, 110]
+
+        self.model.set_rois(ds_roi_limits, us_roi_limits)
+
+
+        self.model.save_setting(setting_filename)
+
+        self.model2 = TemperatureModel()
+        self.model2.load_data_image(os.path.join(
+            temperature_fitting_path,
+            'test_measurement.spe'))
+
+        self.model2.load_setting(setting_filename)
+
+        self.assertEqual(self.model.ds_temperature, self.model2.ds_temperature)
+        self.assertEqual(self.model.us_temperature, self.model2.us_temperature)
+
+

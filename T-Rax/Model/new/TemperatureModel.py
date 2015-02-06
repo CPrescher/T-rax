@@ -4,6 +4,8 @@ __author__ = 'Clemens Prescher'
 from PyQt4 import QtCore
 import numpy as np
 from scipy.optimize import curve_fit
+import pickle
+import h5py
 
 from model.Spectrum import Spectrum
 from model.new.RoiData import RoiDataManager, Roi
@@ -25,8 +27,8 @@ class TemperatureModel(QtCore.QObject):
         self.ds_calibration_img_file = None
         self.us_calibration_img_file = None
 
-        self._ds_calibration_img = None
-        self._us_calibration_img = None
+        self.ds_calibration_filename = None
+        self.us_calibration_filename = None
 
         self._filename_iterator = FileNameIterator()
 
@@ -96,16 +98,16 @@ class TemperatureModel(QtCore.QObject):
     #########################################################################
     def load_ds_calibration_image(self, filename):
         self.ds_calibration_img_file = SpeFile(filename)
-        self._ds_calibration_img = self.ds_calibration_img_file.img
-        self.ds_temperature_model.set_calibration_data(self._ds_calibration_img,
+        self.ds_calculations_filename = filename
+        self.ds_temperature_model.set_calibration_data(self.ds_calibration_img_file.img,
                                                        self.ds_calibration_img_file.x_calibration)
         self.ds_calculations_changed.emit()
 
 
     def load_us_calibration_image(self, filename):
         self.us_calibration_img_file = SpeFile(filename)
-        self._us_calibration_img = self.us_calibration_img_file.img
-        self.us_temperature_model.set_calibration_data(self._us_calibration_img,
+        self.us_calibration_filename = filename
+        self.us_temperature_model.set_calibration_data(self.us_calibration_img_file.img,
                                                        self.us_calibration_img_file.x_calibration)
         self.us_calculations_changed.emit()
 
@@ -135,6 +137,79 @@ class TemperatureModel(QtCore.QObject):
     def set_us_calibration_temperature(self, temperature):
         self.us_temperature_model.set_calibration_temperature(temperature)
         self.us_calculations_changed.emit()
+
+    def save_setting(self, filename):
+        f = h5py.File(filename, 'w')
+
+        f.create_group('downstream_calibration')
+        ds_group = f['downstream_calibration']
+        if self.ds_calibration_img_file is not None:
+            ds_group['image'] = self.ds_calibration_img_file.img
+            ds_group['image'].attrs['filename'] = self.ds_calibration_img_file.filename
+            ds_group['image'].attrs['x_calibration'] = self.ds_calibration_img_file.x_calibration
+        ds_group['roi'] = self.ds_roi.as_list()
+        ds_group['modus'] = self.ds_temperature_model.calibration_parameter.modus
+        ds_group['temperature'] = self.ds_temperature_model.calibration_parameter.temperature
+        ds_group['etalon_spectrum'] = self.ds_temperature_model.calibration_parameter.get_etalon_spectrum().data
+        ds_group['etalon_spectrum'].attrs['filename'] = \
+            self.ds_temperature_model.calibration_parameter.get_etalon_filename()
+
+        f.create_group('upstream_calibration')
+        us_group = f['upstream_calibration']
+        if self.us_calibration_img_file is not None:
+            us_group['image'] = self.us_calibration_img_file.img
+            us_group['image'].attrs['filename'] = self.us_calibration_img_file.filename
+            us_group['image'].attrs['x_calibration'] = self.us_calibration_img_file.x_calibration
+        us_group['roi'] = self.us_roi.as_list()
+        us_group['modus'] = self.us_temperature_model.calibration_parameter.modus
+        us_group['temperature'] = self.us_temperature_model.calibration_parameter.temperature
+        us_group['etalon_spectrum'] = self.us_temperature_model.calibration_parameter.get_etalon_spectrum().data
+        us_group['etalon_spectrum'].attrs['filename'] = \
+            self.us_temperature_model.calibration_parameter.get_etalon_filename()
+
+        f.close()
+
+    def load_setting(self, filename):
+        f = h5py.File(filename, 'r')
+        ds_group = f['downstream_calibration']
+        if 'image' in ds_group:
+            self.ds_temperature_model.set_calibration_data(ds_group['image'][...],
+                                                           ds_group['image'].attrs['x_calibration'][...])
+            self.ds_calibration_filename = ds_group['image'].attrs['filename']
+        else:
+            self.ds_temperature_model.reset_calibration_data()
+            self.ds_calibration_filename = None
+
+        etalon_data = ds_group['etalon_spectrum'][...]
+        self.ds_temperature_model.calibration_parameter.set_etalon_spectrum(Spectrum(etalon_data[0,:],
+                                                                                     etalon_data[1,:]))
+        modus = ds_group['modus'][...]
+        self.ds_temperature_model.calibration_parameter.set_modus(modus)
+        temperature = ds_group['temperature'][...]
+        self.ds_temperature_model.calibration_parameter.set_temperature(temperature)
+
+        us_group = f['upstream_calibration']
+        if 'image' in us_group:
+            self.us_temperature_model.set_calibration_data(us_group['image'][...],
+                                                           us_group['image'].attrs['x_calibration'][...])
+            self.us_calibration_filename = us_group['image'].attrs['filename']
+        else:
+            self.us_temperature_model.reset_calibration_data()
+            self.us_calibration_filename = None
+
+        etalon_data = us_group['etalon_spectrum'][...]
+        self.us_temperature_model.calibration_parameter.set_etalon_spectrum(Spectrum(etalon_data[0,:],
+                                                                                     etalon_data[1,:]))
+        self.us_temperature_model.calibration_parameter.set_modus(us_group['modus'][...])
+        self.us_temperature_model.calibration_parameter.set_temperature(us_group['temperature'][...])
+
+        self.set_rois(ds_group['roi'][...], us_group['roi'][...])
+
+        self.data_changed.emit()
+        self.us_calculations_changed.emit()
+        self.ds_calculations_changed.emit()
+
+
 
     # updating roi values
     @property
@@ -281,12 +356,10 @@ class SingleTemperatureModel(QtCore.QObject):
         self.data_spectrum = Spectrum([], [])
         self.calibration_spectrum = Spectrum([], [])
         self.corrected_spectrum = Spectrum([], [])
-        self.fit_spectrum = Spectrum([], [])
 
         self._data_img = None
         self._data_img_x_calibration = None
         self._data_img_dimension = None
-        self._filename_iterator = FileNameIterator()
 
         self.data_roi_max = 0
 
@@ -329,6 +402,21 @@ class SingleTemperatureModel(QtCore.QObject):
         self._update_corrected_spectrum()
         self.fit_data()
         self.data_changed.emit()
+
+    def reset_calibration_data(self):
+        self._calibration_img = None
+        self._calibration_img_x_calibration = None
+        self._calibration_img_dimension = None
+
+        self.calibration_spectrum = Spectrum([], [])
+        self.corrected_spectrum = Spectrum([], [])
+        self.fit_spectrum = Spectrum([], [])
+
+        self.temperature = np.NaN
+        self.temperature_error = np.NaN
+        self.fit_spectrum = Spectrum([], [])
+        self.data_changed.emit()
+
 
     # setting etalon interface
     #########################################################################
@@ -449,6 +537,8 @@ class CalibrationParameter(object):
 
         self.temperature = 2000
         self.etalon_spectrum_func = None
+        self._etalon_x = np.array([])
+        self._etalon_y = np.array([])
         self.etalon_file_name = 'Select File...'
 
     def set_modus(self, modus):
@@ -497,7 +587,7 @@ class CalibrationParameter(object):
     def get_etalon_spectrum(self):
         return Spectrum(self._etalon_x, self._etalon_y)
 
-    def set_etalon_function_from_spectrum(self, spectrum):
+    def set_etalon_spectrum(self, spectrum):
         try:
             self._etalon_x = spectrum.x
             self._etalon_y = spectrum.y
