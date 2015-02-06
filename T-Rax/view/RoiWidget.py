@@ -305,11 +305,6 @@ class ImgROI(pg.ROI):
         self.addScaleHandle([0, 0.5], [1, 0.5], item=Handle(10, typ='f', pen=pen, activePen=active_pen, parent=self))
         self.addScaleHandle([0.5, 0], [0.5, 1], item=Handle(10, typ='f', pen=pen, activePen=active_pen, parent=self))
 
-        self.addScaleHandle([1, 0], [0, 1], item=Handle(8, typ='s', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([0, 1], [1, 0], item=Handle(8, typ='s', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([0, 0], [1, 1], item=Handle(8, typ='s', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([1, 1], [0, 0], item=Handle(8, typ='s', pen=pen, activePen=active_pen, parent=self))
-
 
     def hoverEvent(self, ev):
         hover = False
