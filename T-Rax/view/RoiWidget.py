@@ -6,6 +6,7 @@ from functools import partial
 from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
 from pyqtgraph.graphicsItems.ROI import Handle
+import numpy as np
 
 from view.HistogramLUTItem import HistogramLUTItem
 
