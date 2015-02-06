@@ -11,7 +11,7 @@ def dependencies_for_myprogram():
 
 from scipy.optimize import curve_fit
 
-from Model.GeneralData import GeneralData
+from model.GeneralData import GeneralData
 
 
 class TemperatureData(GeneralData):

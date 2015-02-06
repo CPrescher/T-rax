@@ -2,20 +2,21 @@ from wx.lib.pubsub import pub
 from SPE_module import SPE_File
 import numpy as np
 import random
-from scipy.optimize import minimize
+from scipy.ndimage import gaussian_filter1d
 
-from Model.TemperatureData import Roi, Spectrum, gauss_curve_function
-from Model.GeneralData import GeneralData
+from model.GeneralData import GeneralData
+from model.TemperatureData import Roi, Spectrum, gauss_curve_function
 
 
-class RubyData(GeneralData):
+class DiamondData(GeneralData):
     def __init__(self):
-        self.roi_data_manager =  RoiRubyManager()
+        self.roi_data_manager =  ROIDiamondManager()
         self._create_dummy_img()
-        self.click_pos=694.35
-        self.ruby_reference_pos=694.35
-        self.temperature=300
-        self.ruby_condition = 'hydrostatic'
+        self.click_pos=1334
+        self.diamond_reference_pos=1334
+        self.derivative_smoothing = 5
+        self.laser_line = 532 #in nm
+        self.return_derivative = True
 
     def _create_dummy_img(self):
         self.exp_data=DummyImg(self.roi_data_manager)
@@ -26,107 +27,61 @@ class RubyData(GeneralData):
         self.exp_data = self.read_exp_image_file(filename)
         self.roi = self.exp_data.roi
         self.fitted_spectrum=Spectrum([],[])
-        pub.sendMessage("EXP RUBY DATA CHANGED")
+        pub.sendMessage("EXP DIAMOND DATA CHANGED")
 
     def read_exp_image_file(self, filename):
         img_file= SPE_File(filename)
-        return ExpRubyData(img_file, self.roi_data_manager)
-    
-#********************RUBY STUFF HERE***********************
+        return ExpDiamondData(img_file, self.roi_data_manager)
+  
+#********************DIAMOND STUFF HERE***********************
 #
     
+    def get_derivative_spectrum(self):
+        if self.return_derivative:
+            original_spectrum = self.get_spectrum()
+            derivative_spectrum = Spectrum(original_spectrum.x, np.gradient(original_spectrum.y))
+            derivative_spectrum.y = gaussian_filter1d(derivative_spectrum.y, self.derivative_smoothing)
+            derivative_spectrum.y = float((max(original_spectrum.y)-min(original_spectrum.y)))/(max(derivative_spectrum.y)-min(derivative_spectrum.y)) * derivative_spectrum.y
+            derivative_spectrum.y = derivative_spectrum.y+min(original_spectrum.y)-min(derivative_spectrum.y)
+            return derivative_spectrum
+        else:
+            return Spectrum([],[])   
+
     def set_click_pos(self, pos):
         self.click_pos = pos
-        pub.sendMessage("RUBY POS CHANGED")
+        pub.sendMessage("DIAMOND POS CHANGED")
 
-    def set_ruby_reference_pos(self, pos):
-        self.ruby_reference_pos=pos
-        pub.sendMessage("RUBY POS CHANGED")
-
-    def set_temperature(self, temperature):
-        self.temperature = temperature
-        pub.sendMessage("RUBY POS CHANGED")
-    
-    def set_ruby_condition(self, condition):
-        self.ruby_condition=condition
-        pub.sendMessage("RUBY POS CHANGED")
+    def set_diamond_reference_pos(self, pos):
+        self.diamond_reference_pos=pos
+        pub.sendMessage("DIAMOND POS CHANGED")
 
     def get_pressure(self):
-        A=1904
-        k=0.46299
-        l=0.0060823
-        m=0.0000010264
-        if self.ruby_condition =='hydrostatic':
-           B=7.665
-        if self.ruby_condition == 'non-hydrostatic':
-           B=5
-        A_temperature_corrected=A + (k*(self.temperature - 298))
-        lambda0_temperature_corrected=self.ruby_reference_pos + \
-            (l*(self.temperature - 298)) + (m*((self.temperature - 298)**2))
-        ratio=(self.click_pos/lambda0_temperature_corrected)**B
-        P=(A_temperature_corrected/B)*ratio - (A_temperature_corrected/B)
+        K=547
+        Kp=3.75
+
+        P=(K*(self.click_pos-self.diamond_reference_pos)/self.diamond_reference_pos)*\
+            (1 + 0.5*(Kp-1)*(self.click_pos-self.diamond_reference_pos)/self.diamond_reference_pos)
         return P
 
-    def fit_spectrum(self):
-        x0=self.create_p0()
-        bounds=self.create_limits()
-        res = minimize(self.fitting_function, self.create_p0(), method='L-BFGS-B',
-                              bounds=self.create_limits())
-        self.set_click_pos(np.max(res.x[2:4]))
-        fit_x =np.linspace(np.min(self.exp_data.get_spectrum().x), np.max(self.exp_data.get_spectrum().x),1000)
-        self.fitted_spectrum=Spectrum(fit_x, self.fitting_function_helper(fit_x,\
-                                                               res.x[0],res.x[1],res.x[2],\
-                                                               res.x[3],res.x[4],res.x[5],\
-                                                               res.x[6],res.x[7],res.x[8],\
-                                                               res.x[9]))
-        pub.sendMessage("RUBY POS CHANGED")
+    def set_laser_line(self, laser_line):
+        self.laser_line=laser_line
+        pub.sendMessage("EXP DIAMOND DATA CHANGED")
 
-    def create_p0(self):
-        intensities=[np.max(self.exp_data.get_spectrum().y),np.max(self.exp_data.get_spectrum().y)*0.5]
-        positions=[self.click_pos,self.click_pos-1.5]
-        hwhm =[0.1,0.1]
-        n =[1,1]
-        constants=[np.min(self.exp_data.get_spectrum().y),0]
-        return intensities+positions+hwhm+n+constants
+    def convert_reverse_cm_to_wavelength(self, reverse_cm):
+        return 1/(1.0/self.laser_line-np.array(reverse_cm)/1.0e7)
 
-    def create_limits(self):
-        intensities=[[0,None],[0,None]]
-        positions=[[690,850],[690,850]]
-        hwhm = [[0,5],[0,5]]
-        n=[[0,1],[0,1]]
-        constants=[[None,None],[None,None]]
-        return intensities+positions+hwhm+n+constants
-    
-    def fitting_function(self, param):
-        x=self.exp_data.get_spectrum().x
-        y=self.exp_data.get_spectrum().y
-        int1=param[0] 
-        int2=param[1] 
-        pos1=param[2]
-        pos2=param[3]
-        hwhm1=param[4]
-        hwhm2=param[5]
-        n1=param[6]
-        n2=param[7]
-        a=param[8]
-        b=param[9]
-        fit_y=self.fitting_function_helper(x,int1, int2, pos1,pos2,hwhm1, hwhm2,n1,n2,a,b)
-        return np.sum((fit_y-y)**2)
+    def convert_wavelength_to_reverse_cm(self, wavelength):
+        return (1.0/self.laser_line-1/np.array(wavelength))*1.0e7
 
-
-    def fitting_function_helper(self,x,int1, int2, pos1,pos2,hwhm1, hwhm2,n1,n2,a,b):
-        y=pseudo_voigt_curve(x,int1,hwhm1,n1,pos1)
-        y+=pseudo_voigt_curve(x,int2,hwhm2,n2,pos2)
-        y+=a+b/100.*x
-        return y
+    def get_spectrum(self):
+        wavelength_spectrum=self.exp_data.get_spectrum()
+        return Spectrum(self.convert_wavelength_to_reverse_cm(wavelength_spectrum.x),
+                        wavelength_spectrum.y)
                         
 
-    def get_fitted_spectrum(self):
-        return self.fitted_spectrum
 
 
-
-class ExpRubyData(object):
+class ExpDiamondData(object):
     def __init__(self, img_file, roi_data_manager):
         self._img_file= img_file
         self.roi=roi_data_manager.get_roi_data(img_file.get_dimension())
@@ -147,9 +102,6 @@ class ExpRubyData(object):
         else:
             return self._img_data
 
-    def get_filename(self):
-        return self.filename
-
     def get_img_data(self):
         return self.img_data()
 
@@ -161,7 +113,6 @@ class ExpRubyData(object):
         roi_img = self.get_roi_img()
         x=self.x_whole[self.roi.x_min:self.roi.x_max+1]
         y=np.sum(roi_img,0)/np.float(np.size(roi_img,0))
-
         return Spectrum(x, np.sum(roi_img,0)/np.float(np.size(roi_img,0)))
 
     def _get_file_number(self):
@@ -199,6 +150,7 @@ class ExpRubyData(object):
 
     def get_x_limits(self):
         return np.array([min(self.x_whole), max(self.x_whole)])
+
     
     def get_file_information(self):
         return ('{exp_time:g}s, ' +\
@@ -211,15 +163,16 @@ class ExpRubyData(object):
                 center_wavelength=self._img_file.center_wavelength)
 
 
-class DummyImg(ExpRubyData):
+class DummyImg(ExpDiamondData):
     def __init__(self, roi_data_manager):
         self.roi=roi_data_manager.get_roi_data([1300,100])
         self.create_img()
         self.filename = 'dummy_img.spe'
-        self.current_frame=0;
+        self.num_frames=1
+        self.current_frame=0
 
     def create_img(self):
-        x=np.linspace(650,750,1300)
+        x=np.linspace(570,580,1300)
         y=np.linspace(0,101, 100)
         X,Y = np.meshgrid(x,y)
 
@@ -228,9 +181,9 @@ class DummyImg(ExpRubyData):
         T1=random.randrange(1700,3000,1)
         T2=T1+ random.randrange(-200,200,1)
 
-        lorenz1 = lorentz_curve(x,4,0.5,700)+lorentz_curve(x,3,0.5,698)
+        lorenz1 = lorentz_curve(x,4,0.1,572)
         gauss1 = gauss_curve_function(y,2,80,3)
-        lorenz2 = lorentz_curve(x,4,0.5,700)+lorentz_curve(x,3,0.5,698)
+        lorenz2 = lorentz_curve(x,4,0.1,572)
         gauss2 = gauss_curve_function(y,2,15,3)
 
         for x_ind in xrange(len(x)):
@@ -241,14 +194,13 @@ class DummyImg(ExpRubyData):
 
     def img_data(self):
         return self._img_data
-
     
     def get_file_information(self):
-        return '10s, dummy spec, 700nm'
+        return '10s, dummy spec, 575nm'
 
 
 
-class RoiRubyManager():
+class ROIDiamondManager():
     def __init__(self):
         self._img_dimensions_list = []
         self._roi_data_list = []
@@ -298,3 +250,4 @@ def gauss_curve(x,int,hwhm,center):
 def pseudo_voigt_curve(x,int,hwhm,n, center):
     return n*lorentz_curve(x,int,hwhm,center)+\
            (1-n)*gauss_curve(x,int,hwhm,center)
+
