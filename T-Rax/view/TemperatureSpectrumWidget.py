@@ -13,11 +13,13 @@ pg.setConfigOption('background', 'k')
 pg.setConfigOption('foreground', 'w')
 pg.setConfigOption('antialias', True)
 
-
-plot_colors = {
+colors = {
     'data_pen': '#ffffff',
     'data_brush': '#FFF',
     'fit_pen': 'r',
+    'downstream': 'FFFF00',
+    'upstream': 'FF9900',
+    'combined': 'FFCC00'
 }
 
 
@@ -36,6 +38,7 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._pg_layout_widget = pg.GraphicsLayoutWidget()
         self._pg_layout = pg.GraphicsLayout()
         self._pg_layout.setContentsMargins(0,0,0,0)
+        self._pg_layout.layout.setVerticalSpacing(0)
 
         self._us_plot = ModifiedPlotItem()
         self._us_plot.showAxis('top', show=True)
@@ -43,7 +46,8 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._us_plot.getAxis('top').setStyle(showValues=False)
         self._us_plot.getAxis('right').setStyle(showValues=False)
         self._us_plot.getAxis('left').setStyle(showValues=False)
-        self._us_plot.setTitle("Upstream", color='FF9900', size='20pt')
+        self._us_plot.setTitle("Upstream", color=colors['upstream'], size='20pt')
+        self._us_plot.setLabel('bottom', '&lambda; (nm)')
         self._us_plot.setMinimumWidth(120)
 
         self._ds_plot = ModifiedPlotItem()
@@ -52,7 +56,8 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._ds_plot.getAxis('top').setStyle(showValues=False)
         self._ds_plot.getAxis('right').setStyle(showValues=False)
         self._ds_plot.getAxis('left').setStyle(showValues=False)
-        self._ds_plot.setTitle("Downstream", color='FFFF00', size='20pt')
+        self._ds_plot.setTitle("Downstream", color=colors['downstream'], size='20pt')
+        self._ds_plot.setLabel('bottom', '&lambda; (nm)')
         self._ds_plot.setMinimumWidth(120)
 
         self._time_lapse_plot = ModifiedPlotItem()
@@ -60,25 +65,48 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._time_lapse_plot.showAxis('right', show=True)
         self._time_lapse_plot.getAxis('top').setStyle(showValues=False)
         self._time_lapse_plot.getAxis('right').setStyle(showValues=False)
+        self._time_lapse_plot.setLabel('left', "T (K)")
+        self._time_lapse_plot.setLabel('bottom', "time (s)")
 
 
         self._pg_layout.addItem(self._ds_plot,0,0)
         self._pg_layout.addItem(self._us_plot,0,1)
-        self._pg_layout.addItem(self._time_lapse_plot, 1, 0, 1, 2)
+
+        self._pg_time_lapse_layout = pg.GraphicsLayout()
+        self._pg_time_lapse_layout.setContentsMargins(0, 0, 0, 0)
+        self._pg_time_lapse_layout.setSpacing(0)
+
+        self._time_lapse_ds_temperature_txt = pg.LabelItem()
+        self._time_lapse_us_temperature_txt = pg.LabelItem()
+        self._time_lapse_combined_temperature_txt = pg.LabelItem()
+
+        self._pg_time_lapse_layout.addItem(self._time_lapse_ds_temperature_txt, 0, 0)
+        self._pg_time_lapse_layout.addItem(self._time_lapse_combined_temperature_txt, 0, 1)
+        self._pg_time_lapse_layout.addItem(self._time_lapse_us_temperature_txt, 0, 2)
+
+        self._pg_time_lapse_layout.addItem(self._time_lapse_plot, 1, 0, 1, 3)
+
+
+
+        # self._pg_layout.addItem(self._time_lapse_plot, 1, 0, 1, 2)
+        self._pg_layout.addItem(self._pg_time_lapse_layout, 1, 0, 1, 2)
+
+
         self._pg_layout.layout.setColumnStretchFactor(0, 1)
         self._pg_layout.layout.setColumnStretchFactor(1, 1)
         self._pg_layout.layout.setRowStretchFactor(0, 3)
         self._pg_layout.layout.setRowStretchFactor(1, 2)
 
+
         self._pg_layout_widget.addItem(self._pg_layout)
         self._layout.addWidget(self._pg_layout_widget)
 
     def create_data_items(self):
-        self._us_data_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['data_pen'], width=1),
-                                                brush=pg.mkBrush(plot_colors['data_brush']),
+        self._us_data_item = pg.ScatterPlotItem(pen=pg.mkPen(colors['data_pen'], width=1),
+                                                brush=pg.mkBrush(colors['data_brush']),
                                                 size=3,
                                                 symbol ='o')
-        self._us_fit_item = pg.PlotDataItem(pen = pg.mkPen(plot_colors['fit_pen'], width = 3))
+        self._us_fit_item = pg.PlotDataItem(pen=pg.mkPen(colors['fit_pen'], width=3))
 
         self._us_plot.addItem(self._us_data_item)
         self._us_plot.addItem(self._us_fit_item)
@@ -95,12 +123,11 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._us_intensity_indicator = IntensityIndicator()
         self._us_intensity_indicator.setParentItem(self._us_plot)
 
-
-        self._ds_data_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['data_pen'], width=1),
-                                                brush=pg.mkBrush(plot_colors['data_brush']),
+        self._ds_data_item = pg.ScatterPlotItem(pen=pg.mkPen(colors['data_pen'], width=1),
+                                                brush=pg.mkBrush(colors['data_brush']),
                                                 size=3,
                                                 symbol ='o')
-        self._ds_fit_item = pg.PlotDataItem(pen = pg.mkPen(plot_colors['fit_pen'], width = 3))
+        self._ds_fit_item = pg.PlotDataItem(pen=pg.mkPen(colors['fit_pen'], width=3))
 
         self._ds_plot.addItem(self._ds_data_item)
         self._ds_plot.addItem(self._ds_fit_item)
@@ -116,27 +143,25 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._ds_intensity_indicator = IntensityIndicator()
         self._ds_intensity_indicator.setParentItem(self._ds_plot)
 
-        self._time_lapse_ds_data_item = pg.PlotDataItem()
-        self._time_lapse_us_data_item = pg.PlotDataItem()
+        self._time_lapse_ds_data_item = pg.PlotDataItem(
+            pen=pg.mkPen(colors['downstream'], width=3),
+            brush=pg.mkBrush(colors['downstream']),
+            symbolPen=pg.mkPen(colors['downstream'], width=1),
+            symbolBrush=pg.mkBrush(colors['downstream']),
+            size=3,
+            symbol='s'
+        )
+        self._time_lapse_us_data_item = pg.PlotDataItem(
+            pen=pg.mkPen(colors['upstream'], width=3),
+            brush=pg.mkBrush(colors['upstream']),
+            symbolPen=pg.mkPen(colors['upstream'], width=1),
+            symbolBrush=pg.mkBrush(colors['upstream']),
+            size=3,
+            symbol='s'
+        )
 
         self._time_lapse_plot.addItem(self._time_lapse_ds_data_item)
         self._time_lapse_plot.addItem(self._time_lapse_us_data_item)
-
-        self._time_lapse_ds_temperature_txt = pg.LabelItem()
-        self._time_lapse_us_temperature_txt = pg.LabelItem()
-        self._time_lapse_combined_temperature_txt = pg.LabelItem()
-
-        self._time_lapse_ds_temperature_txt.setParentItem(self._time_lapse_plot.vb)
-        self._time_lapse_us_temperature_txt.setParentItem(self._time_lapse_plot.vb)
-        self._time_lapse_combined_temperature_txt.setParentItem(self._time_lapse_plot.vb)
-
-        self._time_lapse_ds_temperature_txt.anchor(itemPos=(0, 0), parentPos=(0, 0), offset=(15, 10))
-        self._time_lapse_us_temperature_txt.anchor(itemPos=(1, 0), parentPos=(1, 0), offset=(-15, 10))
-        self._time_lapse_combined_temperature_txt.anchor(itemPos=(0.5, 0), parentPos=(0.5, 0), offset=(0, 10))
-
-        self._time_lapse_combined_temperature_txt.setText('combined:')
-        self._time_lapse_us_temperature_txt.setText('US:')
-        self._time_lapse_ds_temperature_txt.setText('DS:')
 
 
     def plot_ds_data(self, x, y):
@@ -151,29 +176,51 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
     def plot_us_fit(self, x, y):
         self._us_fit_item.setData(x, y)
 
+    def plot_ds_time_lapse(self, x, y):
+        self._time_lapse_ds_data_item.setData(x, y)
+
+    def plot_us_time_lapse(self, x, y):
+        self._time_lapse_us_data_item.setData(x, y)
+
     def update_us_temperature_txt(self, temperature, temperature_error):
         self._us_temperature_txt_item.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
                                                                                   temperature_error),
-                                              size='30pt',
-                                              color='FF9900')
+                                              size='24pt')
 
     def update_ds_temperature_txt(self, temperature, temperature_error):
         self._ds_temperature_txt_item.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
                                                                                   temperature_error),
-                                              size='30pt',
-                                              color='FFFF00')
+                                              size='24pt')
 
     def update_us_roi_max_txt(self, roi_max, format_max=65536):
         self._us_roi_max_txt_item.setText('Max Int {0:.0f}'.format(roi_max),
-                                          size='22pt',
+                                          size='18pt',
                                           color='33CC00')
         self._us_intensity_indicator.set_intensity(float(roi_max)/format_max)
 
     def update_ds_roi_max_txt(self, roi_max, format_max=65536):
         self._ds_roi_max_txt_item.setText('Max Int {0:.0f}'.format(roi_max),
-                                          size='22pt',
+                                          size='18pt',
                                           color='33CC00')
         self._ds_intensity_indicator.set_intensity(float(roi_max)/format_max)
+
+    def update_time_lapse_ds_temperature_txt(self, temperature, temperature_error):
+        self._time_lapse_ds_temperature_txt.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
+                                                                                        temperature_error),
+                                                    size='16pt',
+                                                    color=colors['downstream'])
+
+    def update_time_lapse_us_temperature_txt(self, temperature, temperature_error):
+        self._time_lapse_us_temperature_txt.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
+                                                                                        temperature_error),
+                                                    size='16pt',
+                                                    color=colors['upstream'])
+
+    def update_time_lapse_combined_temperature_txt(self, temperature, temperature_error):
+        self._time_lapse_combined_temperature_txt.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
+                                                                                              temperature_error),
+                                                          size='30pt',
+                                                          color=colors['combined'])
 
 
 class IntensityIndicator(pg.GraphicsWidget):
@@ -232,11 +279,20 @@ class IntensityIndicator(pg.GraphicsWidget):
 
 
 if __name__ == '__main__':
+    import numpy as np
     app = QtGui.QApplication([])
     widget = TemperatureSpectrumWidget()
     widget.show()
     widget.raise_()
     widget.update_us_temperature_txt(20, 3)
     widget.update_ds_roi_max_txt(2000)
+    widget.update_time_lapse_ds_temperature_txt(2001, 23)
+    widget.update_time_lapse_us_temperature_txt(1998, 23)
+    widget.update_time_lapse_combined_temperature_txt(1999, 35)
+
+    x = np.arange(10, step=1)
+    widget.plot_ds_time_lapse(x, np.sin(x))
+    widget.plot_us_time_lapse(x, np.cos(x))
+
     # widget._us_temperature_txt_item.setText('12415123')
     app.exec_()
