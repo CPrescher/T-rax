@@ -65,8 +65,8 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._time_lapse_plot.showAxis('right', show=True)
         self._time_lapse_plot.getAxis('top').setStyle(showValues=False)
         self._time_lapse_plot.getAxis('right').setStyle(showValues=False)
+        self._time_lapse_plot.getAxis('bottom').setStyle(showValues=False)
         self._time_lapse_plot.setLabel('left', "T (K)")
-        self._time_lapse_plot.setLabel('bottom', "time (s)")
 
 
         self._pg_layout.addItem(self._ds_plot,0,0)
@@ -87,15 +87,8 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._pg_time_lapse_layout.addItem(self._time_lapse_plot, 1, 0, 1, 3)
 
 
-
-        # self._pg_layout.addItem(self._time_lapse_plot, 1, 0, 1, 2)
-        self._pg_layout.addItem(self._pg_time_lapse_layout, 1, 0, 1, 2)
-
-
         self._pg_layout.layout.setColumnStretchFactor(0, 1)
         self._pg_layout.layout.setColumnStretchFactor(1, 1)
-        self._pg_layout.layout.setRowStretchFactor(0, 3)
-        self._pg_layout.layout.setRowStretchFactor(1, 2)
 
 
         self._pg_layout_widget.addItem(self._pg_layout)
@@ -203,6 +196,16 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
                                           size='18pt',
                                           color='33CC00')
         self._ds_intensity_indicator.set_intensity(float(roi_max)/format_max)
+
+    def show_time_lapse_plot(self, bool):
+        if bool:
+            if self._pg_time_lapse_layout not in self._pg_layout.items:
+                self._pg_layout.addItem(self._pg_time_lapse_layout, 1, 0, 1, 2)
+                self._pg_layout.layout.setRowStretchFactor(0, 4)
+                self._pg_layout.layout.setRowStretchFactor(1, 3)
+        else:
+            if self._pg_time_lapse_layout in self._pg_layout.items:
+                self._pg_layout.removeItem(self._pg_time_lapse_layout)
 
     def update_time_lapse_ds_temperature_txt(self, temperature, temperature_error):
         self._time_lapse_ds_temperature_txt.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,

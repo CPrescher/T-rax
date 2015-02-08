@@ -341,6 +341,12 @@ class TemperatureModel(QtCore.QObject):
 
 
     def fit_all_frames(self):
+        if self.data_img_file is None:
+            return [], [], [], []
+
+        if self.data_img_file.num_frames == 1:
+            return [], [], [], []
+
         cur_frame = self.current_frame
         self.blockSignals(True)
 

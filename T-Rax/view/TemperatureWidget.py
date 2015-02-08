@@ -37,6 +37,9 @@ class TemperatureWidget(QtGui.QWidget):
 
         self._main_layout.addWidget(self._main_splitter)
 
+        self._main_splitter.setStretchFactor(0, 3)
+        self._main_splitter.setStretchFactor(1, 2)
+
         self.setLayout(self._main_layout)
 
         self.create_shortcuts()
@@ -77,6 +80,7 @@ class TemperatureWidget(QtGui.QWidget):
         self.settings_cb = self.control_widget.experiment_tab.settings_gb.settings_cb
 
         self.roi_img_item = self.roi_widget.img_widget.pg_img_item
+        self.time_lapse_layout = self.graph_widget._pg_time_lapse_layout
 
 
 class ControlWidget(QtGui.QWidget):

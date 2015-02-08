@@ -7,6 +7,7 @@ from PyQt4 import QtGui, QtCore
 
 from view.TemperatureWidget import TemperatureWidget
 from model.TemperatureModel import TemperatureModel
+import numpy as np
 
 
 class TemperatureController(QtCore.QObject):
@@ -55,6 +56,10 @@ class TemperatureController(QtCore.QObject):
         self.model.data_changed.connect(self.data_changed)
         self.model.ds_calculations_changed.connect(self.ds_calculations_changed)
         self.model.us_calculations_changed.connect(self.us_calculations_changed)
+
+        self.model.data_changed.connect(self.update_time_lapse)
+        self.model.ds_calculations_changed.connect(self.update_time_lapse)
+        self.model.us_calculations_changed.connect(self.update_time_lapse)
 
         self.widget.roi_widget.rois_changed.connect(self.widget_rois_changed)
 
@@ -173,13 +178,16 @@ class TemperatureController(QtCore.QObject):
             self.widget.dirname_lbl.setText(dirname)
             if self.model.data_img_file.num_frames > 1:
                 self.widget.frame_widget.setVisible(True)
+                self.widget.graph_widget.show_time_lapse_plot(True)
             else:
                 self.widget.frame_widget.setVisible(False)
+                self.widget.graph_widget.show_time_lapse_plot(False)
             self.widget.frame_num_txt.setText(str(self.model.current_frame+1))
         else:
             self.widget.filename_lbl.setText('Select File...')
             self.widget.dirname_lbl.setText('')
             self.widget.frame_widget.setVisible(False)
+            self.widget.graph_widget.show_time_lapse_plot(False)
 
         self.ds_calculations_changed()
         self.us_calculations_changed()
@@ -228,6 +236,23 @@ class TemperatureController(QtCore.QObject):
         self.widget.graph_widget.update_us_temperature_txt(self.model.us_temperature,
                                                            self.model.us_temperature_error)
         self.widget.graph_widget.update_us_roi_max_txt(self.model.us_temperature_model.data_roi_max)
+
+    def update_time_lapse(self):
+        ds_temperature, ds_temperature_error, us_temperature, us_temperature_error = self.model.fit_all_frames()
+        self.widget.graph_widget.plot_ds_time_lapse(range(0, len(ds_temperature)), ds_temperature)
+        self.widget.graph_widget.plot_us_time_lapse(range(0, len(us_temperature)), us_temperature)
+
+        self.widget.graph_widget.update_time_lapse_ds_temperature_txt(np.mean(ds_temperature),
+                                                                      np.std(ds_temperature))
+
+        self.widget.graph_widget.update_time_lapse_us_temperature_txt(np.mean(us_temperature),
+                                                                      np.std(us_temperature))
+
+        self.widget.graph_widget.update_time_lapse_combined_temperature_txt(
+            np.mean(ds_temperature + us_temperature),
+            np.std(ds_temperature + us_temperature)
+        )
+
 
 
     def widget_rois_changed(self, roi_list):
