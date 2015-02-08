@@ -179,7 +179,8 @@ class ImageWidget(QtGui.QWidget):
         self.pg_img_item = pg.ImageItem()
         self.pg_viewbox.addItem(self.pg_img_item)
 
-        self.pg_hist_item = HistogramLUTItem(self.pg_img_item, orientation='vertical')
+        self.pg_hist_item = HistogramLUTItem(self.pg_img_item, orientation='vertical',
+                                             autoLevel=[0, 0.996])
         self.pg_layout.addItem(self.pg_hist_item, 1, 2, 1, 3)
 
         self._layout = QtGui.QHBoxLayout()
@@ -222,15 +223,6 @@ class ImageWidget(QtGui.QWidget):
         self.pg_viewbox.setLimits(xMin=0, xMax=x_max,
                                   yMin=0, yMax=y_max)
         self.img_data = data
-        self.auto_range()
-
-    def auto_range(self):
-        hist_x, hist_y = self.pg_img_item.getHistogram()
-        ind = np.where(np.cumsum(hist_y) < (0.996 * np.sum(hist_y)))
-        if len(ind[0]):
-            self.pg_hist_item.setLevels(np.min(np.min(self.img_data)), hist_x[ind[0][-1]])
-        else:
-            self.pg_hist_item.setLevels(np.min(np.min(self.img_data)), 0.5 * np.max(hist_x))
 
 
     def mouseMoved(self, pos):

@@ -58,18 +58,16 @@ class HistogramLUTItem(GraphicsWidget):
     sigLevelsChanged = QtCore.pyqtSignal(object)
     sigLevelChangeFinished = QtCore.pyqtSignal(object)
 
-    def __init__(self, image=None, fillHistogram=False, orientation='horizontal'):
+    def __init__(self, image=None, fillHistogram=False, orientation='horizontal', autoLevel=None):
         """
         If *image* (ImageItem) is provided, then the control will be automatically linked to the image and changes to the control will be immediately reflected in the image's appearance.
         By default, the histogram is rendered with a fill. For performance, set *fillHistogram* = False.
         """
         GraphicsWidget.__init__(self)
         self.lut = None
-        self.imageItem = None
-        self.first_image = True
-        self.percentageLevel = False
+        self.imageItem = image
         self.orientation = orientation
-        self.range = None
+        self.autoLevel = autoLevel
 
         self.layout = QtGui.QGraphicsGridLayout()
         self.setLayout(self.layout)
@@ -249,36 +247,29 @@ class HistogramLUTItem(GraphicsWidget):
         self.sigLevelsChanged.emit(self)
         self.update()
 
-    def imageChanged(self, autoRange=False):
-        prof = debug.Profiler('HistogramLUTItem.imageChanged', disabled=True)
-        h = list(self.imageItem.getHistogram(bins=1000))
-
-        prof.mark('get histogram')
-        if h[0] is None:
+    def imageChanged(self):
+        hist_x, hist_y = self.imageItem.getHistogram()
+        if hist_x is None:
             return
 
-        h[1][1:] = np.log(h[1][1:])
-        h[0][1:] = np.log(h[0][1:])
+        hist_x_log = np.log(hist_x)
+        hist_y_log = np.log(hist_y)
 
-        h[0][0] = 0
-        h[1][0] = h[1][1]
+        hist_x_log[0] = 0
+
         if self.orientation == 'horizontal':
-            self.plot.setData(h[0], h[1])
+            self.plot.setData(hist_x_log, hist_y_log)
         elif self.orientation == 'vertical':
-            self.plot.setData(h[1], h[0])
+            self.plot.setData(hist_y_log, hist_x_log)
 
-        self.hist_x_range = np.max(h[0]) - np.min(h[0])
-        # if self.percentageLevel:
-        # if self.first_image:
-        #         self.region.setRegion([h[0, 0], h[0, -1]])
-        #         self.old_hist_x_range = self.hist_x_range
-        #         self.first_image = False
-        #     else:
-        #         region_fraction = np.array(self.region.getRegion()) / self.old_hist_x_range
-        #         self.region.setRegion(region_fraction * self.hist_x_range)
-        #         self.old_hist_x_range = self.hist_x_range
-        #
-        #         #self.vb.setRange(yRange=[0, 1.2 * np.max(h[1])])
+        if self.autoLevel is not None:
+            cumulative_sum = np.cumsum(hist_y)
+            min_ind = np.where(cumulative_sum > (self.autoLevel[0] * np.sum(hist_y)))
+            max_ind = np.where(cumulative_sum < (self.autoLevel[1] * np.sum(hist_y)))
+            if len(max_ind[0]) and len(min_ind):
+                self.setLevels(hist_x[min_ind[0][0]], hist_x[max_ind[0][-1]])
+            else:
+                self.setLevels(0, 0.5 * np.max(hist_x))
 
     def getLevels(self):
         return self.region.getRegion()
