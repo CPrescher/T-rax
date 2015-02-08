@@ -3,7 +3,7 @@ import datetime
 import os
 
 from model.SpeFile import SpeFile
-unittest_folder = os.path.join(os.path.dirname(__file__), 'unittest files')
+unittest_folder = os.path.join(os.path.dirname(__file__), 'test_files')
 
 
 class TestSPEModule(unittest.TestCase):
@@ -11,7 +11,6 @@ class TestSPEModule(unittest.TestCase):
         self.vers2_spe_file = SpeFile(os.path.join(unittest_folder, 'SPE_v2_PIXIS.SPE'))
         self.vers2_converted_spe_file = SpeFile(os.path.join(unittest_folder, 'SPE_v2_converted.SPE'))
         self.vers3_spe_file = SpeFile(os.path.join(unittest_folder, 'SPE_v3_PIMAX.spe'))
-        self.vers3_spe_pimax_file = SpeFile(os.path.join(unittest_folder, 'Fe7C3_150_152.spe'))
 
     def test_calibration(self):
         self.assertGreater(len(self.vers2_spe_file.x_calibration), 0)

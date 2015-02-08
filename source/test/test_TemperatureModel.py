@@ -10,7 +10,7 @@ from model.TemperatureModel import TemperatureModel
 
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'unittest files')
+unittest_files_path = os.path.join(unittest_path, 'test_files')
 
 
 class TestTemperatureModel(unittest.TestCase):
@@ -200,7 +200,7 @@ class TestTemperatureModel(unittest.TestCase):
     def test_fitting_temperature(self):
         # loading files
         temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature fitting')
+            unittest_files_path, 'temperature_fitting')
         self.model.load_data_image(os.path.join(
             temperature_fitting_path,
             'test_measurement.spe'))
@@ -236,7 +236,7 @@ class TestTemperatureModel(unittest.TestCase):
 
     def test_multiple_frame_spe_file(self):
         temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature fitting')
+            unittest_files_path, 'temperature_fitting')
         self.model.load_data_image(os.path.join(
             temperature_fitting_path,
             'test_measurement_multiple.spe'))
@@ -265,7 +265,7 @@ class TestTemperatureModel(unittest.TestCase):
 
     def test_multiple_frame_spe_file_on_limits(self):
         temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature fitting')
+            unittest_files_path, 'temperature_fitting')
         self.model.load_data_image(os.path.join(
             temperature_fitting_path,
             'test_measurement_multiple.spe'))
@@ -298,7 +298,7 @@ class TestTemperatureModel(unittest.TestCase):
 
     def test_temperature_fitting_of_multiple_frame_spe_file(self):
         temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature fitting')
+            unittest_files_path, 'temperature_fitting')
         self.model.load_data_image(os.path.join(
             temperature_fitting_path,
             'test_measurement_multiple.spe'))
@@ -336,7 +336,7 @@ class TestTemperatureModel(unittest.TestCase):
 
     def test_batch_fitting_of_multiple_frame_spe_file(self):
         temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature fitting')
+            unittest_files_path, 'temperature_fitting')
         self.model.load_data_image(os.path.join(
             temperature_fitting_path,
             'test_measurement_multiple.spe'))
@@ -387,7 +387,7 @@ class TestTemperatureModel(unittest.TestCase):
         self.model.save_setting(filename)
 
         temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature fitting')
+            unittest_files_path, 'temperature_fitting')
         self.model.load_data_image(os.path.join(
             temperature_fitting_path,
             'test_measurement_multiple.spe'))
@@ -437,7 +437,7 @@ class TestTemperatureModel(unittest.TestCase):
         setting_filename = os.path.join(unittest_files_path, 'complete.trs')
 
         temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature fitting')
+            unittest_files_path, 'temperature_fitting')
         self.model.load_data_image(os.path.join(
             temperature_fitting_path,
             'test_measurement.spe'))

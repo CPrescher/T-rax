@@ -13,8 +13,8 @@ from view.TemperatureWidget import TemperatureWidget
 
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'unittest files')
-temperature_fitting_path = os.path.join(unittest_files_path, 'temperature fitting')
+unittest_files_path = os.path.join(unittest_path, 'test_files')
+temperature_fitting_path = os.path.join(unittest_files_path, 'temperature_fitting')
 
 
 class TestTemperatureController(unittest.TestCase):

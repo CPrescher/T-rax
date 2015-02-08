@@ -12,7 +12,7 @@ from model.SpeFile import SpeFile
 
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'unittest files')
+unittest_files_path = os.path.join(unittest_path, 'test_files')
 
 class TestSingleTemperatureModel(unittest.TestCase):
     def setUp(self):
@@ -63,7 +63,7 @@ class TestSingleTemperatureModel(unittest.TestCase):
 
     def test_setting_calibration_and_experimental_data_retrieving_spectra(self):
         temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature fitting')
+            unittest_files_path, 'temperature_fitting')
         data_file = SpeFile(os.path.join(temperature_fitting_path,'test_measurement.spe'))
         calibration_file = SpeFile(os.path.join(temperature_fitting_path,'us_calibration.spe'))
 
@@ -79,7 +79,7 @@ class TestSingleTemperatureModel(unittest.TestCase):
     def test_temperature_fitting(self):
 
         # loading files
-        temperature_fitting_path = os.path.join(unittest_files_path, 'temperature fitting')
+        temperature_fitting_path = os.path.join(unittest_files_path, 'temperature_fitting')
         data_file = SpeFile(os.path.join(temperature_fitting_path,'test_measurement.spe'))
         calibration_file = SpeFile(os.path.join(temperature_fitting_path,'ds_calibration.spe'))
 
