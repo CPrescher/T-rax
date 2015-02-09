@@ -19,7 +19,7 @@ colors = {
     'fit_pen': 'r',
     'downstream': 'FFFF00',
     'upstream': 'FF9900',
-    'combined': 'FFCC00'
+    'combined': '66FFFF'
 }
 
 
