@@ -40,7 +40,7 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._pg_layout.setContentsMargins(0,0,0,0)
         self._pg_layout.layout.setVerticalSpacing(0)
 
-        self._us_plot = ModifiedPlotItem()
+        self._us_plot = ModifiedPlotItem(enableMouseInteraction=False)
         self._us_plot.showAxis('top', show=True)
         self._us_plot.showAxis('right', show=True)
         self._us_plot.getAxis('top').setStyle(showValues=False)
@@ -50,7 +50,7 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._us_plot.setLabel('bottom', '&lambda; (nm)')
         self._us_plot.setMinimumWidth(120)
 
-        self._ds_plot = ModifiedPlotItem()
+        self._ds_plot = ModifiedPlotItem(False)
         self._ds_plot.showAxis('top', show=True)
         self._ds_plot.showAxis('right', show=True)
         self._ds_plot.getAxis('top').setStyle(showValues=False)
@@ -60,7 +60,7 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._ds_plot.setLabel('bottom', '&lambda; (nm)')
         self._ds_plot.setMinimumWidth(120)
 
-        self._time_lapse_plot = ModifiedPlotItem()
+        self._time_lapse_plot = ModifiedPlotItem(False)
         self._time_lapse_plot.showAxis('top', show=True)
         self._time_lapse_plot.showAxis('right', show=True)
         self._time_lapse_plot.getAxis('top').setStyle(showValues=False)
@@ -178,23 +178,29 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
     def update_us_temperature_txt(self, temperature, temperature_error):
         self._us_temperature_txt_item.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
                                                                                   temperature_error),
-                                              size='24pt')
+                                              size='24pt',
+                                              color=colors['upstream'],
+                                              justify='left')
 
     def update_ds_temperature_txt(self, temperature, temperature_error):
         self._ds_temperature_txt_item.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
                                                                                   temperature_error),
-                                              size='24pt')
+                                              size='24pt',
+                                              color=colors['downstream'],
+                                              justify='left')
 
     def update_us_roi_max_txt(self, roi_max, format_max=65536):
         self._us_roi_max_txt_item.setText('Max Int {0:.0f}'.format(roi_max),
                                           size='18pt',
-                                          color='33CC00')
+                                          color='33CC00',
+                                          justify='right')
         self._us_intensity_indicator.set_intensity(float(roi_max)/format_max)
 
     def update_ds_roi_max_txt(self, roi_max, format_max=65536):
         self._ds_roi_max_txt_item.setText('Max Int {0:.0f}'.format(roi_max),
                                           size='18pt',
-                                          color='33CC00')
+                                          color='33CC00',
+                                          justify='left')
         self._ds_intensity_indicator.set_intensity(float(roi_max)/format_max)
 
     def show_time_lapse_plot(self, bool):
@@ -211,13 +217,15 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._time_lapse_ds_temperature_txt.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
                                                                                         temperature_error),
                                                     size='16pt',
-                                                    color=colors['downstream'])
+                                                    color=colors['downstream'],
+                                                    justify='left')
 
     def update_time_lapse_us_temperature_txt(self, temperature, temperature_error):
         self._time_lapse_us_temperature_txt.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,
                                                                                         temperature_error),
                                                     size='16pt',
-                                                    color=colors['upstream'])
+                                                    color=colors['upstream'],
+                                                    justify='right')
 
     def update_time_lapse_combined_temperature_txt(self, temperature, temperature_error):
         self._time_lapse_combined_temperature_txt.setText('{0:.0f} K &plusmn; {1:.0f}'.format(temperature,

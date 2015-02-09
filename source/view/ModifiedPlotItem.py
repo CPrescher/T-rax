@@ -11,24 +11,31 @@ class ModifiedPlotItem(pg.PlotItem):
     mouse_left_clicked = QtCore.pyqtSignal(float, float)
     range_changed = QtCore.pyqtSignal(list)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, enableMouseInteraction=True, *args, **kwargs):
         super(ModifiedPlotItem, self).__init__(*args, **kwargs)
+        self.enableMouseInterAction = enableMouseInteraction
         self.modify_mouse_behavior()
+
 
     def modify_mouse_behavior(self):
         self.vb.mouseClickEvent = self.mouse_click_event
-        self.vb.mouseDragEvent = self.mouse_drag_event
         self.vb.mouseDoubleClickEvent = self.mouse_double_click_event
-        self.vb.wheelEvent = self.wheel_event
-        self.range_changed_timer = QtCore.QTimer()
-        self.range_changed_timer.timeout.connect(self.emit_sig_range_changed)
-        self.range_changed_timer.setInterval(30)
+
+        if self.enableMouseInterAction:
+            self.vb.mouseDragEvent = self.mouse_drag_event
+            self.vb.wheelEvent = self.wheel_event
+            self.range_changed_timer = QtCore.QTimer()
+            self.range_changed_timer.timeout.connect(self.emit_sig_range_changed)
+            self.range_changed_timer.setInterval(30)
+            self.last_view_range = np.array(self.vb.viewRange())
+        else:
+            self.vb.mouseDragEvent = self.empty_event_function
+            self.vb.wheelEvent = self.empty_event_function
 
         self.cur_mouse_position_x = 0
         self.cur_mouse_position_y = 0
 
         self.mouse_moved.connect(self.update_cur_mouse_position)
-        self.last_view_range = np.array(self.vb.viewRange())
 
     def connect_mouse_move_event(self):
         self.scene().sigMouseMoved.connect(self.mouse_move_event)
@@ -42,14 +49,24 @@ class ModifiedPlotItem(pg.PlotItem):
         if ev.button() == QtCore.Qt.RightButton or \
                 (ev.button() == QtCore.Qt.LeftButton and
                          ev.modifiers() & QtCore.Qt.ControlModifier):
-            self.vb.scaleBy(2)
-            self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
+            if self.enableMouseInterAction:
+                self.vb.scaleBy(2)
+                self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
         elif ev.button() == QtCore.Qt.LeftButton:
             if self.sceneBoundingRect().contains(ev.pos()):
                 pos = self.vb.mapToView(ev.pos())
                 x = pos.x()
                 y = pos.y()
                 self.mouse_left_clicked.emit(x, y)
+
+    def mouse_double_click_event(self, ev):
+        if self.enableMouseInterAction:
+            if (ev.button() == QtCore.Qt.RightButton) or (ev.button() == QtCore.Qt.LeftButton and
+                                                                  ev.modifiers() & QtCore.Qt.ControlModifier):
+                self.vb.autoRange()
+                self.vb.enableAutoRange()
+                self._auto_range = True
+                self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
 
     def update_cur_mouse_position(self, x, y):
         self.cur_mouse_position_x = x
@@ -58,13 +75,9 @@ class ModifiedPlotItem(pg.PlotItem):
     def get_mouse_position(self):
         return self.cur_mouse_position_x, self.cur_mouse_position_y
 
-    def mouse_double_click_event(self, ev):
-        if (ev.button() == QtCore.Qt.RightButton) or (ev.button() == QtCore.Qt.LeftButton and
-                                                              ev.modifiers() & QtCore.Qt.ControlModifier):
-            self.vb.autoRange()
-            self.vb.enableAutoRange()
-            self._auto_range = True
-            self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
+
+    def empty_event_function(self, ev):
+        pass
 
     def mouse_drag_event(self, ev, axis=None):
         # most of this code is copied behavior mouse drag from the original code
