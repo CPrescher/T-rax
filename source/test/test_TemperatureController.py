@@ -3,6 +3,7 @@ __author__ = 'Clemens Prescher'
 
 import unittest
 import os
+import sys
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtTest import QTest
@@ -18,17 +19,20 @@ temperature_fitting_path = os.path.join(unittest_files_path, 'temperature_fittin
 
 
 class TestTemperatureController(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+    # @classmethod
+    # def setUpClass(cls):
+    # cls.app = QtGui.QApplication([])
 
     def setUp(self):
+        self.app = QtGui.QApplication(sys.argv)
         self.widget = TemperatureWidget()
         self.controller = TemperatureController(self.widget)
         self.model = self.controller.model
 
     def tearDown(self):
-        pass
+        self.app.closeAllWindows()
+        self.app.quit()
+        del self.app
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)
