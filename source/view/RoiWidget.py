@@ -29,7 +29,7 @@ class RoiWidget(QtGui.QWidget):
 
         self._main_horizontal_layout = QtGui.QHBoxLayout()
 
-        self.img_widget = ImageWidget(roi_num=roi_num, roi_colors=roi_colors)
+        self.img_widget = RoiImageWidget(roi_num=roi_num, roi_colors=roi_colors)
 
         self._roi_gbs_layout = QtGui.QVBoxLayout()
         self.roi_gbs = []
@@ -150,10 +150,7 @@ class IntegerTextField(QtGui.QLineEdit):
         self.setValidator(QtGui.QIntValidator())
 
 
-
-
-
-class ImageWidget(QtGui.QWidget):
+class RoiImageWidget(QtGui.QWidget):
     mouse_moved = QtCore.pyqtSignal(float, float)
     mouse_left_clicked = QtCore.pyqtSignal(float, float)
     mouse_left_double_clicked = QtCore.pyqtSignal(float, float)
@@ -161,7 +158,7 @@ class ImageWidget(QtGui.QWidget):
     rois_changed = QtCore.pyqtSignal(list)
 
     def __init__(self, roi_num=1, roi_colors=((255, 255, 0)), *args, **kwargs):
-        super(ImageWidget, self).__init__(*args, **kwargs)
+        super(RoiImageWidget, self).__init__(*args, **kwargs)
         self.roi_num = roi_num
         self.roi_colors = roi_colors
 
@@ -196,8 +193,8 @@ class ImageWidget(QtGui.QWidget):
         self.rois = []
         for ind in range(self.roi_num):
             self.rois.append(ImgROI((25, 25), (150, 150),
-                                    pen=pg.mkPen(self.roi_colors[ind], width=4),
-                                    active_pen=pg.mkPen('r', width=4)))
+                                    pen=pg.mkPen(self.roi_colors[ind], width=2),
+                                    active_pen=pg.mkPen('r', width=3)))
             self.pg_viewbox.addItem(self.rois[-1])
             self.rois[-1].sigRegionChanged.connect(self.roi_changed)
 
@@ -303,10 +300,10 @@ class ImgROI(pg.ROI):
         self.setPen(pen)
         self.active_pen = active_pen
 
-        self.addScaleHandle([1, 0.5], [0, 0.5], item=Handle(10, typ='f', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([0.5, 1], [0.5, 0], item=Handle(10, typ='f', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([0, 0.5], [1, 0.5], item=Handle(10, typ='f', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([0.5, 0], [0.5, 1], item=Handle(10, typ='f', pen=pen, activePen=active_pen, parent=self))
+        self.addScaleHandle([1, 0.5], [0, 0.5], item=Handle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
+        self.addScaleHandle([0.5, 1], [0.5, 0], item=Handle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
+        self.addScaleHandle([0, 0.5], [1, 0.5], item=Handle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
+        self.addScaleHandle([0.5, 0], [0.5, 1], item=Handle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
 
 
     def hoverEvent(self, ev):
