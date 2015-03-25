@@ -5,6 +5,7 @@ from PyQt4 import QtGui, QtCore
 
 from view.MainWidget import MainWidget
 from controller.TemperatureController import TemperatureController
+from controller.RamanController import RamanController
 
 
 class MainController(object):
@@ -27,6 +28,7 @@ class MainController(object):
 
     def create_sub_controller(self):
         self.temperature_controller = TemperatureController(self.main_widget.temperature_widget)
+        self.raman_controller = RamanController(self.main_widget.raman_widget)
 
     def load_directories(self):
         try:
@@ -43,6 +45,20 @@ class MainController(object):
 
     def create_signals(self):
         self.main_widget.closeEvent = self.closeEvent
+
+        self.main_widget.navigation_widget.temperature_btn.clicked.connect(
+            self.navigation_temperature_btn_clicked)
+        self.main_widget.navigation_widget.raman_btn.clicked.connect(
+            self.navigation_raman_btn_clicked)
+
+    def navigation_raman_btn_clicked(self):
+        self.main_widget.temperature_widget.hide()
+        self.main_widget.raman_widget.show()
+
+    def navigation_temperature_btn_clicked(self):
+        self.main_widget.raman_widget.hide()
+        self.main_widget.temperature_widget.show()
+
 
     def save_directories(self):
         fid = open('parameters.txt', 'w')

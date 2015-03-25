@@ -6,6 +6,7 @@ from PyQt4 import QtCore, QtGui
 from functools import partial
 
 from view.TemperatureWidget import TemperatureWidget
+from view.RamanWidget import RamanWidget
 
 module_path = os.path.dirname(__file__)
 
@@ -17,9 +18,14 @@ class MainWidget(QtGui.QWidget):
         self._main_layout.setSpacing(0)
         self.navigation_widget = NavigationWidget(self)
         self.temperature_widget = TemperatureWidget(self)
+        self.raman_widget = RamanWidget(self)
 
         self._main_layout.addWidget(self.navigation_widget)
         self._main_layout.addWidget(self.temperature_widget)
+        self._main_layout.addWidget(self.raman_widget)
+
+        self.raman_widget.hide()
+
         self.load_stylesheet()
         self.setLayout(self._main_layout)
 

@@ -36,12 +36,12 @@ class FileGroupBox(QtGui.QGroupBox):
         self.filename_lbl = QtGui.QLabel('file')
         self.dirname_lbl = QtGui.QLabel('folder')
 
-        self._file_control_layout.addWidget(self.load_file_btn, 0, 0)
-        self._file_control_layout.addWidget(self.load_previous_file_btn, 0, 1)
-        self._file_control_layout.addWidget(self.load_next_file_btn, 0, 2)
-        self._file_control_layout.addWidget(self.autoprocess_cb, 0, 3)
-        self._file_control_layout.addWidget(self.filename_lbl, 1, 0, 1, 4)
-        self._file_control_layout.addWidget(self.dirname_lbl, 2, 0, 1, 4)
+        self._file_control_layout.addWidget(self.load_file_btn, 0, 0, 1, 2)
+        self._file_control_layout.addWidget(self.load_previous_file_btn, 1, 0)
+        self._file_control_layout.addWidget(self.load_next_file_btn, 1, 1)
+        self._file_control_layout.addWidget(self.autoprocess_cb, 0, 2)
+        self._file_control_layout.addWidget(self.filename_lbl, 2, 0, 1, 4)
+        self._file_control_layout.addWidget(self.dirname_lbl, 3, 0, 1, 4)
         self.file_control_widget.setLayout(self._file_control_layout)
 
     def create_frame_control_widget(self):
@@ -54,20 +54,16 @@ class FileGroupBox(QtGui.QGroupBox):
         self.load_previous_frame_btn = QtGui.QPushButton('<')
         self.load_next_frame_btn = QtGui.QPushButton('>')
         self.frame_txt = QtGui.QLineEdit('100')
-        self.timelapse_btn = QtGui.QPushButton('Time Lapse')
 
         self._frame_control_layout.addWidget(self.load_previous_frame_btn)
         self._frame_control_layout.addWidget(self.frame_txt)
         self._frame_control_layout.addWidget(self.load_next_frame_btn)
-        self._frame_control_layout.addWidget(self.timelapse_btn)
+        self._frame_control_layout.addSpacerItem(QtGui.QSpacerItem(QtGui.QSpacerItem(10, 10,
+                                                                                     QtGui.QSizePolicy.Expanding,
+                                                                                     QtGui.QSizePolicy.Fixed)))
         self.frame_control_widget.setLayout(self._frame_control_layout)
 
     def style_widgets(self):
-        self.load_previous_file_btn.setMaximumWidth(25)
-        self.load_next_file_btn.setMaximumWidth(25)
-        self.load_previous_frame_btn.setMaximumWidth(25)
-        self.load_next_frame_btn.setMaximumWidth(25)
-
         self.frame_txt.setMaximumWidth(50)
 
         self.load_previous_file_btn.setFlat(True)
@@ -75,7 +71,18 @@ class FileGroupBox(QtGui.QGroupBox):
         self.load_previous_frame_btn.setFlat(True)
         self.load_next_frame_btn.setFlat(True)
         self.load_file_btn.setFlat(True)
-        self.timelapse_btn.setFlat(True)
 
         self.frame_txt.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
         self.frame_txt.setValidator(QtGui.QIntValidator())
+
+
+class TemperatureFileGroupBox(FileGroupBox):
+    def __init__(self, *args, **kwargs):
+        super(TemperatureFileGroupBox, self).__init__()
+        self.timelapse_btn = QtGui.QPushButton('Time Lapse')
+        self.timelapse_btn.setFlat(True)
+        self._frame_control_layout.addWidget(self.timelapse_btn)
+
+        self.load_previous_frame_btn.setMaximumWidth(25)
+        self.load_next_frame_btn.setMaximumWidth(25)
+

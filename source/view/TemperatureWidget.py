@@ -5,7 +5,7 @@ from PyQt4 import QtCore, QtGui
 
 from view.TemperatureSpectrumWidget import TemperatureSpectrumWidget
 from view.RoiWidget import RoiWidget
-from .Widgets import FileGroupBox
+from .Widgets import TemperatureFileGroupBox as FileGroupBox
 
 
 class TemperatureWidget(QtGui.QWidget):
@@ -43,7 +43,12 @@ class TemperatureWidget(QtGui.QWidget):
 
         self.setLayout(self._main_layout)
 
+        self.style_widgets()
         self.create_shortcuts()
+
+    def style_widgets(self):
+        self.control_widget.setMinimumWidth(250)
+        self.control_widget.setMaximumWidth(250)
 
     def create_shortcuts(self):
         self.load_data_file_btn = self.control_widget.experiment_tab.file_gb.load_file_btn

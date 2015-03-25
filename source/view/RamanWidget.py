@@ -41,7 +41,12 @@ class RamanWidget(QtGui.QWidget):
 
         self.setLayout(self._main_layout)
 
+        self.style_widgets()
         self.create_shortcuts()
+
+    def style_widgets(self):
+        self.control_widget.setMinimumWidth(250)
+        self.control_widget.setMaximumWidth(250)
 
     def create_shortcuts(self):
         pass
