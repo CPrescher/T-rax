@@ -256,7 +256,8 @@ class TemperatureController(QtCore.QObject):
 
 
     def widget_rois_changed(self, roi_list):
-        self.model.set_rois(roi_list[0], roi_list[1])
+        if self.model.has_data():
+            self.model.set_rois(roi_list[0], roi_list[1])
 
 
 if __name__ == '__main__':

@@ -93,6 +93,9 @@ class TemperatureModel(QtCore.QObject):
         self._update_temperature_models_data()
         self.data_changed.emit()
 
+    def has_data(self):
+        return self._data_img is not None
+
     # calibration image files:
     #########################################################################
     def load_ds_calibration_image(self, filename):
