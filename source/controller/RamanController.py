@@ -2,7 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore
-from model.RamanModel import RamanModel
+from model.BaseModel import SingleSpectrumModel
 
 
 class RamanController(QtCore.QObject):
@@ -10,7 +10,7 @@ class RamanController(QtCore.QObject):
         super(RamanController, self).__init__()
 
         self.widget = raman_widget
-        self.model = RamanModel()
+        self.model = SingleSpectrumModel()
 
     def create_signals(self):
         self.connect_click_function(self.widget.load_data_file_btn, self.load_data_file)
