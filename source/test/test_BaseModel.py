@@ -12,7 +12,7 @@ unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, 'test_files')
 
 
-class TestRamanModel(unittest.TestCase):
+class TestSingleSpectrumModel(unittest.TestCase):
     def setUp(self):
         self.model = SingleSpectrumModel()
 
