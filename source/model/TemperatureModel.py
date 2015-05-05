@@ -249,8 +249,8 @@ class TemperatureModel(QtCore.QObject):
 
         # creating the header:
         header = "Fitted Temperatures:\n"
-        header += "Downstream (K): {}\t{}\n".format(self.ds_temperature, self.ds_temperature_error)
-        header += "Upstream (K): {}\t{}\n\n".format(self.us_temperature, self.us_temperature_error)
+        header += "Downstream (K): {:.1f}\t{:.1f}\n".format(self.ds_temperature, self.ds_temperature_error)
+        header += "Upstream (K): {:.1f}\t{:.1f}\n\n".format(self.us_temperature, self.us_temperature_error)
         header += "Datacolumns:\n"
         header += "\t".join(("lambda(nm)", "DS_data", "DS_fit", "US_data", "US_fit"))
 

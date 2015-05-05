@@ -499,8 +499,8 @@ class TestTemperatureModel(unittest.TestCase):
         lines = file.readlines()
 
         self.assertEqual(lines[0], "# Fitted Temperatures:\n")
-        self.assertEqual(lines[1], "# Downstream (K): 1046.90555551	14.7003290334\n")
-        self.assertEqual(lines[2], "# Upstream (K): 1413.60884965	2.10864840134\n")
+        self.assertEqual(lines[1], "# Downstream (K): 1046.9	14.7\n")
+        self.assertEqual(lines[2], "# Upstream (K): 1413.6	2.1\n")
         self.assertEqual(lines[3], "# \n")
         self.assertEqual(lines[4], "# Datacolumns:\n")
         self.assertEqual(lines[5], "# lambda(nm)	DS_data	DS_fit	US_data	US_fit\n")
