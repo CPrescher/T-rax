@@ -199,37 +199,7 @@ class TestTemperatureModel(unittest.TestCase):
 
     def test_fitting_temperature(self):
         # loading files
-        temperature_fitting_path = os.path.join(
-            unittest_files_path, 'temperature_fitting')
-        self.model.load_data_image(os.path.join(
-            temperature_fitting_path,
-            'test_measurement.spe'))
-        self.model.load_us_calibration_image(os.path.join(
-            temperature_fitting_path,
-            'us_calibration.spe'))
-        self.model.load_ds_calibration_image(os.path.join(
-            temperature_fitting_path,
-            'ds_calibration.spe'))
-
-        # load correct etalon files:
-        self.model.load_us_etalon_spectrum(os.path.join(
-            temperature_fitting_path,
-            '15A_lamp.txt'
-        ))
-
-        self.model.load_ds_etalon_spectrum(os.path.join(
-            temperature_fitting_path,
-            '15A_lamp.txt'
-        ))
-        self.model.set_ds_calibration_modus(1)
-        self.model.set_us_calibration_modus(1)
-
-        # set the correct roi
-        x_limits_wavelength = [666, 836]
-        x_limits_ind = self.model.data_img_file.get_index_from(x_limits_wavelength)
-
-        self.model.set_rois([x_limits_ind[0], x_limits_ind[1], 152, 163],
-                            [x_limits_ind[0], x_limits_ind[1], 99, 110])
+        self.load_single_frame_file_and_calibration()
 
         self.assertEqual(np.round(self.model.ds_temperature), 1047)
         self.assertEqual(np.round(self.model.us_temperature), 1414)
@@ -490,4 +460,51 @@ class TestTemperatureModel(unittest.TestCase):
         self.assertEqual(self.model.ds_temperature, self.model2.ds_temperature)
         self.assertEqual(self.model.us_temperature, self.model2.us_temperature)
 
+    def load_single_frame_file_and_calibration(self):
+        temperature_fitting_path = os.path.join(
+            unittest_files_path, 'temperature_fitting')
+        self.model.load_data_image(os.path.join(
+            temperature_fitting_path,
+            'test_measurement.spe'))
+        self.model.load_us_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'us_calibration.spe'))
+        self.model.load_ds_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'ds_calibration.spe'))
+        # load correct etalon files:
+        self.model.load_us_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+        self.model.load_ds_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+        self.model.set_ds_calibration_modus(1)
+        self.model.set_us_calibration_modus(1)
+        # set the correct roi
+        x_limits_wavelength = [666, 836]
+        x_limits_ind = self.model.data_img_file.get_index_from(x_limits_wavelength)
+        self.model.set_rois([x_limits_ind[0], x_limits_ind[1], 152, 163],
+                            [x_limits_ind[0], x_limits_ind[1], 99, 110])
+
+    def test_saving_data_as_text_from_a_single_frame(self):
+        self.load_single_frame_file_and_calibration()
+
+        out_path = os.path.join(unittest_files_path, 'data.txt')
+        self.model.save_txt(out_path)
+
+        file = open(out_path)
+        lines = file.readlines()
+
+        self.assertEqual(lines[0], "# Fitted Temperatures:\n")
+        self.assertEqual(lines[1], "# Downstream (K): 1046.90555551	14.7003290334\n")
+        self.assertEqual(lines[2], "# Upstream (K): 1413.60884965	2.10864840134\n")
+        self.assertEqual(lines[3], "# \n")
+        self.assertEqual(lines[4], "# Datacolumns:\n")
+        self.assertEqual(lines[5], "# lambda(nm)	DS_data	DS_fit	US_data	US_fit\n")
+
+        file.close()
+        os.remove(out_path)
 

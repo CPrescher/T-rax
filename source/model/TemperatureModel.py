@@ -231,7 +231,34 @@ class TemperatureModel(QtCore.QObject):
         self.ds_calculations_changed.emit()
         self.data_changed.emit()
 
+    def save_txt(self, filename):
+        """
+        Saves the fitted temperatures, original spectra and fitted spectra into a txt file
+        Format:
+            Header
+                Downstream (K): temperatures...
+                Upstream (K): temperatures...
+            column names:
+            lambda(nm), DS_data, DS_fit, US_data, US_fit, ....
 
+        if the original spe file contains several frames, all frames will be saved in order with always data and then
+        fit.
+        :param filename: path to save the file to
+        :return:
+        """
+
+        # creating the header:
+        header = "Fitted Temperatures:\n"
+        header += "Downstream (K): {}\t{}\n".format(self.ds_temperature, self.ds_temperature_error)
+        header += "Upstream (K): {}\t{}\n\n".format(self.us_temperature, self.us_temperature_error)
+        header += "Datacolumns:\n"
+        header += "\t".join(("lambda(nm)", "DS_data", "DS_fit", "US_data", "US_fit"))
+
+        output_matrix = np.vstack((self.ds_data_spectrum.x,
+                                   self.ds_data_spectrum.y, self.ds_fit_spectrum.y,
+                                   self.us_data_spectrum.y, self.us_fit_spectrum.y))
+
+        np.savetxt(filename, output_matrix.T, header=header)
 
     # updating roi values
     @property
