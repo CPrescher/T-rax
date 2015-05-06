@@ -255,8 +255,8 @@ class TemperatureModel(QtCore.QObject):
         header += "\t".join(("lambda(nm)", "DS_data", "DS_fit", "US_data", "US_fit"))
 
         output_matrix = np.vstack((self.ds_data_spectrum.x,
-                                   self.ds_data_spectrum.y, self.ds_fit_spectrum.y,
-                                   self.us_data_spectrum.y, self.us_fit_spectrum.y))
+                                   self.ds_corrected_spectrum.y, self.ds_fit_spectrum.y,
+                                   self.us_corrected_spectrum.y, self.us_fit_spectrum.y))
 
         np.savetxt(filename, output_matrix.T, header=header)
 
