@@ -21,7 +21,7 @@ class TemperatureWidget(QtGui.QWidget):
         self._graph_control_layout.setContentsMargins(0, 0, 0, 0)
 
         self.graph_widget = TemperatureSpectrumWidget()
-        self.control_widget = ControlWidget()
+        self.control_widget = TemperatureControlWidget()
         self.roi_widget = RoiWidget(2, ['Downstream', 'Upstream'],
                                        roi_colors=[(255, 255, 0), (255, 140, 0)])
 
@@ -83,22 +83,24 @@ class TemperatureWidget(QtGui.QWidget):
         self.load_setting_btn = self.control_widget.experiment_tab.settings_gb.load_setting_btn
         self.save_setting_btn = self.control_widget.experiment_tab.settings_gb.save_setting_btn
 
+        self.save_data_btn = self.control_widget.experiment_tab.save_data_btn
+
         self.settings_cb = self.control_widget.experiment_tab.settings_gb.settings_cb
 
         self.roi_img_item = self.roi_widget.img_widget.pg_img_item
         self.time_lapse_layout = self.graph_widget._pg_time_lapse_layout
 
 
-class ControlWidget(QtGui.QWidget):
+class TemperatureControlWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
-        super(ControlWidget, self).__init__(*args, **kwargs)
+        super(TemperatureControlWidget, self).__init__(*args, **kwargs)
 
         self._layout = QtGui.QHBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
 
         self.tab_widget = QtGui.QTabWidget()
-        self.experiment_tab = ExperimentTab()
-        self.calibration_tab = CalibrationTab()
+        self.experiment_tab = TemperatureExperimentTab()
+        self.calibration_tab = TemperatureCalibrationTab()
 
         self.tab_widget.addTab(self.experiment_tab, 'Experiment')
         self.tab_widget.addTab(self.calibration_tab, 'Calibration')
@@ -106,18 +108,22 @@ class ControlWidget(QtGui.QWidget):
         self.setLayout(self._layout)
 
 
-class ExperimentTab(QtGui.QWidget):
+class TemperatureExperimentTab(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
-        super(ExperimentTab, self).__init__(*args, **kwargs)
+        super(TemperatureExperimentTab, self).__init__(*args, **kwargs)
         self._layout = QtGui.QVBoxLayout()
         self.file_gb = FileGroupBox()
         self.settings_gb = SettingsGroupBox()
 
+        self.save_data_btn = QtGui.QPushButton("Save Data")
+
         self._layout.addWidget(self.file_gb)
         self._layout.addWidget(self.settings_gb)
+        self._layout.addWidget(self.save_data_btn)
         self._layout.addSpacerItem(QtGui.QSpacerItem(10, 10,
                                                      QtGui.QSizePolicy.Fixed,
                                                      QtGui.QSizePolicy.Expanding))
+
         self.setLayout(self._layout)
 
 
@@ -150,9 +156,9 @@ class SettingsGroupBox(QtGui.QGroupBox):
         self.settings_cb.view().setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
 
-class CalibrationTab(QtGui.QWidget):
+class TemperatureCalibrationTab(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
-        super(CalibrationTab, self).__init__(*args, **kwargs)
+        super(TemperatureCalibrationTab, self).__init__(*args, **kwargs)
         self._layout = QtGui.QVBoxLayout()
 
         self.downstream_gb = CalibrationGB('Downstream', 'rgba(255, 255, 0, 255)')

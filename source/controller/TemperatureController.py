@@ -34,6 +34,8 @@ class TemperatureController(QtCore.QObject):
         self.widget.load_next_frame_btn.clicked.connect(self.model.load_next_img_frame)
         self.widget.load_previous_frame_btn.clicked.connect(self.model.load_previous_img_frame)
 
+        self.connect_click_function(self.widget.save_data_btn, self.save_data_file)
+
         # Calibration signals
         self.connect_click_function(self.widget.load_ds_calibration_file_btn, self.load_ds_calibration_file)
         self.connect_click_function(self.widget.load_us_calibration_file_btn, self.load_us_calibration_file)
@@ -140,6 +142,13 @@ class TemperatureController(QtCore.QObject):
             self._setting_working_dir = os.path.dirname(filename)
             self.model.load_setting(filename)
             self.update_setting_combobox()
+
+    def save_data_file(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getSaveFileName(self.widget, caption="Save data in a tabulated format",
+                                                             directory=self._setting_working_dir))
+        if filename is not '':
+            self.model.save_txt(filename)
 
     def update_setting_combobox(self):
         self._settings_files_list = []

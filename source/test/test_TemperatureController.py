@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
+from mock import patch
 import os
 import sys
 
@@ -19,9 +20,6 @@ temperature_fitting_path = os.path.join(unittest_files_path, 'temperature_fittin
 
 
 class TestTemperatureController(unittest.TestCase):
-    # @classmethod
-    # def setUpClass(cls):
-    # cls.app = QtGui.QApplication([])
 
     def setUp(self):
         self.app = QtGui.QApplication(sys.argv)
@@ -212,4 +210,44 @@ class TestTemperatureController(unittest.TestCase):
 
         self.assertEqual(self.widget.settings_cb.count(), 1)
 
+    def load_single_frame_file_and_calibration(self):
+        temperature_fitting_path = os.path.join(
+            unittest_files_path, 'temperature_fitting')
+        self.model.load_data_image(os.path.join(
+            temperature_fitting_path,
+            'test_measurement.spe'))
+        self.model.load_us_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'us_calibration.spe'))
+        self.model.load_ds_calibration_image(os.path.join(
+            temperature_fitting_path,
+            'ds_calibration.spe'))
+        # load correct etalon files:
+        self.model.load_us_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+        self.model.load_ds_etalon_spectrum(os.path.join(
+            temperature_fitting_path,
+            '15A_lamp.txt'
+        ))
+        self.model.set_ds_calibration_modus(1)
+        self.model.set_us_calibration_modus(1)
+        # set the correct roi
+        x_limits_wavelength = [666, 836]
+        x_limits_ind = self.model.data_img_file.get_index_from(x_limits_wavelength)
+        self.model.set_rois([x_limits_ind[0], x_limits_ind[1], 152, 163],
+                            [x_limits_ind[0], x_limits_ind[1], 99, 110])
 
+    @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
+    def test_saving_data_as_txt(self, filedialog):
+        out_path = os.path.join(unittest_files_path, 'data.txt')
+        filedialog.return_value = out_path
+        QTest.mouseClick(self.widget.save_data_btn, QtCore.Qt.LeftButton)
+
+        self.assertTrue(os.path.exists(out_path))
+        os.remove(out_path)
+
+
+def test():
+    return "asd"
