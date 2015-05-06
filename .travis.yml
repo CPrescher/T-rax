@@ -19,7 +19,7 @@ before_install:
 
 install:
     - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy dateutil nose pyqt h5py
-    - pip install lmfit coverage PyOpenGL
+    - pip install lmfit coverage PyOpenGL mock
     - git clone https://github.com/luindil/pyqtgraph
     - cd pyqtgraph
     - python setup.py install
