@@ -6,7 +6,7 @@ import unittest
 import numpy as np
 from PyQt4 import QtGui
 
-from view.RoiWidget import RoiWidget
+from widget.RoiWidget import RoiWidget
 
 
 class TestNewRoiView(unittest.TestCase):

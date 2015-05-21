@@ -26,5 +26,5 @@ install:
     - cd ..
 
 script:
-    - cd source/test
+    - cd t-rax/test
     - nosetests --with-coverage --cover-package=controller,model,view

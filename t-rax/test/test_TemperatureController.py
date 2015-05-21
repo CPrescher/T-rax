@@ -11,7 +11,7 @@ from PyQt4.QtTest import QTest
 import numpy as np
 
 from controller.TemperatureController import TemperatureController
-from view.TemperatureWidget import TemperatureWidget
+from widget.TemperatureWidget import TemperatureWidget
 
 
 unittest_path = os.path.dirname(__file__)
