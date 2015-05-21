@@ -5,8 +5,8 @@ import os
 from PyQt4 import QtCore, QtGui
 from functools import partial
 
-from view.TemperatureWidget import TemperatureWidget
-from view.RamanWidget import RamanWidget
+from .TemperatureWidget import TemperatureWidget
+from .RamanWidget import RamanWidget
 
 module_path = os.path.dirname(__file__)
 

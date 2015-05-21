@@ -8,7 +8,7 @@ import pyqtgraph as pg
 from pyqtgraph.graphicsItems.ROI import Handle
 import numpy as np
 
-from view.HistogramLUTItem import HistogramLUTItem
+from .HistogramLUTItem import HistogramLUTItem
 
 
 pg.setConfigOption('useOpenGL', False)

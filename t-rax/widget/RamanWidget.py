@@ -2,9 +2,9 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore, QtGui
-from view.RoiWidget import RoiWidget
-from view.SpectrumWidget import SpectrumWidget
-from view.Widgets import FileGroupBox
+from .RoiWidget import RoiWidget
+from .SpectrumWidget import SpectrumWidget
+from .Widgets import FileGroupBox
 
 
 class RamanWidget(QtGui.QWidget):

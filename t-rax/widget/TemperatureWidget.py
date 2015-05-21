@@ -3,8 +3,8 @@ __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore, QtGui
 
-from view.TemperatureSpectrumWidget import TemperatureSpectrumWidget
-from view.RoiWidget import RoiWidget
+from .TemperatureSpectrumWidget import TemperatureSpectrumWidget
+from .RoiWidget import RoiWidget
 from .Widgets import TemperatureFileGroupBox as FileGroupBox
 
 

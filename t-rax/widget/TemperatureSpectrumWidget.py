@@ -4,7 +4,7 @@ __author__ = 'Clemens Prescher'
 from PyQt4 import QtGui
 import pyqtgraph as pg
 
-from view.ModifiedPlotItem import ModifiedPlotItem
+from .ModifiedPlotItem import ModifiedPlotItem
 
 
 pg.setConfigOption('useOpenGL', False)

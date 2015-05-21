@@ -5,7 +5,7 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from view.TemperatureWidget import TemperatureWidget
+from widget.TemperatureWidget import TemperatureWidget
 from model.TemperatureModel import TemperatureModel
 import numpy as np
 

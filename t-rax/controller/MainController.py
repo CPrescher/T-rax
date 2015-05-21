@@ -3,7 +3,7 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from view.MainWidget import MainWidget
+from widget.MainWidget import MainWidget
 from controller.TemperatureController import TemperatureController
 from controller.RamanController import RamanController
 
