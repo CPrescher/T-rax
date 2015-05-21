@@ -51,20 +51,20 @@ class RoiWidget(QtGui.QWidget):
     def create_roi_gbs(self):
         for ind in range(self.roi_num):
             self.roi_gbs.append(RoiGroupBox(self.roi_titles[ind], self.roi_colors[ind]))
-            self.roi_gbs[-1].roi_txt_changed.connect(partial(self.update_img_roi, ind))
+            self.roi_gbs[-1].roi_txt_changed.connect(partial(self._update_img_roi, ind))
             self._roi_gbs_layout.addWidget(self.roi_gbs[-1])
 
     def create_signals(self):
-        self.img_widget.rois_changed.connect(self.update_roi_gbs)
+        self.img_widget.rois_changed.connect(self._update_roi_gbs)
 
-    def update_roi_gbs(self, rois_list):
+    def _update_roi_gbs(self, rois_list):
         for ind, roi_gb in enumerate(self.roi_gbs):
             roi_gb.blockSignals(True)
             roi_gb.update_roi_txt(rois_list[ind])
             roi_gb.blockSignals(False)
         self.rois_changed.emit(self.img_widget.get_roi_limits())
 
-    def update_img_roi(self, ind, roi_list):
+    def _update_img_roi(self, ind, roi_list):
         self.img_widget.blockSignals(True)
         self.img_widget.update_roi(ind, roi_list)
         self.img_widget.blockSignals(False)
@@ -72,9 +72,9 @@ class RoiWidget(QtGui.QWidget):
 
     def set_rois(self, rois_list):
         self.blockSignals(True)
-        self.update_roi_gbs(rois_list)
+        self._update_roi_gbs(rois_list)
         for ind in range(self.roi_num):
-            self.update_img_roi(ind, rois_list[ind])
+            self._update_img_roi(ind, rois_list[ind])
         self.blockSignals(False)
 
     def get_rois(self):
@@ -219,8 +219,10 @@ class RoiImageWidget(QtGui.QWidget):
         x_max, y_max = data.shape
         self.pg_viewbox.setLimits(xMin=0, xMax=x_max,
                                   yMin=0, yMax=y_max)
-        self.img_data = data
 
+    @property
+    def img_data(self):
+        return self.pg_img_item.image
 
     def mouseMoved(self, pos):
         pos = self.pg_img_item.mapFromScene(pos)

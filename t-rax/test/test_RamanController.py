@@ -37,3 +37,12 @@ class RamanControllerTest(unittest.TestCase):
 
         self.assertIsNotNone(self.widget.graph_widget._data_item.xData)
         self.assertIsNotNone(self.widget.graph_widget._data_item.yData)
+
+        self.assertIsNotNone(self.widget.roi_widget.img_widget.img_data)
+        self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].x_min_txt.text()), "0")
+        self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].y_min_txt.text()), "0")
+        self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].x_max_txt.text()), "0")
+        self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].y_max_txt.text()), "0")
+
+    def test_changing_roi(self):
+        self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))

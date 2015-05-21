@@ -10,7 +10,7 @@ from .Spectrum import Spectrum
 from .helper import FileNameIterator
 
 
-class SingleSpectrumModel(QtCore.QObject):
+class SingleSpectrumModel(QtCore.QObject, object):
     data_changed = QtCore.pyqtSignal()
 
     def __init__(self):
@@ -92,7 +92,7 @@ class SingleSpectrumModel(QtCore.QObject):
     @property
     def roi(self):
         try:
-            return self.roi_data_manager.get_roi(0, self._data_img_dimension)
+            return self.roi_manager.get_roi(0, self._data_img_dimension)
         except AttributeError:
             return Roi([0, 0, 0, 0])
 
