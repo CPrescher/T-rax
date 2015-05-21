@@ -74,12 +74,20 @@ class SingleSpectrumModel(QtCore.QObject, object):
     def spectrum(self):
         if self.spe_file is not None:
             roi = self.roi_manager.get_roi(0, self._data_img_dimension)
+            self._validate_roi(roi)
             data_x = self._data_img_x_calibration[roi.x_min:roi.x_max + 1]
             data_y = self._get_roi_sum(self.data_img, roi)
             self.data_roi_max = self._get_roi_max(self.data_img, roi)
             self.data_spectrum.data = data_x, data_y
             return self.data_spectrum
         return None
+
+    def _validate_roi(self, roi):
+        roi.x_min, roi.x_max = (roi.x_min, roi.x_max) if roi.x_max > roi.x_min else (roi.x_max, roi.x_min)
+        roi.y_min, roi.y_max = (roi.y_min, roi.y_max) if roi.y_max > roi.y_min else (roi.y_max, roi.y_min)
+        roi.x_min = roi.x_min if roi.x_min > 0 else 0
+        roi.y_min = roi.y_min if roi.y_min > 0 else 0
+        return roi
 
     def _get_roi_sum(self, img, roi):
         roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
