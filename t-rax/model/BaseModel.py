@@ -11,10 +11,13 @@ from .helper import FileNameIterator
 
 
 class SingleSpectrumModel(QtCore.QObject):
+    data_changed = QtCore.pyqtSignal()
+
     def __init__(self):
         super(SingleSpectrumModel, self).__init__()
 
         self.spe_file = None
+        self.filename = None
 
         self._data_img = None
         self._data_img_dimension = None
@@ -30,6 +33,7 @@ class SingleSpectrumModel(QtCore.QObject):
 
     def load_file(self, filename):
         self.spe_file = SpeFile(filename)
+        self.filename = filename
 
         self._data_img = self.spe_file.img
         self._data_img_x_calibration = self.spe_file.x_calibration
@@ -41,6 +45,7 @@ class SingleSpectrumModel(QtCore.QObject):
             self._data_img = self.spe_file.img
         self._data_img_dimension = (self._data_img.shape[1], self._data_img.shape[0])
         self._filename_iterator.update_filename(filename)
+        self.data_changed.emit()
 
     def load_next_file(self):
         new_filename = self._filename_iterator.get_next_filename()

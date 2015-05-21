@@ -49,8 +49,12 @@ class RamanWidget(QtGui.QWidget):
         self.control_widget.setMaximumWidth(250)
 
     def create_shortcuts(self):
-        pass
+        self.load_file_btn = self.control_widget._file_gb.load_file_btn
+        self.load_next_file_btn = self.control_widget._file_gb.load_next_file_btn
+        self.load_previous_file_btn = self.control_widget._file_gb.load_previous_file_btn
 
+        self.filename_lbl = self.control_widget._file_gb.filename_lbl
+        self.dirname_lbl = self.control_widget._file_gb.dirname_lbl
 
 class ControlWidget(QtGui.QWidget):
     def __init__(self):
