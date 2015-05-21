@@ -46,3 +46,12 @@ class RamanControllerTest(unittest.TestCase):
 
     def test_changing_roi(self):
         self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+
+        x, y = self.model.spectrum.data
+        self.widget.roi_widget.roi_gbs[0].x_min_txt.setText("")
+        QTest.keyClicks(self.widget.roi_widget.roi_gbs[0].x_min_txt, "0")
+        QTest.keyPress(self.widget.roi_widget.roi_gbs[0].x_min_txt, QtCore.Qt.Key_Enter)
+
+        new_x, new_y = self.model.spectrum.data
+
+        self.assertNotEqual(len(x), len(new_x))

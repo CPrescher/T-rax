@@ -24,6 +24,8 @@ class RamanController(QtCore.QObject):
         self.widget.load_previous_file_btn.clicked.connect(self.model.load_previous_file)
 
         self.model.data_changed.connect(self.data_changed)
+        self.model.spectrum_changed.connect(self.widget.graph_widget.plot_data)
+        self.widget.roi_widget.rois_changed.connect(self.rois_changed)
 
     def connect_click_function(self, emitter, function):
         self.widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
@@ -44,6 +46,13 @@ class RamanController(QtCore.QObject):
         self.widget.dirname_lbl.setText(os.path.sep.join(os.path.dirname(self.model.filename).split(os.sep)[-2:]))
 
         self.widget.graph_widget.plot_data(*self.model.spectrum.data)
-        self.widget.roi_widget.img_widget.plot_image(self.model.data_img)
+        self.widget.roi_widget.plot_img(self.model.data_img)
 
         self.widget.roi_widget.set_rois([self.model.roi.as_list()])
+
+    def rois_changed(self):
+        """
+        called when the roi is changed in the roi Widget, will recalculate the spectrum and then plot the new updated
+        one.
+        """
+        self.model.roi = self.widget.roi_widget.get_rois()[0]
