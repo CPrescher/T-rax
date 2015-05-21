@@ -165,16 +165,4 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
-/T-Rax/idl files/read_princeton.pro
-*.pro
-*.pyproj
-/T-Rax/T-Rax.pyproj
-/T-Rax/unittests/spe_xml.xml
-/T-Rax/roi_data.txt
-/T-Rax/sample files/Test 2013-09-24/spe_xml.xml
-/T-Rax/roi_data.txt
-*.~ml
-*.rar
-*.pyperf
-*.iml
 .idea
