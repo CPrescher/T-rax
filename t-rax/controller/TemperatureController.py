@@ -247,7 +247,7 @@ class TemperatureController(QtCore.QObject):
         self.widget.graph_widget.update_us_roi_max_txt(self.model.us_temperature_model.data_roi_max)
 
     def update_time_lapse(self):
-        ds_temperature, ds_temperature_error, us_temperature, us_temperature_error = self.model.fit_all_frames()
+        us_temperature, us_temperature_error, ds_temperature, ds_temperature_error = self.model.fit_all_frames()
         self.widget.graph_widget.plot_ds_time_lapse(range(0, len(ds_temperature)), ds_temperature)
         self.widget.graph_widget.plot_us_time_lapse(range(0, len(us_temperature)), us_temperature)
 
