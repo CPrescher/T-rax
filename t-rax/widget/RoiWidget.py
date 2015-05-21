@@ -108,7 +108,7 @@ class RoiGroupBox(QtGui.QGroupBox):
         self._grid_layout.addWidget(self.y_max_txt, 2, 2)
 
         self.setLayout(self._grid_layout)
-        style_str = "color: {0}; border: 1px solid {0};".format(self.color)
+        style_str = "color: rgb{0}; border: 1px solid rgb{0};".format(self.color)
         self.setStyleSheet('QGroupBox {'+style_str+'}')
         self.setMaximumWidth(230)
         self.create_signals()
