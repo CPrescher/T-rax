@@ -12,6 +12,7 @@ from PyQt4.QtTest import QTest
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, 'test_files')
 
+from model.BaseModel import SingleSpectrumModel
 from widget.BaseWidget import BaseWidget
 from controller.BaseController import BaseController
 
@@ -20,7 +21,8 @@ class BaseControllerTest(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication([])
         self.widget = BaseWidget()
-        self.controller = BaseController(self.widget)
+        self.model = SingleSpectrumModel()
+        self.controller = BaseController(self.model, self.widget)
         self.model = self.controller.model
 
     def tearDown(self):
