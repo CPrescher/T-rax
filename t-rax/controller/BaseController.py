@@ -6,12 +6,13 @@ from model.BaseModel import SingleSpectrumModel
 from widget.RamanWidget import RamanWidget
 import os
 
-class RamanController(QtCore.QObject):
+
+class BaseController(QtCore.QObject):
     def __init__(self, raman_widget):
         """
         :type raman_widget: RamanWidget
         """
-        super(RamanController, self).__init__()
+        super(BaseController, self).__init__()
 
         self.widget = raman_widget
         self.model = SingleSpectrumModel()

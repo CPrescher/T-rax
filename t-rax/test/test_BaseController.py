@@ -13,14 +13,14 @@ unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, 'test_files')
 
 from widget.RamanWidget import RamanWidget
-from controller.RamanController import RamanController
+from controller.BaseController import BaseController
 
 
-class RamanControllerTest(unittest.TestCase):
+class BaseControllerTest(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication([])
         self.widget = RamanWidget()
-        self.controller = RamanController(self.widget)
+        self.controller = BaseController(self.widget)
         self.model = self.controller.model
 
     def tearDown(self):

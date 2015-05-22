@@ -5,7 +5,7 @@ from PyQt4 import QtGui, QtCore
 
 from widget.MainWidget import MainWidget
 from controller.TemperatureController import TemperatureController
-from controller.RamanController import RamanController
+from controller.BaseController import BaseController
 
 
 class MainController(object):
@@ -28,7 +28,7 @@ class MainController(object):
 
     def create_sub_controller(self):
         self.temperature_controller = TemperatureController(self.main_widget.temperature_widget)
-        self.raman_controller = RamanController(self.main_widget.raman_widget)
+        self.raman_controller = BaseController(self.main_widget.raman_widget)
 
     def load_directories(self):
         try:
