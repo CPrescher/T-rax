@@ -56,6 +56,11 @@ class RamanWidget(QtGui.QWidget):
         self.filename_lbl = self.control_widget._file_gb.filename_lbl
         self.dirname_lbl = self.control_widget._file_gb.dirname_lbl
 
+        self.frame_widget = self.control_widget._file_gb.frame_control_widget
+        self.frame_txt = self.control_widget._file_gb.frame_txt
+        self.load_next_frame_btn = self.control_widget._file_gb.load_next_frame_btn
+        self.load_previous_frame_btn = self.control_widget._file_gb.load_previous_frame_btn
+
 class ControlWidget(QtGui.QWidget):
     def __init__(self):
         super(ControlWidget, self).__init__()

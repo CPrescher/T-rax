@@ -68,6 +68,7 @@ class SingleSpectrumModel(QtCore.QObject, object):
             return False
         self.current_frame = frame_number
         self._data_img = self.spe_file.img[frame_number]
+        self.data_changed.emit()
         return True
 
     @property
@@ -112,3 +113,10 @@ class SingleSpectrumModel(QtCore.QObject, object):
     @property
     def data_img(self):
         return self._data_img
+
+    def has_frames(self):
+        return self.spe_file.num_frames > 1
+
+    @property
+    def num_frames(self):
+        return self.spe_file.num_frames

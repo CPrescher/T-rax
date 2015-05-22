@@ -4,6 +4,7 @@ __author__ = 'Clemens Prescher'
 import unittest
 from mock import patch
 import os
+from numpy import array_equal
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtTest import QTest
@@ -44,6 +45,22 @@ class RamanControllerTest(unittest.TestCase):
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].x_max_txt.text()), "0")
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].y_max_txt.text()), "0")
 
+    def test_load_multiple_frame_file(self):
+        self.controller.load_data_file(os.path.join(unittest_files_path,
+                                                    'temperature_fitting',
+                                                    'test_measurement_multiple.spe'))
+
+        self.assertEqual(float(str(self.widget.frame_txt.text())), self.model.current_frame)
+
+        img_data = self.widget.roi_widget.img_widget.img_data
+        QTest.mouseClick(self.widget.load_next_frame_btn, QtCore.Qt.LeftButton)
+        img_data2 = self.widget.roi_widget.img_widget.img_data
+        self.assertFalse(array_equal(img_data, img_data2))
+        QTest.mouseClick(self.widget.load_previous_frame_btn, QtCore.Qt.LeftButton)
+        img_data3 = self.widget.roi_widget.img_widget.img_data
+        self.assertTrue(array_equal(img_data, img_data3))
+
+
     def test_changing_roi(self):
         self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
 
@@ -53,5 +70,4 @@ class RamanControllerTest(unittest.TestCase):
         QTest.keyPress(self.widget.roi_widget.roi_gbs[0].x_min_txt, QtCore.Qt.Key_Enter)
 
         new_x, new_y = self.model.spectrum.data
-
         self.assertNotEqual(len(x), len(new_x))

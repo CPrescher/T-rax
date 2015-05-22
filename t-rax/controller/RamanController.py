@@ -22,6 +22,8 @@ class RamanController(QtCore.QObject):
         self.connect_click_function(self.widget.load_file_btn, self.load_data_file)
         self.widget.load_next_file_btn.clicked.connect(self.model.load_next_file)
         self.widget.load_previous_file_btn.clicked.connect(self.model.load_previous_file)
+        self.widget.load_next_frame_btn.clicked.connect(self.model.load_next_frame)
+        self.widget.load_previous_frame_btn.clicked.connect(self.model.load_previous_frame)
 
         self.model.data_changed.connect(self.data_changed)
         self.model.spectrum_changed.connect(self.widget.graph_widget.plot_data)
@@ -49,6 +51,12 @@ class RamanController(QtCore.QObject):
         self.widget.roi_widget.plot_img(self.model.data_img)
 
         self.widget.roi_widget.set_rois([self.model.roi.as_list()])
+
+        if self.model.has_frames():
+            self.widget.frame_widget.setVisible(True)
+            self.widget.frame_txt.setText(str(self.model.current_frame))
+        else:
+            self.widget.frame_widget.setVisible(False)
 
     def rois_changed(self):
         """
