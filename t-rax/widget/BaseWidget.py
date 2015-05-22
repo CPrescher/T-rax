@@ -61,6 +61,9 @@ class BaseWidget(QtGui.QWidget):
         self.load_next_frame_btn = self.control_widget._file_gb.load_next_frame_btn
         self.load_previous_frame_btn = self.control_widget._file_gb.load_previous_frame_btn
 
+    def add_control_widget(self, widget):
+        self.control_widget._layout.insertWidget(self.control_widget._layout.count() - 1, widget)
+
 class ControlWidget(QtGui.QWidget):
     def __init__(self):
         super(ControlWidget, self).__init__()
