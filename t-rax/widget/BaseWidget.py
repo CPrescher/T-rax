@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore, QtGui
+
 from .RoiWidget import RoiWidget
 from .SpectrumWidget import SpectrumWidget
 from .Widgets import FileGroupBox
@@ -63,6 +64,7 @@ class BaseWidget(QtGui.QWidget):
 
     def add_control_widget(self, widget):
         self.control_widget._layout.insertWidget(self.control_widget._layout.count() - 1, widget)
+
 
 class ControlWidget(QtGui.QWidget):
     def __init__(self):

@@ -1,10 +1,12 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
+import os
+
 from PyQt4 import QtCore, QtGui
+
 from model.BaseModel import SingleSpectrumModel
 from widget.BaseWidget import BaseWidget
-import os
 
 
 class BaseController(QtCore.QObject):
