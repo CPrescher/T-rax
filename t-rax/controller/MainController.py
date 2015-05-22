@@ -3,9 +3,10 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
+from model.RamanModel import RamanModel
 from widget.MainWidget import MainWidget
 from controller.TemperatureController import TemperatureController
-from controller.BaseController import BaseController
+from controller.RamanController import RamanController
 
 
 class MainController(object):
@@ -16,6 +17,7 @@ class MainController(object):
             self.main_widget.setWindowTitle('T-Rax v' + str(version))
 
         self.create_signals()
+        self.create_data_models()
         self.create_sub_controller()
         self.load_directories()
 
@@ -26,9 +28,12 @@ class MainController(object):
         self.main_widget.activateWindow()
         self.main_widget.raise_()
 
+    def create_data_models(self):
+        self.raman_model = RamanModel()
+
     def create_sub_controller(self):
         self.temperature_controller = TemperatureController(self.main_widget.temperature_widget)
-        self.raman_controller = BaseController(self.main_widget.raman_widget)
+        self.raman_controller = RamanController(self.raman_model, self.main_widget.raman_widget)
 
     def load_directories(self):
         try:

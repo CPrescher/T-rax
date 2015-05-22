@@ -10,14 +10,15 @@ from widget.BaseWidget import BaseWidget
 
 
 class BaseController(QtCore.QObject):
-    def __init__(self, raman_widget):
+    def __init__(self, model, widget):
         """
-        :type raman_widget: BaseWidget
+        :type widget: BaseWidget
+        :type model: SingleSpectrumModel
         """
         super(BaseController, self).__init__()
 
-        self.widget = raman_widget
-        self.model = SingleSpectrumModel()
+        self.widget = widget
+        self.model = model
         self._working_dir = ''
         self.create_signals()
 
