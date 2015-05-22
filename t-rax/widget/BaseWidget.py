@@ -7,9 +7,9 @@ from .SpectrumWidget import SpectrumWidget
 from .Widgets import FileGroupBox
 
 
-class RamanWidget(QtGui.QWidget):
+class BaseWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
-        super(RamanWidget, self).__init__(*args, **kwargs)
+        super(BaseWidget, self).__init__(*args, **kwargs)
         self._main_layout = QtGui.QVBoxLayout()
         self._main_layout.setContentsMargins(0, 0, 0, 0)
         self._main_layout.setSpacing(0)
@@ -76,7 +76,7 @@ class ControlWidget(QtGui.QWidget):
 
 if __name__ == '__main__':
     app = QtGui.QApplication([])
-    widget = RamanWidget()
+    widget = BaseWidget()
     widget.show()
     widget.raise_()
     app.exec_()

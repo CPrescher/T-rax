@@ -3,14 +3,14 @@ __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore, QtGui
 from model.BaseModel import SingleSpectrumModel
-from widget.RamanWidget import RamanWidget
+from widget.BaseWidget import BaseWidget
 import os
 
 
 class BaseController(QtCore.QObject):
     def __init__(self, raman_widget):
         """
-        :type raman_widget: RamanWidget
+        :type raman_widget: BaseWidget
         """
         super(BaseController, self).__init__()
 
