@@ -42,3 +42,6 @@ class SpectrumWidget(QtGui.QWidget):
 
     def plot_data(self, x, y):
         self._data_item.setData(x, y)
+
+    def get_data(self):
+        return self._data_item.getData()

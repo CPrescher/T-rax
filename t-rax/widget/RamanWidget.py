@@ -13,6 +13,13 @@ class RamanWidget(BaseWidget, object):
         self.display_mode_gb = DisplayModeGroupBox()
         self.add_control_widget(self.display_mode_gb)
 
+        self.create_raman_shortcuts()
+
+    def create_raman_shortcuts(self):
+        self.laser_line_txt = self.display_mode_gb._laser_line_txt
+        self.reverse_cm_cb = self.display_mode_gb._reverse_cm_cb
+        self.nanometer_cb = self.display_mode_gb._nanometer_cb
+
 
 class DisplayModeGroupBox(QtGui.QGroupBox):
     def __init__(self, title='Options'):

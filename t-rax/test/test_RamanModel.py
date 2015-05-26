@@ -7,21 +7,32 @@ import numpy as np
 
 from model.RamanModel import RamanModel
 
-
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, 'test_files')
+test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
-class TestRamanModel(unittest.TestCase):
+class RamanModelTest(unittest.TestCase):
     def setUp(self):
         self.model = RamanModel()
 
-    def array_almost_equal(self, array1, array2):
-        self.assertAlmostEqual(np.sum(array1 - array2), 0)
+    def test_changing_laser_line(self):
+        self.model.load_file(test_file)
 
-    def array_not_almost_equal(self, array1, array2):
-        self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
+        x, y = self.model.spectrum.data
 
-    def test_changing_unit(self):
-        self.model.load_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+        self.model.laser_line = 600
 
+        x_new, y_new = self.model.spectrum.data
+
+        self.assertFalse(np.array_equal(x, x_new))
+        self.assertTrue(np.array_equal(y, y_new))
+
+    def test_changing_mode(self):
+        self.model.load_file(test_file)
+
+        x, y = self.model.spectrum.data
+        self.model._mode = WAVELENGTH_MODE
+        x_new, y_new = self.model.spectrum.data
+        self.assertFalse(np.array_equal(x, x_new))
+        self.assertTrue(np.array_equal(y, y_new))

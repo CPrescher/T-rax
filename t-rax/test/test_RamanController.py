@@ -5,34 +5,45 @@ import unittest
 import os
 import numpy as np
 
-from model.RamanModel import RamanModel, WAVELENGTH_MODE
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtTest import QTest
+
+from model.RamanModel import RamanModel
+from widget.RamanWidget import RamanWidget
+from controller.RamanController import RamanController
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
-class RamanModelTest(unittest.TestCase):
+class RamanControllerTest(unittest.TestCase):
     def setUp(self):
+        self.app = QtGui.QApplication([])
         self.model = RamanModel()
-
-    def test_changing_laser_line(self):
+        self.widget = RamanWidget(None)
+        self.controller = RamanController(self.model, self.widget)
         self.model.load_file(test_file)
 
-        x, y = self.model.spectrum.data
+    def tearDown(self):
+        del self.app
 
-        self.model.laser_line = 600
+    def click_checkbox(self, checkbox):
+        QTest.mouseClick(checkbox, QtCore.Qt.LeftButton, pos=QtCore.QPoint(2, checkbox.height() / 2))
 
-        x_new, y_new = self.model.spectrum.data
+    def test_laser_line(self):
+        x, y = self.widget.graph_widget.get_data()
+        self.widget.laser_line_txt.setText('')
+        QTest.keyClicks(self.widget.laser_line_txt, "415")
+        QTest.keyClick(self.widget.laser_line_txt, QtCore.Qt.Key_Enter)
+        new_x, new_y = self.widget.graph_widget.get_data()
 
-        self.assertFalse(np.array_equal(x, x_new))
-        self.assertTrue(np.array_equal(y, y_new))
+        self.assertFalse(np.array_equal(new_x, x))
+        self.assertTrue(np.array_equal(new_y, y))
 
-    def test_changing_mode(self):
-        self.model.load_file(test_file)
-
-        x, y = self.model.spectrum.data
-        self.model.mode = WAVELENGTH_MODE
-        x_new, y_new = self.model.spectrum.data
-        self.assertFalse(np.array_equal(x, x_new))
-        self.assertTrue(np.array_equal(y, y_new))
+    def test_change_mode(self):
+        x, y = self.widget.graph_widget.get_data()
+        self.click_checkbox(self.widget.nanometer_cb)
+        new_x, new_y = self.widget.graph_widget.get_data()
+        self.assertFalse(np.array_equal(new_x, x))
+        self.assertTrue(np.array_equal(new_y, y))

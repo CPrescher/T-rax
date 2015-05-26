@@ -13,13 +13,16 @@ class RamanModel(SingleSpectrumModel, object):
     def __init__(self):
         super(RamanModel, self).__init__()
         self._laser_line = 532
-        self.mode = REVERSE_CM_MODE
+        self._mode = REVERSE_CM_MODE
 
     @property
     def spectrum(self):
         spec = super(RamanModel, self).spectrum
-        if self.mode is REVERSE_CM_MODE:
+        if self._mode is REVERSE_CM_MODE:
             spec._x = convert_wavelength_to_reverse_cm(spec.x, self.laser_line)
+        import time
+
+        print time.time()
         return spec
 
     @property
@@ -29,6 +32,15 @@ class RamanModel(SingleSpectrumModel, object):
     @laser_line.setter
     def laser_line(self, value):
         self._laser_line = value
+        self.spectrum_changed.emit(*self.spectrum.data)
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, value):
+        self._mode = value
         self.spectrum_changed.emit(*self.spectrum.data)
 
 
