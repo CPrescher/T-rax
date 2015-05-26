@@ -20,9 +20,6 @@ class RamanModel(SingleSpectrumModel, object):
         spec = super(RamanModel, self).spectrum
         if self._mode is REVERSE_CM_MODE:
             spec._x = convert_wavelength_to_reverse_cm(spec.x, self.laser_line)
-        import time
-
-        print time.time()
         return spec
 
     @property
