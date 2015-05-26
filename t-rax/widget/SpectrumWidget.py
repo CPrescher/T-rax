@@ -29,7 +29,7 @@ class SpectrumWidget(QtGui.QWidget):
         self._plot_item.showAxis('right', show=True)
         self._plot_item.getAxis('top').setStyle(showValues=False)
         self._plot_item.getAxis('right').setStyle(showValues=False)
-        self._plot_item.getAxis('left').setStyle(showValues=False)
+        self._plot_item.getAxis('left').setStyle(showValues=True)
         self._plot_item.setLabel('bottom', 'v (cm<sup>-1</sup>)')
         self._pg_layout.addItem(self._plot_item, 0, 0)
 

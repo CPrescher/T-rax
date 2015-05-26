@@ -1,9 +1,9 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from .BaseWidget import BaseWidget
-
 from PyQt4 import QtGui, QtCore
+
+from .BaseWidget import BaseWidget
 
 
 class RamanWidget(BaseWidget, object):
@@ -37,13 +37,8 @@ class DisplayModeGroupBox(QtGui.QGroupBox):
         self._laser_lint_unit_lbl = QtGui.QLabel('nm')
 
         self._mode_lbl = QtGui.QLabel('Unit:')
-        self._reverse_cm_cb = QtGui.QRadioButton()
-        self._reverse_cm_lbl = QtGui.QLabel('cm<sup>-1</sup>')
-        self._reverse_cm_lbl.mousePressEvent = self._reverse_cm_lbl_mouse_press
+        self._reverse_cm_cb = QtGui.QRadioButton('cm-1')
         self._nanometer_cb = QtGui.QRadioButton('nm')
-
-    def _reverse_cm_lbl_mouse_press(self, *args, **kwargs):
-        self._reverse_cm_cb.setChecked(True)
 
     def create_layout(self):
         self._laser_line_layout = QtGui.QHBoxLayout()
@@ -54,7 +49,6 @@ class DisplayModeGroupBox(QtGui.QGroupBox):
         self._reverse_cm_layout = QtGui.QHBoxLayout()
         self._reverse_cm_layout.setSpacing(1)
         self._reverse_cm_layout.addWidget(self._reverse_cm_cb)
-        self._reverse_cm_layout.addWidget(self._reverse_cm_lbl)
         self._mode_layout.addLayout(self._reverse_cm_layout)
         self._mode_layout.addWidget(self._nanometer_cb)
 
