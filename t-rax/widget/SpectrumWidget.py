@@ -24,13 +24,13 @@ class SpectrumWidget(QtGui.QWidget):
         self._pg_layout.setContentsMargins(0, 0, 0, 0)
         self._pg_layout.layout.setVerticalSpacing(0)
 
-        self._plot_item = ModifiedPlotItem(enableMouseInteraction=False)
+        self._plot_item = ModifiedPlotItem(enableMouseInteraction=True)
         self._plot_item.showAxis('top', show=True)
         self._plot_item.showAxis('right', show=True)
         self._plot_item.getAxis('top').setStyle(showValues=False)
         self._plot_item.getAxis('right').setStyle(showValues=False)
         self._plot_item.getAxis('left').setStyle(showValues=False)
-        self._plot_item.setLabel('bottom', 'v (cm-1)')
+        self._plot_item.setLabel('bottom', 'v (cm<sup>-1</sup>)')
         self._pg_layout.addItem(self._plot_item, 0, 0)
 
         self._pg_layout_widget.addItem(self._pg_layout)
@@ -45,3 +45,6 @@ class SpectrumWidget(QtGui.QWidget):
 
     def get_data(self):
         return self._data_item.getData()
+
+    def set_xlabel(self, label_string):
+        self._plot_item.setLabel('bottom', label_string)

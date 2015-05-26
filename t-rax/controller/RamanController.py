@@ -29,6 +29,7 @@ class RamanController(QtCore.QObject):
     def connect_signals(self):
         self.widget.laser_line_txt.editingFinished.connect(self.laser_line_txt_changed)
         self.widget.nanometer_cb.toggled.connect(self.display_mode_changed)
+        self.model.spectrum_changed.connect(self.spectrum_changed)
 
     def laser_line_txt_changed(self):
         new_laser_line = float(str(self.widget.laser_line_txt.text()))
@@ -39,3 +40,9 @@ class RamanController(QtCore.QObject):
             self.model.mode = WAVELENGTH_MODE
         else:
             self.model.mode = REVERSE_CM_MODE
+
+    def spectrum_changed(self):
+        if self.model.mode == WAVELENGTH_MODE:
+            self.widget.graph_widget.set_xlabel('&lambda; (nm)')
+        elif self.model.mode == REVERSE_CM_MODE:
+            self.widget.graph_widget.set_xlabel('v (cm<sup>-1</sup>)')
