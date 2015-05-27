@@ -19,6 +19,7 @@ class FileGroupBox(QtGui.QGroupBox):
 
         self._main_layout.addWidget(self.file_control_widget)
         self._main_layout.addWidget(self.frame_control_widget)
+        self.frame_control_widget.hide()
         self.setLayout(self._main_layout)
 
     def create_file_control_widget(self):

@@ -4,8 +4,10 @@ import os
 from PyQt4 import QtGui, QtCore
 
 from model.RamanModel import RamanModel
+from model.RubyModel import RubyModel
 from widget.MainWidget import MainWidget
 from controller.TemperatureController import TemperatureController
+from controller.RubyController import RubyController
 from controller.RamanController import RamanController
 
 
@@ -30,9 +32,11 @@ class MainController(object):
 
     def create_data_models(self):
         self.raman_model = RamanModel()
+        self.ruby_model = RubyModel()
 
     def create_sub_controller(self):
         self.temperature_controller = TemperatureController(self.main_widget.temperature_widget)
+        self.ruby_controller = RubyController(self.ruby_model, self.main_widget.ruby_widget)
         self.raman_controller = RamanController(self.raman_model, self.main_widget.raman_widget)
 
     def load_directories(self):
@@ -53,16 +57,28 @@ class MainController(object):
 
         self.main_widget.navigation_widget.temperature_btn.clicked.connect(
             self.navigation_temperature_btn_clicked)
+        self.main_widget.navigation_widget.ruby_btn.clicked.connect(
+            self.navigation_ruby_btn_clicked)
         self.main_widget.navigation_widget.raman_btn.clicked.connect(
             self.navigation_raman_btn_clicked)
 
+    def navigation_ruby_btn_clicked(self):
+        self.hide_module_widgets()
+        self.main_widget.ruby_widget.show()
+
     def navigation_raman_btn_clicked(self):
-        self.main_widget.temperature_widget.hide()
+        self.hide_module_widgets()
         self.main_widget.raman_widget.show()
 
     def navigation_temperature_btn_clicked(self):
-        self.main_widget.raman_widget.hide()
+        self.hide_module_widgets()
         self.main_widget.temperature_widget.show()
+
+    def hide_module_widgets(self):
+        self.main_widget.temperature_widget.hide()
+        self.main_widget.ruby_widget.hide()
+        self.main_widget.raman_widget.hide()
+
 
 
     def save_directories(self):
