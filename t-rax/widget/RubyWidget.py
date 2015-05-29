@@ -27,7 +27,7 @@ class RubyWidget(BaseWidget, object):
         self.ruby_scale_cb = self._ruby_pressure_gb._ruby_scale_cb
 
     def modify_graph_widget(self):
-        self._ruby_line = pg.InfiniteLine()
+        self._ruby_line = pg.InfiniteLine(pen=pg.mkPen((197, 0, 3), width=2))
         self.graph_widget.add_item(self._ruby_line)
 
     def set_ruby_line_pos(self, value):
@@ -89,7 +89,7 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
         self._layout.addWidget(self._sample_position_txt, 4, 1)
         self._layout.addWidget(self._sample_temperature_txt, 4, 2)
 
-        self._layout.addWidget(self._pressure_lbl, 6, 1)
+        self._layout.addWidget(self._pressure_lbl, 6, 0, 1, 2)
         self._layout.addWidget(self._pressure_unit_lbl, 6, 2)
 
         self.setLayout(self._layout)
