@@ -46,9 +46,10 @@ class RubyController(QtCore.QObject):
     def mouse_left_clicked(self, x, y):
         self.model.sample_position = x
         self.widget.set_ruby_line_pos(x)
+        self.widget.sample_position_txt.setText("{:.2f}".format(x))
 
     def pressure_changed(self, new_value):
-        self.widget.pressure_lbl.setText("{:.3f}".format(new_value))
+        self.widget.pressure_lbl.setText("{:.2f}".format(new_value))
 
     def reference_position_txt_changed(self):
         new_value = float(str(self.widget.reference_position_txt.text()))
