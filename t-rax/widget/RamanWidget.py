@@ -71,6 +71,6 @@ class DisplayModeGroupBox(QtGui.QGroupBox):
 
 if __name__ == '__main__':
     app = QtGui.QApplication([])
-    widget = RamanWidget()
+    widget = RamanWidget(parent=None)
     widget.show()
     app.exec_()
