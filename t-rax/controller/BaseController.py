@@ -46,7 +46,7 @@ class BaseController(QtCore.QObject):
 
     def data_changed(self):
         """
-        Updates the interface everytime the RamanModel sends the data_changed signal
+        Updates the interface everytime the BaseModel sends the data_changed signal
         """
         self.widget.filename_lbl.setText(os.path.basename(self.model.filename))
         self.widget.dirname_lbl.setText(os.path.sep.join(os.path.dirname(self.model.filename).split(os.sep)[-2:]))

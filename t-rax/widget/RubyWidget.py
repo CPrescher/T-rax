@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtGui, QtCore
+import pyqtgraph as pg
 
 from .BaseWidget import BaseWidget
 
@@ -14,6 +15,7 @@ class RubyWidget(BaseWidget, object):
         self.add_control_widget(self._ruby_pressure_gb)
 
         self.create_ruby_shortcuts()
+        self.modify_graph_widget()
 
     def create_ruby_shortcuts(self):
         self.sample_position_txt = self._ruby_pressure_gb._sample_position_txt
@@ -21,6 +23,19 @@ class RubyWidget(BaseWidget, object):
         self.sample_temperature_txt = self._ruby_pressure_gb._sample_temperature_txt
         self.reference_temperature_txt = self._ruby_pressure_gb._reference_temperature_txt
         self.pressure_lbl = self._ruby_pressure_gb._pressure_lbl
+
+        self.ruby_scale_cb = self._ruby_pressure_gb._ruby_scale_cb
+
+    def modify_graph_widget(self):
+        self._ruby_line = pg.InfiniteLine()
+        self.graph_widget.add_item(self._ruby_line)
+
+    def set_ruby_line_pos(self, value):
+        self._ruby_line.setValue(value)
+
+    def get_ruby_line_pos(self):
+        return self._ruby_line.value()
+
 
 
 class RubyPressureGroupBox(QtGui.QGroupBox):
@@ -40,10 +55,10 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
         self._temperature_lbl = QtGui.QLabel("Temp.")
         self._temperature_unit_lbl = QtGui.QLabel("(K)")
 
-        self._reference_position_txt = QtGui.QLineEdit("695.35")
+        self._reference_position_txt = QtGui.QLineEdit("694.35")
         self._reference_temperature_txt = QtGui.QLineEdit("298")
 
-        self._sample_position_txt = QtGui.QLineEdit("695.35")
+        self._sample_position_txt = QtGui.QLineEdit("694.35")
         self._sample_temperature_txt = QtGui.QLineEdit("298")
 
         self._ruby_scale_cb = QtGui.QComboBox()

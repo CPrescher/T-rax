@@ -4,17 +4,13 @@ __author__ = 'Clemens Prescher'
 from PyQt4 import QtCore
 from BaseModel import SingleSpectrumModel
 
-HYDROSTATIC_SCALE = 0
-NONHYDROSTATIC_SCALE = 1
-DEWAELE_SCALE = 2
-
 
 class RubyModel(SingleSpectrumModel):
     pressure_changed = QtCore.pyqtSignal(float)
 
-    HYDROSTATIC_SCALE = 0
-    NONHYDROSTATIC_SCALE = 1
-    DEWAELE_SCALE = 2
+    DEWAELE_SCALE = 0
+    HYDROSTATIC_SCALE = 1
+    NONHYDROSTATIC_SCALE = 2
 
     def __init__(self):
         super(RubyModel, self).__init__()
@@ -24,7 +20,7 @@ class RubyModel(SingleSpectrumModel):
         self._sample_position = 694.35
         self._sample_temperature = 298
 
-        self._ruby_scale = DEWAELE_SCALE
+        self._ruby_scale = RubyModel.DEWAELE_SCALE
 
     def get_ruby_pressure(self):
         line_pos = self._sample_position
@@ -40,13 +36,13 @@ class RubyModel(SingleSpectrumModel):
         lam0 = self.reference_position
         lam = line_pos
 
-        if self._ruby_scale == DEWAELE_SCALE:
+        if self._ruby_scale == RubyModel.DEWAELE_SCALE:
             B = 9.61
             A = 1920
-        elif self._ruby_scale == HYDROSTATIC_SCALE:
+        elif self._ruby_scale == RubyModel.HYDROSTATIC_SCALE:
             B = 7.665
             A = 1904
-        elif self._ruby_scale == NONHYDROSTATIC_SCALE:
+        elif self._ruby_scale == RubyModel.NONHYDROSTATIC_SCALE:
             B = 5
             A = 1904
 

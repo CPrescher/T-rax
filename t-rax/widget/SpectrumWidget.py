@@ -8,6 +8,8 @@ from .ModifiedPlotItem import ModifiedPlotItem
 
 
 class SpectrumWidget(QtGui.QWidget):
+    mouse_left_clicked = QtCore.pyqtSignal(float, float)
+
     def __init__(self, *args, **kwargs):
         super(SpectrumWidget, self).__init__(*args, **kwargs)
         self._layout = QtGui.QVBoxLayout()
@@ -31,6 +33,7 @@ class SpectrumWidget(QtGui.QWidget):
         self._plot_item.getAxis('right').setStyle(showValues=False)
         self._plot_item.getAxis('left').setStyle(showValues=True)
         self._plot_item.setLabel('bottom', 'v (cm<sup>-1</sup>)')
+        self._plot_item.mouse_left_clicked.connect(self.mouse_left_clicked)
         self._pg_layout.addItem(self._plot_item, 0, 0)
 
         self._pg_layout_widget.addItem(self._pg_layout)
@@ -39,6 +42,9 @@ class SpectrumWidget(QtGui.QWidget):
     def create_data_items(self):
         self._data_item = pg.PlotDataItem(pen=pg.mkPen("#fff", width=3))
         self._plot_item.addItem(self._data_item)
+
+    def add_item(self, pg_item):
+        self._plot_item.addItem(pg_item)
 
     def plot_data(self, x, y):
         self._data_item.setData(x, y)

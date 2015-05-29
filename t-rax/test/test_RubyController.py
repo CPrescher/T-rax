@@ -33,9 +33,10 @@ class RubyControllerTest(unittest.TestCase):
         QTest.keyClicks(text_field, str)
         QTest.keyClick(text_field, QtCore.Qt.Key_Enter)
 
-    def test_set_ruby_position_textfield_and_retrieve_pressure(self):
+    def test_set_ruby_position_textfield_retrieve_pressure_and_set_line_pos(self):
         self.input_txt_into_text_field(self.widget.sample_position_txt, "700")
         self.assertNotEqual(float(str(self.widget.pressure_lbl.text())), 0)
+        self.assertAlmostEqual(self.widget.get_ruby_line_pos(), 700)
 
     def test_set_ruby_reference_position_text_and_retrieve_pressure(self):
         self.input_txt_into_text_field(self.widget.reference_position_txt, "694.15")
@@ -52,3 +53,12 @@ class RubyControllerTest(unittest.TestCase):
         p1 = float(str(self.widget.pressure_lbl.text()))
         self.input_txt_into_text_field(self.widget.reference_temperature_txt, "600")
         self.assertGreater(float(str(self.widget.pressure_lbl.text())), p1)
+
+    def test_change_ruby_equation_of_state_and_retrieve_pressure(self):
+        self.input_txt_into_text_field(self.widget.sample_position_txt, "702")
+        p1 = float(str(self.widget.pressure_lbl.text()))
+        self.widget.ruby_scale_cb.setCurrentIndex(1)
+        self.assertNotAlmostEqual(float(str(self.widget.pressure_lbl.text())), p1)
+
+        self.widget.ruby_scale_cb.setCurrentIndex(2)
+        self.assertNotAlmostEqual(float(str(self.widget.pressure_lbl.text())), p1)
