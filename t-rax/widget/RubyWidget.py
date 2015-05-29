@@ -10,8 +10,17 @@ class RubyWidget(BaseWidget, object):
     def __init__(self, parent):
         super(RubyWidget, self).__init__()
 
-        self.ruby_pressure_gb = RubyPressureGroupBox()
-        self.add_control_widget(self.ruby_pressure_gb)
+        self._ruby_pressure_gb = RubyPressureGroupBox()
+        self.add_control_widget(self._ruby_pressure_gb)
+
+        self.create_ruby_shortcuts()
+
+    def create_ruby_shortcuts(self):
+        self.sample_position_txt = self._ruby_pressure_gb._sample_position_txt
+        self.reference_position_txt = self._ruby_pressure_gb._reference_position_txt
+        self.sample_temperature_txt = self._ruby_pressure_gb._sample_temperature_txt
+        self.reference_temperature_txt = self._ruby_pressure_gb._reference_temperature_txt
+        self.pressure_lbl = self._ruby_pressure_gb._pressure_lbl
 
 
 class RubyPressureGroupBox(QtGui.QGroupBox):
@@ -106,7 +115,6 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
 
         cleanlooks = QtGui.QStyleFactory.create('plastique')
         self._ruby_scale_cb.setStyle(cleanlooks)
-        self._ruby_scale_cb.s
 
 
 def horizontal_line():
