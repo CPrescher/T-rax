@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
+from PyQt4 import QtCore
 from BaseModel import SingleSpectrumModel
 
 HYDROSTATIC_SCALE = 0
@@ -9,13 +10,25 @@ DEWAELE_SCALE = 2
 
 
 class RubyModel(SingleSpectrumModel):
+    pressure_changed = QtCore.pyqtSignal(float)
+
+    HYDROSTATIC_SCALE = 0
+    NONHYDROSTATIC_SCALE = 1
+    DEWAELE_SCALE = 2
+
     def __init__(self):
         super(RubyModel, self).__init__()
-        self._reference_pos = 694.35
-        self._reference_temperature = 300
-        self._ruby_scale = HYDROSTATIC_SCALE
+        self._reference_position = 694.35
+        self._reference_temperature = 298
 
-    def get_ruby_pressure(self, line_pos, temperature=None):
+        self._sample_position = 694.35
+        self._sample_temperature = 298
+
+        self._ruby_scale = DEWAELE_SCALE
+
+    def get_ruby_pressure(self):
+        line_pos = self._sample_position
+        temperature = self._sample_temperature
         k = 0.46299
         l = 0.0060823
         m = 0.0000010264
@@ -24,7 +37,7 @@ class RubyModel(SingleSpectrumModel):
             temp = reftemp
         else:
             temp = temperature
-        lam0 = self.reference_pos
+        lam0 = self.reference_position
         lam = line_pos
 
         if self._ruby_scale == DEWAELE_SCALE:
@@ -59,9 +72,46 @@ class RubyModel(SingleSpectrumModel):
         return P
 
     @property
-    def temperature(self):
-        return self._temperature
+    def sample_temperature(self):
+        return self._sample_temperature
+
+    @sample_temperature.setter
+    def sample_temperature(self, value):
+        self._sample_temperature = value
+        self.pressure_changed.emit(self.get_ruby_pressure())
 
     @property
-    def reference_pos(self):
-        return self._reference_pos
+    def sample_position(self):
+        return self._sample_position
+
+    @sample_position.setter
+    def sample_position(self, value):
+        self._sample_position = value
+        self.pressure_changed.emit(self.get_ruby_pressure())
+
+    @property
+    def reference_temperature(self):
+        return self._reference_temperature
+
+    @reference_temperature.setter
+    def reference_temperature(self, value):
+        self._reference_temperature = value
+        self.pressure_changed.emit(self.get_ruby_pressure())
+
+    @property
+    def reference_position(self):
+        return self._reference_position
+
+    @reference_position.setter
+    def reference_position(self, value):
+        self._reference_position = value
+        self.pressure_changed.emit(self.get_ruby_pressure())
+
+    @property
+    def ruby_scale(self):
+        return self._ruby_scale
+
+    @ruby_scale.setter
+    def ruby_scale(self, value):
+        self._ruby_scale = value
+        self.pressure_changed.emit(self.get_ruby_pressure())
