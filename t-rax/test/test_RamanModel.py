@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 import unittest
 import os
+from PyQt4 import QtGui
 
 import numpy as np
 
@@ -14,7 +15,11 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 class RamanModelTest(unittest.TestCase):
     def setUp(self):
+        self.app = QtGui.QApplication()
         self.model = RamanModel()
+
+    def tearDown(self):
+        del self.app
 
     def test_changing_laser_line(self):
         self.model.load_file(test_file)

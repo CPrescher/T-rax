@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 import unittest
 import os
+from PyQt4 import QtGui
 
 import numpy as np
 
@@ -14,10 +15,11 @@ unittest_files_path = os.path.join(unittest_path, 'test_files')
 
 class TestSingleSpectrumModel(unittest.TestCase):
     def setUp(self):
+        self.app = QtGui.QApplication([])
         self.model = SingleSpectrumModel()
 
     def tearDown(self):
-        pass
+        del self.app
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)

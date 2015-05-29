@@ -1,7 +1,7 @@
 import unittest
 import os
 
-import numpy as np
+from PyQt4 import QtGui
 
 from model.RubyModel import RubyModel
 
@@ -12,7 +12,11 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 class RubyModelTest(unittest.TestCase):
     def setUp(self):
+        self.app = QtGui.QApplication([])
         self.model = RubyModel()
+
+    def tearDown(self):
+        del self.app
 
     def test_get_pressure(self):
         self.assertAlmostEqual(self.model.get_ruby_pressure(), 0)

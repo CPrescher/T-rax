@@ -4,6 +4,8 @@ __author__ = 'Clemens Prescher'
 import unittest
 import os
 
+from PyQt4 import QtGui
+
 import numpy as np
 
 from model.TemperatureModel import SingleTemperatureModel
@@ -16,11 +18,12 @@ unittest_files_path = os.path.join(unittest_path, 'test_files')
 
 class TestSingleTemperatureModel(unittest.TestCase):
     def setUp(self):
+        self.app = QtGui.QApplication([])
         self.roi_manager = RoiDataManager(1)
         self.model = SingleTemperatureModel(0, self.roi_manager)
 
     def tearDown(self):
-        pass
+        del self.app
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)
