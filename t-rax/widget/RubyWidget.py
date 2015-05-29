@@ -44,9 +44,7 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
         self._reference_temperature_txt = QtGui.QLineEdit("298")
 
         self._sample_position_txt = QtGui.QLineEdit("695.35")
-        self._sample_position_unit_lbl = QtGui.QLabel("nm")
         self._sample_temperature_txt = QtGui.QLineEdit("298")
-        self._sample_temperature_unit_lbl = QtGui.QLabel("K")
 
         self._ruby_scale_cb = QtGui.QComboBox()
         self._ruby_scale_cb.addItems(["Dewaele et al. 2008",
