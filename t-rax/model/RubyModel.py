@@ -2,7 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore
-from BaseModel import SingleSpectrumModel
+from .BaseModel import SingleSpectrumModel
 
 
 class RubyModel(SingleSpectrumModel):
