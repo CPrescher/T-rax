@@ -21,3 +21,27 @@ class DiamondController(QtCore.QObject):
         self.base_controller = BaseController(model, widget)
         self.model = model
         self.widget = widget
+
+        self.connect_signals()
+
+    def connect_signals(self):
+        self.widget.laser_line_txt.editingFinished.connect(self.laser_line_txt_changed)
+
+        self.model.pressure_changed.connect(self.pressure_changed)
+        self.widget.sample_pos_txt.editingFinished.connect(self.sample_pos_txt_changed)
+        self.widget.reference_pos_txt.editingFinished.connect(self.reference_pos_txt_changed)
+
+    def laser_line_txt_changed(self):
+        new_value = float(str(self.widget.laser_line_txt.text()))
+        self.model.laser_line = new_value
+
+    def sample_pos_txt_changed(self):
+        new_value = float(str(self.widget.sample_pos_txt.text()))
+        self.model.sample_position = new_value
+
+    def reference_pos_txt_changed(self):
+        new_value = float(str(self.widget.reference_pos_txt.text()))
+        self.model.reference_position = new_value
+
+    def pressure_changed(self, value):
+        self.widget.pressure_lbl.setText("{:.2f}".format(value))
