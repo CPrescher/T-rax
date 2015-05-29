@@ -22,3 +22,9 @@ class DiamondModelTest(unittest.TestCase):
         self.model.reference_position = 1334.
         self.model.sample_position = 1335.
         self.assertGreater(self.model.get_pressure(), 0)
+
+    def test_change_reference_position(self):
+        self.model.sample_position = 1350
+        p1 = self.model.get_pressure()
+        self.model.reference_position = 1338
+        self.assertLess(self.model.get_pressure(), p1)
