@@ -5,20 +5,20 @@ import numpy as np
 
 from .BaseModel import SingleSpectrumModel
 
-REVERSE_CM_MODE = 0
-WAVELENGTH_MODE = 1
-
 
 class RamanModel(SingleSpectrumModel, object):
+    REVERSE_CM_MODE = 0
+    WAVELENGTH_MODE = 1
+
     def __init__(self):
         super(RamanModel, self).__init__()
         self._laser_line = 532
-        self._mode = REVERSE_CM_MODE
+        self._mode = RamanModel.REVERSE_CM_MODE
 
     @property
     def spectrum(self):
         spec = super(RamanModel, self).spectrum
-        if self._mode is REVERSE_CM_MODE:
+        if self._mode is RamanModel.REVERSE_CM_MODE:
             spec._x = convert_wavelength_to_reverse_cm(spec.x, self.laser_line)
         return spec
 

@@ -6,7 +6,7 @@ from PyQt4 import QtGui
 
 import numpy as np
 
-from model.RamanModel import RamanModel, WAVELENGTH_MODE
+from model.RamanModel import RamanModel
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, 'test_files')
@@ -37,7 +37,7 @@ class RamanModelTest(unittest.TestCase):
         self.model.load_file(test_file)
 
         x, y = self.model.spectrum.data
-        self.model._mode = WAVELENGTH_MODE
+        self.model._mode = RamanModel.WAVELENGTH_MODE
         x_new, y_new = self.model.spectrum.data
         self.assertFalse(np.array_equal(x, x_new))
         self.assertTrue(np.array_equal(y, y_new))

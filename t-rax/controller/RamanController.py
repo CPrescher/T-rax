@@ -3,7 +3,7 @@ __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore
 
-from model.RamanModel import RamanModel, REVERSE_CM_MODE, WAVELENGTH_MODE
+from model.RamanModel import RamanModel
 from widget.RamanWidget import RamanWidget
 from controller.BaseController import BaseController
 
@@ -37,9 +37,9 @@ class RamanController(QtCore.QObject):
 
     def display_mode_changed(self):
         if self.widget.nanometer_cb.isChecked():
-            self.model.mode = WAVELENGTH_MODE
+            self.model.mode = RamanModel.WAVELENGTH_MODE
         else:
-            self.model.mode = REVERSE_CM_MODE
+            self.model.mode = RamanModel.REVERSE_CM_MODE
 
     def spectrum_changed(self):
         if self.model.mode == WAVELENGTH_MODE:
