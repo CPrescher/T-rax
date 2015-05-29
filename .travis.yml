@@ -27,4 +27,4 @@ install:
 
 script:
     - cd t-rax/test
-    - nosetests --with-coverage --cover-package=controller,model,view
+    - nosetests --with-coverage --cover-package=controller,model,widget
