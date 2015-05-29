@@ -15,7 +15,7 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 class RamanModelTest(unittest.TestCase):
     def setUp(self):
-        self.app = QtGui.QApplication()
+        self.app = QtGui.QApplication([])
         self.model = RamanModel()
 
     def tearDown(self):

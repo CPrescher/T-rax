@@ -2,15 +2,16 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
+from PyQt4 import QtGui
 
 from model.RoiData import RoiDataManager
 
 class TestNewRoiData(unittest.TestCase):
     def setUp(self):
-        pass
+        self.app = QtGui.QApplication([])
 
     def tearDown(self):
-        pass
+        del self.app
 
     def test_single_roi_get_and_set_methods(self):
         roi_data_manager = RoiDataManager(1)
