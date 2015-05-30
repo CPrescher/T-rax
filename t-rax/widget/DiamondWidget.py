@@ -89,7 +89,7 @@ class DiamondPressureGroupBox(QtGui.QGroupBox):
         self._layout.addWidget(self._sample_pos_unit_lbl, 4, 2)
 
         self._layout.addWidget(self._pressure_lbl, 5, 0, 1, 2)
-        self._layout.addWidget(self._pressure_unit_lbl, 6, 2)
+        self._layout.addWidget(self._pressure_unit_lbl, 5, 2)
 
         self.setLayout(self._layout)
 
