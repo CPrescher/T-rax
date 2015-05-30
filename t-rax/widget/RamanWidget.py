@@ -3,6 +3,8 @@ __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtGui, QtCore
 
+import pyqtgraph as pg
+
 from .BaseWidget import BaseWidget
 
 
