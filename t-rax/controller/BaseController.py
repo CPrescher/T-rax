@@ -19,7 +19,17 @@ class BaseController(QtCore.QObject):
 
         self.widget = widget
         self.model = model
+
         self._working_dir = ''
+        self._file_system_watcher = QtCore.QFileSystemWatcher()
+        self._file_system_watcher.addPath(os.getcwd())
+        self._file_system_watcher.directoryChanged.connect(self.new_file_in_directory)
+        self._file_system_watcher.blockSignals(True)
+        self._file_update_timer = QtCore.QTimer()
+        self._file_update_timer.setSingleShot(True)
+        self._file_update_timer.timeout.connect(self.new_file_in_directory)
+        self._files_in_working_dir = []
+
         self.create_signals()
 
     def create_signals(self):
@@ -32,6 +42,7 @@ class BaseController(QtCore.QObject):
         self.model.data_changed.connect(self.data_changed)
         self.model.spectrum_changed.connect(self.widget.graph_widget.plot_data)
         self.widget.roi_widget.rois_changed.connect(self.rois_changed)
+        self.widget.autoprocess_cb.toggled.connect(self.auto_process_cb_toggled)
 
     def connect_click_function(self, emitter, function):
         self.widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
@@ -43,6 +54,10 @@ class BaseController(QtCore.QObject):
 
         if filename is not '':
             self.model.load_file(filename)
+            self._file_system_watcher.removePath(self._file_system_watcher.directories()[0])
+            self._working_dir = os.path.dirname(filename)
+            self._file_system_watcher.addPath(self._working_dir)
+            self._files_in_working_dir = os.listdir(self._working_dir)
 
     def data_changed(self):
         """
@@ -67,3 +82,27 @@ class BaseController(QtCore.QObject):
         one.
         """
         self.model.roi = self.widget.roi_widget.get_rois()[0]
+
+    def auto_process_cb_toggled(self):
+        if self.widget.autoprocess_cb.isChecked():
+            self._file_system_watcher.blockSignals(False)
+        else:
+            self._file_system_watcher.blockSignals(True)
+
+    def new_file_in_directory(self):
+        files_now = os.listdir(self._working_dir)
+        files_added = [f for f in files_now if not f in self._files_in_working_dir]
+        if len(files_added) > 0:
+            new_file_path = os.path.join(str(self._working_dir), files_added[-1])
+            if new_file_path.endswith(self.model.filename.split('.')[-1]):
+                file_info = os.stat(new_file_path)
+                if file_info.st_size > 1000:
+                    try:
+                        self.load_data_file(new_file_path)
+                    except IOError:
+                        self._file_update_timer.start(5)
+                        return
+                else:
+                    self._file_update_timer.start(5)
+                    return
+            self._files_in_working_dir = files_now

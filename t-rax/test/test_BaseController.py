@@ -4,6 +4,7 @@ __author__ = 'Clemens Prescher'
 import unittest
 from mock import patch
 import os
+import shutil
 from numpy import array_equal
 
 from PyQt4 import QtGui, QtCore
@@ -27,6 +28,8 @@ class BaseControllerTest(unittest.TestCase):
 
     def tearDown(self):
         del self.app
+        if os.path.exists(os.path.join(unittest_files_path, 'temp.spe')):
+            os.remove(os.path.join(unittest_files_path, 'temp.spe'))
 
     @patch('PyQt4.QtGui.QFileDialog.getOpenFileName')
     def test_loading_files(self, filedialog):
@@ -73,3 +76,15 @@ class BaseControllerTest(unittest.TestCase):
 
         new_x, new_y = self.model.spectrum.data
         self.assertNotEqual(len(x), len(new_x))
+
+    def test_using_auto_load_function(self):
+        self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+
+        QTest.mouseClick(self.widget.autoprocess_cb, QtCore.Qt.LeftButton,
+                         pos=QtCore.QPoint(2, self.widget.autoprocess_cb.height() / 2))
+        shutil.copy2(os.path.join(unittest_files_path, 'temper_009.spe'),
+                     os.path.join(unittest_files_path, 'temp.spe'))
+        # apparently the file system watcher signal has to be send manually that when using unittests....
+        self.controller._file_system_watcher.directoryChanged.emit(unittest_files_path)
+
+        self.assertEqual(str(self.widget.filename_lbl.text()), 'temp.spe')
