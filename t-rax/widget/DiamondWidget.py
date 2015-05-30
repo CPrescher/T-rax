@@ -24,8 +24,8 @@ class DiamondWidget(BaseWidget, object):
         self.derivative_sb = self._diamond_gb._derivative_sb
 
     def modify_graph_widget(self):
-        self._diamond_line = pg.InfiniteLine(1334, pen=pg.mkPen((27, 0, 134), width=2))
-        self._derivative_item = pg.PlotDataItem(pen=pg.mkPen((40, 0, 200)))
+        self._diamond_line = pg.InfiniteLine(1334, pen=pg.mkPen((150, 150, 250), width=2))
+        self._derivative_item = pg.PlotDataItem(pen=pg.mkPen((100, 100, 200)))
         self.graph_widget.add_item(self._diamond_line)
         self.graph_widget.add_item(self._derivative_item)
 
