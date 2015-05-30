@@ -28,7 +28,6 @@ class DiamondController(QtCore.QObject):
     def connect_signals(self):
         self.model.pressure_changed.connect(self.pressure_changed)
         self.model.spectrum_changed.connect(self.spectrum_changed)
-        self.model.data_changed.connect(self.spectrum_changed)
 
         self.widget.laser_line_txt.editingFinished.connect(self.laser_line_txt_changed)
         self.widget.sample_pos_txt.editingFinished.connect(self.sample_pos_txt_changed)

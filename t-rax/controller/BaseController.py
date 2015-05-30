@@ -51,7 +51,6 @@ class BaseController(QtCore.QObject):
         self.widget.filename_lbl.setText(os.path.basename(self.model.filename))
         self.widget.dirname_lbl.setText(os.path.sep.join(os.path.dirname(self.model.filename).split(os.sep)[-2:]))
 
-        self.widget.graph_widget.plot_data(*self.model.spectrum.data)
         self.widget.roi_widget.plot_img(self.model.data_img)
 
         self.widget.roi_widget.set_rois([self.model.roi.as_list()])

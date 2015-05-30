@@ -46,6 +46,7 @@ class SingleSpectrumModel(QtCore.QObject, object):
         self._data_img_dimension = (self._data_img.shape[1], self._data_img.shape[0])
         self._filename_iterator.update_filename(filename)
         self.data_changed.emit()
+        self.spectrum_changed.emit(*self.spectrum.data)
 
     def load_next_file(self):
         new_filename = self._filename_iterator.get_next_filename()
