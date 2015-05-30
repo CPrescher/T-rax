@@ -30,6 +30,7 @@ class DiamondController(QtCore.QObject):
         self.model.spectrum_changed.connect(self.spectrum_changed)
 
         self.widget.laser_line_txt.editingFinished.connect(self.laser_line_txt_changed)
+        self.widget.derivative_sb.valueChanged.connect(self.spectrum_changed)
         self.widget.sample_pos_txt.editingFinished.connect(self.sample_pos_txt_changed)
         self.widget.reference_pos_txt.editingFinished.connect(self.reference_pos_txt_changed)
 

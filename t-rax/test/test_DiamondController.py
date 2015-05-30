@@ -41,6 +41,12 @@ class DiamondControllerTest(unittest.TestCase):
         x, y = self.widget.graph_widget.get_data()
         self.assertTrue(np.array_equal(x, x_der))
 
+    def test_changing_derivative_smoothing(self):
+        _, y_der = self.widget._derivative_item.getData()
+        self.widget.derivative_sb.setValue(10)
+        _, y_der2 = self.widget._derivative_item.getData()
+        self.assertFalse(np.array_equal(y_der, y_der2))
+
     def test_diamond_position_text_field(self):
         self.input_txt_into_text_field(self.widget.sample_pos_txt, "1340")
         self.assertAlmostEqual(self.get_numeric_value_from_text_field(self.widget.pressure_lbl), 2.48)
