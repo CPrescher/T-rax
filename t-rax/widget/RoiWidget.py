@@ -6,14 +6,12 @@ from functools import partial
 from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
 from pyqtgraph.graphicsItems.ROI import Handle
-import numpy as np
 
 from .HistogramLUTItem import HistogramLUTItem
 
-
 pg.setConfigOption('useOpenGL', False)
 pg.setConfigOption('leftButtonPan', False)
-pg.setConfigOption('background', (30,30,30))
+pg.setConfigOption('background', (30, 30, 30))
 pg.setConfigOption('foreground', 'w')
 pg.setConfigOption('antialias', True)
 
@@ -21,7 +19,7 @@ pg.setConfigOption('antialias', True)
 class RoiWidget(QtGui.QWidget):
     rois_changed = QtCore.pyqtSignal(list)
 
-    def __init__(self, roi_num=1, roi_titles = ('',), roi_colors=((255, 255, 0)), *args, **kwargs):
+    def __init__(self, roi_num=1, roi_titles=('',), roi_colors=((255, 255, 0)), *args, **kwargs):
         super(RoiWidget, self).__init__(*args, **kwargs)
         self.roi_num = roi_num
         self.roi_titles = roi_titles
@@ -35,15 +33,14 @@ class RoiWidget(QtGui.QWidget):
         self.roi_gbs = []
         self.create_roi_gbs()
         self._roi_gbs_layout.addSpacerItem(QtGui.QSpacerItem(20, 20,
-                                                            QtGui.QSizePolicy.Expanding,
-                                                            QtGui.QSizePolicy.Expanding))
-
+                                                             QtGui.QSizePolicy.Expanding,
+                                                             QtGui.QSizePolicy.Expanding))
 
         self._main_horizontal_layout.addWidget(self.img_widget)
         self._main_horizontal_layout.addLayout(self._roi_gbs_layout)
 
-        self._main_horizontal_layout.setStretch(0,1)
-        self._main_horizontal_layout.setStretch(1,0)
+        self._main_horizontal_layout.setStretch(0, 1)
+        self._main_horizontal_layout.setStretch(1, 0)
         self.setLayout(self._main_horizontal_layout)
 
         self.create_signals()
@@ -85,7 +82,6 @@ class RoiWidget(QtGui.QWidget):
             self.img_widget.plot_image(img_data.T)
 
 
-
 class RoiGroupBox(QtGui.QGroupBox):
     roi_txt_changed = QtCore.pyqtSignal(list)
 
@@ -109,7 +105,7 @@ class RoiGroupBox(QtGui.QGroupBox):
 
         self.setLayout(self._grid_layout)
         style_str = "color: rgb{0}; border: 1px solid rgb{0};".format(self.color)
-        self.setStyleSheet('QGroupBox {'+style_str+'}')
+        self.setStyleSheet('QGroupBox {' + style_str + '}')
         self.setMaximumWidth(230)
         self.create_signals()
 
@@ -201,8 +197,8 @@ class RoiImageWidget(QtGui.QWidget):
     def get_roi_limits(self):
         roi_limits = []
         for roi in self.rois:
-            roi_limits.append([roi.pos()[0], roi.pos()[0]+roi.size()[0],
-                               roi.pos()[1], roi.pos()[1]+roi.size()[1]])
+            roi_limits.append([roi.pos()[0], roi.pos()[0] + roi.size()[0],
+                               roi.pos()[1], roi.pos()[1] + roi.size()[1]])
         return roi_limits
 
     def roi_changed(self):
@@ -210,9 +206,8 @@ class RoiImageWidget(QtGui.QWidget):
 
     def update_roi(self, ind, roi_limits):
         self.rois[ind].setPos((roi_limits[0], roi_limits[2]))
-        self.rois[ind].setSize((roi_limits[1]-roi_limits[0],
-                                roi_limits[3]- roi_limits[2]))
-
+        self.rois[ind].setSize((roi_limits[1] - roi_limits[0],
+                                roi_limits[3] - roi_limits[2]))
 
     def plot_image(self, data):
         self.pg_img_item.setImage(data)
@@ -272,7 +267,7 @@ class RoiImageWidget(QtGui.QWidget):
         if ev.button() == QtCore.Qt.RightButton or \
                 (ev.button() == QtCore.Qt.LeftButton and \
                              ev.modifiers() & QtCore.Qt.ControlModifier):
-            #determine the amount of translation
+            # determine the amount of translation
             tr = dif * mask
             tr = self.pg_viewbox.mapToView(tr) - self.pg_viewbox.mapToView(pg.Point(0, 0))
             x = tr.x()
@@ -282,9 +277,9 @@ class RoiImageWidget(QtGui.QWidget):
             self.pg_viewbox.sigRangeChangedManually.emit(self.pg_viewbox.state['mouseEnabled'])
         else:
             if ev.isFinish():  ## This is the final move in the drag; change the view scale now
-                #print "finish"
+                # print "finish"
                 self.pg_viewbox.rbScaleBox.hide()
-                #ax = QtCore.QRectF(Point(self.pressPos), Point(self.mousePos))
+                # ax = QtCore.QRectF(Point(self.pressPos), Point(self.mousePos))
                 ax = QtCore.QRectF(pg.Point(ev.buttonDownPos(ev.button())), pg.Point(pos))
                 ax = self.pg_viewbox.childGroup.mapRectFromParent(ax)
                 self.pg_viewbox.showAxRect(ax)
@@ -302,11 +297,14 @@ class ImgROI(pg.ROI):
         self.setPen(pen)
         self.active_pen = active_pen
 
-        self.addScaleHandle([1, 0.5], [0, 0.5], item=Handle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([0.5, 1], [0.5, 0], item=Handle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([0, 0.5], [1, 0.5], item=Handle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
-        self.addScaleHandle([0.5, 0], [0.5, 1], item=Handle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
-
+        self.addScaleHandle([1, 0.5], [0, 0.5],
+                            item=CustomHandle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
+        self.addScaleHandle([0.5, 1], [0.5, 0],
+                            item=CustomHandle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
+        self.addScaleHandle([0, 0.5], [1, 0.5],
+                            item=CustomHandle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
+        self.addScaleHandle([0.5, 0], [0.5, 1],
+                            item=CustomHandle(7.5, typ='f', pen=pen, activePen=active_pen, parent=self))
 
     def hoverEvent(self, ev):
         hover = False
@@ -323,18 +321,80 @@ class ImgROI(pg.ROI):
             self.currentPen = self.pen
         self.update()
 
+    def addHandle(self, info, index=None):
+        ## If a Handle was not supplied, create it now
+        if 'item' not in info or info['item'] is None:
+            h = Handle(self.handleSize, typ=info['type'], pen=self.handlePen, parent=self)
+            info['item'] = h
+        else:
+            h = info['item']
+            if info['pos'] is None:
+                info['pos'] = h.pos()
+        h.setPos(info['pos'] * self.state['size'])
 
-if __name__ == '__main__':
-    import numpy as np
+        ## connect the handle to this ROI
+        # iid = len(self.handles)
+        h.connectROI(self)
+        if index is None:
+            self.handles.append(info)
+        else:
+            self.handles.insert(index, info)
 
-    app = QtGui.QApplication([])
-    view = NewRoiWidget(2, ['Downstream ROI', 'Upstream_ROI'],
-        ('#FFFF00','#FF9900'))
+        h.setZValue(self.zValue() + 1)
+        self.stateChanged()
+        return h
 
-    data = np.identity(200)
-    view.img_widget.plot_image(data)
 
-    view.show()
-    view.activateWindow()
-    view.raise_()
-    app.exec_()
+class CustomHandle(pg.graphicsItems.ROI.Handle):
+    def __init__(self, radius, typ=None, pen=pg.mkPen(200, 200, 220), parent=None, deletable=False,
+                 activePen=pg.mkPen(255, 255, 0)):
+        super(CustomHandle, self).__init__(radius, typ=typ, pen=pen, parent=parent, deletable=deletable)
+
+        self.pen = pen
+        self.activePen = activePen
+
+    def hoverEvent(self, ev):
+        hover = False
+        if not ev.isExit():
+            if ev.acceptDrags(QtCore.Qt.LeftButton):
+                hover = True
+            for btn in [QtCore.Qt.LeftButton, QtCore.Qt.RightButton, QtCore.Qt.MidButton]:
+                if int(self.acceptedMouseButtons() & btn) > 0 and ev.acceptClicks(btn):
+                    hover = True
+
+        if hover:
+            self.currentPen = self.activePen
+        else:
+            self.currentPen = self.pen
+        self.update()
+
+    def mouseDragEvent(self, ev):
+        if ev.button() != QtCore.Qt.LeftButton:
+            return
+        ev.accept()
+
+        ## Inform ROIs that a drag is happening
+        ##  note: the ROI is informed that the handle has moved using ROI.movePoint
+        ##  this is for other (more nefarious) purposes.
+        # for r in self.roi:
+        # r[0].pointDragEvent(r[1], ev)
+
+        if ev.isFinish():
+            if self.isMoving:
+                for r in self.rois:
+                    r.stateChangeFinished()
+            self.isMoving = False
+            self.currentPen = self.pen
+            self.update()
+        elif ev.isStart():
+            for r in self.rois:
+                r.handleMoveStarted()
+            self.isMoving = True
+            self.startPos = self.scenePos()
+            self.cursorOffset = self.scenePos() - ev.buttonDownScenePos()
+            self.currentPen = self.activePen
+
+        if self.isMoving:  ## note: isMoving may become False in mid-drag due to right-click.
+            pos = ev.scenePos() + self.cursorOffset
+            self.currentPen = self.activePen
+            self.movePoint(pos, ev.modifiers(), finish=False)
