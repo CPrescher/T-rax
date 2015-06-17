@@ -85,6 +85,6 @@ class BaseControllerTest(unittest.TestCase):
         shutil.copy2(os.path.join(unittest_files_path, 'temper_009.spe'),
                      os.path.join(unittest_files_path, 'temp.spe'))
         # apparently the file system watcher signal has to be send manually that when using unittests....
-        self.controller._file_system_watcher.directoryChanged.emit(unittest_files_path)
+        self.controller._directory_watcher._file_system_watcher.directoryChanged.emit(unittest_files_path)
 
         self.assertEqual(str(self.widget.filename_lbl.text()), 'temp.spe')

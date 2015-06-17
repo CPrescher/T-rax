@@ -8,6 +8,8 @@ from PyQt4 import QtCore, QtGui
 from model.BaseModel import SingleSpectrumModel
 from widget.BaseWidget import BaseWidget
 
+from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
+
 
 class BaseController(QtCore.QObject):
     def __init__(self, model, widget):
@@ -21,14 +23,7 @@ class BaseController(QtCore.QObject):
         self.model = model
 
         self._working_dir = ''
-        self._file_system_watcher = QtCore.QFileSystemWatcher()
-        self._file_system_watcher.addPath(os.getcwd())
-        self._file_system_watcher.directoryChanged.connect(self.new_file_in_directory)
-        self._file_system_watcher.blockSignals(True)
-        self._file_update_timer = QtCore.QTimer()
-        self._file_update_timer.setSingleShot(True)
-        self._file_update_timer.timeout.connect(self.new_file_in_directory)
-        self._files_in_working_dir = []
+        self._create_autoprocess_system()
 
         self.create_signals()
 
@@ -49,15 +44,13 @@ class BaseController(QtCore.QObject):
 
     def load_data_file(self, filename=None):
         if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load Experiment SPE",
-                                                             directory=self._working_dir))
-
+            filename = QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load Experiment SPE",
+                                                         directory=self._working_dir)
+        filename = str(filename)
         if filename is not '':
             self.model.load_file(filename)
-            self._file_system_watcher.removePath(self._file_system_watcher.directories()[0])
             self._working_dir = os.path.dirname(filename)
-            self._file_system_watcher.addPath(self._working_dir)
-            self._files_in_working_dir = os.listdir(self._working_dir)
+            self._directory_watcher.path = self._working_dir
 
     def data_changed(self):
         """
@@ -85,24 +78,10 @@ class BaseController(QtCore.QObject):
 
     def auto_process_cb_toggled(self):
         if self.widget.autoprocess_cb.isChecked():
-            self._file_system_watcher.blockSignals(False)
+            self._directory_watcher.activate()
         else:
-            self._file_system_watcher.blockSignals(True)
+            self._directory_watcher.deactivate()
 
-    def new_file_in_directory(self):
-        files_now = os.listdir(self._working_dir)
-        files_added = [f for f in files_now if not f in self._files_in_working_dir]
-        if len(files_added) > 0:
-            new_file_path = os.path.join(str(self._working_dir), files_added[-1])
-            if new_file_path.endswith(self.model.filename.split('.')[-1]):
-                file_info = os.stat(new_file_path)
-                if file_info.st_size > 1000:
-                    try:
-                        self.load_data_file(new_file_path)
-                    except IOError:
-                        self._file_update_timer.start(5)
-                        return
-                else:
-                    self._file_update_timer.start(5)
-                    return
-            self._files_in_working_dir = files_now
+    def _create_autoprocess_system(self):
+        self._directory_watcher = NewFileInDirectoryWatcher(file_types=['.spe'])
+        self._directory_watcher.file_added.connect(self.load_data_file)
