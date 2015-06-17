@@ -72,6 +72,9 @@ class SingleSpectrumModel(QtCore.QObject, object):
         self.data_changed.emit()
         return True
 
+    def save_txt(self, filename):
+        self.spectrum.save(filename)
+
     @property
     def spectrum(self):
         if self.spe_file is not None:

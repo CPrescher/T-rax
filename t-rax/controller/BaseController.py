@@ -34,6 +34,8 @@ class BaseController(QtCore.QObject):
         self.widget.load_next_frame_btn.clicked.connect(self.model.load_next_frame)
         self.widget.load_previous_frame_btn.clicked.connect(self.model.load_previous_frame)
 
+        self.connect_click_function(self.widget.save_data_btn, self.save_data_btn_clicked)
+
         self.model.data_changed.connect(self.data_changed)
         self.model.spectrum_changed.connect(self.widget.graph_widget.plot_data)
         self.widget.roi_widget.rois_changed.connect(self.rois_changed)
@@ -51,6 +53,13 @@ class BaseController(QtCore.QObject):
             self.model.load_file(filename)
             self._working_dir = os.path.dirname(filename)
             self._directory_watcher.path = self._working_dir
+
+    def save_data_btn_clicked(self, filename=None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getSaveFileName(self.widget, caption="Save data in tabulated text format",
+                                                             directory=self._working_dir))
+        if filename is not '':
+            self.model.save_txt(filename)
 
     def data_changed(self):
         """

@@ -42,7 +42,7 @@ class RamanController(QtCore.QObject):
             self.model.mode = RamanModel.REVERSE_CM_MODE
 
     def spectrum_changed(self):
-        if self.model.mode == WAVELENGTH_MODE:
+        if self.model.mode == RamanModel.WAVELENGTH_MODE:
             self.widget.graph_widget.set_xlabel('&lambda; (nm)')
-        elif self.model.mode == REVERSE_CM_MODE:
+        elif self.model.mode == RamanModel.REVERSE_CM_MODE:
             self.widget.graph_widget.set_xlabel('v (cm<sup>-1</sup>)')

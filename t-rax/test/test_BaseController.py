@@ -28,8 +28,12 @@ class BaseControllerTest(unittest.TestCase):
 
     def tearDown(self):
         del self.app
-        if os.path.exists(os.path.join(unittest_files_path, 'temp.spe')):
-            os.remove(os.path.join(unittest_files_path, 'temp.spe'))
+        self.delete_file_if_exists(os.path.join(unittest_files_path, 'temp.spe'))
+        self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.txt'))
+
+    def delete_file_if_exists(self, path):
+        if os.path.exists(path):
+            os.remove(path)
 
     @patch('PyQt4.QtGui.QFileDialog.getOpenFileName')
     def test_loading_files(self, filedialog):
@@ -49,6 +53,21 @@ class BaseControllerTest(unittest.TestCase):
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].y_min_txt.text()), "0")
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].x_max_txt.text()), "0")
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].y_max_txt.text()), "0")
+
+    @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
+    def test_saving_data(self, filedialog):
+        # load a file:
+        self.controller.load_data_file(
+            os.path.join(unittest_files_path, 'temper_009.spe')
+        )
+        # Monkey patch
+        out_path = os.path.join(unittest_files_path, 'output.txt')
+        filedialog.return_value = out_path
+
+        # initiate the saving process
+        QTest.mouseClick(self.widget.save_data_btn, QtCore.Qt.LeftButton)
+        self.assertTrue(os.path.exists(out_path))
+
 
     def test_load_multiple_frame_file(self):
         self.controller.load_data_file(os.path.join(unittest_files_path,
