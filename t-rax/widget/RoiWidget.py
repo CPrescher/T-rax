@@ -3,6 +3,8 @@ __author__ = 'Clemens Prescher'
 
 from functools import partial
 
+import numpy as np
+
 from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
 from pyqtgraph.graphicsItems.ROI import Handle
