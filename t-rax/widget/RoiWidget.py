@@ -324,26 +324,8 @@ class ImgROI(pg.ROI):
         self.update()
 
     def addHandle(self, info, index=None):
-        ## If a Handle was not supplied, create it now
-        if 'item' not in info or info['item'] is None:
-            h = Handle(self.handleSize, typ=info['type'], pen=self.handlePen, parent=self)
-            info['item'] = h
-        else:
-            h = info['item']
-            if info['pos'] is None:
-                info['pos'] = h.pos()
+        h = super(ImgROI, self).addHandle(info, index)
         h.setPos(info['pos'] * self.state['size'])
-
-        ## connect the handle to this ROI
-        # iid = len(self.handles)
-        h.connectROI(self)
-        if index is None:
-            self.handles.append(info)
-        else:
-            self.handles.insert(index, info)
-
-        h.setZValue(self.zValue() + 1)
-        self.stateChanged()
         return h
 
 
@@ -371,32 +353,12 @@ class CustomHandle(pg.graphicsItems.ROI.Handle):
         self.update()
 
     def mouseDragEvent(self, ev):
-        if ev.button() != QtCore.Qt.LeftButton:
-            return
-        ev.accept()
-
-        ## Inform ROIs that a drag is happening
-        ##  note: the ROI is informed that the handle has moved using ROI.movePoint
-        ##  this is for other (more nefarious) purposes.
-        # for r in self.roi:
-        # r[0].pointDragEvent(r[1], ev)
-
+        super(CustomHandle, self).mouseDragEvent(ev)
         if ev.isFinish():
-            if self.isMoving:
-                for r in self.rois:
-                    r.stateChangeFinished()
-            self.isMoving = False
             self.currentPen = self.pen
-            self.update()
         elif ev.isStart():
-            for r in self.rois:
-                r.handleMoveStarted()
-            self.isMoving = True
-            self.startPos = self.scenePos()
-            self.cursorOffset = self.scenePos() - ev.buttonDownScenePos()
             self.currentPen = self.activePen
 
         if self.isMoving:  ## note: isMoving may become False in mid-drag due to right-click.
-            pos = ev.scenePos() + self.cursorOffset
             self.currentPen = self.activePen
-            self.movePoint(pos, ev.modifiers(), finish=False)
+        self.update()
