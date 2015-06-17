@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui
 from .TemperatureSpectrumWidget import TemperatureSpectrumWidget
 from .RoiWidget import RoiWidget
 from .Widgets import TemperatureFileGroupBox as FileGroupBox
-
+from .Widgets import OutputGroupBox
 
 class TemperatureWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
@@ -83,7 +83,7 @@ class TemperatureWidget(QtGui.QWidget):
         self.load_setting_btn = self.control_widget.experiment_tab.settings_gb.load_setting_btn
         self.save_setting_btn = self.control_widget.experiment_tab.settings_gb.save_setting_btn
 
-        self.save_data_btn = self.control_widget.experiment_tab.save_data_btn
+        self.save_data_btn = self.control_widget.experiment_tab.output_gb.save_data_btn
 
         self.settings_cb = self.control_widget.experiment_tab.settings_gb.settings_cb
 
@@ -113,13 +113,14 @@ class TemperatureExperimentTab(QtGui.QWidget):
         super(TemperatureExperimentTab, self).__init__(*args, **kwargs)
         self._layout = QtGui.QVBoxLayout()
         self.file_gb = FileGroupBox()
+        self.output_gb = OutputGroupBox()
         self.settings_gb = SettingsGroupBox()
 
         self.save_data_btn = QtGui.QPushButton("Save Data")
 
         self._layout.addWidget(self.file_gb)
+        self._layout.addWidget(self.output_gb)
         self._layout.addWidget(self.settings_gb)
-        self._layout.addWidget(self.save_data_btn)
         self._layout.addSpacerItem(QtGui.QSpacerItem(10, 10,
                                                      QtGui.QSizePolicy.Fixed,
                                                      QtGui.QSizePolicy.Expanding))

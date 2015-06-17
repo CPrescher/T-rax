@@ -4,7 +4,7 @@ __author__ = 'Clemens Prescher'
 from PyQt4 import QtGui, QtCore
 
 
-class FileGroupBox(QtGui.QGroupBox):
+class FileGroupBox(QtGui.QGroupBox, object):
     def __init__(self, *args):
         super(FileGroupBox, self).__init__(*args)
         self.setTitle('File')
@@ -87,3 +87,26 @@ class TemperatureFileGroupBox(FileGroupBox):
         self.load_previous_frame_btn.setMaximumWidth(25)
         self.load_next_frame_btn.setMaximumWidth(25)
 
+
+class OutputGroupBox(QtGui.QGroupBox, object):
+    def __init__(self, *args, **kwargs):
+        super(OutputGroupBox, self).__init__("Output", *args, **kwargs)
+
+        self.create_widgets()
+        self.create_layout()
+        self.style_widgets()
+
+    def create_widgets(self):
+        self.save_data_btn = QtGui.QPushButton("Save Data")
+        self.save_graph_btn = QtGui.QPushButton("Save Graph")
+
+    def create_layout(self):
+        self._layout = QtGui.QHBoxLayout()
+
+        self._layout.addWidget(self.save_data_btn)
+        self._layout.addWidget(self.save_graph_btn)
+        self.setLayout(self._layout)
+
+    def style_widgets(self):
+        self.save_data_btn.setFlat(True)
+        self.save_graph_btn.setFlat(True)

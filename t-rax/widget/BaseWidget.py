@@ -5,7 +5,7 @@ from PyQt4 import QtCore, QtGui
 
 from .RoiWidget import RoiWidget
 from .SpectrumWidget import SpectrumWidget
-from .Widgets import FileGroupBox
+from .Widgets import FileGroupBox, OutputGroupBox
 
 
 class BaseWidget(QtGui.QWidget):
@@ -73,8 +73,10 @@ class ControlWidget(QtGui.QWidget):
         super(ControlWidget, self).__init__()
         self._layout = QtGui.QVBoxLayout()
         self._file_gb = FileGroupBox()
+        self._output_gb = OutputGroupBox()
 
         self._layout.addWidget(self._file_gb)
+        self._layout.addWidget(self._output_gb)
         self._layout.addSpacerItem(QtGui.QSpacerItem(QtGui.QSpacerItem(10, 10,
                                                                        QtGui.QSizePolicy.Fixed,
                                                                        QtGui.QSizePolicy.Expanding)))
