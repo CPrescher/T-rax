@@ -35,6 +35,7 @@ class BaseController(QtCore.QObject):
         self.widget.load_previous_frame_btn.clicked.connect(self.model.load_previous_frame)
 
         self.connect_click_function(self.widget.save_data_btn, self.save_data_btn_clicked)
+        self.connect_click_function(self.widget.save_graph_btn, self.save_graph_btn_clicked)
 
         self.model.data_changed.connect(self.data_changed)
         self.model.spectrum_changed.connect(self.widget.graph_widget.plot_data)
@@ -64,6 +65,20 @@ class BaseController(QtCore.QObject):
 
         if filename is not '':
             self.model.save_txt(filename)
+
+    def save_graph_btn_clicked(self, filename=None):
+        if filename is None:
+            filename = QtGui.QFileDialog.getSaveFileName(
+                parent=self.widget,
+                caption="Save data in tabulated text format",
+                directory=os.path.join(self._working_dir, '.'.join(self.model.filename.split(".")[:-1]) + ".svg"),
+                filter='Vector Graphics (*.svg);; Image (*.png)'
+            )
+        filename = str(filename)
+
+        if filename is not '':
+            self.widget.graph_widget.save_graph(filename)
+
 
     def data_changed(self):
         """

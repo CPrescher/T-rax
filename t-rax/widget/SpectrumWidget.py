@@ -6,6 +6,8 @@ import pyqtgraph as pg
 
 from .ModifiedPlotItem import ModifiedPlotItem
 
+from pyqtgraph.exporters.ImageExporter import ImageExporter
+from pyqtgraph.exporters.SVGExporter import SVGExporter
 
 class SpectrumWidget(QtGui.QWidget):
     mouse_left_clicked = QtCore.pyqtSignal(float, float)
@@ -40,7 +42,7 @@ class SpectrumWidget(QtGui.QWidget):
         self._layout.addWidget(self._pg_layout_widget)
 
     def create_data_items(self):
-        self._data_item = pg.PlotDataItem(pen=pg.mkPen("#fff", width=3))
+        self._data_item = pg.PlotDataItem(pen=pg.mkPen("#fff", width=1.5))
         self._plot_item.addItem(self._data_item)
 
     def add_item(self, pg_item):
@@ -54,3 +56,31 @@ class SpectrumWidget(QtGui.QWidget):
 
     def set_xlabel(self, label_string):
         self._plot_item.setLabel('bottom', label_string)
+
+    def save_graph(self, filename):
+        self._pg_layout.setContentsMargins(20, 20, 20, 20)
+        QtGui.QApplication.processEvents()
+        if filename.endswith('.png'):
+            exporter = ImageExporter(self._pg_layout)
+            exporter.export(filename)
+        elif filename.endswith('.svg'):
+            self._invert_color()
+            exporter = SVGExporter(self._pg_layout)
+            exporter.export(filename)
+            self._norm_color()
+        self._pg_layout.setContentsMargins(0, 0, 0, 0)
+        QtGui.QApplication.processEvents()
+
+    def _invert_color(self):
+        self._plot_item.getAxis('bottom').setPen('k')
+        self._plot_item.getAxis('top').setPen('k')
+        self._plot_item.getAxis('left').setPen('k')
+        self._plot_item.getAxis('right').setPen('k')
+        self._data_item.setPen(pg.mkPen("#000", width=1.5))
+
+    def _norm_color(self):
+        self._plot_item.getAxis('bottom').setPen('w')
+        self._plot_item.getAxis('top').setPen('w')
+        self._plot_item.getAxis('left').setPen('w')
+        self._plot_item.getAxis('right').setPen('w')
+        self._data_item.setPen(pg.mkPen("#FFF", width=1.5))

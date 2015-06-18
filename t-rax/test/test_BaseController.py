@@ -30,6 +30,8 @@ class BaseControllerTest(unittest.TestCase):
         del self.app
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'temp.spe'))
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.txt'))
+        self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.png'))
+        self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.svq'))
 
     def delete_file_if_exists(self, path):
         if os.path.exists(path):
@@ -66,6 +68,28 @@ class BaseControllerTest(unittest.TestCase):
 
         # initiate the saving process
         QTest.mouseClick(self.widget.save_data_btn, QtCore.Qt.LeftButton)
+        self.assertTrue(os.path.exists(out_path))
+
+    @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
+    def test_saving_graph(self, filedialog):
+        # load a file:
+        self.controller.load_data_file(
+            os.path.join(unittest_files_path, 'temper_009.spe')
+        )
+
+        # Monkey patch
+        out_path = os.path.join(unittest_files_path, 'output.svg')
+        filedialog.return_value = out_path
+
+        QTest.mouseClick(self.widget.save_graph_btn, QtCore.Qt.LeftButton)
+        self.assertTrue(os.path.exists(out_path))
+
+        # do the same for png
+        # Monkey patch
+        out_path = os.path.join(unittest_files_path, 'output.png')
+        filedialog.return_value = out_path
+
+        QTest.mouseClick(self.widget.save_graph_btn, QtCore.Qt.LeftButton)
         self.assertTrue(os.path.exists(out_path))
 
 
