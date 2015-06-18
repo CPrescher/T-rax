@@ -241,6 +241,7 @@ class TestTemperatureController(unittest.TestCase):
 
     @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
     def test_saving_data_as_txt(self, filedialog):
+        self.load_single_frame_file_and_calibration()
         out_path = os.path.join(unittest_files_path, 'data.txt')
         filedialog.return_value = out_path
         QTest.mouseClick(self.widget.save_data_btn, QtCore.Qt.LeftButton)
