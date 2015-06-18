@@ -56,8 +56,12 @@ class BaseController(QtCore.QObject):
 
     def save_data_btn_clicked(self, filename=None):
         if filename is None:
-            filename = str(QtGui.QFileDialog.getSaveFileName(self.widget, caption="Save data in tabulated text format",
-                                                             directory=self._working_dir))
+            filename = str(QtGui.QFileDialog.getSaveFileName(
+                parent=self.widget,
+                caption="Save data in tabulated text format",
+                directory=os.path.join(self._working_dir, '.'.join(self.model.filename.split(".")[:-1]) + ".txt"))
+            )
+
         if filename is not '':
             self.model.save_txt(filename)
 

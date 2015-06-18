@@ -145,8 +145,12 @@ class TemperatureController(QtCore.QObject):
 
     def save_data_file(self, filename=None):
         if filename is None:
-            filename = str(QtGui.QFileDialog.getSaveFileName(self.widget, caption="Save data in a tabulated format",
-                                                             directory=self._setting_working_dir))
+            filename = str(QtGui.QFileDialog.getSaveFileName(
+                parent=self.widget,
+                caption="Save data in tabulated text format",
+                directory=os.path.join(self._exp_working_dir,
+                                       '.'.join(self.model.data_img_file.filename.split(".")[:-1]) + ".txt"))
+            )
         if filename is not '':
             self.model.save_txt(filename)
 
