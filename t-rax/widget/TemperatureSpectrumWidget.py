@@ -3,6 +3,8 @@ __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtGui
 import pyqtgraph as pg
+from pyqtgraph.exporters.ImageExporter import ImageExporter
+from pyqtgraph.exporters.SVGExporter import SVGExporter
 
 from .ModifiedPlotItem import ModifiedPlotItem
 
@@ -22,6 +24,10 @@ colors = {
     'combined': '66FFFF'
 }
 
+export_colors = {
+    'downstream': '#235CDB',
+    'combined': '#DE5757',
+}
 
 class TemperatureSpectrumWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
@@ -95,10 +101,11 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._layout.addWidget(self._pg_layout_widget)
 
     def create_data_items(self):
-        self._us_data_item = pg.ScatterPlotItem(pen=pg.mkPen(colors['data_pen'], width=1),
-                                                brush=pg.mkBrush(colors['data_brush']),
-                                                size=3,
-                                                symbol ='o')
+        # self._us_data_item = pg.ScatterPlotItem(pen=pg.mkPen(colors['data_pen'], width=1),
+        #                                         brush=pg.mkBrush(colors['data_brush']),
+        #                                         size=3,
+        #                                         symbol ='o')
+        self._us_data_item = pg.PlotDataItem(pen=pg.mkPen("#fff", width=1.5))
         self._us_fit_item = pg.PlotDataItem(pen=pg.mkPen(colors['fit_pen'], width=3))
 
         self._us_plot.addItem(self._us_data_item)
@@ -116,10 +123,11 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._us_intensity_indicator = IntensityIndicator()
         self._us_intensity_indicator.setParentItem(self._us_plot)
 
-        self._ds_data_item = pg.ScatterPlotItem(pen=pg.mkPen(colors['data_pen'], width=1),
-                                                brush=pg.mkBrush(colors['data_brush']),
-                                                size=3,
-                                                symbol ='o')
+        # self._ds_data_item = pg.ScatterPlotItem(pen=pg.mkPen(colors['data_pen'], width=1),
+        #                                         brush=pg.mkBrush(colors['data_brush']),
+        #                                         size=3,
+        #                                         symbol ='o')
+        self._ds_data_item = pg.PlotDataItem(pen=pg.mkPen("#fff", width=1.5))
         self._ds_fit_item = pg.PlotDataItem(pen=pg.mkPen(colors['fit_pen'], width=3))
 
         self._ds_plot.addItem(self._ds_data_item)
@@ -232,6 +240,109 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
                                                                                               temperature_error),
                                                           size='30pt',
                                                           color=colors['combined'])
+
+    def save_graph(self, filename):
+        self._pg_layout.setContentsMargins(20, 20, 20, 20)
+        QtGui.QApplication.processEvents()
+        if filename.endswith('.png'):
+            exporter = ImageExporter(self._pg_layout)
+            exporter.export(filename)
+        elif filename.endswith('.svg'):
+            self._prepare_svg_export()
+
+            exporter = SVGExporter(self._pg_layout)
+            exporter.export(filename)
+
+            self._finalize_svg_export()
+
+        self._pg_layout.setContentsMargins(0, 0, 0, 0)
+        QtGui.QApplication.processEvents()
+
+    def _prepare_svg_export(self):
+        # since the svg will always have a transparent background we need to invert the colors of the original plot
+        self._invert_color()
+        # the pyqtgraph SVG Exporter cannot handle non ascii characters
+        self._convert_symbols_to_ascii()
+
+        # due to a strange bug in SVG export we are not going to use the symbols of the time lapse plot
+        self._time_lapse_ds_data_item.setSymbol(None)
+        self._time_lapse_us_data_item.setSymbol(None)
+
+    def _finalize_svg_export(self):
+        self._norm_color()
+        self._convert_symbols_to_unicode()
+        self._time_lapse_ds_data_item.setSymbol("s")
+        self._time_lapse_us_data_item.setSymbol("s")
+        QtGui.QApplication.processEvents()
+        QtGui.QApplication.processEvents()
+
+    def _convert_symbols_to_ascii(self):
+        self._us_plot.setLabel('bottom', 'wavelength (nm)')
+        self._ds_plot.setLabel('bottom', 'wavelength (nm)')
+
+        self._ds_temperature_txt_item.setText(self._ds_temperature_txt_item.text.replace("&plusmn;", '+-'))
+        self._us_temperature_txt_item.setText(self._us_temperature_txt_item.text.replace("&plusmn;", '+-'))
+        self._time_lapse_ds_temperature_txt.setText(self._time_lapse_ds_temperature_txt.text.replace("&plusmn;", '+-'))
+        self._time_lapse_us_temperature_txt.setText(self._time_lapse_us_temperature_txt.text.replace("&plusmn;", '+-'))
+        self._time_lapse_combined_temperature_txt.setText(self._time_lapse_combined_temperature_txt. \
+                                                          text.replace("&plusmn;", '+-'))
+
+    def _convert_symbols_to_unicode(self):
+        self._us_plot.setLabel('bottom', '&lambda; (nm)')
+        self._ds_plot.setLabel('bottom', '&lambda; (nm)')
+
+        self._ds_temperature_txt_item.setText(self._ds_temperature_txt_item.text.replace("+-", "&plusmn;"))
+        self._us_temperature_txt_item.setText(self._us_temperature_txt_item.text.replace("+-", "&plusmn;"))
+        self._time_lapse_ds_temperature_txt.setText(self._time_lapse_ds_temperature_txt.text.replace("+-", "&plusmn;"))
+        self._time_lapse_us_temperature_txt.setText(self._time_lapse_us_temperature_txt.text.replace("+-", "&plusmn;"))
+        self._time_lapse_combined_temperature_txt.setText(self._time_lapse_combined_temperature_txt. \
+                                                          text.replace('+-', "&plusmn;"))
+
+    def _set_plot_item_axis_color(self, plot_item, color):
+        plot_item.getAxis('bottom').setPen(color)
+        plot_item.getAxis('top').setPen(color)
+        plot_item.getAxis('left').setPen(color)
+        plot_item.getAxis('right').setPen(color)
+
+    def _invert_color(self):
+        self._set_plot_item_axis_color(self._ds_plot, 'k')
+        self._set_plot_item_axis_color(self._us_plot, 'k')
+        self._set_plot_item_axis_color(self._time_lapse_plot, 'k')
+
+        self._ds_data_item.setPen(pg.mkPen("#000", width=1))
+        self._ds_data_item.setBrush(pg.mkBrush("#000"))
+        self._us_data_item.setPen(pg.mkPen("#000", width=1))
+        self._us_data_item.setBrush(pg.mkBrush("#000"))
+
+        self._ds_intensity_indicator.outside_rect.setPen(pg.mkPen("k", width=1))
+        self._us_intensity_indicator.outside_rect.setPen(pg.mkPen("k", width=1))
+
+        self._ds_temperature_txt_item.opts['color'] = export_colors['downstream']
+        self._time_lapse_ds_temperature_txt.opts['color'] = export_colors['downstream']
+        self._ds_plot.setTitle("Downstream", color=export_colors['downstream'], size='20pt')
+        self._time_lapse_ds_data_item.setPen(pg.mkPen(export_colors['downstream'], width=3))
+
+        self._time_lapse_combined_temperature_txt.opts['color'] = export_colors['combined']
+
+    def _norm_color(self):
+        self._set_plot_item_axis_color(self._ds_plot, 'w')
+        self._set_plot_item_axis_color(self._us_plot, 'w')
+        self._set_plot_item_axis_color(self._time_lapse_plot, 'w')
+
+        self._ds_data_item.setPen(pg.mkPen('w', width=1))
+        self._ds_data_item.setBrush(pg.mkBrush('w'))
+        self._us_data_item.setPen(pg.mkPen('w', width=1))
+        self._us_data_item.setBrush(pg.mkBrush('w'))
+
+        self._ds_intensity_indicator.outside_rect.setPen(pg.mkPen("w", width=1))
+        self._us_intensity_indicator.outside_rect.setPen(pg.mkPen("w", width=1))
+
+        self._ds_temperature_txt_item.opts['color'] = colors['downstream']
+        self._time_lapse_ds_temperature_txt.opts['color'] = colors['downstream']
+        self._ds_plot.setTitle("Downstream", color=colors['downstream'], size='20pt')
+        self._time_lapse_ds_data_item.setPen(pg.mkPen(colors['downstream'], width=3))
+
+        self._time_lapse_combined_temperature_txt.opts['color'] = colors['combined']
 
 
 class IntensityIndicator(pg.GraphicsWidget):

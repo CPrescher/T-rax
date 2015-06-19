@@ -84,6 +84,7 @@ class TemperatureWidget(QtGui.QWidget):
         self.save_setting_btn = self.control_widget.experiment_tab.settings_gb.save_setting_btn
 
         self.save_data_btn = self.control_widget.experiment_tab.output_gb.save_data_btn
+        self.save_graph_btn = self.control_widget.experiment_tab.output_gb.save_graph_btn
 
         self.settings_cb = self.control_widget.experiment_tab.settings_gb.settings_cb
 

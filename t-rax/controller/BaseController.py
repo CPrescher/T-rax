@@ -70,7 +70,7 @@ class BaseController(QtCore.QObject):
         if filename is None:
             filename = QtGui.QFileDialog.getSaveFileName(
                 parent=self.widget,
-                caption="Save data in tabulated text format",
+                caption="Save displayed graph as vector graphics or image",
                 directory=os.path.join(self._working_dir, '.'.join(self.model.filename.split(".")[:-1]) + ".svg"),
                 filter='Vector Graphics (*.svg);; Image (*.png)'
             )

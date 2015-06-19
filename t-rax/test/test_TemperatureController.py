@@ -249,6 +249,20 @@ class TestTemperatureController(unittest.TestCase):
         self.assertTrue(os.path.exists(out_path))
         os.remove(out_path)
 
+    @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
+    def test_saving_graph_image(self, filedialog):
+        self.load_single_frame_file_and_calibration()
 
-def test():
-    return "asd"
+        out_path = os.path.join(unittest_files_path, 'data.png')
+        filedialog.return_value = out_path
+        QTest.mouseClick(self.widget.save_graph_btn, QtCore.Qt.LeftButton)
+
+        self.assertTrue(os.path.exists(out_path))
+        os.remove(out_path)
+
+        out_path = os.path.join(unittest_files_path, 'data.svg')
+        filedialog.return_value = out_path
+        QTest.mouseClick(self.widget.save_graph_btn, QtCore.Qt.LeftButton)
+
+        self.assertTrue(os.path.exists(out_path))
+        os.remove(out_path)

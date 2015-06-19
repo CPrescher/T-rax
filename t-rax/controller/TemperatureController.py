@@ -34,7 +34,8 @@ class TemperatureController(QtCore.QObject):
         self.widget.load_next_frame_btn.clicked.connect(self.model.load_next_img_frame)
         self.widget.load_previous_frame_btn.clicked.connect(self.model.load_previous_img_frame)
 
-        self.connect_click_function(self.widget.save_data_btn, self.save_data_file)
+        self.connect_click_function(self.widget.save_data_btn, self.save_data_btn_clicked)
+        self.connect_click_function(self.widget.save_graph_btn, self.save_graph_btn_clicked)
 
         # Calibration signals
         self.connect_click_function(self.widget.load_ds_calibration_file_btn, self.load_ds_calibration_file)
@@ -143,7 +144,7 @@ class TemperatureController(QtCore.QObject):
             self.model.load_setting(filename)
             self.update_setting_combobox()
 
-    def save_data_file(self, filename=None):
+    def save_data_btn_clicked(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getSaveFileName(
                 parent=self.widget,
@@ -153,6 +154,20 @@ class TemperatureController(QtCore.QObject):
             )
         if filename is not '':
             self.model.save_txt(filename)
+
+    def save_graph_btn_clicked(self, filename=None):
+        if filename is None:
+            filename = QtGui.QFileDialog.getSaveFileName(
+                parent=self.widget,
+                caption="Save displayed graph as vector graphics or image",
+                directory=os.path.join(self._exp_working_dir,
+                                       '.'.join(self.model.data_img_file.filename.split(".")[:-1]) + ".svg"),
+                filter='Vector Graphics (*.svg);; Image (*.png)'
+            )
+        filename = str(filename)
+
+        if filename is not '':
+            self.widget.graph_widget.save_graph(filename)
 
     def update_setting_combobox(self):
         self._settings_files_list = []
