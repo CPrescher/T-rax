@@ -110,3 +110,29 @@ class OutputGroupBox(QtGui.QGroupBox, object):
     def style_widgets(self):
         self.save_data_btn.setFlat(True)
         self.save_graph_btn.setFlat(True)
+
+
+class StatusBar(QtGui.QWidget):
+    def __init__(self, *args, **kwargs):
+        super(StatusBar, self).__init__(*args, **kwargs)
+
+        self.create_widgets()
+        self.create_layout()
+        self.style_widgets()
+
+    def create_widgets(self):
+        self.mouse_pos_lbl = QtGui.QLabel('x: \ty:')
+        self.info_lbl = QtGui.QLabel("File information")
+
+    def create_layout(self):
+        self._layout = QtGui.QHBoxLayout()
+        self._layout.addWidget(self.mouse_pos_lbl)
+        self._layout.addSpacerItem(QtGui.QSpacerItem(QtGui.QSpacerItem(10, 10,
+                                                                       QtGui.QSizePolicy.Expanding,
+                                                                       QtGui.QSizePolicy.Fixed)))
+        self._layout.addWidget(self.info_lbl)
+
+        self.setLayout(self._layout)
+
+    def style_widgets(self):
+        self._layout.setContentsMargins(8, 0, 8, 0)

@@ -25,9 +25,9 @@ class BaseController(QtCore.QObject):
         self._working_dir = ''
         self._create_autoprocess_system()
 
-        self.create_signals()
+        self.connect_signals()
 
-    def create_signals(self):
+    def connect_signals(self):
         self.connect_click_function(self.widget.load_file_btn, self.load_data_file)
         self.widget.load_next_file_btn.clicked.connect(self.model.load_next_file)
         self.widget.load_previous_file_btn.clicked.connect(self.model.load_previous_file)
@@ -41,6 +41,8 @@ class BaseController(QtCore.QObject):
         self.model.spectrum_changed.connect(self.widget.graph_widget.plot_data)
         self.widget.roi_widget.rois_changed.connect(self.rois_changed)
         self.widget.autoprocess_cb.toggled.connect(self.auto_process_cb_toggled)
+
+        self.widget.graph_widget.mouse_moved.connect(self.graph_mouse_moved)
 
     def connect_click_function(self, emitter, function):
         self.widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
@@ -97,12 +99,17 @@ class BaseController(QtCore.QObject):
         else:
             self.widget.frame_widget.setVisible(False)
 
+        self.widget.graph_info_lbl.setText(self.model.file_info)
+
     def rois_changed(self):
         """
         called when the roi is changed in the roi Widget, will recalculate the spectrum and then plot the new updated
         one.
         """
         self.model.roi = self.widget.roi_widget.get_rois()[0]
+
+    def graph_mouse_moved(self, x, y):
+        self.widget.graph_mouse_pos_lbl.setText("X: {:8.2f}  Y: {:8.2f}".format(x, y))
 
     def auto_process_cb_toggled(self):
         if self.widget.autoprocess_cb.isChecked():

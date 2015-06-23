@@ -5,7 +5,7 @@ from PyQt4 import QtCore, QtGui
 
 from .RoiWidget import RoiWidget
 from .SpectrumWidget import SpectrumWidget
-from .Widgets import FileGroupBox, OutputGroupBox
+from .Widgets import FileGroupBox, OutputGroupBox, StatusBar
 
 
 class BaseWidget(QtGui.QWidget):
@@ -17,18 +17,20 @@ class BaseWidget(QtGui.QWidget):
         self._main_splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
 
         self._graph_control_widget = QtGui.QWidget()
-        self._graph_control_layout = QtGui.QHBoxLayout()
+        self._graph_control_layout = QtGui.QGridLayout()
         self._graph_control_layout.setContentsMargins(0, 0, 0, 0)
 
         self.graph_widget = SpectrumWidget()
         self.control_widget = ControlWidget()
+        self.graph_status_bar = StatusBar()
         self.roi_widget = RoiWidget(1, roi_colors=[(255, 255, 255)])
 
-        self._graph_control_layout.addWidget(self.graph_widget)
-        self._graph_control_layout.addWidget(self.control_widget)
+        self._graph_control_layout.addWidget(self.graph_widget, 0, 0)
+        self._graph_control_layout.addWidget(self.control_widget, 0, 1)
+        self._graph_control_layout.addWidget(self.graph_status_bar, 1, 0, 1, 2)
 
-        self._graph_control_layout.setStretch(0, 1)
-        self._graph_control_layout.setStretch(1, 0)
+        # self._graph_control_layout.setStretch(0, 1)
+        # self._graph_control_layout.setStretch(1, 0)
 
         self._graph_control_widget.setLayout(self._graph_control_layout)
 
@@ -46,6 +48,10 @@ class BaseWidget(QtGui.QWidget):
         self.create_shortcuts()
 
     def style_widgets(self):
+        self._graph_control_layout.setSpacing(0)
+        self._graph_control_layout.setContentsMargins(0, 0, 0, 0)
+        self._main_splitter.setContentsMargins(0, 0, 0, 0)
+
         self.control_widget.setMinimumWidth(250)
         self.control_widget.setMaximumWidth(250)
 
@@ -66,6 +72,9 @@ class BaseWidget(QtGui.QWidget):
 
         self.save_data_btn = self.control_widget._output_gb.save_data_btn
         self.save_graph_btn = self.control_widget._output_gb.save_graph_btn
+
+        self.graph_info_lbl = self.graph_status_bar.info_lbl
+        self.graph_mouse_pos_lbl = self.graph_status_bar.mouse_pos_lbl
 
     def add_control_widget(self, widget):
         self.control_widget._layout.insertWidget(self.control_widget._layout.count() - 1, widget)

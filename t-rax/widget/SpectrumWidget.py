@@ -11,6 +11,7 @@ from pyqtgraph.exporters.SVGExporter import SVGExporter
 
 class SpectrumWidget(QtGui.QWidget):
     mouse_left_clicked = QtCore.pyqtSignal(float, float)
+    mouse_moved = QtCore.pyqtSignal(float, float)
 
     def __init__(self, *args, **kwargs):
         super(SpectrumWidget, self).__init__(*args, **kwargs)
@@ -21,6 +22,7 @@ class SpectrumWidget(QtGui.QWidget):
         self.create_data_items()
 
         self.setLayout(self._layout)
+        self._plot_item.connect_mouse_move_event()
 
     def create_plot_items(self):
         self._pg_layout_widget = pg.GraphicsLayoutWidget()
@@ -36,6 +38,7 @@ class SpectrumWidget(QtGui.QWidget):
         self._plot_item.getAxis('left').setStyle(showValues=True)
         self._plot_item.setLabel('bottom', 'v (cm<sup>-1</sup>)')
         self._plot_item.mouse_left_clicked.connect(self.mouse_left_clicked)
+        self._plot_item.mouse_moved.connect(self.mouse_moved)
         self._pg_layout.addItem(self._plot_item, 0, 0)
 
         self._pg_layout_widget.addItem(self._pg_layout)

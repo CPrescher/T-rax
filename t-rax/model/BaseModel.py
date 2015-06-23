@@ -124,3 +124,9 @@ class SingleSpectrumModel(QtCore.QObject, object):
     @property
     def num_frames(self):
         return self.spe_file.num_frames
+
+    @property
+    def file_info(self):
+        return "Exp. Time: {}s | Grating: {} | Detector: {}".format(self.spe_file.exposure_time,
+                                                                    self.spe_file.grating,
+                                                                    self.spe_file.detector)

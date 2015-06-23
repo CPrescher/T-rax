@@ -131,3 +131,12 @@ class BaseControllerTest(unittest.TestCase):
         self.controller._directory_watcher._file_system_watcher.directoryChanged.emit(unittest_files_path)
 
         self.assertEqual(str(self.widget.filename_lbl.text()), 'temp.spe')
+
+    def test_graph_status_bar_shows_file_info(self):
+        self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+        self.assertEqual(str(self.widget.graph_info_lbl.text()), self.model.file_info)
+
+    def test_graph_status_bar_shows_mouse_position(self):
+        self.widget.graph_widget.mouse_moved.emit(102, 104)
+        self.assertIn("102", str(self.widget.graph_mouse_pos_lbl.text()))
+        self.assertIn("104", str(self.widget.graph_mouse_pos_lbl.text()))
