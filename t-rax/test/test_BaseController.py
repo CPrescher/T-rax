@@ -137,6 +137,16 @@ class BaseControllerTest(unittest.TestCase):
         self.assertEqual(str(self.widget.graph_info_lbl.text()), self.model.file_info)
 
     def test_graph_status_bar_shows_mouse_position(self):
-        self.widget.graph_widget.mouse_moved.emit(102, 104)
+        self.widget.graph_widget._plot_item.mouse_moved.emit(102, 104)
+
         self.assertIn("102", str(self.widget.graph_mouse_pos_lbl.text()))
         self.assertIn("104", str(self.widget.graph_mouse_pos_lbl.text()))
+
+    def test_roi_status_bar_shows_mouse_position_intensity_and_wavelength(self):
+        self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+        self.widget.roi_widget.img_widget.mouse_moved.emit(130, 20)
+
+        self.assertIn("20", self.widget.roi_widget.pos_lbl.text())
+        self.assertIn("130", self.widget.roi_widget.pos_lbl.text())
+        self.assertIn("{:.0f}".format(self.model.data_img[20, 130]), self.widget.roi_widget.pos_lbl.text())
+        self.assertIn("{:.2f}".format(self.model._data_img_x_calibration[130]), self.widget.roi_widget.pos_lbl.text())

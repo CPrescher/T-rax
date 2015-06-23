@@ -11,6 +11,8 @@ from pyqtgraph.graphicsItems.ROI import Handle
 
 from .HistogramLUTItem import HistogramLUTItem
 
+from .Widgets import StatusBar
+
 pg.setConfigOption('useOpenGL', False)
 pg.setConfigOption('leftButtonPan', False)
 pg.setConfigOption('background', (30, 30, 30))
@@ -27,7 +29,8 @@ class RoiWidget(QtGui.QWidget):
         self.roi_titles = roi_titles
         self.roi_colors = roi_colors
 
-        self._main_horizontal_layout = QtGui.QHBoxLayout()
+        self._main_vertical_layout = QtGui.QVBoxLayout()
+        self._horizontal_layout = QtGui.QHBoxLayout()
 
         self.img_widget = RoiImageWidget(roi_num=roi_num, roi_colors=roi_colors)
 
@@ -38,12 +41,19 @@ class RoiWidget(QtGui.QWidget):
                                                              QtGui.QSizePolicy.Expanding,
                                                              QtGui.QSizePolicy.Expanding))
 
-        self._main_horizontal_layout.addWidget(self.img_widget)
-        self._main_horizontal_layout.addLayout(self._roi_gbs_layout)
+        self._horizontal_layout.addWidget(self.img_widget)
+        self._horizontal_layout.addLayout(self._roi_gbs_layout)
 
-        self._main_horizontal_layout.setStretch(0, 1)
-        self._main_horizontal_layout.setStretch(1, 0)
-        self.setLayout(self._main_horizontal_layout)
+        self._horizontal_layout.setStretch(0, 1)
+        self._horizontal_layout.setStretch(1, 0)
+
+        self.status_bar = StatusBar()
+        self.pos_lbl = self.status_bar.left_lbl
+        self._main_vertical_layout.addLayout(self._horizontal_layout)
+        self._main_vertical_layout.addWidget(self.status_bar)
+        self._main_vertical_layout.setContentsMargins(0, 0, 0, 8)
+
+        self.setLayout(self._main_vertical_layout)
 
         self.create_signals()
 

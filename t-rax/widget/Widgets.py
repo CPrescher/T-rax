@@ -121,16 +121,16 @@ class StatusBar(QtGui.QWidget):
         self.style_widgets()
 
     def create_widgets(self):
-        self.mouse_pos_lbl = QtGui.QLabel('x: \ty:')
-        self.info_lbl = QtGui.QLabel("File information")
+        self.left_lbl = QtGui.QLabel()
+        self.right_lbl = QtGui.QLabel()
 
     def create_layout(self):
         self._layout = QtGui.QHBoxLayout()
-        self._layout.addWidget(self.mouse_pos_lbl)
+        self._layout.addWidget(self.left_lbl)
         self._layout.addSpacerItem(QtGui.QSpacerItem(QtGui.QSpacerItem(10, 10,
                                                                        QtGui.QSizePolicy.Expanding,
                                                                        QtGui.QSizePolicy.Fixed)))
-        self._layout.addWidget(self.info_lbl)
+        self._layout.addWidget(self.right_lbl)
 
         self.setLayout(self._layout)
 

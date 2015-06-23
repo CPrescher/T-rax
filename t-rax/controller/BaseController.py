@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 import os
+import numpy as np
 
 from PyQt4 import QtCore, QtGui
 
@@ -43,6 +44,7 @@ class BaseController(QtCore.QObject):
         self.widget.autoprocess_cb.toggled.connect(self.auto_process_cb_toggled)
 
         self.widget.graph_widget.mouse_moved.connect(self.graph_mouse_moved)
+        self.widget.roi_widget.img_widget.mouse_moved.connect(self.img_mouse_moved)
 
     def connect_click_function(self, emitter, function):
         self.widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
@@ -110,6 +112,17 @@ class BaseController(QtCore.QObject):
 
     def graph_mouse_moved(self, x, y):
         self.widget.graph_mouse_pos_lbl.setText("X: {:8.2f}  Y: {:8.2f}".format(x, y))
+
+    def img_mouse_moved(self, x, y):
+        x = np.floor(x)
+        y = np.floor(y)
+        try:
+            self.widget.roi_widget.pos_lbl.setText("X: {:5.0f}  Y: {:5.0f}    Int: {:6.0f}    lambda: {:5.2f} nm".
+                                                   format(x, y,
+                                                          self.model.data_img[y, x],
+                                                          self.model._data_img_x_calibration[x]))
+        except IndexError as e:
+            pass
 
     def auto_process_cb_toggled(self):
         if self.widget.autoprocess_cb.isChecked():

@@ -73,8 +73,8 @@ class BaseWidget(QtGui.QWidget):
         self.save_data_btn = self.control_widget._output_gb.save_data_btn
         self.save_graph_btn = self.control_widget._output_gb.save_graph_btn
 
-        self.graph_info_lbl = self.graph_status_bar.info_lbl
-        self.graph_mouse_pos_lbl = self.graph_status_bar.mouse_pos_lbl
+        self.graph_info_lbl = self.graph_status_bar.right_lbl
+        self.graph_mouse_pos_lbl = self.graph_status_bar.left_lbl
 
     def add_control_widget(self, widget):
         self.control_widget._layout.insertWidget(self.control_widget._layout.count() - 1, widget)
