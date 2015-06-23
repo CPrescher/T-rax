@@ -252,28 +252,27 @@ class HistogramLUTItem(GraphicsWidget):
         if hist_x is None:
             return
 
-        try:
-            hist_x_log = np.log(hist_x)
-            hist_y_log = np.log(hist_y)
+        hist_x[hist_x <= 0] = 1
+        hist_y[hist_y <= 0] = 1
 
-            hist_x_log[0] = 0
+        hist_x_log = np.log(hist_x)
+        hist_y_log = np.log(hist_y)
 
-            if self.orientation == 'horizontal':
-                self.plot.setData(hist_x_log, hist_y_log)
-            elif self.orientation == 'vertical':
-                self.plot.setData(hist_y_log, hist_x_log)
+        hist_x_log[0] = 0
 
-            if self.autoLevel is not None:
-                cumulative_sum = np.cumsum(hist_y)
-                min_ind = np.where(cumulative_sum > (self.autoLevel[0] * np.sum(hist_y)))
-                max_ind = np.where(cumulative_sum < (self.autoLevel[1] * np.sum(hist_y)))
-                if len(max_ind[0]) and len(min_ind):
-                    self.setLevels(hist_x[min_ind[0][0]], hist_x[max_ind[0][-1]])
-                else:
-                    self.setLevels(0, 0.5 * np.max(hist_x))
-        except RuntimeError:
-            # catches the annoying divide by zero errors
-            pass
+        if self.orientation == 'horizontal':
+            self.plot.setData(hist_x_log, hist_y_log)
+        elif self.orientation == 'vertical':
+            self.plot.setData(hist_y_log, hist_x_log)
+
+        if self.autoLevel is not None:
+            cumulative_sum = np.cumsum(hist_y)
+            min_ind = np.where(cumulative_sum > (self.autoLevel[0] * np.sum(hist_y)))
+            max_ind = np.where(cumulative_sum < (self.autoLevel[1] * np.sum(hist_y)))
+            if len(max_ind[0]) and len(min_ind):
+                self.setLevels(hist_x[min_ind[0][0]], hist_x[max_ind[0][-1]])
+            else:
+                self.setLevels(0, 0.5 * np.max(hist_x))
 
     def getLevels(self):
         return self.region.getRegion()
