@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 from pyqtgraph.exporters.ImageExporter import ImageExporter
 from pyqtgraph.exporters.SVGExporter import SVGExporter
@@ -30,6 +30,8 @@ export_colors = {
 }
 
 class TemperatureSpectrumWidget(QtGui.QWidget):
+    mouse_moved = QtCore.pyqtSignal(float, float)
+
     def __init__(self, *args, **kwargs):
         super(TemperatureSpectrumWidget, self).__init__(*args, **kwargs)
         self._layout = QtGui.QVBoxLayout()
@@ -39,6 +41,8 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self.create_data_items()
 
         self.setLayout(self._layout)
+
+        self.connect_mouse_signals()
 
     def create_plot_items(self):
         self._pg_layout_widget = pg.GraphicsLayoutWidget()
@@ -95,7 +99,6 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
 
         self._pg_layout.layout.setColumnStretchFactor(0, 1)
         self._pg_layout.layout.setColumnStretchFactor(1, 1)
-
 
         self._pg_layout_widget.addItem(self._pg_layout)
         self._layout.addWidget(self._pg_layout_widget)
@@ -163,6 +166,16 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
 
         self._time_lapse_plot.addItem(self._time_lapse_ds_data_item)
         self._time_lapse_plot.addItem(self._time_lapse_us_data_item)
+
+    def connect_mouse_signals(self):
+        self._ds_plot.connect_mouse_move_event()
+        self._us_plot.connect_mouse_move_event()
+        self._pg_layout.addItem(self._pg_time_lapse_layout, 2, 0, 1, 2)
+        self._time_lapse_plot.connect_mouse_move_event()
+        self._pg_layout.removeItem(self._pg_time_lapse_layout)
+        self._ds_plot.mouse_moved.connect(self.mouse_moved)
+        self._us_plot.mouse_moved.connect(self.mouse_moved)
+        self._time_lapse_plot.mouse_moved.connect(self.mouse_moved)
 
 
     def plot_ds_data(self, x, y):

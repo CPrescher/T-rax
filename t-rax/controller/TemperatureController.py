@@ -67,6 +67,10 @@ class TemperatureController(QtCore.QObject):
         self.widget.roi_widget.rois_changed.connect(self.widget_rois_changed)
 
 
+        # mouse moved signals
+        self.widget.graph_widget.mouse_moved.connect(self.graph_mouse_moved)
+        self.widget.roi_widget.img_widget.mouse_moved.connect(self.roi_mouse_moved)
+
 
     def connect_click_function(self, emitter, function):
         self.widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
@@ -211,6 +215,7 @@ class TemperatureController(QtCore.QObject):
                 self.widget.frame_widget.setVisible(False)
                 self.widget.graph_widget.show_time_lapse_plot(False)
             self.widget.frame_num_txt.setText(str(self.model.current_frame+1))
+            self.widget.graph_info_lbl.setText(self.model.file_info)
         else:
             self.widget.filename_lbl.setText('Select File...')
             self.widget.dirname_lbl.setText('')
@@ -219,6 +224,7 @@ class TemperatureController(QtCore.QObject):
 
         self.ds_calculations_changed()
         self.us_calculations_changed()
+
 
 
     def ds_calculations_changed(self):
@@ -281,17 +287,20 @@ class TemperatureController(QtCore.QObject):
             np.std(ds_temperature + us_temperature)
         )
 
-
-
     def widget_rois_changed(self, roi_list):
         if self.model.has_data():
             self.model.set_rois(roi_list[0], roi_list[1])
 
+    def graph_mouse_moved(self, x, y):
+        self.widget.graph_mouse_pos_lbl.setText("X: {:8.2f}  Y: {:8.2f}".format(x, y))
 
-if __name__ == '__main__':
-    app = QtGui.QApplication([])
-    widget = TemperatureWidget()
-    controller = TemperatureController(widget)
-    widget.show()
-    widget.raise_()
-    app.exec_()
+    def roi_mouse_moved(self, x, y):
+        x = np.floor(x)
+        y = np.floor(y)
+        try:
+            self.widget.roi_widget.pos_lbl.setText("X: {:5.0f}  Y: {:5.0f}    Int: {:6.0f}    lambda: {:5.2f} nm".
+                                                   format(x, y,
+                                                          self.model.data_img[y, x],
+                                                          self.model.data_img_file.x_calibration[x]))
+        except IndexError as e:
+            pass

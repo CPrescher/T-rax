@@ -96,6 +96,12 @@ class TemperatureModel(QtCore.QObject):
     def has_data(self):
         return self._data_img is not None
 
+    @property
+    def file_info(self):
+        return "Exp. Time: {}s | Grating: {} | Detector: {}".format(self.data_img_file.exposure_time,
+                                                                    self.data_img_file.grating,
+                                                                    self.data_img_file.detector)
+
     # calibration image files:
     #########################################################################
     def load_ds_calibration_image(self, filename):

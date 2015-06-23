@@ -29,9 +29,6 @@ class BaseWidget(QtGui.QWidget):
         self._graph_control_layout.addWidget(self.control_widget, 0, 1)
         self._graph_control_layout.addWidget(self.graph_status_bar, 1, 0, 1, 2)
 
-        # self._graph_control_layout.setStretch(0, 1)
-        # self._graph_control_layout.setStretch(1, 0)
-
         self._graph_control_widget.setLayout(self._graph_control_layout)
 
         self._main_splitter.addWidget(self._graph_control_widget)

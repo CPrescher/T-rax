@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui
 from .TemperatureSpectrumWidget import TemperatureSpectrumWidget
 from .RoiWidget import RoiWidget
 from .Widgets import TemperatureFileGroupBox as FileGroupBox
-from .Widgets import OutputGroupBox
+from .Widgets import OutputGroupBox, StatusBar
 
 class TemperatureWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
@@ -17,19 +17,18 @@ class TemperatureWidget(QtGui.QWidget):
         self._main_splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
 
         self._graph_control_widget = QtGui.QWidget()
-        self._graph_control_layout = QtGui.QHBoxLayout()
+        self._graph_control_layout = QtGui.QGridLayout()
         self._graph_control_layout.setContentsMargins(0, 0, 0, 0)
 
         self.graph_widget = TemperatureSpectrumWidget()
         self.control_widget = TemperatureControlWidget()
+        self.graph_status_bar = StatusBar()
         self.roi_widget = RoiWidget(2, ['Downstream', 'Upstream'],
                                        roi_colors=[(255, 255, 0), (255, 140, 0)])
 
-        self._graph_control_layout.addWidget(self.graph_widget)
-        self._graph_control_layout.addWidget(self.control_widget)
-
-        self._graph_control_layout.setStretch(0, 1)
-        self._graph_control_layout.setStretch(1, 0)
+        self._graph_control_layout.addWidget(self.graph_widget, 0, 0)
+        self._graph_control_layout.addWidget(self.control_widget, 0, 1)
+        self._graph_control_layout.addWidget(self.graph_status_bar, 1, 0, 1, 2)
 
         self._graph_control_widget.setLayout(self._graph_control_layout)
 
@@ -90,6 +89,9 @@ class TemperatureWidget(QtGui.QWidget):
 
         self.roi_img_item = self.roi_widget.img_widget.pg_img_item
         self.time_lapse_layout = self.graph_widget._pg_time_lapse_layout
+
+        self.graph_mouse_pos_lbl = self.graph_status_bar.left_lbl
+        self.graph_info_lbl = self.graph_status_bar.right_lbl
 
 
 class TemperatureControlWidget(QtGui.QWidget):
