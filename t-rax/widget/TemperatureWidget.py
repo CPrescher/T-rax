@@ -8,6 +8,7 @@ from .RoiWidget import RoiWidget
 from .Widgets import TemperatureFileGroupBox as FileGroupBox
 from .Widgets import OutputGroupBox, StatusBar
 
+
 class TemperatureWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
         super(TemperatureWidget, self).__init__(*args, **kwargs)
@@ -93,6 +94,8 @@ class TemperatureWidget(QtGui.QWidget):
         self.graph_mouse_pos_lbl = self.graph_status_bar.left_lbl
         self.graph_info_lbl = self.graph_status_bar.right_lbl
 
+        self.connect_to_epics_cb = self.control_widget.experiment_tab.connect_epics_cb
+
 
 class TemperatureControlWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
@@ -119,11 +122,15 @@ class TemperatureExperimentTab(QtGui.QWidget):
         self.output_gb = OutputGroupBox()
         self.settings_gb = SettingsGroupBox()
 
+        self.connect_epics_cb = QtGui.QCheckBox("connect to EPICS")
+        self.connect_epics_cb.setLayoutDirection(QtCore.Qt.RightToLeft)
+
         self.save_data_btn = QtGui.QPushButton("Save Data")
 
         self._layout.addWidget(self.file_gb)
         self._layout.addWidget(self.output_gb)
         self._layout.addWidget(self.settings_gb)
+        self._layout.addWidget(self.connect_epics_cb)
         self._layout.addSpacerItem(QtGui.QSpacerItem(10, 10,
                                                      QtGui.QSizePolicy.Fixed,
                                                      QtGui.QSizePolicy.Expanding))

@@ -91,8 +91,6 @@ class MainController(object):
         self.main_widget.diamond_widget.hide()
         self.main_widget.raman_widget.hide()
 
-
-
     def save_directories(self):
         fid = open('parameters.txt', 'w')
         output_str = \
