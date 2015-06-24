@@ -121,7 +121,8 @@ class BaseController(QtCore.QObject):
                                                    format(x, y,
                                                           self.model.data_img[y, x],
                                                           self.model._data_img_x_calibration[x]))
-        except IndexError as e:
+
+        except (IndexError, AttributeError, TypeError):
             pass
 
     def auto_process_cb_toggled(self):

@@ -302,5 +302,5 @@ class TemperatureController(QtCore.QObject):
                                                    format(x, y,
                                                           self.model.data_img[y, x],
                                                           self.model.data_img_file.x_calibration[x]))
-        except IndexError as e:
+        except (IndexError, TypeError):
             pass
