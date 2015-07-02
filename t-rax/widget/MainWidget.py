@@ -13,11 +13,12 @@ from .RamanWidget import RamanWidget
 
 module_path = os.path.dirname(__file__)
 
+
 class MainWidget(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
         super(MainWidget, self).__init__(*args, **kwargs)
         self._main_layout = QtGui.QVBoxLayout()
-        self._main_layout.setContentsMargins(0,0,0,0)
+        self._main_layout.setContentsMargins(0, 0, 0, 0)
         self._main_layout.setSpacing(0)
         self.navigation_widget = NavigationWidget(self)
         self.temperature_widget = TemperatureWidget(self)
@@ -38,7 +39,6 @@ class MainWidget(QtGui.QWidget):
         self.load_stylesheet()
         self.setLayout(self._main_layout)
 
-
     def load_stylesheet(self):
         main_stylesheet_file = open(os.path.join(module_path, "TRaxStyle.qss"), 'r')
         main_stylesheet_str = main_stylesheet_file.read()
@@ -46,8 +46,7 @@ class MainWidget(QtGui.QWidget):
         navigation_stylesheet_file = open(os.path.join(module_path, "NavigationStyle.qss"), 'r')
         navigation_stylesheet_str = navigation_stylesheet_file.read()
         navigation_stylesheet_file.close()
-        self.setStyleSheet(main_stylesheet_str+'\n'+navigation_stylesheet_str)
-
+        self.setStyleSheet(main_stylesheet_str + '\n' + navigation_stylesheet_str)
 
 
 class NavigationWidget(QtGui.QFrame):
@@ -57,6 +56,7 @@ class NavigationWidget(QtGui.QFrame):
         'diamond': 'rgba(27, 0, 134, 255)',
         'raman': 'rgba(21, 134, 31, 255)'
     }
+
     def __init__(self, *args, **kwargs):
         super(NavigationWidget, self).__init__()
         self.setObjectName("navigation_frame")
@@ -68,7 +68,7 @@ class NavigationWidget(QtGui.QFrame):
         self.diamond_btn = QtGui.QPushButton('Diamond')
         self.raman_btn = QtGui.QPushButton('Raman')
 
-        #setting object names for stylesheet access
+        # setting object names for stylesheet access
         self.temperature_btn.setObjectName('temperature_btn')
         self.ruby_btn.setObjectName('ruby_btn')
         self.diamond_btn.setObjectName('diamond_btn')
@@ -80,7 +80,7 @@ class NavigationWidget(QtGui.QFrame):
         self._layout.addWidget(self.ruby_btn)
         self._layout.addWidget(self.diamond_btn)
         self._layout.addWidget(self.raman_btn)
-        self._layout.addSpacerItem(QtGui.QSpacerItem(10,10, QtGui.QSizePolicy.Expanding,
+        self._layout.addSpacerItem(QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Expanding,
                                                      QtGui.QSizePolicy.Fixed))
         self._layout.addWidget(self.copyright_lbl)
         self.setLayout(self._layout)
@@ -98,15 +98,14 @@ class NavigationWidget(QtGui.QFrame):
                                                  self.colors['diamond'],
                                                  self.diamond_btn))
         self.raman_btn.clicked.connect(partial(self.update_colors,
-                                                 self.colors['raman'],
-                                                 self.raman_btn))
-
+                                               self.colors['raman'],
+                                               self.raman_btn))
 
 
     def connect_click_function(self, emitter, function):
         self.control_widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
 
-    def update_colors(self, new_color, sender,):
+    def update_colors(self, new_color, sender, ):
         str1 = '#navigation_frame {background: qlineargradient(spread:reflect, x1:0, y1:0.5, x2:0, y2:0, stop:0.12 %s, stop:0.6 rgb(30, 30, 30));}' % new_color
         str2 = 'QPushButton { border: 1px solid #999}'
         str3 = '#%s { border: 2px solid #fff}' % sender.objectName()

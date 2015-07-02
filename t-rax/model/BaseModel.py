@@ -20,6 +20,7 @@ class SingleSpectrumModel(QtCore.QObject, object):
         self.spe_file = None
         self.filename = None
 
+        self._data_img = None
         self._data_img_dimension = None
         self._data_img_x_calibration = None
 
@@ -111,8 +112,9 @@ class SingleSpectrumModel(QtCore.QObject, object):
 
     @roi.setter
     def roi(self, roi):
-        self.roi_manager.set_roi(0, self._data_img_dimension, roi)
-        self.spectrum_changed.emit(*self.spectrum.data)
+        if self._data_img is not None:
+            self.roi_manager.set_roi(0, self._data_img_dimension, roi)
+            self.spectrum_changed.emit(*self.spectrum.data)
 
     @property
     def data_img(self):
