@@ -10,6 +10,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtTest import QTest
 import numpy as np
 
+from model.TemperatureModel import TemperatureModel
 from controller.TemperatureController import TemperatureController
 from widget.TemperatureWidget import TemperatureWidget
 
@@ -24,8 +25,8 @@ class TestTemperatureController(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication(sys.argv)
         self.widget = TemperatureWidget()
-        self.controller = TemperatureController(self.widget)
-        self.model = self.controller.model
+        self.model = TemperatureModel()
+        self.controller = TemperatureController(self.widget, self.model)
 
     def tearDown(self):
         self.app.closeAllWindows()
