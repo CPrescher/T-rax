@@ -30,6 +30,7 @@ class RubyController(QtCore.QObject):
 
     def connect_signals(self):
         self.model.pressure_changed.connect(self.pressure_changed)
+        self.model.param_changed.connect(self.params_changed)
         self.widget.ruby_scale_cb.currentIndexChanged.connect(self.ruby_scale_cb_changed)
         self.widget.sample_position_txt.editingFinished.connect(self.sample_position_txt_changed)
         self.widget.reference_position_txt.editingFinished.connect(self.reference_position_txt_changed)
@@ -45,11 +46,19 @@ class RubyController(QtCore.QObject):
 
     def mouse_left_clicked(self, x, y):
         self.model.sample_position = x
-        self.widget.set_ruby_line_pos(x)
-        self.widget.sample_position_txt.setText("{:.2f}".format(x))
 
     def pressure_changed(self, new_value):
         self.widget.pressure_lbl.setText("{:.2f}".format(new_value))
+
+    def params_changed(self):
+        self.widget.reference_position_txt.setText("{:.2f}".format(self.model.reference_position))
+        self.widget.reference_temperature_txt.setText("{:.2f}".format(self.model.reference_temperature))
+        self.widget.sample_position_txt.setText("{:.2f}".format(self.model.sample_position))
+        self.widget.sample_temperature_txt.setText("{:.2f}".format(self.model.sample_temperature))
+
+        self.widget.ruby_scale_cb.setCurrentIndex(self.model.ruby_scale)
+
+        self.widget.set_ruby_line_pos(self.model.sample_position)
 
     def reference_position_txt_changed(self):
         new_value = float(str(self.widget.reference_position_txt.text()))

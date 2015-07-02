@@ -7,6 +7,7 @@ from .BaseModel import SingleSpectrumModel
 
 class RubyModel(SingleSpectrumModel):
     pressure_changed = QtCore.pyqtSignal(float)
+    param_changed = QtCore.pyqtSignal()
 
     DEWAELE_SCALE = 0
     HYDROSTATIC_SCALE = 1
@@ -74,6 +75,7 @@ class RubyModel(SingleSpectrumModel):
     @sample_temperature.setter
     def sample_temperature(self, value):
         self._sample_temperature = value
+        self.param_changed.emit()
         self.pressure_changed.emit(self.get_ruby_pressure())
 
     @property
@@ -83,6 +85,7 @@ class RubyModel(SingleSpectrumModel):
     @sample_position.setter
     def sample_position(self, value):
         self._sample_position = value
+        self.param_changed.emit()
         self.pressure_changed.emit(self.get_ruby_pressure())
 
     @property
@@ -92,6 +95,7 @@ class RubyModel(SingleSpectrumModel):
     @reference_temperature.setter
     def reference_temperature(self, value):
         self._reference_temperature = value
+        self.param_changed.emit()
         self.pressure_changed.emit(self.get_ruby_pressure())
 
     @property
@@ -101,6 +105,7 @@ class RubyModel(SingleSpectrumModel):
     @reference_position.setter
     def reference_position(self, value):
         self._reference_position = value
+        self.param_changed.emit()
         self.pressure_changed.emit(self.get_ruby_pressure())
 
     @property
@@ -110,4 +115,5 @@ class RubyModel(SingleSpectrumModel):
     @ruby_scale.setter
     def ruby_scale(self, value):
         self._ruby_scale = value
+        self.param_changed.emit()
         self.pressure_changed.emit(self.get_ruby_pressure())

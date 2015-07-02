@@ -16,7 +16,7 @@ except ImportError:
 
 
 class TemperatureController(QtCore.QObject):
-    def __init__(self, temperature_widget):
+    def __init__(self, temperature_widget, temperature_model):
         """
         :param temperature_widget: reference to the temperature widget
         :type temperature_widget: TemperatureWidget
@@ -24,7 +24,7 @@ class TemperatureController(QtCore.QObject):
         """
         super(TemperatureController, self).__init__()
         self.widget = temperature_widget
-        self.model = TemperatureModel()
+        self.model = temperature_model
 
         self.create_signals()
 

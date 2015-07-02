@@ -59,7 +59,7 @@ class TemperatureWidget(QtGui.QWidget):
         self.frame_num_txt = self.control_widget.experiment_tab.file_gb.frame_txt
         self.frame_widget = self.control_widget.experiment_tab.file_gb.frame_control_widget
 
-        self.auto_process_cb = self.control_widget.experiment_tab.file_gb.autoprocess_cb
+        self.autoprocess_cb = self.control_widget.experiment_tab.file_gb.autoprocess_cb
         self.filename_lbl = self.control_widget.experiment_tab.file_gb.filename_lbl
         self.dirname_lbl = self.control_widget.experiment_tab.file_gb.dirname_lbl
 

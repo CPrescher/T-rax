@@ -1,8 +1,11 @@
 import sys
 import os
+import xml.etree.cElementTree as ET
 
 from PyQt4 import QtGui, QtCore
 
+from model.RoiData import Roi
+from model.TemperatureModel import TemperatureModel
 from model.RubyModel import RubyModel
 from model.DiamondModel import DiamondModel
 from model.RamanModel import RamanModel
@@ -23,7 +26,8 @@ class MainController(object):
         self.create_signals()
         self.create_data_models()
         self.create_sub_controller()
-        self.load_directories()
+        self.settings = QtCore.QSettings("T-Rax", "T-Rax")
+        self.load_settings()
 
     def show_window(self):
         self.main_widget.show()
@@ -33,28 +37,89 @@ class MainController(object):
         self.main_widget.raise_()
 
     def create_data_models(self):
+        self.temperature_model = TemperatureModel()
         self.ruby_model = RubyModel()
         self.diamond_model = DiamondModel()
         self.raman_model = RamanModel()
 
     def create_sub_controller(self):
-        self.temperature_controller = TemperatureController(self.main_widget.temperature_widget)
+        self.temperature_controller = TemperatureController(self.main_widget.temperature_widget, self.temperature_model)
         self.ruby_controller = RubyController(self.ruby_model, self.main_widget.ruby_widget)
         self.diamond_controller = DiamondController(self.diamond_model, self.main_widget.diamond_widget)
         self.raman_controller = RamanController(self.raman_model, self.main_widget.raman_widget)
 
-    def load_directories(self):
-        try:
-            fid = open('parameters.txt', 'r')
-            self.temperature_controller._exp_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
-            self.temperature_controller._calibration_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
-            self.temperature_controller._setting_working_dir = ':'.join(fid.readline().split(':')[1::])[1:-1]
-            fid.close()
-        except IOError:
-            self.temperature_controller._exp_working_dir = os.getcwd()
-            self.temperature_controller._calibration_working_dir = os.getcwd()
-            self.temperature_controller._settings_working_dir = os.getcwd()
-        self.temperature_controller.update_setting_combobox()
+    def load_settings(self):
+        ## temperature module:
+        temperature_data_path = str(self.settings.value("temperature data file").toString())
+        if os.path.exists(temperature_data_path):
+            self.temperature_controller.load_data_file(temperature_data_path)
+
+        settings_file_path = os.path.join(str(self.settings.value("temperature settings directory").toString()),
+                                          str(self.settings.value("temperature settings file").toString()) + ".trs")
+        if os.path.exists(settings_file_path):
+            self.temperature_controller.load_setting_file(settings_file_path)
+
+        temperature_autoprocessing = self.settings.value("temperature autoprocessing").toBool()
+        if temperature_autoprocessing:
+            self.main_widget.temperature_widget.autoprocess_cb.setChecked(True)
+
+        self.main_widget.temperature_widget.connect_to_epics_cb.setChecked(
+            self.settings.value("temperature epics connected").toBool()
+        )
+
+        ## Ruby Module:
+        ruby_data_path = str(self.settings.value("ruby data file").toString())
+        if os.path.exists(ruby_data_path):
+            self.ruby_controller.file_controller.load_data_file(ruby_data_path)
+
+        ruby_autoprocessing = self.settings.value("ruby autoprocessing").toBool()
+        if ruby_autoprocessing:
+            self.main_widget.ruby_widget.autoprocess_cb.setChecked(True)
+
+        self.ruby_model.blockSignals(True)
+        value = self.settings.value("ruby scale").toInt()
+        self.ruby_model.ruby_scale = value[0] if value[1] else self.ruby_model.ruby_scale
+
+        value = self.settings.value("ruby reference position").toFloat()
+        self.ruby_model.reference_position = value[0] if value[1] else self.ruby_model.reference_position
+
+        value = self.settings.value("ruby reference temperature").toFloat()
+        self.ruby_model.reference_temperature = value[0] if value[1] else self.ruby_model.reference_temperature
+
+        value = self.settings.value("ruby sample position").toFloat()
+        self.ruby_model.sample_position = value[0] if value[1] else self.ruby_model.sample_position
+
+        self.ruby_model.blockSignals(False)
+        value = self.settings.value("ruby sample temperature").toFloat()
+        self.ruby_model.sample_temperature = value[0] if value[1] else self.ruby_model.sample_temperature
+
+        ruby_roi_str = str(self.settings.value("ruby roi").toString())
+        if ruby_roi_str is not "":
+            ruby_roi = [float(e) for e in ruby_roi_str.split()]
+            self.ruby_model.roi = ruby_roi
+            self.main_widget.ruby_widget.roi_widget.set_rois([ruby_roi])
+
+    def save_settings(self):
+        self.settings.setValue("temperature data file", self.temperature_model.data_img_file.filename)
+        self.settings.setValue("temperature settings directory", self.temperature_controller._setting_working_dir)
+        self.settings.setValue("temperature settings file",
+                               str(self.main_widget.temperature_widget.settings_cb.currentText()))
+
+        self.settings.setValue("temperature autoprocessing",
+                               self.main_widget.temperature_widget.autoprocess_cb.isChecked())
+
+        self.settings.setValue("temperature epics connected",
+                               self.main_widget.temperature_widget.connect_to_epics_cb.isChecked())
+
+        self.settings.setValue("ruby data file", self.ruby_model.filename)
+        self.settings.setValue("ruby autoprocessing",
+                               self.main_widget.ruby_widget.autoprocess_cb.isChecked())
+        self.settings.setValue("ruby reference position", self.ruby_model.reference_position)
+        self.settings.setValue("ruby reference temperature", self.ruby_model.reference_temperature)
+        self.settings.setValue("ruby sample position", self.ruby_model.sample_position)
+        self.settings.setValue("ruby sample temperature", self.ruby_model.sample_temperature)
+        self.settings.setValue("ruby scale", self.ruby_model.ruby_scale)
+        self.settings.setValue("ruby roi", " ".join(str(e) for e in self.ruby_model.roi.as_list()))
 
     def create_signals(self):
         self.main_widget.closeEvent = self.closeEvent
@@ -91,17 +156,8 @@ class MainController(object):
         self.main_widget.diamond_widget.hide()
         self.main_widget.raman_widget.hide()
 
-    def save_directories(self):
-        fid = open('parameters.txt', 'w')
-        output_str = \
-            'Temperature Working directory: ' + self.temperature_controller._exp_working_dir + '\n' + \
-            'Temperature Calibration directory: ' + self.temperature_controller._calibration_working_dir + '\n' + \
-            'Temperature Settings directory: ' + self.temperature_controller._setting_working_dir + '\n'
-        fid.write(output_str)
-        fid.close()
-
     def closeEvent(self, event):
-        self.save_directories()
+        self.save_settings()
         try:
             self.temperature_controller.roi_controller.view.close()
         except:
