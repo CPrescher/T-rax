@@ -8,6 +8,7 @@ from PyQt4 import QtGui, QtCore
 from widget.TemperatureWidget import TemperatureWidget
 from model.TemperatureModel import TemperatureModel
 import numpy as np
+import epics
 
 
 class TemperatureController(QtCore.QObject):
@@ -250,6 +251,10 @@ class TemperatureController(QtCore.QObject):
                                                            self.model.ds_temperature_error)
         self.widget.graph_widget.update_ds_roi_max_txt(self.model.ds_temperature_model.data_roi_max)
 
+        if self.widget.connect_to_epics_cb.isChecked():
+            epics.caput("13IDD:ds_las_temp", self.model.ds_temperature)
+            epics.caput("13IDD:dn_t_int", str(self.model.ds_roi_max))
+
     def us_calculations_changed(self):
         if self.model.us_calibration_filename is not None:
             self.widget.us_calibration_filename_lbl.setText(os.path.basename(self.model.us_calibration_filename))
@@ -270,6 +275,10 @@ class TemperatureController(QtCore.QObject):
         self.widget.graph_widget.update_us_temperature_txt(self.model.us_temperature,
                                                            self.model.us_temperature_error)
         self.widget.graph_widget.update_us_roi_max_txt(self.model.us_temperature_model.data_roi_max)
+
+        if self.widget.connect_to_epics_cb.isChecked():
+            epics.caput("13IDD:us_las_temp", self.model.us_temperature)
+            epics.caput("13IDD:up_t_int", str(self.model.us_roi_max))
 
     def update_time_lapse(self):
         us_temperature, us_temperature_error, ds_temperature, ds_temperature_error = self.model.fit_all_frames()

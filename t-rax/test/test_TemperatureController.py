@@ -185,10 +185,7 @@ class TestTemperatureController(unittest.TestCase):
                                 np.array(self.model.us_fit_spectrum.data))
 
     def test_loading_settings(self):
-        filename = os.path.join(temperature_fitting_path, 'test_measurement.spe')
-        self.controller.load_data_file(filename)
-        setting_filename = os.path.join(temperature_fitting_path, 'PiMax.trs')
-        self.controller.load_setting_file(setting_filename)
+        self.load_pimax_example_and_setting()
 
         self.assertEqual(self.widget.graph_widget._ds_temperature_txt_item.text,
                          '1047 K &plusmn; 15')
@@ -238,6 +235,12 @@ class TestTemperatureController(unittest.TestCase):
         x_limits_ind = self.model.data_img_file.get_index_from(x_limits_wavelength)
         self.model.set_rois([x_limits_ind[0], x_limits_ind[1], 152, 163],
                             [x_limits_ind[0], x_limits_ind[1], 99, 110])
+
+    def load_pimax_example_and_setting(self):
+        filename = os.path.join(temperature_fitting_path, 'test_measurement.spe')
+        self.controller.load_data_file(filename)
+        setting_filename = os.path.join(temperature_fitting_path, 'PiMax.trs')
+        self.controller.load_setting_file(setting_filename)
 
     @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
     def test_saving_data_as_txt(self, filedialog):
@@ -296,3 +299,28 @@ class TestTemperatureController(unittest.TestCase):
         self.assertIn("{:.0f}".format(self.model.data_img[20, 130]), self.widget.roi_widget.pos_lbl.text())
         self.assertIn("{:.2f}".format(self.model.data_img_file.x_calibration[130]),
                       self.widget.roi_widget.pos_lbl.text())
+
+    def test_pyepics_connection_is_working(self):
+        try:
+            import epics
+        except ImportError:
+            return
+        QTest.mouseClick(self.widget.connect_to_epics_cb, QtCore.Qt.LeftButton,
+                         pos=QtCore.QPoint(self.widget.connect_to_epics_cb.width() - 2,
+                                           self.widget.connect_to_epics_cb.height() / 2))
+
+        self.load_pimax_example_and_setting()
+
+        self.assertAlmostEqual(self.model.ds_temperature, epics.caget('13IDD:ds_las_temp.VAL'))
+        self.assertAlmostEqual(self.model.us_temperature, epics.caget('13IDD:us_las_temp.VAL'))
+
+        self.assertAlmostEqual(self.model.ds_roi_max, float(epics.caget('13IDD:dn_t_int.VAL')))
+        self.assertAlmostEqual(self.model.us_roi_max, float(epics.caget('13IDD:up_t_int.VAL')))
+
+        self.load_single_frame_file_and_calibration()
+
+        self.assertAlmostEqual(self.model.ds_temperature, epics.caget('13IDD:ds_las_temp.VAL'))
+        self.assertAlmostEqual(self.model.us_temperature, epics.caget('13IDD:us_las_temp.VAL'))
+
+        self.assertAlmostEqual(self.model.ds_roi_max, float(epics.caget('13IDD:dn_t_int.VAL')))
+        self.assertAlmostEqual(self.model.us_roi_max, float(epics.caget('13IDD:up_t_int.VAL')))

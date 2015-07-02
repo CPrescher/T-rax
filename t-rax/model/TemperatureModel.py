@@ -365,6 +365,14 @@ class TemperatureModel(QtCore.QObject):
     def us_etalon_filename(self):
         return self.us_temperature_model.calibration_parameter.etalon_file_name
 
+    @property
+    def ds_roi_max(self):
+        return self.ds_temperature_model.data_roi_max
+
+    @property
+    def us_roi_max(self):
+        return self.us_temperature_model.data_roi_max
+
     # TODO: Think aboout refactoring this function away from here
     def get_wavelength_from(self, index):
         return self.data_img_file.get_wavelength_from(index)
