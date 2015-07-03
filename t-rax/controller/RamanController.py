@@ -19,7 +19,7 @@ class RamanController(QtCore.QObject):
         """
         super(RamanController, self).__init__()
 
-        self.file_controller = BaseController(model, widget)
+        self.base_controller = BaseController(model, widget)
 
         self.model = model
         self.widget = widget
@@ -46,3 +46,8 @@ class RamanController(QtCore.QObject):
             self.widget.graph_widget.set_xlabel('&lambda; (nm)')
         elif self.model.mode == RamanModel.REVERSE_CM_MODE:
             self.widget.graph_widget.set_xlabel('v (cm<sup>-1</sup>)')
+
+    def update_widget_parameter(self):
+        self.widget.laser_line_txt.setText("{:.2f}".format(self.model.laser_line))
+        if self.model.mode == RamanModel.WAVELENGTH_MODE:
+            self.widget.nanometer_cb.setChecked(True)

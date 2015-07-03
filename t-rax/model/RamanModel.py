@@ -39,7 +39,8 @@ class RamanModel(SingleSpectrumModel, object):
     @mode.setter
     def mode(self, value):
         self._mode = value
-        self.spectrum_changed.emit(*self.spectrum.data)
+        if self.spe_file is not None:
+            self.spectrum_changed.emit(*self.spectrum.data)
 
 
 def convert_wavelength_to_reverse_cm(wavelength, laser_line):

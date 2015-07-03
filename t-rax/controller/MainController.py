@@ -126,6 +126,30 @@ class MainController(object):
             self.diamond_model.roi = diamond_roi
             self.main_widget.diamond_widget.roi_widget.set_rois([diamond_roi])
 
+        ## Raman Module
+        raman_data_path = str(self.settings.value("raman data file").toString())
+        if os.path.exists(raman_data_path):
+            self.raman_controller.base_controller.load_data_file(raman_data_path)
+
+        raman_autoprocessing = self.settings.value("raman autoprocessing").toBool()
+        if raman_autoprocessing:
+            self.main_widget.raman_widget.autoprocess_cb.setChecked(True)
+
+        value = self.settings.value("raman laser line").toFloat()
+        self.raman_model.laser_line = value[0] if value[1] else self.raman_model.laser_line
+
+        value = self.settings.value("raman mode").toInt()
+        self.raman_model.mode = value[0] if value[1] else self.raman_model.mode
+
+        raman_roi_str = str(self.settings.value("raman roi").toString())
+        if raman_roi_str != "":
+            raman_roi = [float(e) for e in raman_roi_str.split()]
+            self.raman_model.roi = raman_roi
+            self.main_widget.raman_widget.roi_widget.set_rois([raman_roi])
+
+        self.raman_controller.update_widget_parameter()
+
+
 
     def save_settings(self):
         # temperature
@@ -159,6 +183,13 @@ class MainController(object):
         self.settings.setValue("diamond reference position", self.diamond_model.reference_position)
         self.settings.setValue("diamond sample position", self.diamond_model.sample_position)
         self.settings.setValue("diamond roi", " ".join(str(e) for e in self.diamond_model.roi.as_list()))
+
+        # raman model
+        self.settings.setValue("raman data file", self.raman_model.filename)
+        self.settings.setValue("raman autoprocessing", self.main_widget.raman_widget.autoprocess_cb.isChecked())
+        self.settings.setValue("raman laser line", self.raman_model.laser_line)
+        self.settings.setValue("raman mode", self.raman_model.mode)
+        self.settings.setValue("raman roi", " ".join(str(e) for e in self.raman_model.roi.as_list()))
 
     def create_signals(self):
         self.main_widget.closeEvent = self.closeEvent
