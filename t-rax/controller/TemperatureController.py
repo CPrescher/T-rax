@@ -316,7 +316,8 @@ class TemperatureController(QtCore.QObject):
             pass
 
     def save_settings(self, settings):
-        settings.setValue("temperature data file", self.model.data_img_file.filename)
+        if self.model.data_img_file:
+            settings.setValue("temperature data file", self.model.data_img_file.filename)
         settings.setValue("temperature settings directory", self._setting_working_dir)
         settings.setValue("temperature settings file", str(self.widget.settings_cb.currentText()))
 

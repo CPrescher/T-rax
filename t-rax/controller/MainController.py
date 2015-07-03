@@ -43,11 +43,10 @@ def write_version_file(version_str):
 __version__ = get_version()
 
 class MainController(object):
-    def __init__(self, version=None):
+    def __init__(self):
         self.main_widget = MainWidget()
 
-        if version is not None:
-            self.main_widget.setWindowTitle('T-Rax ' + get_version())
+        self.main_widget.setWindowTitle('T-Rax ' + get_version())
 
         self.create_signals()
         self.create_data_models()
@@ -57,10 +56,11 @@ class MainController(object):
 
     def show_window(self):
         self.main_widget.show()
-        self.main_widget.setWindowState(
-            self.main_widget.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
-        self.main_widget.activateWindow()
-        self.main_widget.raise_()
+        if sys.platform == "darwin":
+            self.main_widget.setWindowState(
+                self.main_widget.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+            self.main_widget.activateWindow()
+            self.main_widget.raise_()
 
     def create_data_models(self):
         self.temperature_model = TemperatureModel()

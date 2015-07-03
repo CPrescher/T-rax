@@ -39,7 +39,8 @@ class DiamondController(QtCore.QObject):
     def spectrum_changed(self):
         derivative_smoothing = float(self.widget.derivative_sb.value())
         derivative_spectrum = self.model.calculate_derivative_spectrum(derivative_smoothing)
-        self.widget.plot_derivative(*derivative_spectrum.data)
+        if derivative_spectrum is not None:
+            self.widget.plot_derivative(*derivative_spectrum.data)
 
     def laser_line_txt_changed(self):
         new_value = float(str(self.widget.laser_line_txt.text()))

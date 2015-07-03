@@ -28,6 +28,8 @@ class DiamondModel(RamanModel):
         return P
 
     def calculate_derivative_spectrum(self, smoothing):
+        if self.spe_file is None:
+            return None
         original_spectrum = self.spectrum
         derivative_spectrum = Spectrum(np.copy(original_spectrum.x), np.gradient(original_spectrum.y))
         derivative_spectrum._y = gaussian_filter1d(derivative_spectrum.y, smoothing)

@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 folder = 't-rax'
 
-a = Analysis([os.path.join(folder, 't-rax.py')],
+a = Analysis([os.path.join(folder, 'T-Rax.py')],
              pathex=[folder],
              hiddenimports=['scipy.special._ufuncs_cxx', 'scipy.integrate', 'scipy.integrate.quadrature',
                             'scipy.integrate.odepack', 'scipy.integrate._odepack', 'scipy.integrate._ode',
