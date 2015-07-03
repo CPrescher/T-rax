@@ -13,7 +13,7 @@ or Lightfield (File Version 3).
 Maintainer
 ===
 
-Clemens Prescher (clemens.prescher@gmail.com)
+Clemens Prescher (clemens.prescher@gmail.com)  
 Center for Advanced Radiation Sources, University of Chicago
 
 
