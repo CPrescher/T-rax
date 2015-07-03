@@ -16,13 +16,38 @@ from controller.RubyController import RubyController
 from controller.DiamondController import DiamondController
 from controller.RamanController import RamanController
 
+from . import versioneer
+
+versioneer.VCS = 'git'
+versioneer.versionfile_source = ''
+versioneer.versionfile_build = ''
+versioneer.tag_prefix = ''
+versioneer.parentdir_prefix = ''
+
+
+def get_version():
+    version = versioneer.get_version()
+    if version not in __name__:
+        write_version_file(version)
+        return version
+    else:
+        import _version
+        return _version.__version__
+
+
+def write_version_file(version_str):
+    path = os.path.dirname(__file__)
+    with open(os.path.join(path, '_version.py'), 'w') as f:
+        f.write('__version__="{}"'.format(version_str))
+
+__version__ = get_version()
 
 class MainController(object):
     def __init__(self, version=None):
         self.main_widget = MainWidget()
 
         if version is not None:
-            self.main_widget.setWindowTitle('T-Rax v' + str(version))
+            self.main_widget.setWindowTitle('T-Rax ' + get_version())
 
         self.create_signals()
         self.create_data_models()
