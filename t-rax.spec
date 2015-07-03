@@ -2,7 +2,7 @@
 folder = 't-rax'
 
 a = Analysis([os.path.join(folder, 't-rax.py')],
-             pathex=['folder'],
+             pathex=[folder],
              hiddenimports=['scipy.special._ufuncs_cxx', 'scipy.integrate', 'scipy.integrate.quadrature',
                             'scipy.integrate.odepack', 'scipy.integrate._odepack', 'scipy.integrate._ode',
                             'scipy.integrate.quadpack', 'scipy.integrate._quadpack',
@@ -31,6 +31,9 @@ elif _platform == "win32" or _platform == "cygwin":
 elif _platform == "darwin":
     platform = "Mac64"
     name = "T-Rax"
+
+import sys
+sys.path.append(a.pathex[0])
 
 from controller.MainController import get_version
 version = get_version()
