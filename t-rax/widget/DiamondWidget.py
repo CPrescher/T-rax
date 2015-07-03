@@ -18,8 +18,8 @@ class DiamondWidget(BaseWidget, object):
 
     def create_diamond_shortcuts(self):
         self.pressure_lbl = self._diamond_gb._pressure_lbl
-        self.sample_pos_txt = self._diamond_gb._sample_pos_txt
-        self.reference_pos_txt = self._diamond_gb._reference_pos_txt
+        self.sample_position_txt = self._diamond_gb._sample_pos_txt
+        self.reference_position_txt = self._diamond_gb._reference_pos_txt
         self.laser_line_txt = self._diamond_gb._laser_line_txt
         self.derivative_sb = self._diamond_gb._derivative_sb
 

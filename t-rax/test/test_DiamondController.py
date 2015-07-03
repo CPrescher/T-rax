@@ -48,17 +48,17 @@ class DiamondControllerTest(unittest.TestCase):
         self.assertFalse(np.array_equal(y_der, y_der2))
 
     def test_diamond_position_text_field(self):
-        self.input_txt_into_text_field(self.widget.sample_pos_txt, "1340")
+        self.input_txt_into_text_field(self.widget.sample_position_txt, "1340")
         self.assertAlmostEqual(self.get_numeric_value_from_text_field(self.widget.pressure_lbl), 2.48)
         self.assertEqual(self.widget.get_diamond_line_pos(), 1340)
 
     def test_diamond_reference_text_field(self):
-        self.input_txt_into_text_field(self.widget.reference_pos_txt, "1332")
+        self.input_txt_into_text_field(self.widget.reference_position_txt, "1332")
         self.assertNotEqual(float(str(self.widget.pressure_lbl.text())), 0)
 
     def test_clicking_in_graph_widget(self):
         self.widget.graph_widget.mouse_left_clicked.emit(1400, 100)
-        self.assertEqual(self.get_numeric_value_from_text_field(self.widget.sample_pos_txt), 1400)
+        self.assertEqual(self.get_numeric_value_from_text_field(self.widget.sample_position_txt), 1400)
         self.assertAlmostEqual(self.get_numeric_value_from_text_field(self.widget.pressure_lbl), 28.9)
         self.assertAlmostEqual(self.widget.get_diamond_line_pos(), 1400)
 

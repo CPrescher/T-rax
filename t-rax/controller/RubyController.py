@@ -19,7 +19,7 @@ class RubyController(QtCore.QObject):
         """
         super(RubyController, self).__init__()
 
-        self.file_controller = BaseController(model, widget)
+        self.base_controller = BaseController(model, widget)
 
         self.model = model
         self.widget = widget

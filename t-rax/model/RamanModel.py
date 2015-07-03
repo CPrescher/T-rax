@@ -29,7 +29,8 @@ class RamanModel(SingleSpectrumModel, object):
     @laser_line.setter
     def laser_line(self, value):
         self._laser_line = value
-        self.spectrum_changed.emit(*self.spectrum.data)
+        if self.spe_file is not None:
+            self.spectrum_changed.emit(*self.spectrum.data)
 
     @property
     def mode(self):

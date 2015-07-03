@@ -1,10 +1,8 @@
 import sys
 import os
-import xml.etree.cElementTree as ET
 
 from PyQt4 import QtGui, QtCore
 
-from model.RoiData import Roi
 from model.TemperatureModel import TemperatureModel
 from model.RubyModel import RubyModel
 from model.DiamondModel import DiamondModel
@@ -70,7 +68,7 @@ class MainController(object):
         ## Ruby Module:
         ruby_data_path = str(self.settings.value("ruby data file").toString())
         if os.path.exists(ruby_data_path):
-            self.ruby_controller.file_controller.load_data_file(ruby_data_path)
+            self.ruby_controller.base_controller.load_data_file(ruby_data_path)
 
         ruby_autoprocessing = self.settings.value("ruby autoprocessing").toBool()
         if ruby_autoprocessing:
@@ -99,7 +97,38 @@ class MainController(object):
             self.ruby_model.roi = ruby_roi
             self.main_widget.ruby_widget.roi_widget.set_rois([ruby_roi])
 
+        ## Diamond Module:
+        diamond_data_path = str(self.settings.value("diamond data file").toString())
+        if os.path.exists(ruby_data_path):
+            self.diamond_controller.base_controller.load_data_file(diamond_data_path)
+
+        diamond_autoprocessing = self.settings.value("diamond autoprocessing").toBool()
+        if diamond_autoprocessing:
+            self.main_widget.diamond_widget.autoprocess_cb.setChecked(True)
+
+        value = self.settings.value("diamond laser line").toFloat()
+        self.diamond_model.laser_line = value[0] if value[1] else self.diamond_model.laser_line
+
+        value = self.settings.value("diamond derivative").toInt()
+        self.main_widget.diamond_widget.derivative_sb.setValue(value[0])
+
+        value = self.settings.value("diamond reference position").toFloat()
+        self.diamond_model.reference_position = value[0] if value[1] else self.diamond_model.reference_position
+
+        value = self.settings.value("diamond sample position").toFloat()
+        self.diamond_model.sample_position = value[0] if value[1] else self.diamond_model.sample_position
+
+        self.diamond_controller.update_widget_parameter()
+
+        diamond_roi_str = str(self.settings.value("diamond roi").toString())
+        if diamond_roi_str != "":
+            diamond_roi = [float(e) for e in diamond_roi_str.split()]
+            self.diamond_model.roi = diamond_roi
+            self.main_widget.diamond_widget.roi_widget.set_rois([diamond_roi])
+
+
     def save_settings(self):
+        # temperature
         self.settings.setValue("temperature data file", self.temperature_model.data_img_file.filename)
         self.settings.setValue("temperature settings directory", self.temperature_controller._setting_working_dir)
         self.settings.setValue("temperature settings file",
@@ -111,6 +140,7 @@ class MainController(object):
         self.settings.setValue("temperature epics connected",
                                self.main_widget.temperature_widget.connect_to_epics_cb.isChecked())
 
+        # ruby
         self.settings.setValue("ruby data file", self.ruby_model.filename)
         self.settings.setValue("ruby autoprocessing",
                                self.main_widget.ruby_widget.autoprocess_cb.isChecked())
@@ -120,6 +150,15 @@ class MainController(object):
         self.settings.setValue("ruby sample temperature", self.ruby_model.sample_temperature)
         self.settings.setValue("ruby scale", self.ruby_model.ruby_scale)
         self.settings.setValue("ruby roi", " ".join(str(e) for e in self.ruby_model.roi.as_list()))
+
+        # diamond
+        self.settings.setValue("diamond data file", self.diamond_model.filename)
+        self.settings.setValue("diamond autoprocessing", self.main_widget.diamond_widget.autoprocess_cb.isChecked())
+        self.settings.setValue("diamond laser line", self.diamond_model.laser_line)
+        self.settings.setValue("diamond derivative", self.main_widget.diamond_widget.derivative_sb.value())
+        self.settings.setValue("diamond reference position", self.diamond_model.reference_position)
+        self.settings.setValue("diamond sample position", self.diamond_model.sample_position)
+        self.settings.setValue("diamond roi", " ".join(str(e) for e in self.diamond_model.roi.as_list()))
 
     def create_signals(self):
         self.main_widget.closeEvent = self.closeEvent

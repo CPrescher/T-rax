@@ -31,8 +31,8 @@ class DiamondController(QtCore.QObject):
 
         self.widget.laser_line_txt.editingFinished.connect(self.laser_line_txt_changed)
         self.widget.derivative_sb.valueChanged.connect(self.spectrum_changed)
-        self.widget.sample_pos_txt.editingFinished.connect(self.sample_pos_txt_changed)
-        self.widget.reference_pos_txt.editingFinished.connect(self.reference_pos_txt_changed)
+        self.widget.sample_position_txt.editingFinished.connect(self.sample_pos_txt_changed)
+        self.widget.reference_position_txt.editingFinished.connect(self.reference_pos_txt_changed)
 
         self.widget.graph_widget.mouse_left_clicked.connect(self.mouse_left_clicked)
 
@@ -46,12 +46,12 @@ class DiamondController(QtCore.QObject):
         self.model.laser_line = new_value
 
     def sample_pos_txt_changed(self):
-        new_value = float(str(self.widget.sample_pos_txt.text()))
+        new_value = float(str(self.widget.sample_position_txt.text()))
         self.model.sample_position = new_value
         self.widget.set_diamond_line_pos(new_value)
 
     def reference_pos_txt_changed(self):
-        new_value = float(str(self.widget.reference_pos_txt.text()))
+        new_value = float(str(self.widget.reference_position_txt.text()))
         self.model.reference_position = new_value
 
     def pressure_changed(self, value):
@@ -59,5 +59,11 @@ class DiamondController(QtCore.QObject):
 
     def mouse_left_clicked(self, x, y):
         self.model.sample_position = x
-        self.widget.sample_pos_txt.setText("{:.2f}".format(x))
+        self.widget.sample_position_txt.setText("{:.2f}".format(x))
         self.widget.set_diamond_line_pos(x)
+
+    def update_widget_parameter(self):
+        self.widget.laser_line_txt.setText("{:.2f}".format(self.model.laser_line))
+        self.widget.sample_position_txt.setText("{:.2f}".format(self.model.sample_position))
+        self.widget.set_diamond_line_pos(self.model.sample_position)
+        self.widget.reference_position_txt.setText("{:.2f}".format(self.model.reference_position))
