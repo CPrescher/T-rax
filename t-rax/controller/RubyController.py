@@ -1,6 +1,8 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
+import os
+
 from PyQt4 import QtCore
 
 from model.RubyModel import RubyModel
@@ -74,3 +76,45 @@ class RubyController(QtCore.QObject):
 
     def ruby_scale_cb_changed(self, index):
         self.model.ruby_scale = index
+
+    def save_settings(self, settings):
+        settings.setValue("ruby data file", self.model.filename)
+        settings.setValue("ruby autoprocessing", self.widget.autoprocess_cb.isChecked())
+        settings.setValue("ruby reference position", self.model.reference_position)
+        settings.setValue("ruby reference temperature", self.model.reference_temperature)
+        settings.setValue("ruby sample position", self.model.sample_position)
+        settings.setValue("ruby sample temperature", self.model.sample_temperature)
+        settings.setValue("ruby scale", self.model.ruby_scale)
+        settings.setValue("ruby roi", " ".join(str(e) for e in self.model.roi.as_list()))
+
+    def load_settings(self, settings):
+        data_path = str(settings.value("ruby data file").toString())
+        if os.path.exists(data_path):
+            self.base_controller.load_data_file(data_path)
+
+        autoprocessing_flag = settings.value("ruby autoprocessing").toBool()
+        if autoprocessing_flag:
+            self.widget.autoprocess_cb.setChecked(True)
+
+        self.model.blockSignals(True)
+        value = settings.value("ruby scale").toInt()
+        self.model.ruby_scale = value[0] if value[1] else self.model.ruby_scale
+
+        value = settings.value("ruby reference position").toFloat()
+        self.model.reference_position = value[0] if value[1] else self.model.reference_position
+
+        value = settings.value("ruby reference temperature").toFloat()
+        self.model.reference_temperature = value[0] if value[1] else self.model.reference_temperature
+
+        value = settings.value("ruby sample position").toFloat()
+        self.model.sample_position = value[0] if value[1] else self.model.sample_position
+
+        self.model.blockSignals(False)
+        value = settings.value("ruby sample temperature").toFloat()
+        self.model.sample_temperature = value[0] if value[1] else self.model.sample_temperature
+
+        roi_str = str(settings.value("ruby roi").toString())
+        if roi_str is not "":
+            roi = [float(e) for e in roi_str.split()]
+            self.model.roi = roi
+            self.widget.roi_widget.set_rois([roi])

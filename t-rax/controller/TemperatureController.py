@@ -16,7 +16,7 @@ except ImportError:
 
 
 class TemperatureController(QtCore.QObject):
-    def __init__(self, temperature_widget, temperature_model):
+    def __init__(self, temperature_widget, model):
         """
         :param temperature_widget: reference to the temperature widget
         :type temperature_widget: TemperatureWidget
@@ -24,7 +24,7 @@ class TemperatureController(QtCore.QObject):
         """
         super(TemperatureController, self).__init__()
         self.widget = temperature_widget
-        self.model = temperature_model
+        self.model = model
 
         self.create_signals()
 
@@ -314,3 +314,32 @@ class TemperatureController(QtCore.QObject):
                                                           self.model.data_img_file.x_calibration[x]))
         except (IndexError, TypeError):
             pass
+
+    def save_settings(self, settings):
+        settings.setValue("temperature data file", self.model.data_img_file.filename)
+        settings.setValue("temperature settings directory", self._setting_working_dir)
+        settings.setValue("temperature settings file", str(self.widget.settings_cb.currentText()))
+
+        settings.setValue("temperature autoprocessing",
+                          self.widget.autoprocess_cb.isChecked())
+
+        settings.setValue("temperature epics connected",
+                          self.widget.connect_to_epics_cb.isChecked())
+
+    def load_settings(self, settings):
+        temperature_data_path = str(settings.value("temperature data file").toString())
+        if os.path.exists(temperature_data_path):
+            self.load_data_file(temperature_data_path)
+
+        settings_file_path = os.path.join(str(settings.value("temperature settings directory").toString()),
+                                          str(settings.value("temperature settings file").toString()) + ".trs")
+        if os.path.exists(settings_file_path):
+            self.load_setting_file(settings_file_path)
+
+        temperature_autoprocessing = settings.value("temperature autoprocessing").toBool()
+        if temperature_autoprocessing:
+            self.widget.autoprocess_cb.setChecked(True)
+
+        self.widget.connect_to_epics_cb.setChecked(
+            settings.value("temperature epics connected").toBool()
+        )

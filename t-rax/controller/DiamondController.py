@@ -2,7 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtCore
-import numpy as np
+import os
 
 from model.DiamondModel import DiamondModel
 from widget.DiamondWidget import DiamondWidget
@@ -67,3 +67,41 @@ class DiamondController(QtCore.QObject):
         self.widget.sample_position_txt.setText("{:.2f}".format(self.model.sample_position))
         self.widget.set_diamond_line_pos(self.model.sample_position)
         self.widget.reference_position_txt.setText("{:.2f}".format(self.model.reference_position))
+
+    def save_settings(self, settings):
+        settings.setValue("diamond data file", self.model.filename)
+        settings.setValue("diamond autoprocessing", self.widget.autoprocess_cb.isChecked())
+        settings.setValue("diamond laser line", self.model.laser_line)
+        settings.setValue("diamond derivative", self.widget.derivative_sb.value())
+        settings.setValue("diamond reference position", self.model.reference_position)
+        settings.setValue("diamond sample position", self.model.sample_position)
+        settings.setValue("diamond roi", " ".join(str(e) for e in self.model.roi.as_list()))
+
+    def load_settings(self, settings):
+        data_path = str(settings.value("diamond data file").toString())
+        if os.path.exists(data_path):
+            self.base_controller.load_data_file(data_path)
+
+        autoprocessing = settings.value("diamond autoprocessing").toBool()
+        if autoprocessing:
+            self.widget.autoprocess_cb.setChecked(True)
+
+        value = settings.value("diamond laser line").toFloat()
+        self.model.laser_line = value[0] if value[1] else self.model.laser_line
+
+        value = settings.value("diamond derivative").toInt()
+        self.widget.derivative_sb.setValue(value[0])
+
+        value = settings.value("diamond reference position").toFloat()
+        self.model.reference_position = value[0] if value[1] else self.model.reference_position
+
+        value = settings.value("diamond sample position").toFloat()
+        self.model.sample_position = value[0] if value[1] else self.model.sample_position
+
+        self.update_widget_parameter()
+
+        roi_str = str(settings.value("diamond roi").toString())
+        if roi_str != "":
+            roi = [float(e) for e in roi_str.split()]
+            self.model.roi = roi
+            self.widget.roi_widget.set_rois([roi])
