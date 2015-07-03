@@ -1,6 +1,5 @@
 # -*- mode: python -*-
 folder = 't-rax'
-version = 0.3
 
 a = Analysis([os.path.join(folder, 't-rax.py')],
              pathex=['folder'],
@@ -32,6 +31,9 @@ elif _platform == "win32" or _platform == "cygwin":
 elif _platform == "darwin":
     platform = "Mac64"
     name = "T-Rax"
+
+from controller.MainController import get_version
+version = get_version()
 
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
