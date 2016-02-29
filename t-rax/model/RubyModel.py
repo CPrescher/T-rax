@@ -43,8 +43,14 @@ class RubyModel(SingleSpectrumModel):
         self._sample_temperature = 298
 
         self.fitted_spectrum = Spectrum([], [])
+        self.auto_fit = False
 
         self._ruby_scale = RubyModel.DEWAELE_SCALE
+
+    def load_file(self, filename):
+        super(RubyModel, self).load_file(filename)
+        if self.auto_fit:
+            self.fit_ruby_peaks()
 
     def get_ruby_pressure(self):
         line_pos = self._sample_position

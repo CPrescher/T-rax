@@ -89,3 +89,11 @@ class RubyModelTest(unittest.TestCase):
         self.assertLess(
             np.sum((self.model.fitted_spectrum.y - self.model.spectrum.y) ** 2) / len(self.model.spectrum.y),
             10)
+
+    def test_fit_ruby_peak_automatic(self):
+        self.model.load_file(ruby_file)
+        self.model.sample_position = 694.33
+        self.model.roi = [82, 752, 11, 24]
+        self.model.auto_fit = True
+        self.model.load_file(ruby_file)
+        self.assertAlmostEqual(self.model.sample_position, 694.318, places=3)
