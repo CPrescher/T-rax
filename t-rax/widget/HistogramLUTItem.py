@@ -1,7 +1,8 @@
 # -*- coding: utf8 -*-
-# Dioptas - GUI program for fast processing of 2D X-ray data
-# Copyright (C) 2014  Clemens Prescher (clemens.prescher@gmail.com)
-# GSECARS, University of Chicago
+# T-Rax - GUI program for analysis of spectroscopy data during
+# diamond anvil cell experiments
+# Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
+# Institute for Geology and Mineralogy, University of Cologne
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
