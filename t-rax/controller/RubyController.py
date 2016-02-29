@@ -59,6 +59,7 @@ class RubyController(QtCore.QObject):
 
         self.widget.graph_widget.mouse_left_clicked.connect(self.mouse_left_clicked)
         self.widget.fit_ruby_btn.clicked.connect(self.model.fit_ruby_peaks)
+        self.widget.fit_ruby_automatic_cb.stateChanged.connect(self.model.set_fit_automatic)
 
     def sample_position_txt_changed(self):
         new_value = float(str(self.widget.sample_position_txt.text()))

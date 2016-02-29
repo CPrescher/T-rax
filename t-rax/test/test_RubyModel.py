@@ -94,6 +94,6 @@ class RubyModelTest(unittest.TestCase):
         self.model.load_file(ruby_file)
         self.model.sample_position = 694.33
         self.model.roi = [82, 752, 11, 24]
-        self.model.auto_fit = True
+        self.model.set_fit_automatic(True)
         self.model.load_file(ruby_file)
         self.assertAlmostEqual(self.model.sample_position, 694.318, places=3)
