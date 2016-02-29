@@ -20,6 +20,8 @@
 import unittest
 import os
 
+import numpy as np
+
 from PyQt4 import QtGui
 
 from model.RubyModel import RubyModel
@@ -27,6 +29,7 @@ from model.RubyModel import RubyModel
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
+ruby_file = os.path.join(unittest_files_path, 'ruby_fitting', 'Ruby.spe')
 
 
 class RubyModelTest(unittest.TestCase):
@@ -74,3 +77,15 @@ class RubyModelTest(unittest.TestCase):
 
         self.model.ruby_scale = RubyModel.NONHYDROSTATIC_SCALE
         self.assertNotEqual(self.model.get_ruby_pressure(), p1)
+
+    def test_fit_ruby_peak(self):
+        self.model.load_file(ruby_file)
+        self.model.roi = [82, 752, 11, 24]
+        self.model.sample_position = 694.33
+        self.model.fit_ruby_peaks()
+
+        self.assertAlmostEqual(self.model.sample_position, 694.318, places=3)
+        self.assertGreater(len(self.model.fitted_spectrum.y), 0)
+        self.assertLess(
+            np.sum((self.model.fitted_spectrum.y - self.model.spectrum.y) ** 2) / len(self.model.spectrum.y),
+            10)

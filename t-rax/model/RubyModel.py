@@ -18,7 +18,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt4 import QtCore
+
+from lmfit.models import LinearModel, PseudoVoigtModel
+
 from .BaseModel import SingleSpectrumModel
+from .Spectrum import Spectrum
 
 
 class RubyModel(SingleSpectrumModel):
@@ -36,6 +40,8 @@ class RubyModel(SingleSpectrumModel):
 
         self._sample_position = 694.35
         self._sample_temperature = 298
+
+        self.fitted_spectrum = Spectrum([], [])
 
         self._ruby_scale = RubyModel.DEWAELE_SCALE
 
@@ -83,6 +89,32 @@ class RubyModel(SingleSpectrumModel):
         P = (Acorr / B) * rat - (Acorr / B)
         P = (P * 100) / 100.
         return P
+
+    def fit_ruby_peaks(self):
+        peak1 = PseudoVoigtModel(prefix='p1_')
+        peak2 = PseudoVoigtModel(prefix='p2_')
+        background = LinearModel()
+        model = background + peak1 + peak2
+
+        params = model.make_params(
+            p1_center=self.sample_position,
+            p1_amplitude=max(self.spectrum.y) - min(self.spectrum.y),
+            p1_sigma=0.25,
+            p1_fraction=0.8,
+
+            p2_center=self.sample_position - 1.5,
+            p2_amplitude=max(self.spectrum.y) - min(self.spectrum.y),
+            p2_sigma=0.25,
+            p2_fraction=0.8,
+
+            intercept=min(self.spectrum.y),
+            slope=0
+        )
+
+        result = model.fit(self.spectrum.y, x=self.spectrum.x, **params)
+
+        self.sample_position = result.best_values['p1_center']
+        self.fitted_spectrum = Spectrum(self.spectrum.x, result.best_fit)
 
     @property
     def sample_temperature(self):
