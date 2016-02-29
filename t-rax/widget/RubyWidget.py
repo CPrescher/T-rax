@@ -42,15 +42,23 @@ class RubyWidget(BaseWidget, object):
 
         self.ruby_scale_cb = self._ruby_pressure_gb._ruby_scale_cb
 
+        self.fit_ruby_btn = self._ruby_pressure_gb._fit_ruby_btn
+
     def modify_graph_widget(self):
         self._ruby_line = pg.InfiniteLine(pen=pg.mkPen((197, 0, 3), width=2))
         self.graph_widget.add_item(self._ruby_line)
+
+        self._fitted_spectrum = pg.PlotDataItem(pen=pg.mkPen("#f00", width=1.5))
+        self.graph_widget.add_item(self._fitted_spectrum)
 
     def set_ruby_line_pos(self, value):
         self._ruby_line.setValue(value)
 
     def get_ruby_line_pos(self):
         return self._ruby_line.value()
+
+    def set_fitted_spectrum(self, x, y):
+        self._fitted_spectrum.setData(x, y)
 
 
 class RubyPressureGroupBox(QtGui.QGroupBox):
@@ -84,6 +92,8 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
         self._pressure_lbl = QtGui.QLabel("0")
         self._pressure_unit_lbl = QtGui.QLabel("GPa")
 
+        self._fit_ruby_btn = QtGui.QPushButton('Fit Ruby Peaks')
+
     def _create_layout(self):
         self._layout = QtGui.QGridLayout()
 
@@ -106,6 +116,8 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
 
         self._layout.addWidget(self._pressure_lbl, 6, 0, 1, 2)
         self._layout.addWidget(self._pressure_unit_lbl, 6, 2)
+
+        self._layout.addWidget(self._fit_ruby_btn, 7, 0, 1, 3)
 
         self.setLayout(self._layout)
 

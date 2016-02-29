@@ -49,6 +49,8 @@ class RubyController(QtCore.QObject):
     def connect_signals(self):
         self.model.pressure_changed.connect(self.pressure_changed)
         self.model.param_changed.connect(self.params_changed)
+        self.model.ruby_fitted.connect(self.ruby_fitted)
+
         self.widget.ruby_scale_cb.currentIndexChanged.connect(self.ruby_scale_cb_changed)
         self.widget.sample_position_txt.editingFinished.connect(self.sample_position_txt_changed)
         self.widget.reference_position_txt.editingFinished.connect(self.reference_position_txt_changed)
@@ -56,6 +58,7 @@ class RubyController(QtCore.QObject):
         self.widget.reference_temperature_txt.editingFinished.connect(self.reference_temperature_txt_changed)
 
         self.widget.graph_widget.mouse_left_clicked.connect(self.mouse_left_clicked)
+        self.widget.fit_ruby_btn.clicked.connect(self.model.fit_ruby_peaks)
 
     def sample_position_txt_changed(self):
         new_value = float(str(self.widget.sample_position_txt.text()))
@@ -77,6 +80,9 @@ class RubyController(QtCore.QObject):
         self.widget.ruby_scale_cb.setCurrentIndex(self.model.ruby_scale)
 
         self.widget.set_ruby_line_pos(self.model.sample_position)
+
+    def ruby_fitted(self):
+        self.widget.set_fitted_spectrum(*self.model.fitted_spectrum.data)
 
     def reference_position_txt_changed(self):
         new_value = float(str(self.widget.reference_position_txt.text()))

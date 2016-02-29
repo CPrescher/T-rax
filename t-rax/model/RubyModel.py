@@ -28,6 +28,7 @@ from .Spectrum import Spectrum
 class RubyModel(SingleSpectrumModel):
     pressure_changed = QtCore.pyqtSignal(float)
     param_changed = QtCore.pyqtSignal()
+    ruby_fitted = QtCore.pyqtSignal()
 
     DEWAELE_SCALE = 0
     HYDROSTATIC_SCALE = 1
@@ -115,6 +116,7 @@ class RubyModel(SingleSpectrumModel):
 
         self.sample_position = result.best_values['p1_center']
         self.fitted_spectrum = Spectrum(self.spectrum.x, result.best_fit)
+        self.ruby_fitted.emit()
 
     @property
     def sample_temperature(self):
