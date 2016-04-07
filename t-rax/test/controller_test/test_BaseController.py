@@ -63,7 +63,7 @@ class BaseControllerTest(unittest.TestCase):
 
     @patch('PyQt4.QtGui.QFileDialog.getOpenFileName')
     def test_loading_files(self, filedialog):
-        in_path = os.path.join(unittest_files_path, 'temper_009.spe')
+        in_path = os.path.abspath(os.path.join(unittest_files_path, 'temper_009.spe'))
         filedialog.return_value = in_path
         QTest.mouseClick(self.widget.load_file_btn, QtCore.Qt.LeftButton)
 
