@@ -51,6 +51,6 @@ class TestNewFileInDirectoryWatcher(unittest.TestCase):
         f.close()
 
         self.watcher.check_files()
-        self.watcher.file_added.emit.assert_called_once(file_path)
+        self.watcher.file_added.emit.assert_called_once_with(file_path)
 
 
