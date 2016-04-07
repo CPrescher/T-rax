@@ -31,7 +31,7 @@ from controller.TemperatureController import TemperatureController
 from widget.TemperatureWidget import TemperatureWidget
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 temperature_fitting_path = os.path.join(unittest_files_path, 'temperature_fitting')
 
 

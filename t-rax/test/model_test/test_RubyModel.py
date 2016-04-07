@@ -27,7 +27,7 @@ from PyQt4 import QtGui
 from model.RubyModel import RubyModel
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 ruby_file = os.path.join(unittest_files_path, 'ruby_fitting', 'Ruby.spe')
 

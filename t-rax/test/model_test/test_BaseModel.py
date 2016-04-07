@@ -26,7 +26,7 @@ import numpy as np
 from model.BaseModel import SingleSpectrumModel
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
 
 class TestSingleSpectrumModel(unittest.TestCase):

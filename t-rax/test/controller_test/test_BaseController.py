@@ -28,7 +28,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtTest import QTest
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
 from model.BaseModel import SingleSpectrumModel
 from widget.BaseWidget import BaseWidget

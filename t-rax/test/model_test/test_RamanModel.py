@@ -26,7 +26,7 @@ import numpy as np
 from model.RamanModel import RamanModel
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 

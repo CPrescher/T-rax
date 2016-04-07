@@ -29,7 +29,7 @@ from model.RoiData import RoiDataManager
 from model.SpeFile import SpeFile
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
 
 class TestSingleTemperatureModel(unittest.TestCase):
