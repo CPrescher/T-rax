@@ -20,10 +20,9 @@
 
 import unittest
 import os
-import time
 
 from PyQt4 import QtGui
-from mock import MagicMock
+from mock import Mock
 
 from controller.NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 
@@ -33,7 +32,6 @@ unittest_folder = os.path.join(os.path.dirname(__file__), 'test_files')
 class TestNewFileInDirectoryWatcher(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication([])
-        self.watcher = NewFileInDirectoryWatcher(unittest_folder, file_types=['.txt'], activate=True)
 
     def tearDown(self):
         self.delete_if_exists('test.txt')
@@ -43,13 +41,16 @@ class TestNewFileInDirectoryWatcher(unittest.TestCase):
             os.remove(os.path.join(unittest_folder, file_name))
 
     def test_new_file(self):
-        test_function = MagicMock()
+        self.watcher = NewFileInDirectoryWatcher(unittest_folder, file_types=['.txt'], activate=True)
+        self.watcher.file_added = Mock()
         file_path = os.path.join(unittest_folder, 'test.txt')
         self.delete_if_exists('test.txt')
+
         f = open(file_path, 'w')
-        f.write("blabla"*20)
+        f.write("abcdefg"*20)
         f.close()
+
         self.watcher.check_files()
-        test_function.assert_called_once_with(file_path)
+        self.watcher.file_added.emit.assert_called_once(file_path)
 
 
