@@ -88,11 +88,14 @@ class NewFileInDirectoryWatcher(QtCore.QObject):
             self.check_timer.stop()
 
     def check_files(self):
+        """
+        Checks whether there is a new file in the path and emits a file_added if the file ending is in the file_types
+        list.
+        """
         files_now = os.listdir(self.path)
         files_added = [f for f in files_now if not f in self._files_in_path]
 
         if len(files_added) > 0:
-            print 'added'
             new_file_path = os.path.join(str(self.path), files_added[-1])
 
             # abort if the new_file added is actually a directory...
@@ -110,7 +113,6 @@ class NewFileInDirectoryWatcher(QtCore.QObject):
                         break
 
             if valid_file:
-                print os.stat(new_file_path).st_size
                 if os.stat(new_file_path).st_size > 100:
                     time.sleep(self.interval/1000.)
                     self.file_added.emit(new_file_path)
