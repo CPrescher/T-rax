@@ -1,3 +1,11 @@
+Version 1.1
+- fixed automatic file loading
+- inverted y axes for images in the ROI window
+- automatic ruby fitting
+
+Version 1.0
+-complete rewrite of the program, now using a different graphics library
+
 Version 0.2032
 -fixed a bug which was causing errors when loading calibration files and changing the calibration methods
 
