@@ -43,6 +43,14 @@ class TestTemperatureModel(unittest.TestCase):
     def setUp(self):
         self.model = TemperatureModel()
 
+    def tearDown(self):
+        self.delete_if_exists('complete.trs')
+        self.delete_if_exists('empty.trs')
+
+    def delete_if_exists(self, file_name):
+        if os.path.exists(os.path.join(unittest_files_path, file_name)):
+            os.remove(os.path.join(unittest_files_path, file_name))
+
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)
 
