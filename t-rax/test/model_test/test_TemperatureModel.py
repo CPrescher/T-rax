@@ -27,16 +27,29 @@ import numpy as np
 from model.TemperatureModel import TemperatureModel
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
 
 class TestTemperatureModel(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
     def setUp(self):
-        self.app = QtGui.QApplication([])
         self.model = TemperatureModel()
 
     def tearDown(self):
-        del self.app
+        self.delete_if_exists('complete.trs')
+        self.delete_if_exists('empty.trs')
+
+    def delete_if_exists(self, file_name):
+        if os.path.exists(os.path.join(unittest_files_path, file_name)):
+            os.remove(os.path.join(unittest_files_path, file_name))
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)

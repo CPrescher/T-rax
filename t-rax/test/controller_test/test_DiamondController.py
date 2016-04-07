@@ -29,20 +29,26 @@ from widget.DiamondWidget import DiamondWidget
 from controller.DiamondController import DiamondController
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
 class DiamondControllerTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
+
     def setUp(self):
-        self.app = QtGui.QApplication([])
         self.model = DiamondModel()
         self.widget = DiamondWidget(None)
         self.controller = DiamondController(self.model, self.widget)
         self.model.load_file(test_file)
-
-    def tearDown(self):
-        del self.app
 
     def input_txt_into_text_field(self, text_field, text):
         text_field.setText("")

@@ -23,6 +23,7 @@ from PyQt4 import QtGui, QtCore
 
 from widget.TemperatureWidget import TemperatureWidget
 from model.TemperatureModel import TemperatureModel
+from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 import numpy as np
 
 try:
@@ -36,16 +37,20 @@ class TemperatureController(QtCore.QObject):
         """
         :param temperature_widget: reference to the temperature widget
         :type temperature_widget: TemperatureWidget
+        :param temperature_model: reference to the global temperature model
+        :type model: TemperatureModel
         :return:
         """
         super(TemperatureController, self).__init__()
         self.widget = temperature_widget
         self.model = model
 
-        self.create_signals()
 
         self._exp_working_dir = ''
         self._setting_working_dir = ''
+
+        self._create_autoprocess_system()
+        self.create_signals()
 
     def create_signals(self):
         # File signals
@@ -54,6 +59,7 @@ class TemperatureController(QtCore.QObject):
         self.widget.load_previous_data_file_btn.clicked.connect(self.model.load_previous_data_image)
         self.widget.load_next_frame_btn.clicked.connect(self.model.load_next_img_frame)
         self.widget.load_previous_frame_btn.clicked.connect(self.model.load_previous_img_frame)
+        self.widget.autoprocess_cb.toggled.connect(self.auto_process_cb_toggled)
 
         self.connect_click_function(self.widget.save_data_btn, self.save_data_btn_clicked)
         self.connect_click_function(self.widget.save_graph_btn, self.save_graph_btn_clicked)
@@ -100,8 +106,9 @@ class TemperatureController(QtCore.QObject):
                                                              directory=self._exp_working_dir))
 
         if filename is not '':
-            self._exp_working_dir = os.path.dirname(filename)
-            self.model.load_data_image(filename)
+            self._exp_working_dir = os.path.dirname(str(filename))
+            self.model.load_data_image(str(filename))
+            self._directory_watcher.path = self._exp_working_dir
 
     def load_ds_calibration_file(self, filename=None):
         if filename is None:
@@ -360,3 +367,14 @@ class TemperatureController(QtCore.QObject):
         self.widget.connect_to_epics_cb.setChecked(
             settings.value("temperature epics connected").toBool()
         )
+
+    def auto_process_cb_toggled(self):
+        if self.widget.autoprocess_cb.isChecked():
+            print 'activate'
+            self._directory_watcher.activate()
+        else:
+            self._directory_watcher.deactivate()
+
+    def _create_autoprocess_system(self):
+        self._directory_watcher = NewFileInDirectoryWatcher(file_types=['.spe'])
+        self._directory_watcher.file_added.connect(self.load_data_file)

@@ -26,17 +26,22 @@ import numpy as np
 from model.RamanModel import RamanModel
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
 class RamanModelTest(unittest.TestCase):
-    def setUp(self):
-        self.app = QtGui.QApplication([])
-        self.model = RamanModel()
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
 
-    def tearDown(self):
-        del self.app
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
+    def setUp(self):
+        self.model = RamanModel()
 
     def test_changing_laser_line(self):
         self.model.load_file(test_file)

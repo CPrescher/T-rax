@@ -19,6 +19,7 @@
 
 import unittest
 from mock import patch
+import time
 import os
 import shutil
 from numpy import array_equal
@@ -27,7 +28,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtTest import QTest
 
 unittest_path = os.path.dirname(__file__)
-unittest_files_path = os.path.join(unittest_path, 'test_files')
+unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
 from model.BaseModel import SingleSpectrumModel
 from widget.BaseWidget import BaseWidget
@@ -35,15 +36,22 @@ from controller.BaseController import BaseController
 
 
 class BaseControllerTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
     def setUp(self):
-        self.app = QtGui.QApplication([])
         self.widget = BaseWidget()
         self.model = SingleSpectrumModel()
         self.controller = BaseController(self.model, self.widget)
         self.model = self.controller.model
 
     def tearDown(self):
-        del self.app
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'temp.spe'))
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.txt'))
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.png'))
@@ -55,7 +63,7 @@ class BaseControllerTest(unittest.TestCase):
 
     @patch('PyQt4.QtGui.QFileDialog.getOpenFileName')
     def test_loading_files(self, filedialog):
-        in_path = os.path.join(unittest_files_path, 'temper_009.spe')
+        in_path = os.path.abspath(os.path.join(unittest_files_path, 'temper_009.spe'))
         filedialog.return_value = in_path
         QTest.mouseClick(self.widget.load_file_btn, QtCore.Qt.LeftButton)
 
@@ -139,11 +147,12 @@ class BaseControllerTest(unittest.TestCase):
 
         QTest.mouseClick(self.widget.autoprocess_cb, QtCore.Qt.LeftButton,
                          pos=QtCore.QPoint(2, self.widget.autoprocess_cb.height() / 2))
+        self.assertTrue(self.widget.autoprocess_cb.isChecked())
         shutil.copy2(os.path.join(unittest_files_path, 'temper_009.spe'),
                      os.path.join(unittest_files_path, 'temp.spe'))
-        # apparently the file system watcher signal has to be send manually that when using unittests....
-        self.controller._directory_watcher._file_system_watcher.directoryChanged.emit(unittest_files_path)
 
+        time.sleep(0.2) #need to wait until file_watcher updates the path correctly
+        QtGui.QApplication.processEvents()
         self.assertEqual(str(self.widget.filename_lbl.text()), 'temp.spe')
 
     def test_graph_status_bar_shows_file_info(self):
