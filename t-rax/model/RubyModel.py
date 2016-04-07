@@ -1,13 +1,34 @@
 # -*- coding: utf8 -*-
-__author__ = 'Clemens Prescher'
+# T-Rax - GUI program for analysis of spectroscopy data during
+# diamond anvil cell experiments
+# Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
+# Institute for Geology and Mineralogy, University of Cologne
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt4 import QtCore
+
+from lmfit.models import LinearModel, PseudoVoigtModel
+
 from .BaseModel import SingleSpectrumModel
+from .Spectrum import Spectrum
 
 
 class RubyModel(SingleSpectrumModel):
     pressure_changed = QtCore.pyqtSignal(float)
     param_changed = QtCore.pyqtSignal()
+    ruby_fitted = QtCore.pyqtSignal()
 
     DEWAELE_SCALE = 0
     HYDROSTATIC_SCALE = 1
@@ -21,7 +42,18 @@ class RubyModel(SingleSpectrumModel):
         self._sample_position = 694.35
         self._sample_temperature = 298
 
+        self.fitted_spectrum = Spectrum([], [])
+        self._auto_fit = False
+
         self._ruby_scale = RubyModel.DEWAELE_SCALE
+
+    def load_file(self, filename):
+        super(RubyModel, self).load_file(filename)
+        if self._auto_fit:
+            self.fit_ruby_peaks()
+
+    def set_fit_automatic(self, value):
+        self._auto_fit = value
 
     def get_ruby_pressure(self):
         line_pos = self._sample_position
@@ -67,6 +99,33 @@ class RubyModel(SingleSpectrumModel):
         P = (Acorr / B) * rat - (Acorr / B)
         P = (P * 100) / 100.
         return P
+
+    def fit_ruby_peaks(self):
+        peak1 = PseudoVoigtModel(prefix='p1_')
+        peak2 = PseudoVoigtModel(prefix='p2_')
+        background = LinearModel()
+        model = background + peak1 + peak2
+
+        params = model.make_params(
+            p1_center=self.sample_position,
+            p1_amplitude=max(self.spectrum.y) - min(self.spectrum.y),
+            p1_sigma=0.25,
+            p1_fraction=0.8,
+
+            p2_center=self.sample_position - 1.5,
+            p2_amplitude=max(self.spectrum.y) - min(self.spectrum.y),
+            p2_sigma=0.25,
+            p2_fraction=0.8,
+
+            intercept=min(self.spectrum.y),
+            slope=0
+        )
+
+        result = model.fit(self.spectrum.y, x=self.spectrum.x, **params)
+
+        self.sample_position = result.best_values['p1_center']
+        self.fitted_spectrum = Spectrum(self.spectrum.x, result.best_fit)
+        self.ruby_fitted.emit()
 
     @property
     def sample_temperature(self):

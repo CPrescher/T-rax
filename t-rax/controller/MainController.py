@@ -1,5 +1,21 @@
 # -*- coding: utf8 -*-
-__author__ = 'Clemens Prescher'
+# T-Rax - GUI program for analysis of spectroscopy data during
+# diamond anvil cell experiments
+# Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
+# Institute for Geology and Mineralogy, University of Cologne
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
 import os
@@ -16,13 +32,37 @@ from controller.RubyController import RubyController
 from controller.DiamondController import DiamondController
 from controller.RamanController import RamanController
 
+from . import versioneer
+
+versioneer.VCS = 'git'
+versioneer.versionfile_source = ''
+versioneer.versionfile_build = ''
+versioneer.tag_prefix = ''
+versioneer.parentdir_prefix = ''
+
+
+def get_version():
+    version = versioneer.get_version()
+    if version not in __name__:
+        write_version_file(version)
+        return version
+    else:
+        import _version
+        return _version.__version__
+
+
+def write_version_file(version_str):
+    path = os.path.dirname(__file__)
+    with open(os.path.join(path, '_version.py'), 'w') as f:
+        f.write('__version__="{}"'.format(version_str))
+
+__version__ = get_version()
 
 class MainController(object):
-    def __init__(self, version=None):
+    def __init__(self):
         self.main_widget = MainWidget()
 
-        if version is not None:
-            self.main_widget.setWindowTitle('T-Rax v' + str(version))
+        self.main_widget.setWindowTitle('T-Rax ' + get_version())
 
         self.create_signals()
         self.create_data_models()
@@ -32,10 +72,11 @@ class MainController(object):
 
     def show_window(self):
         self.main_widget.show()
-        self.main_widget.setWindowState(
-            self.main_widget.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
-        self.main_widget.activateWindow()
-        self.main_widget.raise_()
+        if sys.platform == "darwin":
+            self.main_widget.setWindowState(
+                self.main_widget.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+            self.main_widget.activateWindow()
+            self.main_widget.raise_()
 
     def create_data_models(self):
         self.temperature_model = TemperatureModel()

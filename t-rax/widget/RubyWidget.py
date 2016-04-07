@@ -1,5 +1,21 @@
 # -*- coding: utf8 -*-
-__author__ = 'Clemens Prescher'
+# T-Rax - GUI program for analysis of spectroscopy data during
+# diamond anvil cell experiments
+# Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
+# Institute for Geology and Mineralogy, University of Cologne
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
@@ -26,15 +42,24 @@ class RubyWidget(BaseWidget, object):
 
         self.ruby_scale_cb = self._ruby_pressure_gb._ruby_scale_cb
 
+        self.fit_ruby_btn = self._ruby_pressure_gb._fit_ruby_btn
+        self.fit_ruby_automatic_cb = self._ruby_pressure_gb._fit_automatic_cb
+
     def modify_graph_widget(self):
         self._ruby_line = pg.InfiniteLine(pen=pg.mkPen((197, 0, 3), width=2))
         self.graph_widget.add_item(self._ruby_line)
+
+        self._fitted_spectrum = pg.PlotDataItem(pen=pg.mkPen("#f00", width=1.5))
+        self.graph_widget.add_item(self._fitted_spectrum)
 
     def set_ruby_line_pos(self, value):
         self._ruby_line.setValue(value)
 
     def get_ruby_line_pos(self):
         return self._ruby_line.value()
+
+    def set_fitted_spectrum(self, x, y):
+        self._fitted_spectrum.setData(x, y)
 
 
 class RubyPressureGroupBox(QtGui.QGroupBox):
@@ -68,6 +93,9 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
         self._pressure_lbl = QtGui.QLabel("0")
         self._pressure_unit_lbl = QtGui.QLabel("GPa")
 
+        self._fit_ruby_btn = QtGui.QPushButton('Fit Ruby Peaks')
+        self._fit_automatic_cb = QtGui.QCheckBox('auto')
+
     def _create_layout(self):
         self._layout = QtGui.QGridLayout()
 
@@ -90,6 +118,9 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
 
         self._layout.addWidget(self._pressure_lbl, 6, 0, 1, 2)
         self._layout.addWidget(self._pressure_unit_lbl, 6, 2)
+
+        self._layout.addWidget(self._fit_ruby_btn, 7, 0, 1, 2)
+        self._layout.addWidget(self._fit_automatic_cb, 7, 2)
 
         self.setLayout(self._layout)
 
