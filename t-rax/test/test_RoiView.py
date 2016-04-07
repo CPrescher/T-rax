@@ -26,14 +26,20 @@ from widget.RoiWidget import RoiWidget
 
 
 class TestNewRoiView(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
     def setUp(self):
-        self.app = QtGui.QApplication([])
         self.roi_widget = RoiWidget()
         self.img_roi = self.roi_widget.img_widget.rois[0]
         self.roi_gb = self.roi_widget.roi_gbs[0]
 
-    def tearDown(self):
-        del self.app
 
     def test_changing_the_img_roi_changes_the_text_fields(self):
         self.img_roi.setPos(100, 100)

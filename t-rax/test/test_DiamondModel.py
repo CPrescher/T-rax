@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.import unittest
 
+import unittest
 import os
 
 from PyQt4 import QtGui
@@ -29,12 +30,17 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
 class DiamondModelTest(unittest.TestCase):
-    def setUp(self):
-        self.app = QtGui.QApplication([])
-        self.model = DiamondModel()
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
 
-    def tearDown(self):
-        del self.app
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
+    def setUp(self):
+        self.model = DiamondModel()
 
     def test_get_pressure(self):
         self.model.reference_position = 1334.

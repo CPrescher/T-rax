@@ -33,12 +33,17 @@ ruby_file = os.path.join(unittest_files_path, 'ruby_fitting', 'Ruby.spe')
 
 
 class RubyModelTest(unittest.TestCase):
-    def setUp(self):
-        self.app = QtGui.QApplication([])
-        self.model = RubyModel()
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
 
-    def tearDown(self):
-        del self.app
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
+    def setUp(self):
+        self.model = RubyModel()
 
     def test_get_pressure(self):
         self.assertAlmostEqual(self.model.get_ruby_pressure(), 0)

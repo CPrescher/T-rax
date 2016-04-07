@@ -36,16 +36,19 @@ temperature_fitting_path = os.path.join(unittest_files_path, 'temperature_fittin
 
 
 class TestTemperatureController(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
     def setUp(self):
-        self.app = QtGui.QApplication(sys.argv)
         self.widget = TemperatureWidget()
         self.model = TemperatureModel()
         self.controller = TemperatureController(self.widget, self.model)
-
-    def tearDown(self):
-        self.app.closeAllWindows()
-        self.app.quit()
-        del self.app
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)

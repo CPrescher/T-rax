@@ -34,15 +34,20 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
 class RamanControllerTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
     def setUp(self):
-        self.app = QtGui.QApplication([])
         self.model = RamanModel()
         self.widget = RamanWidget(None)
         self.controller = RamanController(self.model, self.widget)
         self.model.load_file(test_file)
-
-    def tearDown(self):
-        del self.app
 
     def click_checkbox(self, checkbox):
         QTest.mouseClick(checkbox, QtCore.Qt.LeftButton, pos=QtCore.QPoint(2, checkbox.height() / 2))

@@ -31,12 +31,17 @@ unittest_files_path = os.path.join(unittest_path, 'test_files')
 
 
 class TestTemperatureModel(unittest.TestCase):
-    def setUp(self):
-        self.app = QtGui.QApplication([])
-        self.model = TemperatureModel()
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
 
-    def tearDown(self):
-        del self.app
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
+    def setUp(self):
+        self.model = TemperatureModel()
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)

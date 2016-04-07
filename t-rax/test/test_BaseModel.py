@@ -30,12 +30,18 @@ unittest_files_path = os.path.join(unittest_path, 'test_files')
 
 
 class TestSingleSpectrumModel(unittest.TestCase):
-    def setUp(self):
-        self.app = QtGui.QApplication([])
-        self.model = SingleSpectrumModel()
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
 
-    def tearDown(self):
-        del self.app
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
+
+    def setUp(self):
+        self.model = SingleSpectrumModel()
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)

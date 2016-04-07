@@ -24,11 +24,15 @@ from model.RoiData import RoiDataManager
 
 
 class TestNewRoiData(unittest.TestCase):
-    def setUp(self):
-        self.app = QtGui.QApplication([])
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
 
-    def tearDown(self):
-        del self.app
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
 
     def test_single_roi_get_and_set_methods(self):
         roi_data_manager = RoiDataManager(1)

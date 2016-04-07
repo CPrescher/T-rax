@@ -34,15 +34,21 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
 class RubyControllerTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QtGui.QApplication([])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+        cls.app.deleteLater()
+
     def setUp(self):
-        self.app = QtGui.QApplication([])
         self.model = RubyModel()
         self.widget = RubyWidget(None)
         self.controller = RubyController(self.model, self.widget)
         self.model.load_file(test_file)
 
-    def tearDown(self):
-        del self.app
 
     def input_txt_into_text_field(self, text_field, str):
         text_field.setText("")
