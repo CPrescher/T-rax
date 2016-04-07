@@ -190,6 +190,7 @@ class RoiImageWidget(QtGui.QWidget):
         self.pg_layout = self.pg_widget.ci
         self.pg_layout.setContentsMargins(0, 10, 15, 0)
         self.pg_viewbox = self.pg_layout.addViewBox(1, 1, lockAspect=False)
+        self.pg_viewbox.invertY(True)
 
         self.bottom_axis = pg.AxisItem('bottom', linkView=self.pg_viewbox)
         self.left_axis = pg.AxisItem('left', linkView=self.pg_viewbox)
