@@ -18,6 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt4 import QtCore
+import numpy as np
 
 from lmfit.models import LinearModel, PseudoVoigtModel
 
@@ -94,8 +95,10 @@ class RubyModel(SingleSpectrumModel):
             corr2 = deltaT ** 2 * 0.0000046231
             corr1 = deltaT * 0.0068259498
             lam = lam + 0.00003547 - corr1 - corr2 - corr3
-
-        rat = (lam / lam0corr) ** B
+        try:
+            rat = (lam / lam0corr) ** B
+        except ValueError:
+            return np.NaN
         P = (Acorr / B) * rat - (Acorr / B)
         P = (P * 100) / 100.
         return P
