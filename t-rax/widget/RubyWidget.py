@@ -59,7 +59,10 @@ class RubyWidget(BaseWidget, object):
         return self._ruby_line.value()
 
     def set_fitted_spectrum(self, x, y):
-        self._fitted_spectrum.setData(x, y)
+        if self.fit_ruby_btn.isChecked():
+            self._fitted_spectrum.setData(x, y)
+        else:
+            self._fitted_spectrum.clear()
 
 
 class RubyPressureGroupBox(QtGui.QGroupBox):
@@ -94,6 +97,7 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
         self._pressure_unit_lbl = QtGui.QLabel("GPa")
 
         self._fit_ruby_btn = QtGui.QPushButton('Fit Ruby Peaks')
+        self._fit_ruby_btn.setCheckable(True)
         self._fit_automatic_cb = QtGui.QCheckBox('auto')
 
     def _create_layout(self):
