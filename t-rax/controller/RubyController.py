@@ -59,6 +59,7 @@ class RubyController(QtCore.QObject):
 
         self.widget.graph_widget.mouse_left_clicked.connect(self.mouse_left_clicked)
         self.widget.fit_ruby_btn.clicked.connect(self.model.fit_ruby_peaks)
+        self.widget.show_ruby_fit_cb.stateChanged.connect(self.toggle_show_ruby)
         self.widget.fit_ruby_automatic_cb.stateChanged.connect(self.model.set_fit_automatic)
 
     def sample_position_txt_changed(self):
@@ -84,6 +85,8 @@ class RubyController(QtCore.QObject):
 
     def ruby_fitted(self):
         self.widget.set_fitted_spectrum(*self.model.fitted_spectrum.data)
+        self.widget.show_ruby_fit_cb.setEnabled(True)
+        self.widget.show_ruby_fit_cb.setChecked(True)
 
     def reference_position_txt_changed(self):
         new_value = float(str(self.widget.reference_position_txt.text()))
@@ -99,6 +102,12 @@ class RubyController(QtCore.QObject):
 
     def ruby_scale_cb_changed(self, index):
         self.model.ruby_scale = index
+
+    def toggle_show_ruby(self):
+        if self.widget.show_ruby_fit_cb.isChecked():
+            self.widget.set_fitted_spectrum(*self.model.fitted_spectrum.data)
+        else:
+            self.widget.remove_fitted_spectrum_from_graph()
 
     def save_settings(self, settings):
         settings.setValue("ruby data file", self.model.filename)
