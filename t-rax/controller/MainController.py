@@ -91,10 +91,22 @@ class MainController(object):
         self.raman_controller = RamanController(self.raman_model, self.main_widget.raman_widget)
 
     def load_settings(self):
-        self.temperature_controller.load_settings(self.settings)
-        self.ruby_controller.load_settings(self.settings)
-        self.diamond_controller.load_settings(self.settings)
-        self.raman_controller.load_settings(self.settings)
+        try:
+            self.temperature_controller.load_settings(self.settings)
+        except AttributeError:
+            pass
+        try:
+            self.ruby_controller.load_settings(self.settings)
+        except AttributeError:
+            pass
+        try:
+            self.diamond_controller.load_settings(self.settings)
+        except AttributeError:
+            pass
+        try:
+            self.raman_controller.load_settings(self.settings)
+        except AttributeError:
+            pass
 
     def save_settings(self):
         self.temperature_controller.save_settings(self.settings)
