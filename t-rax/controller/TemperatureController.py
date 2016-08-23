@@ -370,7 +370,7 @@ class TemperatureController(QtCore.QObject):
 
     def auto_process_cb_toggled(self):
         if self.widget.autoprocess_cb.isChecked():
-            print 'activate'
+            print('activate')
             self._directory_watcher.activate()
         else:
             self._directory_watcher.deactivate()
