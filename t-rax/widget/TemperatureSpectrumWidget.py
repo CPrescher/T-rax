@@ -379,7 +379,7 @@ class IntensityIndicator(pg.GraphicsWidget):
         self._layout = QtGui.QGraphicsGridLayout()
 
         self.outside_rect.setPen(pg.mkPen(color=(255, 255, 255), width=1))
-        self.inside_rect.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0, 150)))
+        self.inside_rect.setBrush(QtGui.QBrush(QtGui.QColor(0, 255, 0, 150)))
 
         self.__parent = None
         self.__parentAnchor = None
@@ -412,13 +412,18 @@ class IntensityIndicator(pg.GraphicsWidget):
                                   bar_width,
                                   bounding_rect.height())
 
+        if self._intensity_level < 0.8:
+            set_color = QtGui.QColor(0, 255, 0, 150)
+        else:
+            set_color = QtGui.QColor(255, 0, 0, 150)
         self.inside_rect.setRect(1,
                                  title_label_height + bounding_rect.height() * (1 - self._intensity_level) + 1,
                                  bar_width,
                                  bounding_rect.height() * self._intensity_level)
+        self.inside_rect.setBrush(QtGui.QBrush(set_color))
 
-    def set_intensity(self, int):
-        self._intensity_level = int
+    def set_intensity(self, intensity):
+        self._intensity_level = intensity
         self.__geometryChanged()
 
 
