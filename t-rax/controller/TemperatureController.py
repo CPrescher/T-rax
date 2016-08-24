@@ -253,11 +253,11 @@ class TemperatureController(QtCore.QObject):
 
     def ds_calculations_changed(self):
         if self.model.ds_calibration_filename is not None:
-            self.widget.ds_calibration_filename_lbl.setText(os.path.basename(self.model.ds_calibration_filename))
+            self.widget.ds_calibration_filename_lbl.setText(str(os.path.basename(self.model.ds_calibration_filename)))
         else:
             self.widget.ds_calibration_filename_lbl.setText('Select File...')
 
-        self.widget.ds_etalon_filename_lbl.setText(os.path.basename(self.model.ds_etalon_filename))
+        self.widget.ds_etalon_filename_lbl.setText(str(os.path.basename(self.model.ds_etalon_filename)))
         self.widget.ds_etalon_rb.setChecked(self.model.ds_temperature_model.calibration_parameter.modus)
         self.widget.ds_temperature_txt.setText(str(self.model.ds_temperature_model.calibration_parameter.temperature))
 
@@ -280,11 +280,11 @@ class TemperatureController(QtCore.QObject):
 
     def us_calculations_changed(self):
         if self.model.us_calibration_filename is not None:
-            self.widget.us_calibration_filename_lbl.setText(os.path.basename(self.model.us_calibration_filename))
+            self.widget.us_calibration_filename_lbl.setText(str(os.path.basename(self.model.us_calibration_filename)))
         else:
             self.widget.us_calibration_filename_lbl.setText('Select File...')
 
-        self.widget.us_etalon_filename_lbl.setText(os.path.basename(self.model.us_etalon_filename))
+        self.widget.us_etalon_filename_lbl.setText(str(os.path.basename(self.model.us_etalon_filename)))
         self.widget.us_etalon_rb.setChecked(self.model.us_temperature_model.calibration_parameter.modus)
         self.widget.us_temperature_txt.setText(str(self.model.us_temperature_model.calibration_parameter.temperature))
 
@@ -351,21 +351,21 @@ class TemperatureController(QtCore.QObject):
                           self.widget.connect_to_epics_cb.isChecked())
 
     def load_settings(self, settings):
-        temperature_data_path = str(settings.value("temperature data file").toString())
+        temperature_data_path = str(settings.value("temperature data file"))
         if os.path.exists(temperature_data_path):
             self.load_data_file(temperature_data_path)
 
-        settings_file_path = os.path.join(str(settings.value("temperature settings directory").toString()),
-                                          str(settings.value("temperature settings file").toString()) + ".trs")
+        settings_file_path = os.path.join(str(settings.value("temperature settings directory")),
+                                          str(settings.value("temperature settings file")) + ".trs")
         if os.path.exists(settings_file_path):
             self.load_setting_file(settings_file_path)
 
-        temperature_autoprocessing = settings.value("temperature autoprocessing").toBool()
+        temperature_autoprocessing = settings.value("temperature autoprocessing") == 'true'
         if temperature_autoprocessing:
             self.widget.autoprocess_cb.setChecked(True)
 
         self.widget.connect_to_epics_cb.setChecked(
-            settings.value("temperature epics connected").toBool()
+            settings.value("temperature epics connected") == 'true'
         )
 
     def auto_process_cb_toggled(self):
