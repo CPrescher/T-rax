@@ -253,11 +253,12 @@ class TemperatureController(QtCore.QObject):
 
     def ds_calculations_changed(self):
         if self.model.ds_calibration_filename is not None:
-            self.widget.ds_calibration_filename_lbl.setText(os.path.basename(self.model.ds_calibration_filename))
+            self.widget.ds_calibration_filename_lbl.setText(os.path.basename(
+                self.model.ds_calibration_filename.decode('UTF-8')))
         else:
             self.widget.ds_calibration_filename_lbl.setText('Select File...')
 
-        self.widget.ds_etalon_filename_lbl.setText(os.path.basename(self.model.ds_etalon_filename))
+        self.widget.ds_etalon_filename_lbl.setText(os.path.basename(self.model.ds_etalon_filename.decode('UTF-8')))
         self.widget.ds_etalon_rb.setChecked(self.model.ds_temperature_model.calibration_parameter.modus)
         self.widget.ds_temperature_txt.setText(str(self.model.ds_temperature_model.calibration_parameter.temperature))
 
@@ -280,11 +281,12 @@ class TemperatureController(QtCore.QObject):
 
     def us_calculations_changed(self):
         if self.model.us_calibration_filename is not None:
-            self.widget.us_calibration_filename_lbl.setText(os.path.basename(self.model.us_calibration_filename))
+            self.widget.us_calibration_filename_lbl.setText(os.path.basename(
+                self.model.us_calibration_filename.decode('UTF-8')))
         else:
             self.widget.us_calibration_filename_lbl.setText('Select File...')
 
-        self.widget.us_etalon_filename_lbl.setText(os.path.basename(self.model.us_etalon_filename))
+        self.widget.us_etalon_filename_lbl.setText(os.path.basename(self.model.us_etalon_filename.decode('UTF-8')))
         self.widget.us_etalon_rb.setChecked(self.model.us_temperature_model.calibration_parameter.modus)
         self.widget.us_temperature_txt.setText(str(self.model.us_temperature_model.calibration_parameter.temperature))
 
