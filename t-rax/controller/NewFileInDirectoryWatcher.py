@@ -114,7 +114,12 @@ class NewFileInDirectoryWatcher(QtCore.QObject):
 
             if valid_file:
                 if os.stat(new_file_path).st_size > 100:
-                    time.sleep(self.interval/1000.)
+                    while True:
+                        try:
+                            os.rename(new_file_path, new_file_path)
+                            break
+                        except OSError:
+                            time.sleep(self.interval/1000.)
                     self.file_added.emit(new_file_path)
                 else:
                     return
