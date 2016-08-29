@@ -250,6 +250,9 @@ class TemperatureController(QtCore.QObject):
 
         self.ds_calculations_changed()
         self.us_calculations_changed()
+        if epics is not None:
+            counter = int(epics.caget("13IDD:t_counter", as_string=True))
+            epics.caput("13IDD:t_counter", str(counter + 1))
 
     def ds_calculations_changed(self):
         if self.model.ds_calibration_filename is not None:
