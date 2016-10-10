@@ -21,7 +21,7 @@
 import unittest
 import os
 
-from PyQt4 import QtGui
+from qtpy import QtWidgets
 from mock import Mock
 
 from controller.NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
@@ -31,7 +31,7 @@ unittest_folder = os.path.join(os.path.dirname(__file__), '..', 'test_files')
 
 class TestNewFileInDirectoryWatcher(unittest.TestCase):
     def setUp(self):
-        self.app = QtGui.QApplication([])
+        self.app = QtWidgets.QApplication([])
 
     def tearDown(self):
         self.delete_if_exists('test.txt')

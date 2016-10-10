@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtCore
+from qtpy import QtCore
 import numpy as np
 
 from .SpeFile import SpeFile
@@ -27,8 +27,8 @@ from .helper import FileNameIterator
 
 
 class SingleSpectrumModel(QtCore.QObject, object):
-    data_changed = QtCore.pyqtSignal()
-    spectrum_changed = QtCore.pyqtSignal(np.ndarray, np.ndarray)
+    data_changed = QtCore.Signal()
+    spectrum_changed = QtCore.Signal(np.ndarray, np.ndarray)
 
     def __init__(self):
         super(SingleSpectrumModel, self).__init__()

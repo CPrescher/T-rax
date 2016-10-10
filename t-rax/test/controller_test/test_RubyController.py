@@ -20,9 +20,9 @@
 import unittest
 import os
 
-from PyQt4 import QtGui, QtCore
+from qtpy import QtWidgets, QtCore
 
-from PyQt4.QtTest import QTest
+from qtpy.QtTest import QTest
 
 from model.RubyModel import RubyModel
 from widget.RubyWidget import RubyWidget
@@ -36,7 +36,7 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 class RubyControllerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+        cls.app = QtWidgets.QApplication([])
 
     @classmethod
     def tearDownClass(cls):

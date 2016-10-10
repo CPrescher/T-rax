@@ -21,7 +21,7 @@ Requirements
 ===
 
 - Python 2.7
-- PyQt4
+- qtpy
 - numpy
 - scipy
 - pyqtgraph
@@ -32,8 +32,8 @@ Requirements
 Installation
 ===
 
-Except for PyQt4, all of those packages can be easily installed using "pip" as python package manager. If you are on 
-Windows or Mac, please try to install PyQt4 by using a precompiled python distribution such as anaconda, enthought, 
+Except for qtpy, all of those packages can be easily installed using "pip" as python package manager. If you are on
+Windows or Mac, please try to install qtpy by using a precompiled python distribution such as anaconda, enthought,
 winpython or Python(x,y). On Linux PyQt usually can be easily installed using the packagemanager.
 
 Using the minimum anaconda distribution, you have to only type the following two commands:

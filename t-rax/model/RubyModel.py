@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtCore
+from qtpy import QtCore
 import numpy as np
 
 from lmfit.models import LinearModel, PseudoVoigtModel
@@ -27,9 +27,9 @@ from .Spectrum import Spectrum
 
 
 class RubyModel(SingleSpectrumModel):
-    pressure_changed = QtCore.pyqtSignal(float)
-    param_changed = QtCore.pyqtSignal()
-    ruby_fitted = QtCore.pyqtSignal()
+    pressure_changed = QtCore.Signal(float)
+    param_changed = QtCore.Signal()
+    ruby_fitted = QtCore.Signal()
 
     DEWAELE_SCALE = 0
     HYDROSTATIC_SCALE = 1

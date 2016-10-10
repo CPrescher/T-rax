@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtWidgets
 import pyqtgraph as pg
 
 from .ModifiedPlotItem import ModifiedPlotItem
@@ -26,13 +26,13 @@ from pyqtgraph.exporters.ImageExporter import ImageExporter
 from pyqtgraph.exporters.SVGExporter import SVGExporter
 
 
-class SpectrumWidget(QtGui.QWidget):
-    mouse_left_clicked = QtCore.pyqtSignal(float, float)
-    mouse_moved = QtCore.pyqtSignal(float, float)
+class SpectrumWidget(QtWidgets.QWidget):
+    mouse_left_clicked = QtCore.Signal(float, float)
+    mouse_moved = QtCore.Signal(float, float)
 
     def __init__(self, *args, **kwargs):
         super(SpectrumWidget, self).__init__(*args, **kwargs)
-        self._layout = QtGui.QVBoxLayout()
+        self._layout = QtWidgets.QVBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
 
         self.create_plot_items()
@@ -79,7 +79,7 @@ class SpectrumWidget(QtGui.QWidget):
 
     def save_graph(self, filename):
         self._pg_layout.setContentsMargins(20, 20, 20, 20)
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
         if filename.endswith('.png'):
             exporter = ImageExporter(self._pg_layout)
             exporter.export(filename)
@@ -89,7 +89,7 @@ class SpectrumWidget(QtGui.QWidget):
             exporter.export(filename)
             self._norm_color()
         self._pg_layout.setContentsMargins(0, 0, 0, 0)
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
 
     def _invert_color(self):
         self._plot_item.getAxis('bottom').setPen('k')

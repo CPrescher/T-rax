@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtGui, QtCore
+from qtpy import QtWidgets, QtCore, QtGui
 import pyqtgraph as pg
 
 from .BaseWidget import BaseWidget
@@ -55,7 +55,7 @@ class DiamondWidget(BaseWidget, object):
         return self._diamond_line.value()
 
 
-class DiamondPressureGroupBox(QtGui.QGroupBox):
+class DiamondPressureGroupBox(QtWidgets.QGroupBox):
     def __init__(self, title="Diamond Pressure"):
         super(DiamondPressureGroupBox, self).__init__(title)
 
@@ -64,28 +64,28 @@ class DiamondPressureGroupBox(QtGui.QGroupBox):
         self._style_widgets()
 
     def _create_widgets(self):
-        self._laser_line_lbl = QtGui.QLabel('Laser Line:')
-        self._laser_line_txt = QtGui.QLineEdit("532")
-        self._laser_line_unit_lbl = QtGui.QLabel('nm')
+        self._laser_line_lbl = QtWidgets.QLabel('Laser Line:')
+        self._laser_line_txt = QtWidgets.QLineEdit("532")
+        self._laser_line_unit_lbl = QtWidgets.QLabel('nm')
 
-        self._derivative_lbl = QtGui.QLabel('Derivative:')
-        self._derivative_sb = QtGui.QSpinBox()
+        self._derivative_lbl = QtWidgets.QLabel('Derivative:')
+        self._derivative_sb = QtWidgets.QSpinBox()
         self._derivative_sb.setValue(5)
         self._derivative_sb.setMaximumWidth(100)
 
-        self._reference_pos_lbl = QtGui.QLabel('Reference:')
-        self._reference_pos_txt = QtGui.QLineEdit('1334')
-        self._reference_pos_unit_lbl = QtGui.QLabel('cm<sup>-1</sup>')
+        self._reference_pos_lbl = QtWidgets.QLabel('Reference:')
+        self._reference_pos_txt = QtWidgets.QLineEdit('1334')
+        self._reference_pos_unit_lbl = QtWidgets.QLabel('cm<sup>-1</sup>')
 
-        self._sample_pos_lbl = QtGui.QLabel("Sample:")
-        self._sample_pos_txt = QtGui.QLineEdit("1334")
-        self._sample_pos_unit_lbl = QtGui.QLabel('cm<sup>-1</sup>')
+        self._sample_pos_lbl = QtWidgets.QLabel("Sample:")
+        self._sample_pos_txt = QtWidgets.QLineEdit("1334")
+        self._sample_pos_unit_lbl = QtWidgets.QLabel('cm<sup>-1</sup>')
 
-        self._pressure_lbl = QtGui.QLabel("0")
-        self._pressure_unit_lbl = QtGui.QLabel("GPa")
+        self._pressure_lbl = QtWidgets.QLabel("0")
+        self._pressure_unit_lbl = QtWidgets.QLabel("GPa")
 
     def _create_layout(self):
-        self._layout = QtGui.QGridLayout()
+        self._layout = QtWidgets.QGridLayout()
 
         self._layout.addWidget(self._laser_line_lbl, 0, 0)
         self._layout.addWidget(self._laser_line_txt, 0, 1)
@@ -139,14 +139,14 @@ class DiamondPressureGroupBox(QtGui.QGroupBox):
 
 
 def horizontal_line():
-    frame = QtGui.QFrame()
-    frame.setFrameShape(QtGui.QFrame.HLine)
-    frame.setFrameShadow(QtGui.QFrame.Sunken)
+    frame = QtWidgets.QFrame()
+    frame.setFrameShape(QtWidgets.QFrame.HLine)
+    frame.setFrameShadow(QtWidgets.QFrame.Sunken)
     return frame
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widget = DiamondPressureGroupBox()
     widget.show()
     widget.raise_()

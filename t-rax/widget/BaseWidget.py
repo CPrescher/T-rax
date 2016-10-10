@@ -17,23 +17,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtWidgets
 
 from .RoiWidget import RoiWidget
 from .SpectrumWidget import SpectrumWidget
 from .Widgets import FileGroupBox, OutputGroupBox, StatusBar
 
 
-class BaseWidget(QtGui.QWidget):
+class BaseWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(BaseWidget, self).__init__(*args, **kwargs)
-        self._main_layout = QtGui.QVBoxLayout()
+        self._main_layout = QtWidgets.QVBoxLayout()
         self._main_layout.setContentsMargins(0, 0, 0, 0)
         self._main_layout.setSpacing(0)
-        self._main_splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self._main_splitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
 
-        self._graph_control_widget = QtGui.QWidget()
-        self._graph_control_layout = QtGui.QGridLayout()
+        self._graph_control_widget = QtWidgets.QWidget()
+        self._graph_control_layout = QtWidgets.QGridLayout()
         self._graph_control_layout.setContentsMargins(0, 0, 0, 0)
 
         self.graph_widget = SpectrumWidget()
@@ -93,23 +93,23 @@ class BaseWidget(QtGui.QWidget):
         self.control_widget._layout.insertWidget(self.control_widget._layout.count() - 1, widget)
 
 
-class ControlWidget(QtGui.QWidget):
+class ControlWidget(QtWidgets.QWidget):
     def __init__(self):
         super(ControlWidget, self).__init__()
-        self._layout = QtGui.QVBoxLayout()
+        self._layout = QtWidgets.QVBoxLayout()
         self._file_gb = FileGroupBox()
         self._output_gb = OutputGroupBox()
 
         self._layout.addWidget(self._file_gb)
         self._layout.addWidget(self._output_gb)
-        self._layout.addSpacerItem(QtGui.QSpacerItem(QtGui.QSpacerItem(10, 10,
-                                                                       QtGui.QSizePolicy.Fixed,
-                                                                       QtGui.QSizePolicy.Expanding)))
+        self._layout.addSpacerItem(QtWidgets.QSpacerItem(QtWidgets.QSpacerItem(10, 10,
+                                                                       QtWidgets.QSizePolicy.Fixed,
+                                                                       QtWidgets.QSizePolicy.Expanding)))
         self.setLayout(self._layout)
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widget = BaseWidget()
     widget.show()
     widget.raise_()
