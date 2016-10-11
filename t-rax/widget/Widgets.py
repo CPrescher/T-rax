@@ -152,3 +152,20 @@ class StatusBar(QtWidgets.QWidget):
 
     def style_widgets(self):
         self._layout.setContentsMargins(8, 0, 8, 0)
+
+
+def open_file_dialog(parent_widget, caption, directory, filter=None):
+    filename = QtWidgets.QFileDialog.getOpenFileName(parent_widget, caption=caption,
+                                                     directory=directory,
+                                                     filter=filter)
+    if isinstance(filename, tuple):  # PyQt5 returns a tuple...
+        return str(filename[0])
+    return str(filename)
+
+def save_file_dialog(parent_widget, caption, directory, filter=None):
+    filename = QtWidgets.QFileDialog.getSaveFileName(parent_widget, caption,
+                                                     directory=directory,
+                                                     filter=filter)
+    if isinstance(filename, tuple):  # PyQt5 returns a tuple...
+        return str(filename[0])
+    return str(filename)

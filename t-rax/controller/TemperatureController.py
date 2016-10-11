@@ -22,6 +22,7 @@ import os
 from qtpy import QtWidgets, QtCore
 
 from widget.TemperatureWidget import TemperatureWidget
+from ..widget.Widgets import open_file_dialog, save_file_dialog
 from model.TemperatureModel import TemperatureModel
 from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 import numpy as np
@@ -44,7 +45,6 @@ class TemperatureController(QtCore.QObject):
         super(TemperatureController, self).__init__()
         self.widget = temperature_widget
         self.model = model
-
 
         self._exp_working_dir = ''
         self._setting_working_dir = ''
@@ -102,8 +102,8 @@ class TemperatureController(QtCore.QObject):
 
     def load_data_file(self, filename=None):
         if filename is None or filename is False:
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, caption="Load Experiment SPE",
-                                                             directory=self._exp_working_dir)
+            filename = open_file_dialog(self.widget, caption="Load Experiment SPE",
+                                        directory=self._exp_working_dir)
 
         if filename is not '':
             self._exp_working_dir = os.path.dirname(str(filename))
@@ -112,8 +112,8 @@ class TemperatureController(QtCore.QObject):
 
     def load_ds_calibration_file(self, filename=None):
         if filename is None or filename is False:
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, caption="Load Downstream Calibration SPE",
-                                                             directory=self._exp_working_dir)
+            filename = open_file_dialog(self.widget, caption="Load Downstream Calibration SPE",
+                                        directory=self._exp_working_dir)
 
         if filename is not '':
             self._exp_working_dir = os.path.dirname(filename)
@@ -121,8 +121,8 @@ class TemperatureController(QtCore.QObject):
 
     def load_us_calibration_file(self, filename=None):
         if filename is None or filename is False:
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, caption="Load Upstream Calibration SPE",
-                                                             directory=self._exp_working_dir)
+            filename = open_file_dialog(self.widget, caption="Load Upstream Calibration SPE",
+                                        directory=self._exp_working_dir)
 
         if filename is not '':
             self._exp_working_dir = os.path.dirname(filename)
@@ -138,8 +138,8 @@ class TemperatureController(QtCore.QObject):
 
     def load_ds_etalon_file(self, filename=None):
         if filename is None or filename is False:
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, caption="Load Downstream Etalon Spectrum",
-                                                             directory=self._exp_working_dir)
+            filename = open_file_dialog(self.widget, caption="Load Downstream Etalon Spectrum",
+                                        directory=self._exp_working_dir)
 
         if filename is not '':
             self._exp_working_dir = os.path.dirname(filename)
@@ -147,8 +147,8 @@ class TemperatureController(QtCore.QObject):
 
     def load_us_etalon_file(self, filename=None):
         if filename is None or filename is False:
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, caption="Load Upstream Etalon Spectrum",
-                                                             directory=self._exp_working_dir)
+            filename = open_file_dialog(self.widget, caption="Load Upstream Etalon Spectrum",
+                                        directory=self._exp_working_dir)
 
         if filename is not '':
             self._exp_working_dir = os.path.dirname(filename)
@@ -156,8 +156,8 @@ class TemperatureController(QtCore.QObject):
 
     def save_setting_file(self, filename=None):
         if filename is None or filename is False:
-            filename = str(QtWidgets.QFileDialog.getSaveFileName(self.widget, caption="Save setting file",
-                                                             directory=self._setting_working_dir))
+            filename = save_file_dialog(self.widget, caption="Save setting file",
+                                        directory=self._setting_working_dir)
 
         if filename is not '':
             self._setting_working_dir = os.path.dirname(filename)
@@ -166,8 +166,8 @@ class TemperatureController(QtCore.QObject):
 
     def load_setting_file(self, filename=None):
         if filename is None or filename is False:
-            filename, _ = QtWidgets.QFileDialog.getOpenFileName(self.widget, caption="Load setting file",
-                                                             directory=self._setting_working_dir)
+            filename = open_file_dialog(self.widget, caption="Load setting file",
+                                        directory=self._setting_working_dir)
 
         if filename is not '':
             self._setting_working_dir = os.path.dirname(filename)
@@ -176,19 +176,19 @@ class TemperatureController(QtCore.QObject):
 
     def save_data_btn_clicked(self, filename=None):
         if filename is None or filename is False:
-            filename = str(QtWidgets.QFileDialog.getSaveFileName(
-                parent=self.widget,
+            filename = save_file_dialog(
+                self.widget,
                 caption="Save data in tabulated text format",
                 directory=os.path.join(self._exp_working_dir,
-                                       '.'.join(self.model.data_img_file.filename.split(".")[:-1]) + ".txt"))
+                                       '.'.join(self.model.data_img_file.filename.split(".")[:-1]) + ".txt")
             )
         if filename is not '':
             self.model.save_txt(filename)
 
     def save_graph_btn_clicked(self, filename=None):
         if filename is None or filename is False:
-            filename = QtWidgets.QFileDialog.getSaveFileName(
-                parent=self.widget,
+            filename = save_file_dialog(
+                self.widget,
                 caption="Save displayed graph as vector graphics or image",
                 directory=os.path.join(self._exp_working_dir,
                                        '.'.join(self.model.data_img_file.filename.split(".")[:-1]) + ".svg"),
