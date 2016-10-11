@@ -57,8 +57,11 @@ class ModifiedPlotItem(pg.PlotItem):
 
     def mouse_move_event(self, pos):
         if self.sceneBoundingRect().contains(pos):
-            pos = self.vb.mapSceneToView(pos)
-            self.mouse_moved.emit(pos.x(), pos.y())
+            try:
+                pos = self.vb.mapSceneToView(pos)
+                self.mouse_moved.emit(pos.x(), pos.y())
+            except np.linalg.linalg.LinAlgError:
+                pass
 
     def mouse_click_event(self, ev):
         if ev.button() == QtCore.Qt.RightButton or \
