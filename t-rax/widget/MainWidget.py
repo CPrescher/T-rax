@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtWidgets
 from functools import partial
 
 from .TemperatureWidget import TemperatureWidget
@@ -29,10 +29,10 @@ from .RamanWidget import RamanWidget
 module_path = os.path.dirname(__file__)
 
 
-class MainWidget(QtGui.QWidget):
+class MainWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(MainWidget, self).__init__(*args, **kwargs)
-        self._main_layout = QtGui.QVBoxLayout()
+        self._main_layout = QtWidgets.QVBoxLayout()
         self._main_layout.setContentsMargins(0, 0, 0, 0)
         self._main_layout.setSpacing(0)
         self.navigation_widget = NavigationWidget(self)
@@ -64,7 +64,7 @@ class MainWidget(QtGui.QWidget):
         self.setStyleSheet(main_stylesheet_str + '\n' + navigation_stylesheet_str)
 
 
-class NavigationWidget(QtGui.QFrame):
+class NavigationWidget(QtWidgets.QFrame):
     colors = {
         'temperature': 'rgba(221, 124, 40, 180)',
         'ruby': 'rgba(197, 0, 3, 255)',
@@ -76,12 +76,12 @@ class NavigationWidget(QtGui.QFrame):
         super(NavigationWidget, self).__init__()
         self.setObjectName("navigation_frame")
 
-        self._layout = QtGui.QHBoxLayout()
+        self._layout = QtWidgets.QHBoxLayout()
 
-        self.temperature_btn = QtGui.QPushButton('Temperature')
-        self.ruby_btn = QtGui.QPushButton('Ruby')
-        self.diamond_btn = QtGui.QPushButton('Diamond')
-        self.raman_btn = QtGui.QPushButton('Raman')
+        self.temperature_btn = QtWidgets.QPushButton('Temperature')
+        self.ruby_btn = QtWidgets.QPushButton('Ruby')
+        self.diamond_btn = QtWidgets.QPushButton('Diamond')
+        self.raman_btn = QtWidgets.QPushButton('Raman')
 
         # setting object names for stylesheet access
         self.temperature_btn.setObjectName('temperature_btn')
@@ -89,14 +89,14 @@ class NavigationWidget(QtGui.QFrame):
         self.diamond_btn.setObjectName('diamond_btn')
         self.raman_btn.setObjectName('raman_btn')
 
-        self.copyright_lbl = QtGui.QLabel('written by Clemens Prescher, GSECARS, UofC')
+        self.copyright_lbl = QtWidgets.QLabel('written by Clemens Prescher, GSECARS, UofC')
         self.copyright_lbl.setObjectName('copyright_label')
         self._layout.addWidget(self.temperature_btn)
         self._layout.addWidget(self.ruby_btn)
         self._layout.addWidget(self.diamond_btn)
         self._layout.addWidget(self.raman_btn)
-        self._layout.addSpacerItem(QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Expanding,
-                                                     QtGui.QSizePolicy.Fixed))
+        self._layout.addSpacerItem(QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Expanding,
+                                                     QtWidgets.QSizePolicy.Fixed))
         self._layout.addWidget(self.copyright_lbl)
         self.setLayout(self._layout)
 
@@ -127,7 +127,7 @@ class NavigationWidget(QtGui.QFrame):
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widget = MainWidget()
     widget.show()
     widget.raise_()

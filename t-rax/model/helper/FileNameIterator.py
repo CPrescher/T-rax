@@ -19,7 +19,7 @@
 
 import os
 import time
-from PyQt4 import QtCore
+from qtpy import QtCore
 
 
 class FileNameIterator(QtCore.QObject):

@@ -21,8 +21,8 @@ import unittest
 import os
 import numpy as np
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtTest import QTest
+from qtpy import QtWidgets, QtCore
+from qtpy.QtTest import QTest
 
 from model.DiamondModel import DiamondModel
 from widget.DiamondWidget import DiamondWidget
@@ -36,7 +36,7 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 class DiamondControllerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+        cls.app = QtWidgets.QApplication([])
 
     @classmethod
     def tearDownClass(cls):

@@ -20,12 +20,12 @@
 import sys
 from sys import platform
 
-from PyQt4 import QtGui
+from qtpy import QtWidgets
 
 from controller.MainController import MainController
 
 
-app = QtGui.QApplication(sys.argv)
+app = QtWidgets.QApplication(sys.argv)
 if platform != "darwin":
     app.setStyle('plastique')
 controller = MainController()

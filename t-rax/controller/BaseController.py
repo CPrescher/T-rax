@@ -20,10 +20,11 @@
 import os
 import numpy as np
 
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtWidgets
 
 from model.BaseModel import SingleSpectrumModel
 from widget.BaseWidget import BaseWidget
+from widget.Widgets import open_file_dialog, save_file_dialog
 
 from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 
@@ -63,12 +64,11 @@ class BaseController(QtCore.QObject):
         self.widget.roi_widget.img_widget.mouse_moved.connect(self.img_mouse_moved)
 
     def connect_click_function(self, emitter, function):
-        self.widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
+        emitter.clicked.connect(function)
 
-    def load_data_file(self, filename=None):
-        if filename is None:
-            filename = QtGui.QFileDialog.getOpenFileName(self.widget, caption="Load Experiment SPE",
-                                                         directory=self._working_dir)
+    def load_data_file(self):
+        filename = open_file_dialog(self.widget, caption="Load Experiment SPE",
+                                    directory=self._working_dir)
         filename = str(filename)
         if filename is not '':
             self.model.load_file(filename)
@@ -77,19 +77,19 @@ class BaseController(QtCore.QObject):
 
     def save_data_btn_clicked(self, filename=None):
         if filename is None:
-            filename = str(QtGui.QFileDialog.getSaveFileName(
-                parent=self.widget,
+            filename = save_file_dialog(
+                self.widget,
                 caption="Save data in tabulated text format",
-                directory=os.path.join(self._working_dir, '.'.join(self.model.filename.split(".")[:-1]) + ".txt"))
+                directory=os.path.join(self._working_dir, '.'.join(self.model.filename.split(".")[:-1]) + ".txt")
             )
 
-        if filename is not '':
-            self.model.save_txt(filename)
+            if filename is not '':
+                self.model.save_txt(filename)
 
     def save_graph_btn_clicked(self, filename=None):
         if filename is None:
-            filename = QtGui.QFileDialog.getSaveFileName(
-                parent=self.widget,
+            filename = save_file_dialog(
+                self.widget,
                 caption="Save displayed graph as vector graphics or image",
                 directory=os.path.join(self._working_dir, '.'.join(self.model.filename.split(".")[:-1]) + ".svg"),
                 filter='Vector Graphics (*.svg);; Image (*.png)'
