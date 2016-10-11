@@ -20,7 +20,7 @@
 import unittest
 
 import numpy as np
-from PyQt4 import QtGui
+from qtpy import QtWidgets
 
 from widget.RoiWidget import RoiWidget
 
@@ -28,7 +28,7 @@ from widget.RoiWidget import RoiWidget
 class TestNewRoiView(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+        cls.app = QtWidgets.QApplication([])
 
     @classmethod
     def tearDownClass(cls):

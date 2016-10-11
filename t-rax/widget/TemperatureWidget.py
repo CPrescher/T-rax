@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtWidgets, QtGui
 
 from .TemperatureSpectrumWidget import TemperatureSpectrumWidget
 from .RoiWidget import RoiWidget
@@ -25,16 +25,16 @@ from .Widgets import TemperatureFileGroupBox as FileGroupBox
 from .Widgets import OutputGroupBox, StatusBar
 
 
-class TemperatureWidget(QtGui.QWidget):
+class TemperatureWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(TemperatureWidget, self).__init__(*args, **kwargs)
-        self._main_layout = QtGui.QVBoxLayout()
+        self._main_layout = QtWidgets.QVBoxLayout()
         self._main_layout.setContentsMargins(0, 0, 0, 0)
         self._main_layout.setSpacing(0)
-        self._main_splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self._main_splitter = QtWidgets.QSplitter(QtCore.Qt.Vertical)
 
-        self._graph_control_widget = QtGui.QWidget()
-        self._graph_control_layout = QtGui.QGridLayout()
+        self._graph_control_widget = QtWidgets.QWidget()
+        self._graph_control_layout = QtWidgets.QGridLayout()
         self._graph_control_layout.setContentsMargins(0, 0, 0, 0)
 
         self.graph_widget = TemperatureSpectrumWidget()
@@ -113,14 +113,14 @@ class TemperatureWidget(QtGui.QWidget):
         self.connect_to_epics_cb = self.control_widget.experiment_tab.connect_to_epics_cb
 
 
-class TemperatureControlWidget(QtGui.QWidget):
+class TemperatureControlWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(TemperatureControlWidget, self).__init__(*args, **kwargs)
 
-        self._layout = QtGui.QHBoxLayout()
+        self._layout = QtWidgets.QHBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
 
-        self.tab_widget = QtGui.QTabWidget()
+        self.tab_widget = QtWidgets.QTabWidget()
         self.experiment_tab = TemperatureExperimentTab()
         self.calibration_tab = TemperatureCalibrationTab()
 
@@ -130,38 +130,38 @@ class TemperatureControlWidget(QtGui.QWidget):
         self.setLayout(self._layout)
 
 
-class TemperatureExperimentTab(QtGui.QWidget):
+class TemperatureExperimentTab(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(TemperatureExperimentTab, self).__init__(*args, **kwargs)
-        self._layout = QtGui.QVBoxLayout()
+        self._layout = QtWidgets.QVBoxLayout()
         self.file_gb = FileGroupBox()
         self.output_gb = OutputGroupBox()
         self.settings_gb = SettingsGroupBox()
-        self.connect_to_epics_cb = QtGui.QCheckBox("Connect to Epics")
+        self.connect_to_epics_cb = QtWidgets.QCheckBox("Connect to Epics")
         self.connect_to_epics_cb.setLayoutDirection(QtCore.Qt.RightToLeft)
 
         self._layout.addWidget(self.file_gb)
         self._layout.addWidget(self.output_gb)
         self._layout.addWidget(self.settings_gb)
         self._layout.addWidget(self.connect_to_epics_cb)
-        self._layout.addSpacerItem(QtGui.QSpacerItem(10, 10,
-                                                     QtGui.QSizePolicy.Fixed,
-                                                     QtGui.QSizePolicy.Expanding))
+        self._layout.addSpacerItem(QtWidgets.QSpacerItem(10, 10,
+                                                     QtWidgets.QSizePolicy.Fixed,
+                                                     QtWidgets.QSizePolicy.Expanding))
 
         self.setLayout(self._layout)
 
 
-class SettingsGroupBox(QtGui.QGroupBox):
+class SettingsGroupBox(QtWidgets.QGroupBox):
     def __init__(self, *args, **kwargs):
         super(SettingsGroupBox, self).__init__('Settings')
 
-        self._layout = QtGui.QGridLayout()
+        self._layout = QtWidgets.QGridLayout()
         self._layout.setVerticalSpacing(8)
         self._layout.setHorizontalSpacing(8)
 
-        self.settings_cb = QtGui.QComboBox()
-        self.load_setting_btn = QtGui.QPushButton('Load')
-        self.save_setting_btn = QtGui.QPushButton('Save')
+        self.settings_cb = QtWidgets.QComboBox()
+        self.load_setting_btn = QtWidgets.QPushButton('Load')
+        self.save_setting_btn = QtWidgets.QPushButton('Save')
 
         self._layout.addWidget(self.settings_cb, 0, 0, 1, 2)
         self._layout.addWidget(self.load_setting_btn, 1, 0)
@@ -175,15 +175,15 @@ class SettingsGroupBox(QtGui.QGroupBox):
         self.load_setting_btn.setFlat(True)
         self.save_setting_btn.setFlat(True)
 
-        cleanlooks = QtGui.QStyleFactory.create('plastique')
+        cleanlooks = QtWidgets.QStyleFactory.create('plastique')
         self.settings_cb.setStyle(cleanlooks)
         self.settings_cb.view().setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
 
-class TemperatureCalibrationTab(QtGui.QWidget):
+class TemperatureCalibrationTab(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(TemperatureCalibrationTab, self).__init__(*args, **kwargs)
-        self._layout = QtGui.QVBoxLayout()
+        self._layout = QtWidgets.QVBoxLayout()
 
         self.downstream_gb = CalibrationGB('Downstream', 'rgba(255, 255, 0, 255)')
         self.upstream_gb = CalibrationGB('Upstream', 'rgba(255, 140, 0, 255)')
@@ -191,30 +191,30 @@ class TemperatureCalibrationTab(QtGui.QWidget):
         self._layout.addWidget(self.downstream_gb)
         self._layout.addWidget(self.upstream_gb)
 
-        self._layout.addSpacerItem(QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Fixed,
-                                                     QtGui.QSizePolicy.Expanding))
+        self._layout.addSpacerItem(QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Fixed,
+                                                     QtWidgets.QSizePolicy.Expanding))
         self.setLayout(self._layout)
 
 
-class CalibrationGB(QtGui.QGroupBox):
+class CalibrationGB(QtWidgets.QGroupBox):
     def __init__(self, title, color):
         super(CalibrationGB, self).__init__(title)
 
         self.color = color
-        self._layout = QtGui.QGridLayout()
+        self._layout = QtWidgets.QGridLayout()
         self._layout.setVerticalSpacing(8)
         self._layout.setHorizontalSpacing(8)
 
-        self.load_file_btn = QtGui.QPushButton('Load File')
-        self.file_lbl = QtGui.QLabel('Select File...')
+        self.load_file_btn = QtWidgets.QPushButton('Load File')
+        self.file_lbl = QtWidgets.QLabel('Select File...')
 
-        self.temperature_txt = QtGui.QLineEdit('2000')
-        self.temperature_unit_lbl = QtGui.QLabel('K')
+        self.temperature_txt = QtWidgets.QLineEdit('2000')
+        self.temperature_unit_lbl = QtWidgets.QLabel('K')
 
-        self.temperature_rb = QtGui.QRadioButton('Temperature')
-        self.etalon_rb = QtGui.QRadioButton('Etalon Spectrum')
-        self.load_etalon_btn = QtGui.QPushButton('...')
-        self.etalon_file_lbl = QtGui.QLabel('Select File...')
+        self.temperature_rb = QtWidgets.QRadioButton('Temperature')
+        self.etalon_rb = QtWidgets.QRadioButton('Etalon Spectrum')
+        self.load_etalon_btn = QtWidgets.QPushButton('...')
+        self.etalon_file_lbl = QtWidgets.QLabel('Select File...')
 
         self._layout.addWidget(self.load_file_btn, 0, 0, 1, 3)
         self._layout.addWidget(self.file_lbl, 0, 3)

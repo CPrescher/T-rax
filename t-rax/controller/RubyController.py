@@ -19,7 +19,7 @@
 
 import os
 
-from PyQt4 import QtCore
+from qtpy import QtCore
 
 from model.RubyModel import RubyModel
 from widget.RubyWidget import RubyWidget

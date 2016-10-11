@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtGui, QtCore
+from qtpy import QtWidgets, QtCore, QtGui
 import pyqtgraph as pg
 from pyqtgraph.exporters.ImageExporter import ImageExporter
 from pyqtgraph.exporters.SVGExporter import SVGExporter
@@ -45,12 +45,12 @@ export_colors = {
 }
 
 
-class TemperatureSpectrumWidget(QtGui.QWidget):
-    mouse_moved = QtCore.pyqtSignal(float, float)
+class TemperatureSpectrumWidget(QtWidgets.QWidget):
+    mouse_moved = QtCore.Signal(float, float)
 
     def __init__(self, *args, **kwargs):
         super(TemperatureSpectrumWidget, self).__init__(*args, **kwargs)
-        self._layout = QtGui.QVBoxLayout()
+        self._layout = QtWidgets.QVBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
 
         self.create_plot_items()
@@ -268,7 +268,7 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
 
     def save_graph(self, filename):
         self._pg_layout.setContentsMargins(20, 20, 20, 20)
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
         if filename.endswith('.png'):
             exporter = ImageExporter(self._pg_layout)
             exporter.export(filename)
@@ -281,7 +281,7 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
             self._finalize_svg_export()
 
         self._pg_layout.setContentsMargins(0, 0, 0, 0)
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
 
     def _prepare_svg_export(self):
         # since the svg will always have a transparent background we need to invert the colors of the original plot
@@ -298,8 +298,8 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
         self._convert_symbols_to_unicode()
         self._time_lapse_ds_data_item.setSymbol("s")
         self._time_lapse_us_data_item.setSymbol("s")
-        QtGui.QApplication.processEvents()
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
 
     def _convert_symbols_to_ascii(self):
         self._us_plot.setLabel('bottom', 'wavelength (nm)')
@@ -373,10 +373,10 @@ class TemperatureSpectrumWidget(QtGui.QWidget):
 class IntensityIndicator(pg.GraphicsWidget):
     def __init__(self):
         pg.GraphicsWidget.__init__(self)
-        self.outside_rect = QtGui.QGraphicsRectItem(0, 0, 100, 100)
-        self.inside_rect = QtGui.QGraphicsRectItem(0, 0, 50, 50)
+        self.outside_rect = QtWidgets.QGraphicsRectItem(0, 0, 100, 100)
+        self.inside_rect = QtWidgets.QGraphicsRectItem(0, 0, 50, 50)
 
-        self._layout = QtGui.QGraphicsGridLayout()
+        self._layout = QtWidgets.QGraphicsGridLayout()
 
         self.outside_rect.setPen(pg.mkPen(color=(255, 255, 255), width=1))
         self.inside_rect.setBrush(QtGui.QBrush(QtGui.QColor(0, 255, 0, 150)))
@@ -430,7 +430,7 @@ class IntensityIndicator(pg.GraphicsWidget):
 if __name__ == '__main__':
     import numpy as np
 
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widget = TemperatureSpectrumWidget()
     widget.show()
     widget.raise_()

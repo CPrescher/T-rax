@@ -22,8 +22,8 @@ from mock import patch
 import os
 import sys
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtTest import QTest
+from qtpy import QtCore, QtWidgets
+from qtpy.QtTest import QTest
 import numpy as np
 
 from model.TemperatureModel import TemperatureModel
@@ -38,7 +38,7 @@ temperature_fitting_path = os.path.join(unittest_files_path, 'temperature_fittin
 class TestTemperatureController(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+        cls.app = QtWidgets.QApplication([])
 
     @classmethod
     def tearDownClass(cls):
@@ -256,7 +256,7 @@ class TestTemperatureController(unittest.TestCase):
         setting_filename = os.path.join(temperature_fitting_path, 'PiMax.trs')
         self.controller.load_setting_file(setting_filename)
 
-    @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
+    @patch('qtpy.QtWidgets.QFileDialog.getSaveFileName')
     def test_saving_data_as_txt(self, filedialog):
         self.load_single_frame_file_and_calibration()
         out_path = os.path.join(unittest_files_path, 'data.txt')
@@ -266,7 +266,7 @@ class TestTemperatureController(unittest.TestCase):
         self.assertTrue(os.path.exists(out_path))
         os.remove(out_path)
 
-    @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
+    @patch('qtpy.QtWidgets.QFileDialog.getSaveFileName')
     def test_saving_graph_image(self, filedialog):
         self.load_single_frame_file_and_calibration()
 
