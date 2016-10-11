@@ -22,7 +22,7 @@ import os
 
 import numpy as np
 
-from PyQt4 import QtGui
+from qtpy import QtWidgets
 
 from model.RubyModel import RubyModel
 
@@ -35,7 +35,7 @@ ruby_file = os.path.join(unittest_files_path, 'ruby_fitting', 'Ruby.spe')
 class RubyModelTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+        cls.app = QtWidgets.QApplication([])
 
     @classmethod
     def tearDownClass(cls):

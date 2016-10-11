@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtCore
+from qtpy import QtCore
 import numpy as np
 from scipy.optimize import curve_fit
 import h5py
@@ -29,9 +29,9 @@ from model.helper import FileNameIterator
 
 
 class TemperatureModel(QtCore.QObject):
-    data_changed = QtCore.pyqtSignal()
-    ds_calculations_changed = QtCore.pyqtSignal()
-    us_calculations_changed = QtCore.pyqtSignal()
+    data_changed = QtCore.Signal()
+    ds_calculations_changed = QtCore.Signal()
+    us_calculations_changed = QtCore.Signal()
 
     def __init__(self):
         super(TemperatureModel, self).__init__()
@@ -427,7 +427,7 @@ class TemperatureModel(QtCore.QObject):
 
 
 class SingleTemperatureModel(QtCore.QObject):
-    data_changed = QtCore.pyqtSignal()
+    data_changed = QtCore.Signal()
 
     def __init__(self, ind, roi_data_manager):
         super(SingleTemperatureModel, self).__init__()

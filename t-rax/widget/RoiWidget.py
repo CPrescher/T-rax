@@ -21,7 +21,7 @@ from functools import partial
 
 import numpy as np
 
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtWidgets, QtGui
 import pyqtgraph as pg
 from pyqtgraph.graphicsItems.ROI import Handle
 
@@ -36,8 +36,8 @@ pg.setConfigOption('foreground', 'w')
 pg.setConfigOption('antialias', True)
 
 
-class RoiWidget(QtGui.QWidget):
-    rois_changed = QtCore.pyqtSignal(list)
+class RoiWidget(QtWidgets.QWidget):
+    rois_changed = QtCore.Signal(list)
 
     def __init__(self, roi_num=1, roi_titles=('',), roi_colors=((255, 255, 0)), *args, **kwargs):
         super(RoiWidget, self).__init__(*args, **kwargs)
@@ -45,17 +45,17 @@ class RoiWidget(QtGui.QWidget):
         self.roi_titles = roi_titles
         self.roi_colors = roi_colors
 
-        self._main_vertical_layout = QtGui.QVBoxLayout()
-        self._horizontal_layout = QtGui.QHBoxLayout()
+        self._main_vertical_layout = QtWidgets.QVBoxLayout()
+        self._horizontal_layout = QtWidgets.QHBoxLayout()
 
         self.img_widget = RoiImageWidget(roi_num=roi_num, roi_colors=roi_colors)
 
-        self._roi_gbs_layout = QtGui.QVBoxLayout()
+        self._roi_gbs_layout = QtWidgets.QVBoxLayout()
         self.roi_gbs = []
         self.create_roi_gbs()
-        self._roi_gbs_layout.addSpacerItem(QtGui.QSpacerItem(20, 20,
-                                                             QtGui.QSizePolicy.Expanding,
-                                                             QtGui.QSizePolicy.Expanding))
+        self._roi_gbs_layout.addSpacerItem(QtWidgets.QSpacerItem(20, 20,
+                                                             QtWidgets.QSizePolicy.Expanding,
+                                                             QtWidgets.QSizePolicy.Expanding))
 
         self._horizontal_layout.addWidget(self.img_widget)
         self._horizontal_layout.addLayout(self._roi_gbs_layout)
@@ -110,13 +110,13 @@ class RoiWidget(QtGui.QWidget):
             self.img_widget.plot_image(img_data.T)
 
 
-class RoiGroupBox(QtGui.QGroupBox):
-    roi_txt_changed = QtCore.pyqtSignal(list)
+class RoiGroupBox(QtWidgets.QGroupBox):
+    roi_txt_changed = QtCore.Signal(list)
 
     def __init__(self, title, color):
         super(RoiGroupBox, self).__init__(title)
         self.color = color
-        self._grid_layout = QtGui.QGridLayout()
+        self._grid_layout = QtWidgets.QGridLayout()
 
         self.x_min_txt = IntegerTextField('0')
         self.x_max_txt = IntegerTextField('0')
@@ -161,25 +161,25 @@ class RoiGroupBox(QtGui.QGroupBox):
         self.roi_txt_changed.emit(self.get_roi_limits())
 
 
-class CenteredQLabel(QtGui.QLabel):
+class CenteredQLabel(QtWidgets.QLabel):
     def __init__(self, *args, **kwargs):
         super(CenteredQLabel, self).__init__(*args, **kwargs)
         self.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter)
 
 
-class IntegerTextField(QtGui.QLineEdit):
+class IntegerTextField(QtWidgets.QLineEdit):
     def __init__(self, *args, **kwargs):
         super(IntegerTextField, self).__init__(*args, **kwargs)
         self.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.setValidator(QtGui.QIntValidator())
 
 
-class RoiImageWidget(QtGui.QWidget):
-    mouse_moved = QtCore.pyqtSignal(float, float)
-    mouse_left_clicked = QtCore.pyqtSignal(float, float)
-    mouse_left_double_clicked = QtCore.pyqtSignal(float, float)
+class RoiImageWidget(QtWidgets.QWidget):
+    mouse_moved = QtCore.Signal(float, float)
+    mouse_left_clicked = QtCore.Signal(float, float)
+    mouse_left_double_clicked = QtCore.Signal(float, float)
 
-    rois_changed = QtCore.pyqtSignal(list)
+    rois_changed = QtCore.Signal(list)
 
     def __init__(self, roi_num=1, roi_colors=((255, 255, 0)), *args, **kwargs):
         super(RoiImageWidget, self).__init__(*args, **kwargs)
@@ -205,7 +205,7 @@ class RoiImageWidget(QtGui.QWidget):
                                              autoLevel=[0, 0.996])
         self.pg_layout.addItem(self.pg_hist_item, 1, 2, 1, 3)
 
-        self._layout = QtGui.QHBoxLayout()
+        self._layout = QtWidgets.QHBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.addWidget(self.pg_widget)
         self.setLayout(self._layout)

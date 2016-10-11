@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtGui, QtCore
+from qtpy import QtWidgets, QtCore, QtGui
 import pyqtgraph as pg
 
 from .BaseWidget import BaseWidget
@@ -66,7 +66,7 @@ class RubyWidget(BaseWidget, object):
         self._fitted_spectrum.clear()
 
 
-class RubyPressureGroupBox(QtGui.QGroupBox):
+class RubyPressureGroupBox(QtWidgets.QGroupBox):
     def __init__(self, title="Ruby Pressure"):
         super(RubyPressureGroupBox, self).__init__(title)
 
@@ -75,34 +75,34 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
         self._style_widgets()
 
     def _create_widgets(self):
-        self._reference_lbl = QtGui.QLabel("Reference")
-        self._sample_lbl = QtGui.QLabel("Sample")
+        self._reference_lbl = QtWidgets.QLabel("Reference")
+        self._sample_lbl = QtWidgets.QLabel("Sample")
 
-        self._position_lbl = QtGui.QLabel("Position")
-        self._position_unit_lbl = QtGui.QLabel("(nm)")
-        self._temperature_lbl = QtGui.QLabel("Temp.")
-        self._temperature_unit_lbl = QtGui.QLabel("(K)")
+        self._position_lbl = QtWidgets.QLabel("Position")
+        self._position_unit_lbl = QtWidgets.QLabel("(nm)")
+        self._temperature_lbl = QtWidgets.QLabel("Temp.")
+        self._temperature_unit_lbl = QtWidgets.QLabel("(K)")
 
-        self._reference_position_txt = QtGui.QLineEdit("694.35")
-        self._reference_temperature_txt = QtGui.QLineEdit("298")
+        self._reference_position_txt = QtWidgets.QLineEdit("694.35")
+        self._reference_temperature_txt = QtWidgets.QLineEdit("298")
 
-        self._sample_position_txt = QtGui.QLineEdit("694.35")
-        self._sample_temperature_txt = QtGui.QLineEdit("298")
+        self._sample_position_txt = QtWidgets.QLineEdit("694.35")
+        self._sample_temperature_txt = QtWidgets.QLineEdit("298")
 
-        self._ruby_scale_cb = QtGui.QComboBox()
+        self._ruby_scale_cb = QtWidgets.QComboBox()
         self._ruby_scale_cb.addItems(["Dewaele et al. 2008",
                                       "Mao et al. 1988 hydrostatic",
                                       "Mao et al. 1988 nonhydrostatic"])
 
-        self._pressure_lbl = QtGui.QLabel("0")
-        self._pressure_unit_lbl = QtGui.QLabel("GPa")
+        self._pressure_lbl = QtWidgets.QLabel("0")
+        self._pressure_unit_lbl = QtWidgets.QLabel("GPa")
 
-        self._show_ruby_fit_cb = QtGui.QCheckBox('Show Fit')
-        self._fit_ruby_btn = QtGui.QPushButton('Fit Ruby Peaks')
-        self._fit_automatic_cb = QtGui.QCheckBox('auto')
+        self._show_ruby_fit_cb = QtWidgets.QCheckBox('Show Fit')
+        self._fit_ruby_btn = QtWidgets.QPushButton('Fit Ruby Peaks')
+        self._fit_automatic_cb = QtWidgets.QCheckBox('auto')
 
     def _create_layout(self):
-        self._layout = QtGui.QGridLayout()
+        self._layout = QtWidgets.QGridLayout()
 
         self._layout.addWidget(self._ruby_scale_cb, 0, 0, 1, 3)
 
@@ -165,19 +165,19 @@ class RubyPressureGroupBox(QtGui.QGroupBox):
 
         self._show_ruby_fit_cb.setEnabled(False)
 
-        cleanlooks = QtGui.QStyleFactory.create('plastique')
+        cleanlooks = QtWidgets.QStyleFactory.create('plastique')
         self._ruby_scale_cb.setStyle(cleanlooks)
 
 
 def horizontal_line():
-    frame = QtGui.QFrame()
-    frame.setFrameShape(QtGui.QFrame.HLine)
-    frame.setFrameShadow(QtGui.QFrame.Sunken)
+    frame = QtWidgets.QFrame()
+    frame.setFrameShape(QtWidgets.QFrame.HLine)
+    frame.setFrameShadow(QtWidgets.QFrame.Sunken)
     return frame
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widget = RubyPressureGroupBox()
     widget.show()
     widget.raise_()
