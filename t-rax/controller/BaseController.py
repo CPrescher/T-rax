@@ -24,7 +24,7 @@ from qtpy import QtCore, QtWidgets
 
 from model.BaseModel import SingleSpectrumModel
 from widget.BaseWidget import BaseWidget
-from ..widget.Widgets import open_file_dialog, save_file_dialog
+from widget.Widgets import open_file_dialog, save_file_dialog
 
 from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 
