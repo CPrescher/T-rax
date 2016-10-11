@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from PyQt4 import QtGui
+from qtpy import QtWidgets
 
 from model.RoiData import RoiDataManager
 
@@ -26,7 +26,7 @@ from model.RoiData import RoiDataManager
 class TestNewRoiData(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+        cls.app = QtWidgets.QApplication([])
 
     @classmethod
     def tearDownClass(cls):

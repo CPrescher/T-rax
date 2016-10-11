@@ -20,7 +20,7 @@
 import unittest
 import os
 
-from PyQt4 import QtGui
+from qtpy import QtWidgets
 
 import numpy as np
 
@@ -33,7 +33,7 @@ unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 class TestTemperatureModel(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+        cls.app = QtWidgets.QApplication([])
 
     @classmethod
     def tearDownClass(cls):

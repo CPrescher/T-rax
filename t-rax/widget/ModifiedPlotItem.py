@@ -17,15 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtWidgets
 import pyqtgraph as pg
 import numpy as np
 
 
 class ModifiedPlotItem(pg.PlotItem):
-    mouse_moved = QtCore.pyqtSignal(float, float)
-    mouse_left_clicked = QtCore.pyqtSignal(float, float)
-    range_changed = QtCore.pyqtSignal(list)
+    mouse_moved = QtCore.Signal(float, float)
+    mouse_left_clicked = QtCore.Signal(float, float)
+    range_changed = QtCore.Signal(list)
 
     def __init__(self, enableMouseInteraction=True, *args, **kwargs):
         super(ModifiedPlotItem, self).__init__(*args, **kwargs)

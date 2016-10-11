@@ -24,8 +24,8 @@ import os
 import shutil
 from numpy import array_equal
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtTest import QTest
+from qtpy import QtWidgets, QtCore
+from qtpy.QtTest import QTest
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
@@ -38,7 +38,7 @@ from controller.BaseController import BaseController
 class BaseControllerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QtGui.QApplication([])
+        cls.app = QtWidgets.QApplication([])
 
     @classmethod
     def tearDownClass(cls):
@@ -61,7 +61,7 @@ class BaseControllerTest(unittest.TestCase):
         if os.path.exists(path):
             os.remove(path)
 
-    @patch('PyQt4.QtGui.QFileDialog.getOpenFileName')
+    @patch('qtpy.QtWidgets.QFileDialog.getOpenFileName')
     def test_loading_files(self, filedialog):
         in_path = os.path.abspath(os.path.join(unittest_files_path, 'temper_009.spe'))
         filedialog.return_value = in_path
@@ -80,7 +80,7 @@ class BaseControllerTest(unittest.TestCase):
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].x_max_txt.text()), "0")
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].y_max_txt.text()), "0")
 
-    @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
+    @patch('qtpy.QtWidgets.QFileDialog.getSaveFileName')
     def test_saving_data(self, filedialog):
         # load a file:
         self.controller.load_data_file(
@@ -94,7 +94,7 @@ class BaseControllerTest(unittest.TestCase):
         QTest.mouseClick(self.widget.save_data_btn, QtCore.Qt.LeftButton)
         self.assertTrue(os.path.exists(out_path))
 
-    @patch('PyQt4.QtGui.QFileDialog.getSaveFileName')
+    @patch('qtpy.QtWidgets.QFileDialog.getSaveFileName')
     def test_saving_graph(self, filedialog):
         # load a file:
         self.controller.load_data_file(
@@ -152,7 +152,7 @@ class BaseControllerTest(unittest.TestCase):
                      os.path.join(unittest_files_path, 'temp.spe'))
 
         time.sleep(0.2) #need to wait until file_watcher updates the path correctly
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
         self.assertEqual(str(self.widget.filename_lbl.text()), 'temp.spe')
 
     def test_graph_status_bar_shows_file_info(self):

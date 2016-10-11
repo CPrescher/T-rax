@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
-from PyQt4 import QtCore
+from qtpy import QtCore
 
 from scipy.ndimage import gaussian_filter1d
 
@@ -27,7 +27,7 @@ from .Spectrum import Spectrum
 
 
 class DiamondModel(RamanModel):
-    pressure_changed = QtCore.pyqtSignal(float)
+    pressure_changed = QtCore.Signal(float)
 
     def __init__(self):
         super(DiamondModel, self).__init__()
