@@ -66,10 +66,9 @@ class BaseController(QtCore.QObject):
     def connect_click_function(self, emitter, function):
         emitter.clicked.connect(function)
 
-    def load_data_file(self, filename=None):
-        if filename is None:
-            filename = open_file_dialog(self.widget, caption="Load Experiment SPE",
-                                        directory=self._working_dir)
+    def load_data_file(self):
+        filename = open_file_dialog(self.widget, caption="Load Experiment SPE",
+                                    directory=self._working_dir)
         filename = str(filename)
         if filename is not '':
             self.model.load_file(filename)
