@@ -524,7 +524,7 @@ class SingleTemperatureModel(QtCore.QObject):
         if self._data_img is not None:
             roi = self.roi_data_manager.get_roi(self.ind, self._data_img_dimension)
 
-            data_x = self._data_img_x_calibration[roi.x_min:roi.x_max + 1]
+            data_x = self._data_img_x_calibration[int(roi.x_min):int(roi.x_max) + 1]
             data_y = self._get_roi_sum(self.data_img, roi)
 
             self.data_roi_max = self._get_roi_max(self.data_img, roi)
@@ -534,7 +534,7 @@ class SingleTemperatureModel(QtCore.QObject):
         if self.calibration_img is not None:
             roi = self.roi_data_manager.get_roi(self.ind, self._calibration_img_dimension)
 
-            calibration_x = self._calibration_img_x_calibration[roi.x_min:roi.x_max + 1]
+            calibration_x = self._calibration_img_x_calibration[int(roi.x_min):int(roi.x_max) + 1]
             calibration_y = self._get_roi_sum(self._calibration_img, roi)
 
             self.calibration_spectrum.data = calibration_x, calibration_y
