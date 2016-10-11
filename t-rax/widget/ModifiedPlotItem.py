@@ -90,7 +90,7 @@ class ModifiedPlotItem(pg.PlotItem):
     def get_mouse_position(self):
         return self.cur_mouse_position_x, self.cur_mouse_position_y
 
-    def empty_event_function(self, ev):
+    def empty_event_function(self, ev, *args, **kwargs):
         pass
 
     def mouse_drag_event(self, ev, axis=None):
