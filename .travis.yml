@@ -19,7 +19,7 @@ before_install:
 
 install:
     - conda config --add channels cprescher
-    - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy python-dateutil nose pyqt h5py qtpy pyqtgraph lmfit
+    - conda install --yes scipy python-dateutil nose pyqt h5py qtpy pyqtgraph lmfit
     - pip install coverage PyOpenGL mock
 
 script:
