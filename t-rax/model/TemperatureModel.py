@@ -559,11 +559,11 @@ class SingleTemperatureModel(QtCore.QObject):
         self._update_corrected_spectrum()
 
     def _get_roi_sum(self, img, roi):
-        roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
+        roi_img = img[int(roi.y_min):int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
         return np.sum(roi_img, 0) / np.float(np.size(roi_img, 0))
 
     def _get_roi_max(self, img, roi):
-        roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
+        roi_img = img[int(roi.y_min):int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
         return np.max(roi_img)
 
     # finally the fitting function

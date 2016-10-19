@@ -288,6 +288,8 @@ class SpeFile(object):
         self._data_type = self._read_at(108, 1, np.uint16)[0]
 
     def _read_at(self, pos, size, ntype):
+        pos = int(pos)
+        size = int(size)
         self._fid.seek(pos)
         return np.fromfile(self._fid, ntype, size)
 

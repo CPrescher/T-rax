@@ -79,7 +79,7 @@ class RamanController(QtCore.QObject):
     def load_settings(self, settings):
         raman_data_path = str(settings.value("raman data file").toString())
         if os.path.exists(raman_data_path):
-            self.base_controller.load_data_file(raman_data_path)
+            self.base_controller.load_file_btn_clicked(raman_data_path)
 
         raman_autoprocessing = settings.value("raman autoprocessing").toBool()
         if raman_autoprocessing:
