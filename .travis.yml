@@ -18,8 +18,9 @@ before_install:
     - sh -e /etc/init.d/xvfb start
 
 install:
-    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy dateutil nose pyqt h5py qtpy
-    - pip install lmfit coverage PyOpenGL mock pyqtgraph
+    - conda config --add channels cprescher
+    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy dateutil nose pyqt h5py qtpy pyqtgraph lmfit
+    - pip install coverage PyOpenGL mock
 
 script:
     - cd t-rax/test
