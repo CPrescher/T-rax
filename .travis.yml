@@ -18,7 +18,7 @@ before_install:
     - sh -e /etc/init.d/xvfb start
 
 install:
-    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy dateutil nose pyqt h5py
+    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy dateutil nose pyqt h5py qtpy
     - pip install lmfit coverage PyOpenGL mock pyqtgraph
 
 script:
