@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from mock import patch
+from mock import patch, MagicMock
 import time
 import os
 import shutil
@@ -51,6 +51,9 @@ class BaseControllerTest(unittest.TestCase):
         self.controller = BaseController(self.model, self.widget)
         self.model = self.controller.model
 
+        QtWidgets.QFileDialog.getOpenFileName = MagicMock(
+            return_value=os.path.abspath(os.path.join(unittest_files_path, 'temper_009.spe')))
+
     def tearDown(self):
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'temp.spe'))
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.txt'))
@@ -61,10 +64,7 @@ class BaseControllerTest(unittest.TestCase):
         if os.path.exists(path):
             os.remove(path)
 
-    @patch('qtpy.QtWidgets.QFileDialog.getOpenFileName')
-    def test_loading_files(self, filedialog):
-        in_path = os.path.abspath(os.path.join(unittest_files_path, 'temper_009.spe'))
-        filedialog.return_value = in_path
+    def test_loading_files(self):
         QTest.mouseClick(self.widget.load_file_btn, QtCore.Qt.LeftButton)
 
         self.assertIsNotNone(self.model.spectrum)
@@ -80,15 +80,12 @@ class BaseControllerTest(unittest.TestCase):
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].x_max_txt.text()), "0")
         self.assertNotEqual(str(self.widget.roi_widget.roi_gbs[0].y_max_txt.text()), "0")
 
-    @patch('qtpy.QtWidgets.QFileDialog.getSaveFileName')
-    def test_saving_data(self, filedialog):
+    def test_saving_data(self):
         # load a file:
-        self.controller.load_data_file(
-            os.path.join(unittest_files_path, 'temper_009.spe')
-        )
+        self.controller.load_file_btn_clicked()
         # Monkey patch
         out_path = os.path.join(unittest_files_path, 'output.txt')
-        filedialog.return_value = out_path
+        QtWidgets.QFileDialog.getSaveFileName = MagicMock(return_value=out_path)
 
         # initiate the saving process
         QTest.mouseClick(self.widget.save_data_btn, QtCore.Qt.LeftButton)
@@ -97,9 +94,7 @@ class BaseControllerTest(unittest.TestCase):
     @patch('qtpy.QtWidgets.QFileDialog.getSaveFileName')
     def test_saving_graph(self, filedialog):
         # load a file:
-        self.controller.load_data_file(
-            os.path.join(unittest_files_path, 'temper_009.spe')
-        )
+        self.controller.load_file_btn_clicked()
 
         # Monkey patch
         out_path = os.path.join(unittest_files_path, 'output.svg')
@@ -117,9 +112,11 @@ class BaseControllerTest(unittest.TestCase):
         self.assertTrue(os.path.exists(out_path))
 
     def test_load_multiple_frame_file(self):
-        self.controller.load_data_file(os.path.join(unittest_files_path,
-                                                    'temperature_fitting',
-                                                    'test_measurement_multiple.spe'))
+        QtWidgets.QFileDialog.getOpenFileName = MagicMock(
+            return_value=os.path.join(unittest_files_path,
+                                      'temperature_fitting',
+                                      'test_measurement_multiple.spe'))
+        self.controller.load_file_btn_clicked()
 
         self.assertEqual(float(str(self.widget.frame_txt.text())), self.model.current_frame)
 
@@ -132,7 +129,7 @@ class BaseControllerTest(unittest.TestCase):
         self.assertTrue(array_equal(img_data, img_data3))
 
     def test_changing_roi(self):
-        self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+        self.controller.load_file_btn_clicked()
 
         x, y = self.model.spectrum.data
         self.widget.roi_widget.roi_gbs[0].x_min_txt.setText("")
@@ -143,7 +140,7 @@ class BaseControllerTest(unittest.TestCase):
         self.assertNotEqual(len(x), len(new_x))
 
     def test_using_auto_load_function(self):
-        self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+        self.controller.load_file_btn_clicked()
 
         QTest.mouseClick(self.widget.autoprocess_cb, QtCore.Qt.LeftButton,
                          pos=QtCore.QPoint(2, self.widget.autoprocess_cb.height() / 2))
@@ -151,12 +148,12 @@ class BaseControllerTest(unittest.TestCase):
         shutil.copy2(os.path.join(unittest_files_path, 'temper_009.spe'),
                      os.path.join(unittest_files_path, 'temp.spe'))
 
-        time.sleep(0.2) #need to wait until file_watcher updates the path correctly
+        time.sleep(0.1)  # need to wait until file_watcher updates the path correctly
         QtWidgets.QApplication.processEvents()
         self.assertEqual(str(self.widget.filename_lbl.text()), 'temp.spe')
 
     def test_graph_status_bar_shows_file_info(self):
-        self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+        self.controller.load_file_btn_clicked()
         self.assertEqual(str(self.widget.graph_info_lbl.text()), self.model.file_info)
 
     def test_graph_status_bar_shows_mouse_position(self):
@@ -166,7 +163,7 @@ class BaseControllerTest(unittest.TestCase):
         self.assertIn("104", str(self.widget.graph_mouse_pos_lbl.text()))
 
     def test_roi_status_bar_shows_mouse_position_intensity_and_wavelength(self):
-        self.controller.load_data_file(os.path.join(unittest_files_path, 'temper_009.spe'))
+        self.controller.load_file_btn_clicked()
         self.widget.roi_widget.img_widget.mouse_moved.emit(130, 20)
 
         self.assertIn("20", self.widget.roi_widget.pos_lbl.text())

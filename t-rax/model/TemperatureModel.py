@@ -271,13 +271,20 @@ class TemperatureModel(QtCore.QObject):
         header += "Downstream (K): {:.1f}\t{:.1f}\n".format(self.ds_temperature, self.ds_temperature_error)
         header += "Upstream (K): {:.1f}\t{:.1f}\n\n".format(self.us_temperature, self.us_temperature_error)
         header += "Datacolumns:\n"
-        header += "\t".join(("lambda(nm)", "DS_data", "DS_fit", "US_data", "US_fit"))
+        header_ds = header + "\t".join(("lambda(nm)", "DS_data", "DS_fit"))
+        header_us = header + "\t".join(("lambda(nm)", "US_data", "US_fit"))
 
-        output_matrix = np.vstack((self.ds_data_spectrum.x,
-                                   self.ds_corrected_spectrum.y, self.ds_fit_spectrum.y,
-                                   self.us_corrected_spectrum.y, self.us_fit_spectrum.y))
+        output_matrix_ds = np.vstack((self.ds_data_spectrum.x,
+                                      self.ds_corrected_spectrum.y, self.ds_fit_spectrum.y))
 
-        np.savetxt(filename, output_matrix.T, header=header)
+        output_matrix_us = np.vstack((self.us_data_spectrum.x,
+                                      self.us_corrected_spectrum.y, self.us_fit_spectrum.y))
+
+        ds_filename = filename.rsplit('.', 1)[0] + '_ds.txt'
+        us_filename = filename.rsplit('.', 1)[0] + '_us.txt'
+
+        np.savetxt(ds_filename, output_matrix_ds.T, header=header_ds)
+        np.savetxt(us_filename, output_matrix_us.T, header=header_us)
 
     # updating roi values
     @property
@@ -559,11 +566,11 @@ class SingleTemperatureModel(QtCore.QObject):
         self._update_corrected_spectrum()
 
     def _get_roi_sum(self, img, roi):
-        roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
+        roi_img = img[int(roi.y_min):int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
         return np.sum(roi_img, 0) / np.float(np.size(roi_img, 0))
 
     def _get_roi_max(self, img, roi):
-        roi_img = img[roi.y_min: roi.y_max + 1, roi.x_min:roi.x_max + 1]
+        roi_img = img[int(roi.y_min):int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
         return np.max(roi_img)
 
     # finally the fitting function

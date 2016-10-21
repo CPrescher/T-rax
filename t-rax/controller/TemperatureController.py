@@ -338,8 +338,8 @@ class TemperatureController(QtCore.QObject):
         try:
             self.widget.roi_widget.pos_lbl.setText("X: {:5.0f}  Y: {:5.0f}    Int: {:6.0f}    lambda: {:5.2f} nm".
                                                    format(x, y,
-                                                          self.model.data_img[y, x],
-                                                          self.model.data_img_file.x_calibration[x]))
+                                                          self.model.data_img[int(y), int(x)],
+                                                          self.model.data_img_file.x_calibration[int(x)]))
         except (IndexError, TypeError):
             pass
 

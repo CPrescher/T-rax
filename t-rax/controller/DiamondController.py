@@ -97,7 +97,7 @@ class DiamondController(QtCore.QObject):
     def load_settings(self, settings):
         data_path = str(settings.value("diamond data file").toString())
         if os.path.exists(data_path):
-            self.base_controller.load_data_file(data_path)
+            self.base_controller.load_file_btn_clicked(data_path)
 
         autoprocessing = settings.value("diamond autoprocessing").toBool()
         if autoprocessing:
