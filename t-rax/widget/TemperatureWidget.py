@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from qtpy import QtCore, QtWidgets, QtGui
-
+import os
 from .TemperatureSpectrumWidget import TemperatureSpectrumWidget
 from .RoiWidget import RoiWidget
 from .Widgets import TemperatureFileGroupBox as FileGroupBox
@@ -110,6 +110,7 @@ class TemperatureWidget(QtWidgets.QWidget):
         self.graph_mouse_pos_lbl = self.graph_status_bar.left_lbl
         self.graph_info_lbl = self.graph_status_bar.right_lbl
 
+        self.setup_epics_pb = self.control_widget.experiment_tab.setup_epics_pb
         self.connect_to_epics_cb = self.control_widget.experiment_tab.connect_to_epics_cb
 
 
@@ -134,16 +135,20 @@ class TemperatureExperimentTab(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(TemperatureExperimentTab, self).__init__(*args, **kwargs)
         self._layout = QtWidgets.QVBoxLayout()
+        self._hlayout = QtWidgets.QHBoxLayout()
         self.file_gb = FileGroupBox()
         self.output_gb = OutputGroupBox()
         self.settings_gb = SettingsGroupBox()
+        self.setup_epics_pb = QtWidgets.QPushButton("Setup Epics")
         self.connect_to_epics_cb = QtWidgets.QCheckBox("Connect to Epics")
         self.connect_to_epics_cb.setLayoutDirection(QtCore.Qt.RightToLeft)
 
         self._layout.addWidget(self.file_gb)
         self._layout.addWidget(self.output_gb)
         self._layout.addWidget(self.settings_gb)
-        self._layout.addWidget(self.connect_to_epics_cb)
+        self._hlayout.addWidget(self.setup_epics_pb)
+        self._hlayout.addWidget(self.connect_to_epics_cb)
+        self._layout.addLayout(self._hlayout)
         self._layout.addSpacerItem(QtWidgets.QSpacerItem(10, 10,
                                                      QtWidgets.QSizePolicy.Fixed,
                                                      QtWidgets.QSizePolicy.Expanding))
@@ -241,3 +246,129 @@ class CalibrationGB(QtWidgets.QGroupBox):
     def set_stylesheet(self):
         style_str = "QGroupBox { color: %s; border: 1px solid %s}" % (self.color, self.color)
         self.setStyleSheet(style_str)
+
+
+class SetupEpicsDialog(QtWidgets.QDialog):
+    """
+    Dialog for inputting map positions manually
+    """
+
+    def __init__(self, parent):
+        super(SetupEpicsDialog, self).__init__()
+
+        self._parent = parent
+        self._create_widgets()
+        self._layout_widgets()
+        self._style_widgets()
+
+        self._connect_widgets()
+        self.approved = False
+
+    def _create_widgets(self):
+        self.us_temp_lbl = QtWidgets.QLabel("US Temperature PV")
+        self.ds_temp_lbl = QtWidgets.QLabel("DS Temperature PV")
+        self.us_int_lbl = QtWidgets.QLabel("US Intensity PV")
+        self.ds_int_lbl = QtWidgets.QLabel("DS Intensity PV")
+        self.file_counter_lbl = QtWidgets.QLabel("File Counter PV")
+
+        self.us_temp_txt = QtWidgets.QLineEdit()
+        self.ds_temp_txt = QtWidgets.QLineEdit()
+        self.us_int_txt = QtWidgets.QLineEdit()
+        self.ds_int_txt = QtWidgets.QLineEdit()
+        self.file_counter_txt = QtWidgets.QLineEdit()
+
+        self.us_temp_txt.setToolTip("Enter the complete PV, or None")
+        self.ds_temp_txt.setToolTip("Enter the complete PV, or None")
+        self.us_int_txt.setToolTip("Enter the complete PV, or None")
+        self.ds_int_txt.setToolTip("Enter the complete PV, or None")
+        self.file_counter_txt.setToolTip("Enter the complete PV, or None")
+
+        self.ok_btn = QtWidgets.QPushButton("Done")
+        self.cancel_btn = QtWidgets.QPushButton("Cancel")
+
+    def _layout_widgets(self):
+        self._grid_layout = QtWidgets.QGridLayout()
+
+        self._grid_layout.addWidget(self.us_temp_lbl, 0, 0)
+        self._grid_layout.addWidget(self.ds_temp_lbl, 1, 0)
+        self._grid_layout.addWidget(self.us_int_lbl, 2, 0)
+        self._grid_layout.addWidget(self.ds_int_lbl, 3, 0)
+        self._grid_layout.addWidget(self.file_counter_lbl, 4, 0)
+        self._grid_layout.addWidget(self.us_temp_txt, 0, 1)
+        self._grid_layout.addWidget(self.ds_temp_txt, 1, 1)
+        self._grid_layout.addWidget(self.us_int_txt, 2, 1)
+        self._grid_layout.addWidget(self.ds_int_txt, 3, 1)
+        self._grid_layout.addWidget(self.file_counter_txt, 4, 1)
+        self._grid_layout.addWidget(self.ok_btn, 5, 0)
+        self._grid_layout.addWidget(self.cancel_btn, 5, 1)
+
+        self.setLayout(self._grid_layout)
+
+    def _style_widgets(self):
+        self.ok_btn.setEnabled(False)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+
+    def _connect_widgets(self):
+        """
+        Connecting actions to slots.
+        """
+        self.ok_btn.clicked.connect(self.accept_epics_setup)
+        self.cancel_btn.clicked.connect(self.reject_epics_setup)
+
+    def accept_epics_setup(self):
+        self.approved = True
+        self.accept()
+
+    def reject_epics_setup(self):
+        self.approved = False
+        self.reject()
+
+    @property
+    def us_temp_pv(self):
+        return str(self.us_temp_txt.text())
+
+    @us_temp_pv.setter
+    def us_temp_pv(self, pv):
+        self.us_temp_txt.setText(pv)
+
+    @property
+    def ds_temp_pv(self):
+        return str(self.ds_temp_txt.text())
+
+    @ds_temp_pv.setter
+    def ds_temp_pv(self, pv):
+        self.ds_temp_txt.setText(pv)
+
+    @property
+    def us_int_pv(self):
+        return str(self.us_int_txt.text())
+
+    @us_int_pv.setter
+    def us_int_pv(self, pv):
+        self.us_int_txt.setText(pv)
+
+    @property
+    def ds_int_pv(self):
+        return str(self.ds_int_txt.text())
+
+    @ds_int_pv.setter
+    def ds_int_pv(self, pv):
+        self.ds_int_txt.setText(pv)
+
+    @property
+    def file_counter_pv(self):
+        return str(self.file_counter_txt.text())
+
+    @file_counter_pv.setter
+    def file_counter_pv(self, pv):
+        self.file_counter_txt.setText(pv)
+
+    def exec_(self):
+        """
+        Overwriting the dialog exec_ function to center the widget in the parent window before execution.
+        """
+        parent_center = self._parent.window().mapToGlobal(self._parent.window().rect().center())
+        self.move(parent_center.x() - 101, parent_center.y() - 48)
+        super(SetupEpicsDialog, self).exec_()
+
