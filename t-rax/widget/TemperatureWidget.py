@@ -24,6 +24,8 @@ from .RoiWidget import RoiWidget
 from .Widgets import TemperatureFileGroupBox as FileGroupBox
 from .Widgets import OutputGroupBox, StatusBar
 
+widget_path = os.path.dirname(__file__)
+
 
 class TemperatureWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
@@ -307,6 +309,12 @@ class SetupEpicsDialog(QtWidgets.QDialog):
     def _style_widgets(self):
         self.ok_btn.setEnabled(False)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+        file = open(os.path.join(widget_path, "stylesheet.qss"))
+        stylesheet = file.read()
+        self.setStyleSheet(stylesheet)
+        file.close()
+
 
 
     def _connect_widgets(self):
