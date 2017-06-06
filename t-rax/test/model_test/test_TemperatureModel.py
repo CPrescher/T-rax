@@ -25,7 +25,7 @@ from qtpy import QtWidgets
 import numpy as np
 
 from model.TemperatureModel import TemperatureModel
-from model.RoiData import Roi
+from model.RoiData import Roi, get_roi_max, get_roi_sum
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
@@ -533,13 +533,13 @@ class TestTemperatureModel(unittest.TestCase):
     def test_get_roi_sum_handles_negative_indices(self):
         self.model.load_data_image(os.path.join(unittest_files_path, 'temper_009.spe'))
 
-        sum_1 = self.model.us_temperature_model._get_roi_sum(self.model.data_img, Roi([0, 300, 10, 50]))
-        sum_2 = self.model.us_temperature_model._get_roi_sum(self.model.data_img, Roi([-100, 300, 10, 50]))
+        sum_1 = get_roi_sum(self.model.data_img, Roi([0, 300, 10, 50]))
+        sum_2 = get_roi_sum(self.model.data_img, Roi([-100, 300, 10, 50]))
         self.assertGreater(len(sum_2), 0)
         self.assertEqual(np.sum(sum_1), np.sum(sum_2))
 
-        sum_1 = self.model.us_temperature_model._get_roi_sum(self.model.data_img, Roi([ 10, 300, 0, 30]))
-        sum_2 = self.model.us_temperature_model._get_roi_sum(self.model.data_img, Roi([ 10, 300, -10, 30]))
+        sum_1 = get_roi_sum(self.model.data_img, Roi([ 10, 300, 0, 30]))
+        sum_2 = get_roi_sum(self.model.data_img, Roi([ 10, 300, -10, 30]))
 
         self.assertGreater(len(sum_2), 0)
         self.assertEqual(np.sum(sum_1), np.sum(sum_2))
@@ -547,10 +547,10 @@ class TestTemperatureModel(unittest.TestCase):
     def test_get_roi_max_handles_negative_indices(self):
         self.model.load_data_image(os.path.join(unittest_files_path, 'temper_009.spe'))
 
-        max_1 = self.model.us_temperature_model._get_roi_max(self.model.data_img, Roi([0, 300, 10, 50]))
-        max_2 = self.model.us_temperature_model._get_roi_max(self.model.data_img, Roi([-100, 300, 10, 50]))
+        max_1 = get_roi_max(self.model.data_img, Roi([0, 300, 10, 50]))
+        max_2 = get_roi_max(self.model.data_img, Roi([-100, 300, 10, 50]))
         self.assertEqual(max_1, max_2)
 
-        max_1 = self.model.us_temperature_model._get_roi_max(self.model.data_img, Roi([ 10, 300, 0, 30]))
-        max_2 = self.model.us_temperature_model._get_roi_max(self.model.data_img, Roi([ 10, 300, -10, 30]))
+        max_1 = get_roi_max(self.model.data_img, Roi([ 10, 300, 0, 30]))
+        max_2 = get_roi_max(self.model.data_img, Roi([ 10, 300, -10, 30]))
         self.assertEqual(max_1, max_2)
