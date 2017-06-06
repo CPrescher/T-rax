@@ -559,6 +559,13 @@ class SingleTemperatureModel(QtCore.QObject):
         self._update_corrected_spectrum()
 
     def _get_roi_sum(self, img, roi):
+        """
+        Averages up all pixels in vertical direction of the ROI
+        :param img: 2d image array
+        :param roi: the region of Interest
+        :type roi: ROI
+        :return: averaged 1-dimensional numpy array
+        """
         x_min = roi.x_min
         if x_min < 0:
             x_min = 0
