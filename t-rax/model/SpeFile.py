@@ -118,7 +118,13 @@ class SpeFile(object):
         rawtime = self._read_at(172, 6, np.int8)
         strdate = ''.join([chr(i) for i in rawdate])
         strdate += ''.join([chr(i) for i in rawtime])
-        self.date_time = datetime.datetime.strptime(strdate, "%d%b%Y%H%M%S")
+        import locale
+        locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+        try:
+            self.date_time = datetime.datetime.strptime(str(strdate), "%d%b%Y%H%M%S")
+        except:
+            print('WARNING: could note read datetime from SPE_FILE')
+            self.date_time = datetime.datetime.now()
 
 
     def _read_calibration_from_header(self):
