@@ -136,3 +136,30 @@ class RoiDataManager():
         else:
             self.get_rois(img_dimension)
             self.set_roi(index, img_dimension, limits)
+
+
+def validate_roi(roi):
+    roi.x_min, roi.x_max = (roi.x_min, roi.x_max) if roi.x_max > roi.x_min else (roi.x_max, roi.x_min)
+    roi.y_min, roi.y_max = (roi.y_min, roi.y_max) if roi.y_max > roi.y_min else (roi.y_max, roi.y_min)
+    roi.x_min = roi.x_min if roi.x_min > 0 else 0
+    roi.y_min = roi.y_min if roi.y_min > 0 else 0
+    return roi
+
+
+def get_roi_sum(img, roi):
+    """
+    Averages up all pixels in vertical direction of the ROI
+    :param img: 2d image array
+    :param roi: the region of Interest
+    :type roi: ROI
+    :return: averaged 1-dimensional numpy array
+    """
+    roi = validate_roi(roi)
+    roi_img = img[int(roi.y_min):int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
+    return np.sum(roi_img, 0) / np.float(np.size(roi_img, 0))
+
+
+def get_roi_max(img, roi):
+    roi = validate_roi(roi)
+    roi_img = img[int(roi.y_min):int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
+    return np.max(roi_img)

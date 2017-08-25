@@ -7,7 +7,7 @@ a = Analysis([os.path.join(folder, 'T-Rax.py')],
                             'scipy.integrate.odepack', 'scipy.integrate._odepack', 'scipy.integrate._ode',
                             'scipy.integrate.quadpack', 'scipy.integrate._quadpack',
                             'scipy.integrate.vode', 'scipy.integrate._dop', 'scipy.integrate.lsoda',
-                            'h5py.h5ac'],
+                            'h5py.h5ac', 'h5py.defs', 'h5py.utils', 'h5py._proxy'],
              hookspath=None,
              runtime_hooks=None)
 
