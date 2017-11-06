@@ -24,7 +24,7 @@ from qtpy import QtWidgets
 
 import numpy as np
 
-from model.TemperatureModel import TemperatureModel
+from model.TemperatureModel import TemperatureModel, T_LOG_FILE, LOG_HEADER
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
@@ -231,6 +231,31 @@ class TestTemperatureModel(unittest.TestCase):
 
         self.assertEqual(np.round(self.model.ds_temperature), 1047)
         self.assertEqual(np.round(self.model.us_temperature), 1414)
+
+    def test_logging_of_single_frame(self):
+        temperature_fitting_path = os.path.join(
+            unittest_files_path, 'temperature_fitting')
+
+        log_path = os.path.join(temperature_fitting_path, T_LOG_FILE)
+        self.delete_if_exists(log_path)
+
+        self.load_single_frame_file_and_calibration()
+        self.model.write_to_log_file()
+
+        self.assertTrue(os.path.isfile(log_path))
+        self.model.log_file.close()
+
+        file = open(log_path)
+        lines = file.readlines()
+
+        self.assertEqual(lines[0], LOG_HEADER)
+        line2 = lines[1].split('\t')
+
+        self.assertEqual(line2[0], os.path.basename(self.model.filename))
+        self.assertEqual(line2[1], os.path.dirname(self.model.filename))
+        file.close()
+
+        self.delete_if_exists(log_path)
 
     def test_multiple_frame_spe_file(self):
         temperature_fitting_path = os.path.join(

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 from qtpy import QtCore
 import numpy as np
 from scipy.optimize import curve_fit
@@ -27,6 +28,9 @@ from model.RoiData import RoiDataManager, Roi
 from model.SpeFile import SpeFile
 from model.helper import FileNameIterator
 
+T_LOG_FILE = 'T_log.txt'
+LOG_HEADER = '# File\tPath\tT_DS\tT_US\tDetector\tExposure Time [sec]\n'
+
 
 class TemperatureModel(QtCore.QObject):
     data_changed = QtCore.Signal()
@@ -36,8 +40,10 @@ class TemperatureModel(QtCore.QObject):
     def __init__(self):
         super(TemperatureModel, self).__init__()
 
+        self.filename = None
         self.data_img_file = None
         self._data_img = None
+        self.log_file = None
 
         self.ds_calibration_img_file = None
         self.us_calibration_img_file = None
@@ -56,6 +62,9 @@ class TemperatureModel(QtCore.QObject):
     # loading spe image files:
     #########################################################################
     def load_data_image(self, filename):
+        if not self.filename or not os.path.dirname(self.filename) == os.path.dirname(filename):
+            self.create_log_file(os.path.dirname(filename))
+        self.filename = filename
         self.data_img_file = SpeFile(filename)
 
         if self.data_img_file.num_frames > 1:
@@ -91,6 +100,17 @@ class TemperatureModel(QtCore.QObject):
         self._update_temperature_models_data()
         self.data_changed.emit()
         return True
+
+    def create_log_file(self, file_path):
+        self.log_file = open(os.path.join(file_path, T_LOG_FILE), 'a')
+        self.log_file.write(LOG_HEADER)
+        return self.log_file
+
+    def write_to_log_file(self):
+        log_data = (os.path.basename(self.filename), os.path.dirname(self.filename), str(self.ds_temperature),
+                    str(self.us_temperature), self.data_img_file.detector, str(self.data_img_file.exposure_time))
+        self.log_file.write('\t'.join(log_data) + '\n')
+        self.log_file.flush()
 
     def _update_temperature_models_data(self):
         self.ds_temperature_model.set_data(self._data_img,
