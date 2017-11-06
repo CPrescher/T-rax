@@ -22,6 +22,7 @@ from qtpy import QtCore
 import numpy as np
 from scipy.optimize import curve_fit
 import h5py
+import math
 
 from model.Spectrum import Spectrum
 from model.RoiData import RoiDataManager, Roi
@@ -107,8 +108,17 @@ class TemperatureModel(QtCore.QObject):
         return self.log_file
 
     def write_to_log_file(self):
-        log_data = (os.path.basename(self.filename), os.path.dirname(self.filename), str(self.ds_temperature),
-                    str(self.us_temperature), self.data_img_file.detector, str(self.data_img_file.exposure_time))
+        if not math.isnan(self.ds_temperature):
+            ds_temp = str(int(self.ds_temperature))
+        else:
+            ds_temp = 'NaN'
+        if not math.isnan(self.us_temperature):
+            us_temp = str(int(self.us_temperature))
+        else:
+            us_temp = 'NaN'
+
+        log_data = (os.path.basename(self.filename), os.path.dirname(self.filename), ds_temp, us_temp,
+                    self.data_img_file.detector, str(self.data_img_file.exposure_time))
         self.log_file.write('\t'.join(log_data) + '\n')
         self.log_file.flush()
 
