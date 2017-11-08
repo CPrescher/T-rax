@@ -64,7 +64,7 @@ class SpeFile(object):
         self._fid.close()
 
     def _read_parameter(self):
-        """Reads in size and datatype. Decides wether it should check in the binary
+        """Reads in size and datatype. Decides whether it should check in the binary
         header (version 2) or in the xml-footer for the experimental parameters"""
         self._read_size()
         self._read_datatype()
@@ -260,9 +260,12 @@ class SpeFile(object):
                     getElementsByTagName('RegionsOfInterest')[0]. \
                     getElementsByTagName('CustomRegions')[0]. \
                     getElementsByTagName('RegionOfInterest')[0]
+                self.roi_dom_width = self.dom.getElementsByTagName('DataFormat')[0]. \
+                    getElementsByTagName('DataBlock')[0]. \
+                    getElementsByTagName('DataBlock')[0]
                 self.roi_x = int(self.roi_dom.attributes['x'].value)
                 self.roi_y = int(self.roi_dom.attributes['y'].value)
-                self.roi_width = int(self.roi_dom.attributes['width'].value)
+                self.roi_width = int(self.roi_dom_width.attributes['width'].value)
                 self.roi_height = int(self.roi_dom.attributes['height'].value)
                 self.roi_x_binning = int(self.roi_dom.attributes['xBinning'].value)
                 self.roi_y_binning = int(self.roi_dom.attributes['yBinning'].value)
