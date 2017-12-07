@@ -258,7 +258,7 @@ class TemperatureController(QtCore.QObject):
             epics_counter = None
         if epics is not None and epics_counter is not None:
             counter = (epics.caget(eps.epics_settings['file_counter'], as_string=True))
-            if counter == '':
+            if counter == '' or counter is None:
                 counter = '1'
             epics.caput(eps.epics_settings['file_counter'], str(int(counter) + 1))
 
