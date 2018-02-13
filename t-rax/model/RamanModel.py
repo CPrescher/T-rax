@@ -38,6 +38,7 @@ class RamanModel(SingleSpectrumModel, object):
         super(RamanModel, self).load_file(filename)
         if not self.log_file or not os.path.dirname(self.filename) == os.path.dirname(filename):
             self.create_log_file(os.path.dirname(filename))
+        self.write_to_log_file()
 
     def create_log_file(self, file_path):
         self.log_file = open(os.path.join(file_path, RAMAN_LOG_FILE), 'a')
@@ -45,7 +46,6 @@ class RamanModel(SingleSpectrumModel, object):
         return self.log_file
 
     def write_to_log_file(self):
-        print("Writing to log file")
         filename = os.path.normpath(self.filename)
         log_data = (os.path.basename(filename), os.path.dirname(filename), str(self.spe_file.exposure_time),
                     str(self.laser_line), self.spe_file.detector)
