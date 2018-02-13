@@ -31,6 +31,9 @@ class RamanModel(SingleSpectrumModel, object):
         self._laser_line = 532
         self._mode = RamanModel.REVERSE_CM_MODE
 
+    def load_file(self, filename):
+        super(RamanModel, self).load_file(filename)
+
     @property
     def spectrum(self):
         spec = super(RamanModel, self).spectrum
