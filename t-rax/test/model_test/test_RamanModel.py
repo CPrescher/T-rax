@@ -65,8 +65,7 @@ class RamanModelTest(unittest.TestCase):
         self.assertTrue(np.array_equal(y, y_new))
 
     def test_logging_of_single_raman_spectrum(self):
-        raman_export_path = os.path.join(
-            unittest_files_path, 'raman_data')
+        raman_export_path = unittest_files_path
 
         log_path = os.path.join(raman_export_path, RAMAN_LOG_FILE)
         self.delete_if_exists(log_path)
@@ -83,8 +82,8 @@ class RamanModelTest(unittest.TestCase):
         self.assertEqual(lines[0], LOG_HEADER)
         line2 = lines[1].split('\t')
 
-        self.assertEqual(line2[0], os.path.basename(self.model.filename))
-        self.assertEqual(line2[1], os.path.dirname(self.model.filename))
+        self.assertEqual(line2[0], os.path.basename(os.path.normpath(self.model.filename)))
+        self.assertEqual(line2[1], os.path.dirname(os.path.normpath(self.model.filename)))
         file.close()
 
         self.delete_if_exists(log_path)

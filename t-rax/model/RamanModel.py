@@ -22,7 +22,7 @@ import os
 
 from .BaseModel import SingleSpectrumModel
 RAMAN_LOG_FILE = 'Raman_export_log.txt'
-LOG_HEADER = '# File\tPath\tExposure Time [sec]\tCentral Wavelength\n'
+LOG_HEADER = '# File\tPath\tExposure Time [sec]\tCentral Wavelength\tDetector\n'
 
 class RamanModel(SingleSpectrumModel, object):
     REVERSE_CM_MODE = 0
@@ -39,11 +39,18 @@ class RamanModel(SingleSpectrumModel, object):
         if not self.log_file or not os.path.dirname(self.filename) == os.path.dirname(filename):
             self.create_log_file(os.path.dirname(filename))
 
-    def write_to_log_file(self):
-        pass
+    def create_log_file(self, file_path):
+        self.log_file = open(os.path.join(file_path, RAMAN_LOG_FILE), 'a')
+        self.log_file.write(LOG_HEADER)
+        return self.log_file
 
-    def create_log_file(self, filename):
-        pass
+    def write_to_log_file(self):
+        print("Writing to log file")
+        filename = os.path.normpath(self.filename)
+        log_data = (os.path.basename(filename), os.path.dirname(filename), str(self.spe_file.exposure_time),
+                    str(self.laser_line), self.spe_file.detector)
+        self.log_file.write('\t'.join(log_data) + '\n')
+        self.log_file.flush()
 
     @property
     def spectrum(self):
