@@ -2,6 +2,7 @@
 folder = 't-rax'
 
 a = Analysis([os.path.join(folder, 'T-Rax.py')],
+             excludes=['PyQt4', 'hook-PyQt4', 'hook-PyQt4.uic', 'hook-PyQt4.uic.py'],
              pathex=[folder],
              hiddenimports=['scipy.special._ufuncs_cxx', 'scipy.integrate', 'scipy.integrate.quadrature',
                             'scipy.integrate.odepack', 'scipy.integrate._odepack', 'scipy.integrate._ode',
