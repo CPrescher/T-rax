@@ -23,7 +23,7 @@ from qtpy import QtWidgets
 
 import numpy as np
 
-from model.RamanModel import RamanModel
+from model.RamanModel import RamanModel, RAMAN_LOG_FILE, LOG_HEADER
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')

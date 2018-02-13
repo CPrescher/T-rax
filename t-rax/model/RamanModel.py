@@ -18,9 +18,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
+import os
 
 from .BaseModel import SingleSpectrumModel
-
+RAMAN_LOG_FILE = 'Raman_export_log.txt'
+LOG_HEADER = '# File\tPath\tExposure Time [sec]\tCentral Wavelength\n'
 
 class RamanModel(SingleSpectrumModel, object):
     REVERSE_CM_MODE = 0
@@ -30,9 +32,18 @@ class RamanModel(SingleSpectrumModel, object):
         super(RamanModel, self).__init__()
         self._laser_line = 532
         self._mode = RamanModel.REVERSE_CM_MODE
+        self.log_file = None
 
     def load_file(self, filename):
         super(RamanModel, self).load_file(filename)
+        if not self.log_file or not os.path.dirname(self.filename) == os.path.dirname(filename):
+            self.create_log_file(os.path.dirname(filename))
+
+    def write_to_log_file(self):
+        pass
+
+    def create_log_file(self, filename):
+        pass
 
     @property
     def spectrum(self):
