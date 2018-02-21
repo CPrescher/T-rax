@@ -104,21 +104,6 @@ class SingleSpectrumModel(QtCore.QObject, object):
             return self.data_spectrum
         return None
 
-    def _validate_roi(self, roi):
-        roi.x_min, roi.x_max = (roi.x_min, roi.x_max) if roi.x_max > roi.x_min else (roi.x_max, roi.x_min)
-        roi.y_min, roi.y_max = (roi.y_min, roi.y_max) if roi.y_max > roi.y_min else (roi.y_max, roi.y_min)
-        roi.x_min = roi.x_min if roi.x_min > 0 else 0
-        roi.y_min = roi.y_min if roi.y_min > 0 else 0
-        return roi
-
-    def _get_roi_sum(self, img, roi):
-        roi_img = img[int(roi.y_min): int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
-        return np.sum(roi_img, 0) / np.float(np.size(roi_img, 0))
-
-    def _get_roi_max(self, img, roi):
-        roi_img = img[int(roi.y_min): int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
-        return np.max(roi_img)
-
     @property
     def roi(self):
         try:
