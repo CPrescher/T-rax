@@ -77,7 +77,7 @@ class BaseController(QtCore.QObject):
             if filename is not '':
                 self.load_data_file(filename)
                 if len(filenames) > 1:
-                    self.save_data_btn_clicked(filename)
+                    self.save_data_btn_clicked(filename=filename)
 
     def load_data_file(self, filename):
         self.model.load_file(filename)
@@ -85,8 +85,8 @@ class BaseController(QtCore.QObject):
         self._directory_watcher.path = self._working_dir
         print('Loaded File: ', filename)
 
-    def save_data_btn_clicked(self, filename=None):
-
+    def save_data_btn_clicked(self, *kargs, **kwargs):
+        filename = kwargs.get('filename', None)
         if filename is None:
             filename = save_file_dialog(
                 self.widget,
