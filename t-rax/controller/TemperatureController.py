@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
+import os, importlib
 
 from qtpy import QtWidgets, QtCore
 
@@ -355,8 +355,8 @@ class TemperatureController(QtCore.QObject):
         self.widget.graph_mouse_pos_lbl.setText("X: {:8.2f}  Y: {:8.2f}".format(x, y))
 
     def roi_mouse_moved(self, x, y):
-        x = np.floor(x)
-        y = np.floor(y)
+        x = int(np.floor(x))
+        y = int(np.floor(y))
         try:
             self.widget.roi_widget.pos_lbl.setText("X: {:5.0f}  Y: {:5.0f}    Int: {:6.0f}    lambda: {:5.2f} nm".
                                                    format(x, y,

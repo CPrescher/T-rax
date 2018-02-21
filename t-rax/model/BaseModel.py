@@ -21,7 +21,7 @@ from qtpy import QtCore
 import numpy as np
 
 from .SpeFile import SpeFile
-from .RoiData import RoiDataManager, Roi
+from .RoiData import RoiDataManager, Roi, validate_roi, get_roi_max, get_roi_sum
 from .Spectrum import Spectrum
 from .helper import FileNameIterator
 
@@ -96,10 +96,10 @@ class SingleSpectrumModel(QtCore.QObject, object):
     def spectrum(self):
         if self.spe_file is not None:
             roi = self.roi_manager.get_roi(0, self._data_img_dimension)
-            self._validate_roi(roi)
+            roi = validate_roi(roi)
             data_x = self._data_img_x_calibration[int(roi.x_min):int(roi.x_max) + 1]
-            data_y = self._get_roi_sum(self.data_img, roi)
-            self.data_roi_max = self._get_roi_max(self.data_img, roi)
+            data_y = get_roi_sum(self.data_img, roi)
+            self.data_roi_max = get_roi_max(self.data_img, roi)
             self.data_spectrum.data = data_x, data_y
             return self.data_spectrum
         return None

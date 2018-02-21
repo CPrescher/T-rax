@@ -17,9 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 from qtpy import QtCore, QtWidgets, QtGui
-
+import os
 from .TemperatureSpectrumWidget import TemperatureSpectrumWidget
 from .RoiWidget import RoiWidget
 from .Widgets import TemperatureFileGroupBox as FileGroupBox
