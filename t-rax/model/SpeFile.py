@@ -201,7 +201,7 @@ class SpeFile(object):
             else:
                 # self._exposure_time = self.dom.getElementsByTagName('ReadoutControl')[0]. \
                 #     getElementsByTagName('Time')[0].childNodes[0].nodeValue
-                self._exposure_time = np.float(self._exposure_time)/1000000000
+                # self._exposure_time = np.float(self._exposure_time)/1000000000
                 self._exposure_time = self.dom.getElementsByTagName('Gating')[0]. \
                     getElementsByTagName('RepetitiveGate')[0].getElementsByTagName('Pulse')[0].getAttribute('width')
                 self._exposure_time = np.float(self._exposure_time)/1000000000
