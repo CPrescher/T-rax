@@ -20,24 +20,141 @@
 from qtpy import QtWidgets, QtCore
 
 import pyqtgraph as pg
+import numpy as np
 
 from .BaseWidget import BaseWidget
+from functools import partial
+from colorsys import hsv_to_rgb
 
 
 class RamanWidget(BaseWidget, object):
+    overlay_show_cb_state_changed = QtCore.Signal(int, bool)
+
     def __init__(self, parent):
         super(RamanWidget, self).__init__(parent)
 
         self.display_mode_gb = DisplayModeGroupBox()
         self.add_control_widget(self.display_mode_gb)
+        self.overlay_gb = OverlayGroupBox()
+        self.add_control_widget(self.overlay_gb)
+        self._body_layout = QtWidgets.QHBoxLayout()
+        self.overlay_tw = ListTableWidget(columns=3)
+        self._body_layout.addWidget(self.overlay_tw, 10)
+        self.add_control_widget(self.overlay_tw)
 
         self.create_raman_shortcuts()
+        self.modify_graph_widget()
+
+        # self.overlay_add_btn = QtWidgets.QPushButton('Add')
+        # self._main_layout.addWidget(self.overlay_add_btn)
+        self.overlays = []
+        self.overlay_show_cbs = []
+        self.overlay_labels = []
 
     def create_raman_shortcuts(self):
         self.laser_line_txt = self.display_mode_gb._laser_line_txt
         self.reverse_cm_cb = self.display_mode_gb._reverse_cm_cb
         self.nanometer_cb = self.display_mode_gb._nanometer_cb
+        self.sample_position_txt = self.display_mode_gb._sample_pos_txt
 
+    def modify_graph_widget(self):
+        self._raman_line = pg.InfiniteLine(pen=pg.mkPen((0, 197, 3), width=2))
+        self.graph_widget.add_item(self._raman_line)
+
+    def set_raman_line_pos(self, value):
+        self._raman_line.setValue(value)
+
+    def get_raman_line_pos(self):
+        return self._raman_line.value()
+
+    def add_overlay(self, spectrum):
+        x, y = spectrum.data
+        color = calculate_color(len(self.overlays) + 1)
+        self.overlays.append(pg.PlotDataItem(x, y, pen=pg.mkPen(color=color, width=0.5)))
+        self.overlay_labels.append(QtWidgets.QTableWidgetItem('None'))
+        self.graph_widget.add_item(self.overlays[-1])
+
+        current_rows = self.overlay_tw.rowCount()
+        self.overlay_tw.setRowCount(current_rows + 1)
+        self.overlay_tw.blockSignals(True)
+
+        show_cb = QtWidgets.QCheckBox()
+        show_cb.setChecked(True)
+        show_cb.stateChanged.connect(partial(self.overlay_show_cb_changed, show_cb))
+        show_cb.setStyleSheet("background-color: transparent")
+        self.overlay_tw.setCellWidget(current_rows, 0, show_cb)
+        self.overlay_show_cbs.append(show_cb)
+
+        color_button = QtWidgets.QPushButton()
+        color_button.setStyleSheet("background-color: rgb({},{},{})".format(color[0], color[1], color[2]))
+        # color_button.clicked.connect(partial(self.overlay_color_btn_click, color_button))
+        self.overlay_tw.setCellWidget(current_rows, 1, color_button)
+        # self.overlay_color_btns.append(color_button)
+
+        name_item = self.overlay_labels[-1]
+        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
+        self.overlay_tw.setItem(current_rows, 2, name_item)
+
+        self.overlay_tw.setColumnWidth(0, 20)
+        self.overlay_tw.setColumnWidth(1, 25)
+        self.overlay_tw.setRowHeight(current_rows, 25)
+        self.select_overlay(current_rows)
+        self.overlay_tw.blockSignals(False)
+
+    def overlay_show_cb_changed(self, checkbox):
+        self.overlay_show_cb_state_changed.emit(self.overlay_show_cbs.index(checkbox), checkbox.isChecked())
+
+    def hide_overlay(self, ind):
+        self.graph_widget.remove_item(self.overlays[ind])
+        # self.legend.hideItem(ind + 1)
+        # self.overlay_show[ind] = False
+        # self.update_graph_range()
+        QtWidgets.QApplication.processEvents()
+
+    def show_overlay(self, ind):
+        self.graph_widget.add_item(self.overlays[ind])
+        # self.legend.showItem(ind + 1)
+        # self.overlay_show[ind] = True
+        self.update_graph_range()
+        QtWidgets.QApplication.processEvents()
+
+    def select_overlay(self, ind):
+        if self.overlay_tw.rowCount() > 0:
+            self.overlay_tw.selectRow(ind)
+
+    def get_selected_overlay_row(self):
+        selected = self.overlay_tw.selectionModel().selectedRows()
+        try:
+            row = selected[0].row()
+        except IndexError:
+            row = -1
+        return row
+
+    def remove_overlay(self, ind):
+        self.overlay_tw.blockSignals(True)
+        self.overlay_tw.removeRow(ind)
+        self.overlay_tw.blockSignals(False)
+        del self.overlay_show_cbs[ind]
+        # del self.overlay_color_btns[ind]
+        del self.overlay_labels[ind]
+        self.remove_overlay_from_graph(ind)
+
+        if self.overlay_tw.rowCount() > ind:
+            self.select_overlay(ind)
+        else:
+            self.select_overlay(self.overlay_tw.rowCount() - 1)
+
+    def remove_overlay_from_graph(self, ind):
+        self.graph_widget.remove_item(self.overlays[ind])
+        del self.overlays[ind]
+        # self.legend.hideItem(ind + 1)
+        # self.overlay_show[ind] = False
+        # self.update_graph_range()
+        QtWidgets.QApplication.processEvents()
+
+    def set_overlay_color(self, ind, color):
+        self.overlays[ind].setPen(pg.mkPen(color=color, width=1.5))
+        self.legend.setItemColor(ind + 1, color)
 
 class DisplayModeGroupBox(QtWidgets.QGroupBox):
     def __init__(self, title='Options'):
@@ -57,6 +174,9 @@ class DisplayModeGroupBox(QtWidgets.QGroupBox):
         self._mode_lbl = QtWidgets.QLabel('Unit:')
         self._reverse_cm_cb = QtWidgets.QRadioButton('cm-1')
         self._nanometer_cb = QtWidgets.QRadioButton('nm')
+        self._sample_pos_lbl = QtWidgets.QLabel('Cursor:')
+        self._sample_pos_txt = QtWidgets.QLineEdit("0")
+
 
     def create_layout(self):
         self._laser_line_layout = QtWidgets.QHBoxLayout()
@@ -75,6 +195,8 @@ class DisplayModeGroupBox(QtWidgets.QGroupBox):
         self._layout.addLayout(self._laser_line_layout, 0, 1)
         self._layout.addWidget(self._mode_lbl, 1, 0)
         self._layout.addLayout(self._mode_layout, 1, 1)
+        self._layout.addWidget(self._sample_pos_lbl, 2, 0)
+        self._layout.addWidget(self._sample_pos_txt, 2, 1)
 
         self.setLayout(self._layout)
 
@@ -85,6 +207,53 @@ class DisplayModeGroupBox(QtWidgets.QGroupBox):
         self._laser_line_lbl.setAlignment(align)
         self._laser_line_txt.setAlignment(align)
         self._mode_lbl.setAlignment(align)
+        self._sample_pos_lbl.setAlignment(align)
+        self._sample_pos_txt.setAlignment(align)
+
+class OverlayGroupBox(QtWidgets.QGroupBox):
+    def __init__(self, title='Overlay'):
+        super(OverlayGroupBox, self).__init__(title)
+
+        self.create_widgets()
+        self.create_layout()
+        self.style_widgets()
+
+    def create_widgets(self):
+        self.overlay_add_btn = QtWidgets.QPushButton('Add')
+        self.overlay_remove_btn = QtWidgets.QPushButton('Remove')
+        # self.overlay_tw = ListTableWidget(columns=3)
+
+
+    def create_layout(self):
+        self._overlaylayout = QtWidgets.QGridLayout()
+        self._overlaylayout.addWidget(self.overlay_add_btn, 0, 0)
+        self._overlaylayout.addWidget(self.overlay_remove_btn, 1, 0)
+
+        self.setLayout(self._overlaylayout)
+
+    def style_widgets(self):
+        # align = QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
+        # self.overlay_add_btn.setAlignment(align)
+        pass
+
+
+class ListTableWidget(QtWidgets.QTableWidget):
+    def __init__(self, columns=3):
+        super(ListTableWidget, self).__init__()
+
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.setColumnCount(columns)
+        self.horizontalHeader().setVisible(False)
+        self.verticalHeader().setVisible(False)
+        self.horizontalHeader().setStretchLastSection(True)
+        self.setShowGrid(False)
+
+def calculate_color(ind):
+    s = 0.8
+    v = 0.8
+    h = (0.19 * (ind + 2)) % 1
+    return np.array(hsv_to_rgb(h, s, v)) * 255
 
 
 if __name__ == '__main__':

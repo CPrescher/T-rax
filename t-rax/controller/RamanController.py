@@ -21,7 +21,6 @@ from qtpy import QtCore
 import os
 
 from model.RamanModel import RamanModel
-from widget.RamanWidget import RamanWidget
 from controller.BaseController import BaseController
 
 
@@ -47,10 +46,26 @@ class RamanController(QtCore.QObject):
         self.widget.laser_line_txt.editingFinished.connect(self.laser_line_txt_changed)
         self.widget.nanometer_cb.toggled.connect(self.display_mode_changed)
         self.model.spectrum_changed.connect(self.spectrum_changed)
+        self.widget.sample_position_txt.editingFinished.connect(self.sample_pos_txt_changed)
+
+        self.widget.graph_widget.mouse_left_clicked.connect(self.mouse_left_clicked)
+
+        self.widget.overlay_gb.overlay_add_btn.clicked.connect(self.overlay_add_btn_clicked)
+        self.model.overlay_added.connect(self.overlay_added)
+
+        self.widget.overlay_gb.overlay_remove_btn.clicked.connect(self.overlay_remove_btn_clicked)
+        self.model.overlay_removed.connect(self.overlay_removed)
+
+        self.widget.overlay_show_cb_state_changed.connect(self.overlay_show_cb_state_changed)
 
     def laser_line_txt_changed(self):
         new_laser_line = float(str(self.widget.laser_line_txt.text()))
         self.model.laser_line = new_laser_line
+
+    def sample_pos_txt_changed(self):
+        new_value = float(str(self.widget.sample_position_txt.text()))
+        self.model.sample_position = new_value
+        self.widget.set_raman_line_pos(new_value)
 
     def display_mode_changed(self):
         if self.widget.nanometer_cb.isChecked():
@@ -64,8 +79,15 @@ class RamanController(QtCore.QObject):
         elif self.model.mode == RamanModel.REVERSE_CM_MODE:
             self.widget.graph_widget.set_xlabel('v (cm<sup>-1</sup>)')
 
+    def mouse_left_clicked(self, x, y):
+        self.model.sample_position = x
+        self.widget.sample_position_txt.setText("{:.2f}".format(x))
+        self.widget.set_raman_line_pos(x)
+
     def update_widget_parameter(self):
         self.widget.laser_line_txt.setText("{:.2f}".format(self.model.laser_line))
+        self.widget.sample_position_txt.setText("{:.2f}".format(self.model.sample_position))
+        self.widget.set_raman_line_pos(self.model.sample_position)
         if self.model.mode == RamanModel.WAVELENGTH_MODE:
             self.widget.nanometer_cb.setChecked(True)
 
@@ -98,3 +120,37 @@ class RamanController(QtCore.QObject):
             self.widget.roi_widget.set_rois([roi])
 
         self.update_widget_parameter()
+
+    def overlay_add_btn_clicked(self):
+        self.model.add_overlay()
+
+    def overlay_added(self):
+        color = self.widget.add_overlay(self.model.overlays[-1])
+        # self.widget.add_overlay(self.model.overlays[-1].name,
+        #                         '#%02x%02x%02x' % (int(color[0]), int(color[1]), int(color[2])))
+        # self.widget.add_overlay(self.model.overlays[-1])
+        self.widget.overlay_labels[-1].setText(os.path.basename(self.model.filename))
+
+    def overlay_remove_btn_clicked(self):
+        cur_ind = self.widget.get_selected_overlay_row()
+        if cur_ind < 0:
+            return
+        # if self.model.pattern_model.background_pattern == self.model.overlay_model.overlays[cur_ind]:
+            # self.model.pattern_model.background_pattern = None
+        self.model.remove_overlay(cur_ind)
+
+    def overlay_removed(self, ind):
+        self.widget.remove_overlay(ind)
+
+
+    def overlay_show_cb_state_changed(self, ind, state):
+        """
+        Callback for the checkboxes in the overlay tablewidget. Controls the visibility of the overlay in the pattern
+        view
+        :param ind: index of overlay
+        :param state: boolean value whether the checkbox was checked or unchecked
+        """
+        if state:
+            self.widget.show_overlay(ind)
+        else:
+            self.widget.hide_overlay(ind)
