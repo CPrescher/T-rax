@@ -118,3 +118,39 @@ class RamanOverlayControllerTest(unittest.TestCase):
         self.widget.overlay_gb.overlay_remove_btn.click()
         self.assertEqual(len(self.model.overlays), 0)
         self.assertEqual(self.widget.overlay_tw.rowCount(), 0)
+
+    def test_change_offset_in_view(self):
+        # sys.excepthook = excepthook
+        self.widget.overlay_gb.overlay_add_btn.click()
+        self.widget.select_overlay(0)
+
+        self.widget.overlay_gb.offset_sb.setValue(100)
+        self.assertEqual(self.model.get_overlay_offset(0), 100)
+
+        x, y = self.model.overlays[0].data
+        x_spec, y_spec = self.widget.overlays[0].getData()
+
+        self.assertAlmostEqual(np.sum(y - y_spec), 0)
+
+    def test_change_scaling_in_view(self):
+        # sys.excepthook = excepthook
+        self.widget.overlay_gb.overlay_add_btn.click()
+        self.widget.select_overlay(0)
+
+        self.widget.overlay_gb.scale_sb.setValue(2.0)
+        self.app.processEvents()
+        self.assertEqual(self.model.get_overlay_scaling(0), 2)
+
+        # tests if overlay is updated in pattern
+        x, y = self.model.overlays[0].data
+        x_spec, y_spec = self.widget.pattern_widget.overlays[0].getData()
+
+        self.assertAlmostEqual(np.sum(y - y_spec), 0)
+
+    def test_overlay_color_btn_clicked(self):
+        sys.excepthook = excepthook
+        self.widget.overlay_gb.overlay_add_btn.click()
+        self.widget.select_overlay(0)
+        print(self.widget.overlay_color_btns[0])
+        self.raman_controller.overlay_color_btn_clicked(0, self.widget.overlay_color_btns[0])
+        print("New Color = ", self.raman_controller.new_color)

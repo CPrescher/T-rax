@@ -28,7 +28,9 @@ from colorsys import hsv_to_rgb
 
 
 class RamanWidget(BaseWidget, object):
+
     overlay_show_cb_state_changed = QtCore.Signal(int, bool)
+    overlay_color_btn_clicked = QtCore.Signal(int, QtWidgets.QWidget)
 
     def __init__(self, parent):
         super(RamanWidget, self).__init__(parent)
@@ -50,12 +52,14 @@ class RamanWidget(BaseWidget, object):
         self.overlays = []
         self.overlay_show_cbs = []
         self.overlay_labels = []
+        self.overlay_color_btns = []
 
     def create_raman_shortcuts(self):
         self.laser_line_txt = self.display_mode_gb._laser_line_txt
         self.reverse_cm_cb = self.display_mode_gb._reverse_cm_cb
         self.nanometer_cb = self.display_mode_gb._nanometer_cb
         self.sample_position_txt = self.display_mode_gb._sample_pos_txt
+        self.overlay_offset_sb = self.overlay_gb.offset_sb
 
     def modify_graph_widget(self):
         self._raman_line = pg.InfiniteLine(pen=pg.mkPen((0, 197, 3), width=2))
@@ -67,10 +71,50 @@ class RamanWidget(BaseWidget, object):
     def get_raman_line_pos(self):
         return self._raman_line.value()
 
+    # def update_graph_range(self):
+    #     x_range = list(self.plot_item.dataBounds(0))
+    #     y_range = list(self.plot_item.dataBounds(1))
+    #
+    #     for ind, overlay in enumerate(self.overlays):
+    #         if self.overlay_show[ind]:
+    #             x_range_overlay = overlay.dataBounds(0)
+    #             y_range_overlay = overlay.dataBounds(1)
+    #             if x_range_overlay[0] < x_range[0]:
+    #                 x_range[0] = x_range_overlay[0]
+    #             if x_range_overlay[1] > x_range[1]:
+    #                 x_range[1] = x_range_overlay[1]
+    #             if y_range_overlay[0] < y_range[0]:
+    #                 y_range[0] = y_range_overlay[0]
+    #             if y_range_overlay[1] > y_range[1]:
+    #                 y_range[1] = y_range_overlay[1]
+    #
+    #     if x_range[1] is not None and x_range[0] is not None:
+    #         padding = self.view_box.suggestPadding(0)
+    #         diff = x_range[1] - x_range[0]
+    #         x_range = [x_range[0] - padding * diff,
+    #                    x_range[1] + padding * diff]
+    #
+    #         self.view_box.setLimits(xMin=x_range[0], xMax=x_range[1])
+    #
+    #         if self.auto_range:
+    #             self.view_box.setRange(xRange=x_range, padding=0)
+    #
+    #     if y_range[1] is not None and y_range[0] is not None:
+    #         padding = self.view_box.suggestPadding(1)
+    #         diff = y_range[1] - y_range[0]
+    #         y_range = [y_range[0] - padding * diff,
+    #                    y_range[1] + padding * diff]
+    #
+    #         self.view_box.setLimits(yMin=y_range[0], yMax=y_range[1])
+    #
+    #         if self.auto_range:
+    #             self.view_box.setRange(yRange=y_range, padding=0)
+    #     self.emit_sig_range_changed()
+
     def add_overlay(self, spectrum):
         x, y = spectrum.data
         color = calculate_color(len(self.overlays) + 1)
-        self.overlays.append(pg.PlotDataItem(x, y, pen=pg.mkPen(color=color, width=0.5)))
+        self.overlays.append(pg.PlotDataItem(x, y, pen=pg.mkPen(color=color, width=2)))
         self.overlay_labels.append(QtWidgets.QTableWidgetItem('None'))
         self.graph_widget.add_item(self.overlays[-1])
 
@@ -87,9 +131,9 @@ class RamanWidget(BaseWidget, object):
 
         color_button = QtWidgets.QPushButton()
         color_button.setStyleSheet("background-color: rgb({},{},{})".format(color[0], color[1], color[2]))
-        # color_button.clicked.connect(partial(self.overlay_color_btn_click, color_button))
+        color_button.clicked.connect(partial(self.overlay_color_btn_click, color_button))
         self.overlay_tw.setCellWidget(current_rows, 1, color_button)
-        # self.overlay_color_btns.append(color_button)
+        self.overlay_color_btns.append(color_button)
 
         name_item = self.overlay_labels[-1]
         name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
@@ -108,13 +152,13 @@ class RamanWidget(BaseWidget, object):
         self.graph_widget.remove_item(self.overlays[ind])
         # self.legend.hideItem(ind + 1)
         # self.overlay_show[ind] = False
-        # self.update_graph_range()
+        self.update_graph_range()
         QtWidgets.QApplication.processEvents()
 
     def show_overlay(self, ind):
         self.graph_widget.add_item(self.overlays[ind])
         # self.legend.showItem(ind + 1)
-        # self.overlay_show[ind] = True
+        self.overlay_show[ind] = True
         self.update_graph_range()
         QtWidgets.QApplication.processEvents()
 
@@ -135,7 +179,7 @@ class RamanWidget(BaseWidget, object):
         self.overlay_tw.removeRow(ind)
         self.overlay_tw.blockSignals(False)
         del self.overlay_show_cbs[ind]
-        # del self.overlay_color_btns[ind]
+        del self.overlay_color_btns[ind]
         del self.overlay_labels[ind]
         self.remove_overlay_from_graph(ind)
 
@@ -154,7 +198,15 @@ class RamanWidget(BaseWidget, object):
 
     def set_overlay_color(self, ind, color):
         self.overlays[ind].setPen(pg.mkPen(color=color, width=1.5))
-        self.legend.setItemColor(ind + 1, color)
+        # self.legend.setItemColor(ind + 1, color)
+
+    def overlay_color_btn_click(self, button):
+        self.overlay_color_btn_clicked.emit(self.overlay_color_btns.index(button), button)
+
+    def update_overlay(self, pattern, ind):
+        x, y = pattern.data
+        self.overlays[ind].setData(x, y)
+        # self.update_graph_range()
 
 class DisplayModeGroupBox(QtWidgets.QGroupBox):
     def __init__(self, title='Options'):
@@ -221,19 +273,65 @@ class OverlayGroupBox(QtWidgets.QGroupBox):
     def create_widgets(self):
         self.overlay_add_btn = QtWidgets.QPushButton('Add')
         self.overlay_remove_btn = QtWidgets.QPushButton('Remove')
+        self.overlay_clear_btn = QtWidgets.QPushButton('Clear All')
         # self.overlay_tw = ListTableWidget(columns=3)
+        self._offset_lbl = QtWidgets.QLabel('Offset:')
+        self._scale_lbl = QtWidgets.QLabel('Scale:')
+        self._value_lbl = QtWidgets.QLabel('Value')
+        self._step_lbl = QtWidgets.QLabel('Step')
+
+        self.scale_sb = QtWidgets.QDoubleSpinBox()
+        self.offset_sb = QtWidgets.QDoubleSpinBox()
+        self.scale_step_msb = QtWidgets.QDoubleSpinBox()
+        self.offset_step_msb = QtWidgets.QDoubleSpinBox()
 
 
     def create_layout(self):
         self._overlaylayout = QtWidgets.QGridLayout()
         self._overlaylayout.addWidget(self.overlay_add_btn, 0, 0)
-        self._overlaylayout.addWidget(self.overlay_remove_btn, 1, 0)
+        self._overlaylayout.addWidget(self.overlay_remove_btn, 0, 1)
+        self._overlaylayout.addWidget(self.overlay_clear_btn, 0, 2)
+        self._overlaylayout.addWidget(self._value_lbl, 1, 1)
+        self._overlaylayout.addWidget(self._step_lbl, 1, 2)
+        self._overlaylayout.addWidget(self._offset_lbl, 2, 0)
+        self._overlaylayout.addWidget(self.offset_sb, 2, 1)
+        self._overlaylayout.addWidget(self.offset_step_msb, 2, 2)
+        self._overlaylayout.addWidget(self._scale_lbl, 3, 0)
+        self._overlaylayout.addWidget(self.scale_sb, 3, 1)
+        self._overlaylayout.addWidget(self.scale_step_msb, 3, 2)
 
         self.setLayout(self._overlaylayout)
 
     def style_widgets(self):
         # align = QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
         # self.overlay_add_btn.setAlignment(align)
+        align = QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
+        self.scale_sb.setAlignment(align)
+        self.offset_sb.setAlignment(align)
+        self.scale_step_msb.setAlignment(align)
+        self.offset_step_msb.setAlignment(align)
+        self._value_lbl.setAlignment(QtCore.Qt.AlignHCenter)
+        self._step_lbl.setAlignment(QtCore.Qt.AlignHCenter)
+
+        self.scale_sb.setMinimum(-9999999)
+        self.scale_sb.setMaximum(9999999)
+        self.scale_sb.setValue(1.0)
+        self.scale_sb.setSingleStep(0.01)
+
+        self.offset_sb.setMaximum(999999998)
+        self.offset_sb.setMinimum(-99999999)
+        self.offset_sb.setValue(0.0)
+        self.offset_sb.setSingleStep(100.0)
+
+        self.scale_step_msb.setMaximum(10.0)
+        self.scale_step_msb.setMinimum(0.01)
+        self.scale_step_msb.setValue(0.01)
+        self.scale_step_msb.setSingleStep(0.01)
+
+        self.offset_step_msb.setMaximum(100000.0)
+        self.offset_step_msb.setMinimum(0.01)
+        self.offset_step_msb.setValue(100.0)
+        self.offset_step_msb.setSingleStep(100.0)
         pass
 
 

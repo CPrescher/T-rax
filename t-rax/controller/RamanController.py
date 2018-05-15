@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from qtpy import QtCore
+from qtpy import QtCore, QtWidgets
 import os
 
 from model.RamanModel import RamanModel
@@ -52,11 +52,18 @@ class RamanController(QtCore.QObject):
 
         self.widget.overlay_gb.overlay_add_btn.clicked.connect(self.overlay_add_btn_clicked)
         self.model.overlay_added.connect(self.overlay_added)
-
         self.widget.overlay_gb.overlay_remove_btn.clicked.connect(self.overlay_remove_btn_clicked)
         self.model.overlay_removed.connect(self.overlay_removed)
-
+        self.widget.overlay_gb.overlay_clear_btn.clicked.connect(self.overlay_clear_btn_clicked)
         self.widget.overlay_show_cb_state_changed.connect(self.overlay_show_cb_state_changed)
+        self.widget.overlay_color_btn_clicked.connect(self.overlay_color_btn_clicked)
+        self.model.overlay_changed.connect(self.overlay_changed)
+        self.widget.overlay_tw.currentCellChanged.connect(self.overlay_selected)
+
+        self.widget.overlay_gb.scale_step_msb.editingFinished.connect(self.update_scale_step)
+        self.widget.overlay_gb.offset_step_msb.editingFinished.connect(self.update_overlay_offset_step)
+        self.widget.overlay_gb.scale_sb.valueChanged.connect(self.overlay_scale_sb_changed)
+        self.widget.overlay_gb.offset_sb.valueChanged.connect(self.overlay_offset_sb_changed)
 
     def laser_line_txt_changed(self):
         new_laser_line = float(str(self.widget.laser_line_txt.text()))
@@ -154,3 +161,90 @@ class RamanController(QtCore.QObject):
             self.widget.show_overlay(ind)
         else:
             self.widget.hide_overlay(ind)
+
+    def overlay_color_btn_clicked(self, ind, button):
+        """
+        Callback for the color buttons in the overlay table. Opens up a color dialog. The color of the overlay and
+        its respective button will be changed according to the selection
+        :param ind: overlay ind
+        :param button: button to color
+        """
+        previous_color = button.palette().color(1)
+        new_color = QtWidgets.QColorDialog.getColor(previous_color, self.widget)
+        if new_color.isValid():
+            color = str(new_color.name())
+        else:
+            color = str(previous_color.name())
+        self.widget.set_overlay_color(ind, color)
+        button.setStyleSheet('background-color:' + color)
+
+    def overlay_clear_btn_clicked(self):
+        """
+        removes all currently loaded overlays
+        """
+        while self.widget.overlay_tw.rowCount() > 0:
+            self.overlay_remove_btn_clicked()
+
+    def update_scale_step(self):
+        """
+        Sets the step size for scale spinbox from the step text box.
+        """
+        value = self.widget.overlay_gb.scale_step_msb.value()
+        self.widget.overlay_gb.scale_sb.setSingleStep(value)
+
+    def update_overlay_offset_step(self):
+        """
+        Sets the step size for the offset spinbox from the offset_step text box.
+        """
+        value = self.widget.overlay_gb.offset_step_msb.value()
+        self.widget.overlay_gb.offset_sb.setSingleStep(value)
+
+    def overlay_scale_sb_changed(self, value):
+        """
+        Callback for overlay_scale_sb spinbox.
+        :param value: new scale value
+        """
+        cur_ind = self.widget.get_selected_overlay_row()
+        self.model.set_overlay_scaling(cur_ind, value)
+        # if self.model.overlays[cur_ind] == self.model.background_pattern:
+        #     self.model.pattern_changed.emit()
+
+    def overlay_offset_sb_changed(self, value):
+        """
+        Callback gor the overlay_offset_sb spinbox.
+        :param value: new value
+        """
+        cur_ind = self.widget.get_selected_overlay_row()
+        self.model.set_overlay_offset(cur_ind, value)
+        # if self.model.overlays[cur_ind] == self.model.background_pattern:
+        #     self.model.pattern_changed.emit()
+
+    def overlay_changed(self, ind):
+        self.widget.update_overlay(self.model.overlays[ind], ind)
+        cur_ind = self.widget.get_selected_overlay_row()
+        if ind == cur_ind:
+            self.widget.overlay_gb.offset_sb.blockSignals(True)
+            self.widget.overlay_gb.scale_sb.blockSignals(True)
+            self.widget.overlay_gb.offset_sb.setValue(self.model.get_overlay_offset(ind))
+            self.widget.overlay_gb.scale_sb.setValue(self.model.get_overlay_scaling(ind))
+            self.widget.overlay_gb.offset_sb.blockSignals(False)
+            self.widget.overlay_gb.scale_sb.blockSignals(False)
+
+    def overlay_selected(self, row, *args):
+        """
+        Callback when the selected row in the overlay table is changed. It will update the scale and offset values
+        for the newly selected overlay and check whether it is set as background or not and check the
+        the set_as_bkg_btn appropriately.
+        :param row: selected row in the overlay table
+        """
+        cur_ind = row
+        self.widget.overlay_gb.scale_sb.blockSignals(True)
+        self.widget.overlay_gb.offset_sb.blockSignals(True)
+        self.widget.overlay_gb.scale_sb.setValue(self.model.overlays[cur_ind].scaling)
+        self.widget.overlay_gb.offset_sb.setValue(self.model.overlays[cur_ind].offset)
+        self.widget.overlay_gb.scale_sb.blockSignals(False)
+        self.widget.overlay_gb.offset_sb.blockSignals(False)
+        # if self.model.background_pattern == self.model.overlay_model.overlays[cur_ind]:
+        #     self.widget.set_as_bkg_btn.setChecked(True)
+        # else:
+        #     self.widget.set_as_bkg_btn.setChecked(False)

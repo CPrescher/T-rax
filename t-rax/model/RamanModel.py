@@ -19,6 +19,8 @@
 
 import numpy as np
 from qtpy import QtCore
+from copy import deepcopy
+
 
 from .BaseModel import SingleSpectrumModel
 
@@ -27,6 +29,7 @@ class RamanModel(SingleSpectrumModel, object):
     REVERSE_CM_MODE = 0
     WAVELENGTH_MODE = 1
 
+    overlay_changed = QtCore.Signal(int)
     overlay_added = QtCore.Signal()
     overlay_removed = QtCore.Signal(int)
 
@@ -64,7 +67,7 @@ class RamanModel(SingleSpectrumModel, object):
             self.spectrum_changed.emit(*self.spectrum.data)
 
     def add_overlay(self):
-        self.overlays.append(self.spectrum)
+        self.overlays.append(deepcopy(self.spectrum))
         # self.overlays[-1].load(filename)
         self.overlay_added.emit()
 
@@ -72,6 +75,40 @@ class RamanModel(SingleSpectrumModel, object):
         if ind >= 0:
             del self.overlays[ind]
             self.overlay_removed.emit(ind)
+
+    def set_overlay_scaling(self, ind, scaling):
+        """
+        Sets the scaling of the specified overlay
+        :param ind: index of the overlay
+        :param scaling: new scaling value
+        """
+        self.overlays[ind].scaling = scaling
+        self.overlay_changed.emit(ind)
+
+    def get_overlay_scaling(self, ind):
+        """
+        Returns the scaling of the specified overlay
+        :param ind: index of the overlay
+        :return: scaling value
+        """
+        return self.overlays[ind].scaling
+
+    def set_overlay_offset(self, ind, offset):
+        """
+        Sets the offset of the specified overlay
+        :param ind: index of the overlay
+        :param offset: new offset value
+        """
+        self.overlays[ind].offset = offset
+        self.overlay_changed.emit(ind)
+
+    def get_overlay_offset(self, ind):
+        """
+        Return the offset of the specified overlay
+        :param ind: index of the overlay
+        :return: overlay value
+        """
+        return self.overlays[ind].offset
 
     # @staticmethod
     # def calculate_color(self, ind):
