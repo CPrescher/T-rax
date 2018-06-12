@@ -17,13 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
+import os, importlib
 
 from qtpy import QtWidgets, QtCore
 
-from widget.TemperatureWidget import TemperatureWidget
+from widget.TemperatureWidget import TemperatureWidget, SetupEpicsDialog
 from widget.Widgets import open_file_dialog, save_file_dialog
 from model.TemperatureModel import TemperatureModel
+import model.epics_settings as eps
 from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 import numpy as np
 
@@ -45,6 +46,8 @@ class TemperatureController(QtCore.QObject):
         super(TemperatureController, self).__init__()
         self.widget = temperature_widget
         self.model = model
+
+        self.setup_epics_dialog = SetupEpicsDialog(self.widget)
 
         self._exp_working_dir = ''
         self._setting_working_dir = ''
@@ -81,6 +84,7 @@ class TemperatureController(QtCore.QObject):
         self.connect_click_function(self.widget.load_setting_btn, self.load_setting_file)
         self.connect_click_function(self.widget.save_setting_btn, self.save_setting_file)
         self.widget.settings_cb.currentIndexChanged.connect(self.settings_cb_changed)
+        self.widget.setup_epics_pb.clicked.connect(self.setup_epics_pb_clicked)
 
         # model signals
         self.model.data_changed.connect(self.data_changed)
@@ -251,6 +255,16 @@ class TemperatureController(QtCore.QObject):
         self.ds_calculations_changed()
         self.us_calculations_changed()
 
+        epics_counter = True
+        if eps.epics_settings['file_counter'] is None or eps.epics_settings['file_counter'] == '' or \
+                        eps.epics_settings['file_counter'] == 'None':
+            epics_counter = None
+        if epics is not None and epics_counter is not None:
+            counter = (epics.caget(eps.epics_settings['file_counter'], as_string=True))
+            if counter == '':
+                counter = '1'
+            epics.caput(eps.epics_settings['file_counter'], str(int(counter) + 1))
+
     def ds_calculations_changed(self):
         if self.model.ds_calibration_filename is not None:
             self.widget.ds_calibration_filename_lbl.setText(str(os.path.basename(self.model.ds_calibration_filename)))
@@ -275,8 +289,12 @@ class TemperatureController(QtCore.QObject):
 
         if self.widget.connect_to_epics_cb.isChecked():
             if epics is not None:
-                epics.caput("13IDD:ds_las_temp", self.model.ds_temperature)
-                epics.caput("13IDD:dn_t_int", str(self.model.ds_roi_max))
+                ds_temp_pv = eps.epics_settings['ds_last_temp']
+                if ds_temp_pv is not None and not ds_temp_pv == '' and not ds_temp_pv == 'None':
+                    epics.caput(ds_temp_pv, self.model.ds_temperature)
+                ds_int_pv = eps.epics_settings['ds_last_int']
+                if ds_int_pv is not None and not ds_int_pv == '' and not ds_int_pv == 'None':
+                    epics.caput(ds_int_pv, str(self.model.ds_roi_max))
 
     def us_calculations_changed(self):
         if self.model.us_calibration_filename is not None:
@@ -301,8 +319,12 @@ class TemperatureController(QtCore.QObject):
 
         if self.widget.connect_to_epics_cb.isChecked():
             if epics is not None:
-                epics.caput("13IDD:us_las_temp", self.model.us_temperature)
-                epics.caput("13IDD:up_t_int", str(self.model.us_roi_max))
+                us_temp_pv = eps.epics_settings['us_last_temp']
+                if us_temp_pv is not None and not us_temp_pv =='' and not us_temp_pv == 'None':
+                    epics.caput(us_temp_pv, self.model.us_temperature)
+                us_int_pv = eps.epics_settings['us_last_int']
+                if us_int_pv is not None and not us_int_pv == '' and not us_int_pv == 'None':
+                    epics.caput(us_int_pv, str(self.model.us_roi_max))
 
     def update_time_lapse(self):
         us_temperature, us_temperature_error, ds_temperature, ds_temperature_error = self.model.fit_all_frames()
@@ -328,8 +350,8 @@ class TemperatureController(QtCore.QObject):
         self.widget.graph_mouse_pos_lbl.setText("X: {:8.2f}  Y: {:8.2f}".format(x, y))
 
     def roi_mouse_moved(self, x, y):
-        x = np.floor(x)
-        y = np.floor(y)
+        x = int(np.floor(x))
+        y = int(np.floor(y))
         try:
             self.widget.roi_widget.pos_lbl.setText("X: {:5.0f}  Y: {:5.0f}    Int: {:6.0f}    lambda: {:5.2f} nm".
                                                    format(x, y,
@@ -378,3 +400,22 @@ class TemperatureController(QtCore.QObject):
     def _create_autoprocess_system(self):
         self._directory_watcher = NewFileInDirectoryWatcher(file_types=['.spe'])
         self._directory_watcher.file_added.connect(self.load_data_file)
+
+    def setup_epics_pb_clicked(self):
+        self.setup_epics_dialog.ok_btn.setEnabled(True)
+        self.setup_epics_dialog.us_temp_pv = eps.epics_settings['us_last_temp']
+        self.setup_epics_dialog.ds_temp_pv = eps.epics_settings['ds_last_temp']
+        self.setup_epics_dialog.us_int_pv = eps.epics_settings['us_last_int']
+        self.setup_epics_dialog.ds_int_pv = eps.epics_settings['ds_last_int']
+        self.setup_epics_dialog.file_counter_pv = eps.epics_settings['file_counter']
+        self.setup_epics_dialog.exec_()
+        if self.setup_epics_dialog.approved:
+            with open('model/epics_settings.py', 'w') as outfile:
+                outfile.write('epics_settings = {\n')
+                outfile.write("    'us_last_temp': '" + self.setup_epics_dialog.us_temp_pv + "',\n")
+                outfile.write("    'ds_last_temp': '" + self.setup_epics_dialog.ds_temp_pv + "',\n")
+                outfile.write("    'us_last_int': '" + self.setup_epics_dialog.us_int_pv + "',\n")
+                outfile.write("    'ds_last_int': '" + self.setup_epics_dialog.ds_int_pv + "',\n")
+                outfile.write("    'file_counter': '" + self.setup_epics_dialog.file_counter_pv + "',\n")
+                outfile.write("}\n")
+            importlib.reload(eps)

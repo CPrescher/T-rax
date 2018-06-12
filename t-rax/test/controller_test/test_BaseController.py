@@ -166,6 +166,8 @@ class BaseControllerTest(unittest.TestCase):
         self.controller.load_file_btn_clicked()
         self.widget.roi_widget.img_widget.mouse_moved.emit(130, 20)
 
+        self.app.processEvents()
+
         self.assertIn("20", self.widget.roi_widget.pos_lbl.text())
         self.assertIn("130", self.widget.roi_widget.pos_lbl.text())
         self.assertIn("{:.0f}".format(self.model.data_img[20, 130]), self.widget.roi_widget.pos_lbl.text())

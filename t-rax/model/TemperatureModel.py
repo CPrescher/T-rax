@@ -23,7 +23,7 @@ from scipy.optimize import curve_fit
 import h5py
 
 from model.Spectrum import Spectrum
-from model.RoiData import RoiDataManager, Roi
+from model.RoiData import RoiDataManager, Roi, get_roi_max, get_roi_sum
 from model.SpeFile import SpeFile
 from model.helper import FileNameIterator
 
@@ -196,7 +196,10 @@ class TemperatureModel(QtCore.QObject):
         if 'image' in ds_group:
             self.ds_temperature_model.set_calibration_data(ds_group['image'][...],
                                                            ds_group['image'].attrs['x_calibration'][...])
-            self.ds_calibration_filename = ds_group['image'].attrs['filename']
+            try:
+                self.ds_calibration_filename = ds_group['image'].attrs['filename'].decode('utf-8')
+            except AttributeError:
+                self.ds_calibration_filename = ds_group['image'].attrs['filename']
             img_dimension = (self.ds_temperature_model.calibration_img.shape[1],
                              self.ds_temperature_model.calibration_img.shape[0])
             self.roi_data_manager.set_roi(0, img_dimension, ds_group['roi'][...])
@@ -209,8 +212,13 @@ class TemperatureModel(QtCore.QObject):
         etalon_data = ds_group['etalon_spectrum'][...]
         self.ds_temperature_model.calibration_parameter.set_etalon_spectrum(Spectrum(etalon_data[0, :],
                                                                                      etalon_data[1, :]))
-        self.ds_temperature_model.calibration_parameter.etalon_file_name = \
-            ds_group['etalon_spectrum'].attrs['filename']
+
+        try:
+            self.ds_temperature_model.calibration_parameter.etalon_file_name = \
+                ds_group['etalon_spectrum'].attrs['filename'].decode('utf-8')
+        except AttributeError:
+            self.ds_temperature_model.calibration_parameter.etalon_file_name = \
+                ds_group['etalon_spectrum'].attrs['filename']
 
         modus = ds_group['modus'][...]
         self.ds_temperature_model.calibration_parameter.set_modus(modus)
@@ -221,7 +229,10 @@ class TemperatureModel(QtCore.QObject):
         if 'image' in us_group:
             self.us_temperature_model.set_calibration_data(us_group['image'][...],
                                                            us_group['image'].attrs['x_calibration'][...])
-            self.us_calibration_filename = us_group['image'].attrs['filename']
+            try:
+                self.us_calibration_filename = us_group['image'].attrs['filename'].decode('utf-8')
+            except AttributeError:
+                self.us_calibration_filename = us_group['image'].attrs['filename']
             img_dimension = (self.us_temperature_model.calibration_img.shape[1],
                              self.us_temperature_model.calibration_img.shape[0])
             self.roi_data_manager.set_roi(1, img_dimension, us_group['roi'][...])
@@ -234,8 +245,12 @@ class TemperatureModel(QtCore.QObject):
         etalon_data = us_group['etalon_spectrum'][...]
         self.us_temperature_model.calibration_parameter.set_etalon_spectrum(Spectrum(etalon_data[0, :],
                                                                                      etalon_data[1, :]))
-        self.us_temperature_model.calibration_parameter.etalon_file_name = \
-            us_group['etalon_spectrum'].attrs['filename']
+        try:
+            self.us_temperature_model.calibration_parameter.etalon_file_name = \
+                us_group['etalon_spectrum'].attrs['filename'].decode('utf-8')
+        except AttributeError:
+            self.us_temperature_model.calibration_parameter.etalon_file_name = \
+                us_group['etalon_spectrum'].attrs['filename']
 
         self.us_temperature_model.calibration_parameter.set_modus(us_group['modus'][...])
         self.us_temperature_model.calibration_parameter.set_temperature(us_group['temperature'][...])
@@ -271,13 +286,20 @@ class TemperatureModel(QtCore.QObject):
         header += "Downstream (K): {:.1f}\t{:.1f}\n".format(self.ds_temperature, self.ds_temperature_error)
         header += "Upstream (K): {:.1f}\t{:.1f}\n\n".format(self.us_temperature, self.us_temperature_error)
         header += "Datacolumns:\n"
-        header += "\t".join(("lambda(nm)", "DS_data", "DS_fit", "US_data", "US_fit"))
+        header_ds = header + "\t".join(("lambda(nm)", "DS_data", "DS_fit"))
+        header_us = header + "\t".join(("lambda(nm)", "US_data", "US_fit"))
 
-        output_matrix = np.vstack((self.ds_data_spectrum.x,
-                                   self.ds_corrected_spectrum.y, self.ds_fit_spectrum.y,
-                                   self.us_corrected_spectrum.y, self.us_fit_spectrum.y))
+        output_matrix_ds = np.vstack((self.ds_data_spectrum.x,
+                                      self.ds_corrected_spectrum.y, self.ds_fit_spectrum.y))
 
-        np.savetxt(filename, output_matrix.T, header=header)
+        output_matrix_us = np.vstack((self.us_data_spectrum.x,
+                                      self.us_corrected_spectrum.y, self.us_fit_spectrum.y))
+
+        ds_filename = filename.rsplit('.', 1)[0] + '_ds.txt'
+        us_filename = filename.rsplit('.', 1)[0] + '_us.txt'
+
+        np.savetxt(ds_filename, output_matrix_ds.T, header=header_ds)
+        np.savetxt(us_filename, output_matrix_us.T, header=header_us)
 
     # updating roi values
     @property
@@ -525,9 +547,9 @@ class SingleTemperatureModel(QtCore.QObject):
             roi = self.roi_data_manager.get_roi(self.ind, self._data_img_dimension)
 
             data_x = self._data_img_x_calibration[int(roi.x_min):int(roi.x_max) + 1]
-            data_y = self._get_roi_sum(self.data_img, roi)
+            data_y = get_roi_sum(self.data_img, roi)
 
-            self.data_roi_max = self._get_roi_max(self.data_img, roi)
+            self.data_roi_max = get_roi_max(self.data_img, roi)
             self.data_spectrum.data = data_x, data_y
 
     def _update_calibration_spectrum(self):
@@ -535,7 +557,7 @@ class SingleTemperatureModel(QtCore.QObject):
             roi = self.roi_data_manager.get_roi(self.ind, self._calibration_img_dimension)
 
             calibration_x = self._calibration_img_x_calibration[int(roi.x_min):int(roi.x_max) + 1]
-            calibration_y = self._get_roi_sum(self._calibration_img, roi)
+            calibration_y = get_roi_sum(self._calibration_img, roi)
 
             self.calibration_spectrum.data = calibration_x, calibration_y
 
@@ -557,14 +579,6 @@ class SingleTemperatureModel(QtCore.QObject):
         self._update_data_spectrum()
         self._update_calibration_spectrum()
         self._update_corrected_spectrum()
-
-    def _get_roi_sum(self, img, roi):
-        roi_img = img[int(roi.y_min):int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
-        return np.sum(roi_img, 0) / np.float(np.size(roi_img, 0))
-
-    def _get_roi_max(self, img, roi):
-        roi_img = img[int(roi.y_min):int(roi.y_max) + 1, int(roi.x_min):int(roi.x_max) + 1]
-        return np.max(roi_img)
 
     # finally the fitting function
     ##################################################################

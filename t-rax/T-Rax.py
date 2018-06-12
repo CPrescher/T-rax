@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # T-Rax - GUI program for analysis of spectroscopy data during
 # diamond anvil cell experiments
 # Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
@@ -16,8 +16,33 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import absolute_import
 
 import sys
+import os
+import time
+
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
+import traceback
+from qtpy import QtWidgets
+
+
+def excepthook(exc_type, exc_value, traceback_obj):
+    """
+    Global function to catch unhandled exceptions. This function will result in an error dialog which displays the
+    error information.
+
+    :param exc_type: exception type
+    :param exc_value: exception value
+    :param traceback_obj: traceback object
+    :return:
+    """
+
+    traceback.print_exception(exc_type, exc_value, traceback_obj)
+
 from sys import platform
 
 from qtpy import QtWidgets
@@ -26,6 +51,8 @@ from controller.MainController import MainController
 
 
 app = QtWidgets.QApplication(sys.argv)
+sys.excepthook = excepthook
+
 if platform != "darwin":
     app.setStyle('plastique')
 controller = MainController()

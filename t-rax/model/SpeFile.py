@@ -64,7 +64,7 @@ class SpeFile(object):
         self._fid.close()
 
     def _read_parameter(self):
-        """Reads in size and datatype. Decides wether it should check in the binary
+        """Reads in size and datatype. Decides whether it should check in the binary
         header (version 2) or in the xml-footer for the experimental parameters"""
         self._read_size()
         self._read_datatype()
@@ -118,7 +118,13 @@ class SpeFile(object):
         rawtime = self._read_at(172, 6, np.int8)
         strdate = ''.join([chr(i) for i in rawdate])
         strdate += ''.join([chr(i) for i in rawtime])
-        self.date_time = datetime.datetime.strptime(strdate, "%d%b%Y%H%M%S")
+        import locale
+        locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+        try:
+            self.date_time = datetime.datetime.strptime(str(strdate), "%d%b%Y%H%M%S")
+        except:
+            print('WARNING: could note read datetime from SPE_FILE')
+            self.date_time = datetime.datetime.now()
 
 
     def _read_calibration_from_header(self):
@@ -193,8 +199,10 @@ class SpeFile(object):
                 self._exposure_time = self.dom.getElementsByTagName('ExposureTime')[0].childNodes[0]
                 self.exposure_time = np.float(self._exposure_time.toxml()) / 1000.0
             else:
-                self._exposure_time = self.dom.getElementsByTagName('ReadoutControl')[0]. \
-                    getElementsByTagName('Time')[0].childNodes[0].nodeValue
+                # self._exposure_time = self.dom.getElementsByTagName('ReadoutControl')[0]. \
+                #     getElementsByTagName('Time')[0].childNodes[0].nodeValue
+                self._exposure_time = self.dom.getElementsByTagName('Gating')[0].getElementsByTagName('RepetitiveGate')[0].getElementsByTagName('Pulse')[0].getAttribute('width')
+                self._exposure_time = np.float(self._exposure_time)/1000000000
                 self._accumulations = self.dom.getElementsByTagName('Accumulations')[0].childNodes[0].nodeValue
                 self.exposure_time = np.float(self._exposure_time) * np.float(self._accumulations)
         else:  # this is searching for legacy experiment:
@@ -252,9 +260,12 @@ class SpeFile(object):
                     getElementsByTagName('RegionsOfInterest')[0]. \
                     getElementsByTagName('CustomRegions')[0]. \
                     getElementsByTagName('RegionOfInterest')[0]
+                self.roi_dom_width = self.dom.getElementsByTagName('DataFormat')[0]. \
+                    getElementsByTagName('DataBlock')[0]. \
+                    getElementsByTagName('DataBlock')[0]
                 self.roi_x = int(self.roi_dom.attributes['x'].value)
                 self.roi_y = int(self.roi_dom.attributes['y'].value)
-                self.roi_width = int(self.roi_dom.attributes['width'].value)
+                self.roi_width = int(self.roi_dom_width.attributes['width'].value)
                 self.roi_height = int(self.roi_dom.attributes['height'].value)
                 self.roi_x_binning = int(self.roi_dom.attributes['xBinning'].value)
                 self.roi_y_binning = int(self.roi_dom.attributes['yBinning'].value)
