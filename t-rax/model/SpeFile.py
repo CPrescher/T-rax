@@ -70,7 +70,7 @@ class SpeFile(object):
         self._read_datatype()
         self.xml_offset = self._read_at(678, 1, np.long)
         if self.xml_offset == [0]:  # means that there is no XML present, hence it is a pre 3.0 version of the SPE
-            #file
+            # file
             self._read_parameter_from_header()
         else:
             self._read_parameter_from_dom()
@@ -201,7 +201,7 @@ class SpeFile(object):
             else:
                 # self._exposure_time = self.dom.getElementsByTagName('ReadoutControl')[0]. \
                 #     getElementsByTagName('Time')[0].childNodes[0].nodeValue
-                self._exposure_time = np.float(self._exposure_time)/1000000000
+                # self._exposure_time = np.float(self._exposure_time)/1000000000
                 self._exposure_time = self.dom.getElementsByTagName('Gating')[0]. \
                     getElementsByTagName('RepetitiveGate')[0].getElementsByTagName('Pulse')[0].getAttribute('width')
                 self._exposure_time = np.float(self._exposure_time)/1000000000
