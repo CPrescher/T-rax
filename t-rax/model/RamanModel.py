@@ -40,6 +40,7 @@ class RamanModel(SingleSpectrumModel, object):
         self._laser_line = 532
         self._mode = RamanModel.REVERSE_CM_MODE
         self.log_file = None
+        self.overlays = []
 
     def load_file(self, filename):
         super(RamanModel, self).load_file(filename)
@@ -65,7 +66,6 @@ class RamanModel(SingleSpectrumModel, object):
                     str(self.laser_line), units, roi, self.spe_file.detector)
         self.log_file.write('\t'.join(log_data) + '\n')
         self.log_file.flush()
-        self.overlays = []
 
     @property
     def spectrum(self):
