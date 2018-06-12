@@ -50,7 +50,6 @@ class FileGroupBox(QtWidgets.QGroupBox, object):
         self.load_next_file_btn = QtWidgets.QPushButton('>')
         self.load_previous_file_btn = QtWidgets.QPushButton('<')
         self.autoprocess_cb = QtWidgets.QCheckBox('auto')
-        self.mapping_cb = QtWidgets.QCheckBox('Mapping')
         self.filename_lbl = QtWidgets.QLabel('file')
         self.dirname_lbl = QtWidgets.QLabel('folder')
 
@@ -58,7 +57,6 @@ class FileGroupBox(QtWidgets.QGroupBox, object):
         self._file_control_layout.addWidget(self.load_previous_file_btn, 1, 0)
         self._file_control_layout.addWidget(self.load_next_file_btn, 1, 1)
         self._file_control_layout.addWidget(self.autoprocess_cb, 0, 2)
-        self._file_control_layout.addWidget(self.mapping_cb, 1, 2)
         self._file_control_layout.addWidget(self.filename_lbl, 2, 0, 1, 4)
         self._file_control_layout.addWidget(self.dirname_lbl, 3, 0, 1, 4)
         self.file_control_widget.setLayout(self._file_control_layout)

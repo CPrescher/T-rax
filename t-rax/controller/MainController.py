@@ -56,13 +56,13 @@ def write_version_file(version_str):
     with open(os.path.join(path, '_version.py'), 'w') as f:
         f.write('__version__="{}"'.format(version_str))
 
-# __version__ = get_version()
+__version__ = get_version()
 
 class MainController(object):
     def __init__(self):
         self.main_widget = MainWidget()
 
-        self.main_widget.setWindowTitle('T-Rax ')
+        self.main_widget.setWindowTitle('T-Rax ' + get_version())
 
         self.create_signals()
         self.create_data_models()

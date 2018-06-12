@@ -97,7 +97,6 @@ class NewFileInDirectoryWatcher(QtCore.QObject):
 
         if len(files_added) > 0:
             new_file_path = os.path.join(str(self.path), files_added[-1])
-            new_file_path = new_file_path.replace('\\', '/')
 
             # abort if the new_file added is actually a directory...
             if os.path.isdir(new_file_path):

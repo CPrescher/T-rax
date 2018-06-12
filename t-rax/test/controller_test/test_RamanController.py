@@ -18,21 +18,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import os, sys
+import os
 import numpy as np
 
-from ..ehook import excepthook
 from qtpy import QtWidgets, QtCore
 from qtpy.QtTest import QTest
 
 from model.RamanModel import RamanModel
 from widget.RamanWidget import RamanWidget
 from controller.RamanController import RamanController
-from controller.BaseController import BaseController
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
-test_file = os.path.join(unittest_files_path, 'test.spe')
+test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
 class RamanControllerTest(unittest.TestCase):
@@ -49,14 +47,10 @@ class RamanControllerTest(unittest.TestCase):
         self.model = RamanModel()
         self.widget = RamanWidget(None)
         self.controller = RamanController(self.model, self.widget)
-        self.base_controller = BaseController(self.model, self.widget)
         self.model.load_file(test_file)
 
     def click_checkbox(self, checkbox):
         QTest.mouseClick(checkbox, QtCore.Qt.LeftButton, pos=QtCore.QPoint(2, checkbox.height() / 2))
-
-    def click_button(widget):
-        QTest.mouseClick(widget, QtCore.Qt.LeftButton)
 
     def test_laser_line(self):
         x, y = self.widget.graph_widget.get_data()
@@ -74,83 +68,3 @@ class RamanControllerTest(unittest.TestCase):
         new_x, new_y = self.widget.graph_widget.get_data()
         self.assertFalse(np.array_equal(new_x, x))
         self.assertTrue(np.array_equal(new_y, y))
-
-########Testing Overlays########
-
-class RamanOverlayControllerTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
-    def setUp(self):
-        self.widget = RamanWidget(None)
-        self.model = RamanModel()
-        # self.model.working_directories['overlay'] = unittest_files_path
-        self.raman_controller = RamanController(self.model, self.widget)
-        self.base_controller = BaseController(self.model, self.widget)
-        # self.overlay_tw = self.widget.overlay_tw
-        self.model.load_file(test_file)
-
-    def tearDown(self):
-        del self.raman_controller
-        # del self.overlay_tw
-        del self.widget
-        del self.model
-        # gc.collect()
-
-    def test_add_overlay(self):
-        sys.excepthook = excepthook
-        self.widget.overlay_gb.overlay_add_btn.click()
-        self.assertEqual(len(self.model.overlays), 1)
-        self.assertEqual(self.widget.overlay_tw.rowCount(), 1)
-
-    def test_remove_overlay(self):
-        sys.excepthook = excepthook
-        self.widget.overlay_gb.overlay_add_btn.click()
-        self.widget.select_overlay(0)
-        self.assertEqual(len(self.model.overlays), 1)
-
-        self.widget.overlay_gb.overlay_remove_btn.click()
-        self.assertEqual(len(self.model.overlays), 0)
-        self.assertEqual(self.widget.overlay_tw.rowCount(), 0)
-
-    def test_change_offset_in_view(self):
-        # sys.excepthook = excepthook
-        self.widget.overlay_gb.overlay_add_btn.click()
-        self.widget.select_overlay(0)
-
-        self.widget.overlay_gb.offset_sb.setValue(100)
-        self.assertEqual(self.model.get_overlay_offset(0), 100)
-
-        x, y = self.model.overlays[0].data
-        x_spec, y_spec = self.widget.overlays[0].getData()
-
-        self.assertAlmostEqual(np.sum(y - y_spec), 0)
-
-    def test_change_scaling_in_view(self):
-        # sys.excepthook = excepthook
-        self.widget.overlay_gb.overlay_add_btn.click()
-        self.widget.select_overlay(0)
-
-        self.widget.overlay_gb.scale_sb.setValue(2.0)
-        self.app.processEvents()
-        self.assertEqual(self.model.get_overlay_scaling(0), 2)
-
-        # tests if overlay is updated in pattern
-        x, y = self.model.overlays[0].data
-        x_spec, y_spec = self.widget.pattern_widget.overlays[0].getData()
-
-        self.assertAlmostEqual(np.sum(y - y_spec), 0)
-
-    def test_overlay_color_btn_clicked(self):
-        sys.excepthook = excepthook
-        self.widget.overlay_gb.overlay_add_btn.click()
-        self.widget.select_overlay(0)
-        print(self.widget.overlay_color_btns[0])
-        self.raman_controller.overlay_color_btn_clicked(0, self.widget.overlay_color_btns[0])
-        print("New Color = ", self.raman_controller.new_color)
