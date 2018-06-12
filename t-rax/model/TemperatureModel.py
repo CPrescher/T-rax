@@ -286,20 +286,13 @@ class TemperatureModel(QtCore.QObject):
         header += "Downstream (K): {:.1f}\t{:.1f}\n".format(self.ds_temperature, self.ds_temperature_error)
         header += "Upstream (K): {:.1f}\t{:.1f}\n\n".format(self.us_temperature, self.us_temperature_error)
         header += "Datacolumns:\n"
-        header_ds = header + "\t".join(("lambda(nm)", "DS_data", "DS_fit"))
-        header_us = header + "\t".join(("lambda(nm)", "US_data", "US_fit"))
+        header += "\t".join(("lambda(nm)", "DS_data", "DS_fit", "US_data", "US_fit"))
 
-        output_matrix_ds = np.vstack((self.ds_data_spectrum.x,
-                                      self.ds_corrected_spectrum.y, self.ds_fit_spectrum.y))
+        output_matrix = np.vstack((self.ds_data_spectrum.x,
+                                   self.ds_corrected_spectrum.y, self.ds_fit_spectrum.y,
+                                   self.us_corrected_spectrum.y, self.us_fit_spectrum.y))
 
-        output_matrix_us = np.vstack((self.us_data_spectrum.x,
-                                      self.us_corrected_spectrum.y, self.us_fit_spectrum.y))
-
-        ds_filename = filename.rsplit('.', 1)[0] + '_ds.txt'
-        us_filename = filename.rsplit('.', 1)[0] + '_us.txt'
-
-        np.savetxt(ds_filename, output_matrix_ds.T, header=header_ds)
-        np.savetxt(us_filename, output_matrix_us.T, header=header_us)
+        np.savetxt(filename, output_matrix.T, header=header)
 
     # updating roi values
     @property
