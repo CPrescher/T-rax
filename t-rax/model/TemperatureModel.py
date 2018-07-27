@@ -641,7 +641,7 @@ def fit_black_body_function(spectrum):
         T_err = np.sqrt(cov[0, 0])
 
         return T, T_err, Spectrum(spectrum._x, black_body_function(spectrum._x, param[0], param[1]))
-    except (RuntimeError, TypeError):
+    except (RuntimeError, TypeError, ValueError):
         return np.NaN, np.NaN, Spectrum([], [])
 
 
