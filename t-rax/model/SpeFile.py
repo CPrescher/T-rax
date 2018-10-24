@@ -69,7 +69,7 @@ class SpeFile(object):
         self._read_size()
         self._read_datatype()
         self.xml_offset = self._read_at(678, 1, np.long)
-        if self.xml_offset == [0]:  # means that there is no XML present, hence it is a pre 3.0 version of the SPE
+        if self.xml_offset[0] <= 0:  # means that there is no XML present, hence it is a pre 3.0 version of the SPE
             #file
             self._read_parameter_from_header()
         else:
@@ -118,8 +118,8 @@ class SpeFile(object):
         rawtime = self._read_at(172, 6, np.int8)
         strdate = ''.join([chr(i) for i in rawdate])
         strdate += ''.join([chr(i) for i in rawtime])
-        import locale
-        locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+        #import locale
+        #locale.setlocale(locale.LC_ALL, 'en_US.utf')
         try:
             self.date_time = datetime.datetime.strptime(str(strdate), "%d%b%Y%H%M%S")
         except:
