@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # T-Rax - GUI program for analysis of spectroscopy data during
 # diamond anvil cell experiments
 # Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
@@ -22,15 +22,15 @@ import os
 
 from qtpy import QtWidgets, QtCore
 
-from model.TemperatureModel import TemperatureModel
-from model.RubyModel import RubyModel
-from model.DiamondModel import DiamondModel
-from model.RamanModel import RamanModel
-from widget.MainWidget import MainWidget
-from controller.TemperatureController import TemperatureController
-from controller.RubyController import RubyController
-from controller.DiamondController import DiamondController
-from controller.RamanController import RamanController
+from ..model.TemperatureModel import TemperatureModel
+from ..model.RubyModel import RubyModel
+from ..model.DiamondModel import DiamondModel
+from ..model.RamanModel import RamanModel
+from ..widget.MainWidget import MainWidget
+from .TemperatureController import TemperatureController
+from .RubyController import RubyController
+from .DiamondController import DiamondController
+from .RamanController import RamanController
 
 from . import versioneer
 
@@ -47,7 +47,7 @@ def get_version():
         write_version_file(version)
         return version
     else:
-        import _version
+        from . import _version
         return _version.__version__
 
 

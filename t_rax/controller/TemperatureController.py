@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # T-Rax - GUI program for analysis of spectroscopy data during
 # diamond anvil cell experiments
 # Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
@@ -21,9 +21,9 @@ import os
 
 from qtpy import QtWidgets, QtCore
 
-from widget.TemperatureWidget import TemperatureWidget
-from widget.Widgets import open_file_dialog, save_file_dialog
-from model.TemperatureModel import TemperatureModel
+from ..widget.TemperatureWidget import TemperatureWidget
+from ..widget.Widgets import open_file_dialog, save_file_dialog
+from ..model.TemperatureModel import TemperatureModel
 from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 import numpy as np
 

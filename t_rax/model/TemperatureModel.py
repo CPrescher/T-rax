@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # T-Rax - GUI program for analysis of spectroscopy data during
 # diamond anvil cell experiments
 # Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
@@ -22,10 +22,10 @@ import numpy as np
 from scipy.optimize import curve_fit
 import h5py
 
-from model.Spectrum import Spectrum
-from model.RoiData import RoiDataManager, Roi, get_roi_max, get_roi_sum
-from model.SpeFile import SpeFile
-from model.helper import FileNameIterator
+from .Spectrum import Spectrum
+from .RoiData import RoiDataManager, Roi, get_roi_max, get_roi_sum
+from .SpeFile import SpeFile
+from .helper import FileNameIterator
 
 
 class TemperatureModel(QtCore.QObject):
