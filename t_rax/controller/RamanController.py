@@ -20,8 +20,8 @@
 from qtpy import QtCore, QtWidgets
 import os
 
-from model.RamanModel import RamanModel
-from controller.BaseController import BaseController
+from ..model.RamanModel import RamanModel
+from ..controller.BaseController import BaseController
 
 
 class RamanController(QtCore.QObject):
