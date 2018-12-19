@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # T-Rax - GUI program for analysis of spectroscopy data during
 # diamond anvil cell experiments
 # Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
@@ -21,9 +21,9 @@ import os
 
 from qtpy import QtCore
 
-from model.RubyModel import RubyModel
-from widget.RubyWidget import RubyWidget
-from controller.BaseController import BaseController
+from ..model.RubyModel import RubyModel
+from ..widget.RubyWidget import RubyWidget
+from .BaseController import BaseController
 
 
 class RubyController(QtCore.QObject):
