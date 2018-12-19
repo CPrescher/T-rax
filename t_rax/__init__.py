@@ -38,9 +38,13 @@ def run_t_rax():
     (options, args) = parser.parse_args()
     
     if options.makeicon:
+        bindir = 'bin'
+        if os.name == 'nt':
+            bindir = 'Scripts'
+        script = os.path.join(sys.prefix, bindir, 'run_t_rax')
         _path, _fname = os.path.split(__file__)
         iconfile = os.path.join(_path, 'widget', 'icons', 't_rax.ico')
-        make_shortcut('run_t_rax', name='T-Rax',icon=iconfile, terminal=True)
+        make_shortcut(script, name='T-Rax',icon=iconfile, terminal=True)
         
     else:
         app = QtWidgets.QApplication(sys.argv)
