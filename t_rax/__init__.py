@@ -17,18 +17,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+__version__ = '1.2'
+
+import os
 import sys
 from sys import platform
-
+from optparse import OptionParser
+from pyshortcuts import make_shortcut
 from qtpy import QtWidgets
-
 from .controller.MainController import MainController, get_version
 
 def run_t_rax():
-    app = QtWidgets.QApplication(sys.argv)
-    if platform != "darwin":
-        app.setStyle('plastique')
-    controller = MainController()
-    controller.show_window()
-    app.exec_()
+    usage = 'Usage: run_t_rax [options]'
+    vers = 'run_t_rax %s' % __version__
+
+    parser = OptionParser(usage=usage, prog='pyshortcut', version=vers)
+
+    parser.add_option('-m', '--make_icon', dest='makeicon', action="store_true",
+                      default=False, help='make desktop shortcut')
+    (options, args) = parser.parse_args()
+    
+    if options.makeicon:
+        _path, _fname = os.path.split(__file__)
+        iconfile = os.path.join(_path, 'widget', 'icons', 't_rax.ico')
+        make_shortcut('run_t_rax', name='T-Rax',icon=iconfile, terminal=True)
+        
+    else:
+        app = QtWidgets.QApplication(sys.argv)
+        if platform != "darwin":
+            app.setStyle('plastique')
+        controller = MainController()
+        controller.show_window()
+        app.exec_()
 
