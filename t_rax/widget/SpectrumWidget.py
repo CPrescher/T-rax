@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # T-Rax - GUI program for analysis of spectroscopy data during
 # diamond anvil cell experiments
 # Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
@@ -67,9 +67,6 @@ class SpectrumWidget(QtWidgets.QWidget):
 
     def add_item(self, pg_item):
         self._plot_item.addItem(pg_item)
-
-    def remove_item(self, pg_item):
-        self._plot_item.removeItem(pg_item)
 
     def plot_data(self, x, y):
         self._data_item.setData(x, y)

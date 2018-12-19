@@ -53,8 +53,11 @@ from controller.MainController import MainController
 app = QtWidgets.QApplication(sys.argv)
 sys.excepthook = excepthook
 
-if platform != "darwin":
-    app.setStyle('plastique')
-controller = MainController()
-controller.show_window()
-app.exec_()
+import t_rax.__init__
+t_rax.__init__.run_t_rax()
+
+# if platform != "darwin":
+#     app.setStyle('plastique')
+# controller = MainController()
+# controller.show_window()
+# app.exec_()

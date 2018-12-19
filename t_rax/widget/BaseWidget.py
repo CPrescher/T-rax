@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # T-Rax - GUI program for analysis of spectroscopy data during
 # diamond anvil cell experiments
 # Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
@@ -74,7 +74,6 @@ class BaseWidget(QtWidgets.QWidget):
         self.load_previous_file_btn = self.control_widget._file_gb.load_previous_file_btn
 
         self.autoprocess_cb = self.control_widget._file_gb.autoprocess_cb
-        self.mapping_cb = self.control_widget._file_gb.mapping_cb
 
         self.filename_lbl = self.control_widget._file_gb.filename_lbl
         self.dirname_lbl = self.control_widget._file_gb.dirname_lbl

@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # T-Rax - GUI program for analysis of spectroscopy data during
 # diamond anvil cell experiments
 # Copyright (C) 2016 Clemens Prescher (clemens.prescher@gmail.com)
@@ -117,8 +117,8 @@ class RoiDataManager():
             rois = []
             part_height = img_dimension[1] / (2.0 * self.roi_num + 1.0)
             for ind in range(self.roi_num):
-                limits = np.array([0.00 * (img_dimension[0] - 1),
-                                   1.00 * (img_dimension[0]) - 1,
+                limits = np.array([0.25 * (img_dimension[0]) - 1,
+                                   0.75 * (img_dimension[0]) - 1,
                                    (2 * ind + 1) * part_height - 1,
                                    (2 * ind + 2) * part_height - 1])
                 limits = np.round(limits)
