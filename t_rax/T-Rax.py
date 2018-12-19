@@ -16,18 +16,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# import sys
+# from sys import platform
+#
+# from qtpy import QtWidgets
+#
+# from controller.MainController import MainController
+#
+#
+# app = QtWidgets.QApplication(sys.argv)
+# if platform != "darwin":
+#     app.setStyle('plastique')
+# controller = MainController()
+# controller.show_window()
+# app.exec_()
 
-import sys
-from sys import platform
+import t_rax.__init__
+t_rax.__init__.run_t_rax()
 
-from qtpy import QtWidgets
-
-from controller.MainController import MainController
-
-
-app = QtWidgets.QApplication(sys.argv)
-if platform != "darwin":
-    app.setStyle('plastique')
-controller = MainController()
-controller.show_window()
-app.exec_()

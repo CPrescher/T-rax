@@ -27,6 +27,7 @@ from pyshortcuts import make_shortcut
 from qtpy import QtWidgets
 from .controller.MainController import MainController
 
+
 def run_t_rax():
     usage = 'Usage: run_t_rax [options]'
     vers = 'run_t_rax %s' % __version__
