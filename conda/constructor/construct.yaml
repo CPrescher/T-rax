@@ -1,0 +1,36 @@
+name:  t_rax
+version: 1.2
+
+channels:
+    - http://repo.continuum.io/pkgs/main
+    - http://repo.continuum.io/pkgs/free
+    - http://repo.continuum.io/pkgs/msys2 [win]
+    - https://conda.anaconda.org/gsecars/
+
+specs:
+    - python 3.6*
+    - conda
+    - anaconda
+    - setuptools
+    - pip
+    - console_shortcut # [win]
+    - python.app # [osx]
+    - numpy
+    - scipy
+    - pyqt
+    - pyqtgraph
+    - qtpy
+    - h5py
+    - matplotlib
+    - six
+    - lmfit
+    - t_rax
+
+## someday, hopefully!
+## installer_type: pkg # [osx]
+
+post_install: post_install_unix.sh  # [linux64 or osx]
+post_install: post_install_windows.bat # [win]
+
+welcome_image: ../../t_rax/widget/icons/t_rax.png  #  [win]
+
