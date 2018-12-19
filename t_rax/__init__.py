@@ -25,7 +25,7 @@ from sys import platform
 from optparse import OptionParser
 from pyshortcuts import make_shortcut
 from qtpy import QtWidgets
-from .controller.MainController import MainController, get_version
+from .controller.MainController import MainController
 
 def run_t_rax():
     usage = 'Usage: run_t_rax [options]'

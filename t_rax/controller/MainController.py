@@ -22,6 +22,7 @@ import os
 
 from qtpy import QtWidgets, QtCore
 
+from .. import __version__
 from ..model.TemperatureModel import TemperatureModel
 from ..model.RubyModel import RubyModel
 from ..model.DiamondModel import DiamondModel
@@ -32,37 +33,11 @@ from .RubyController import RubyController
 from .DiamondController import DiamondController
 from .RamanController import RamanController
 
-from . import versioneer
-
-versioneer.VCS = 'git'
-versioneer.versionfile_source = ''
-versioneer.versionfile_build = ''
-versioneer.tag_prefix = ''
-versioneer.parentdir_prefix = ''
-
-
-def get_version():
-    version = versioneer.get_version()
-    if version not in __name__:
-        write_version_file(version)
-        return version
-    else:
-        from . import _version
-        return _version.__version__
-
-
-def write_version_file(version_str):
-    path = os.path.dirname(__file__)
-    with open(os.path.join(path, '_version.py'), 'w') as f:
-        f.write('__version__="{}"'.format(version_str))
-
-__version__ = get_version()
-
 class MainController(object):
     def __init__(self):
         self.main_widget = MainWidget()
 
-        self.main_widget.setWindowTitle('T-Rax ' + get_version())
+        self.main_widget.setWindowTitle('T-Rax ' + __version__)
 
         self.create_signals()
         self.create_data_models()
