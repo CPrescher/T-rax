@@ -16,42 +16,42 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from __future__ import absolute_import
-
-import sys
-import os
-import time
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
-import traceback
-from qtpy import QtWidgets
-
-
-def excepthook(exc_type, exc_value, traceback_obj):
-    """
-    Global function to catch unhandled exceptions. This function will result in an error dialog which displays the
-    error information.
-
-    :param exc_type: exception type
-    :param exc_value: exception value
-    :param traceback_obj: traceback object
-    :return:
-    """
-
-    traceback.print_exception(exc_type, exc_value, traceback_obj)
-
-from sys import platform
-
-from qtpy import QtWidgets
-
-from controller.MainController import MainController
-
-
-app = QtWidgets.QApplication(sys.argv)
-sys.excepthook = excepthook
+# from __future__ import absolute_import
+#
+# import sys
+# import os
+# import time
+#
+# try:
+#     from cStringIO import StringIO
+# except ImportError:
+#     from io import StringIO
+# import traceback
+# from qtpy import QtWidgets
+#
+#
+# def excepthook(exc_type, exc_value, traceback_obj):
+#     """
+#     Global function to catch unhandled exceptions. This function will result in an error dialog which displays the
+#     error information.
+#
+#     :param exc_type: exception type
+#     :param exc_value: exception value
+#     :param traceback_obj: traceback object
+#     :return:
+#     """
+#
+#     traceback.print_exception(exc_type, exc_value, traceback_obj)
+#
+# from sys import platform
+#
+# # from qtpy import QtWidgets
+#
+# # from controller.MainController import MainController
+#
+#
+# # app = QtWidgets.QApplication(sys.argv)
+# sys.excepthook = excepthook
 
 import t_rax.__init__
 t_rax.__init__.run_t_rax()
