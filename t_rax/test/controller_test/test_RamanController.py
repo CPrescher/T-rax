@@ -25,10 +25,10 @@ from ..ehook import excepthook
 from qtpy import QtWidgets, QtCore
 from qtpy.QtTest import QTest
 
-from model.RamanModel import RamanModel
-from widget.RamanWidget import RamanWidget
-from controller.RamanController import RamanController
-from controller.BaseController import BaseController
+from ...model.RamanModel import RamanModel
+from ...widget.RamanWidget import RamanWidget
+from ...controller.RamanController import RamanController
+from ...controller.BaseController import BaseController
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
@@ -76,6 +76,7 @@ class RamanControllerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(new_y, y))
 
 ########Testing Overlays########
+
 
 class RamanOverlayControllerTest(unittest.TestCase):
     @classmethod

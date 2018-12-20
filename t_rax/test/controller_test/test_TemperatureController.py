@@ -26,9 +26,9 @@ from qtpy import QtCore, QtWidgets
 from qtpy.QtTest import QTest
 import numpy as np
 
-from model.TemperatureModel import TemperatureModel
-from controller.TemperatureController import TemperatureController
-from widget.TemperatureWidget import TemperatureWidget
+from ...model.TemperatureModel import TemperatureModel
+from ...controller.TemperatureController import TemperatureController
+from ...widget.TemperatureWidget import TemperatureWidget
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')

@@ -24,7 +24,7 @@ from qtpy import QtWidgets, QtCore
 from ..widget.TemperatureWidget import TemperatureWidget, SetupEpicsDialog
 from ..widget.Widgets import open_file_dialog, open_files_dialog, save_file_dialog
 from ..model.TemperatureModel import TemperatureModel
-import model.epics_settings as eps
+from ..model import epics_settings as eps
 from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 import numpy as np
 

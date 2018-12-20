@@ -24,8 +24,8 @@ from qtpy import QtWidgets
 
 import numpy as np
 
-from model.TemperatureModel import TemperatureModel, T_LOG_FILE, LOG_HEADER
-from model.RoiData import Roi, get_roi_max, get_roi_sum
+from ...model.TemperatureModel import TemperatureModel, T_LOG_FILE, LOG_HEADER
+from ...model.RoiData import Roi, get_roi_max, get_roi_sum
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
@@ -47,6 +47,7 @@ class TestTemperatureModel(unittest.TestCase):
     def tearDown(self):
         self.delete_if_exists('complete.trs')
         self.delete_if_exists('empty.trs')
+        del self.model
 
     def delete_if_exists(self, file_name):
         if os.path.exists(os.path.join(unittest_files_path, file_name)):
@@ -237,16 +238,16 @@ class TestTemperatureModel(unittest.TestCase):
         temperature_fitting_path = os.path.join(
             unittest_files_path, 'temperature_fitting')
 
-        log_path = os.path.join(temperature_fitting_path, T_LOG_FILE)
-        self.delete_if_exists(log_path)
+        self.log_path = os.path.join(temperature_fitting_path, T_LOG_FILE)
+        self.delete_if_exists(self.log_path)
 
         self.load_single_frame_file_and_calibration()
         self.model.write_to_log_file()
 
-        self.assertTrue(os.path.isfile(log_path))
+        self.assertTrue(os.path.isfile(self.log_path))
         self.model.log_file.close()
 
-        file = open(log_path)
+        file = open(self.log_path)
         lines = file.readlines()
 
         self.assertEqual(lines[0], LOG_HEADER)
@@ -256,7 +257,8 @@ class TestTemperatureModel(unittest.TestCase):
         self.assertEqual(line2[1], os.path.dirname(self.model.filename))
         file.close()
 
-        self.delete_if_exists(log_path)
+        self.model.log_file.close()
+        self.delete_if_exists(self.log_path)
 
     def test_multiple_frame_spe_file(self):
         temperature_fitting_path = os.path.join(

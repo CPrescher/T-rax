@@ -20,7 +20,7 @@ import unittest
 import datetime
 import os
 
-from model.SpeFile import SpeFile
+from ...model.SpeFile import SpeFile
 
 unittest_folder = os.path.join(os.path.dirname(__file__), 'test_files')
 

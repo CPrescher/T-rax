@@ -24,9 +24,9 @@ from qtpy import QtWidgets, QtCore
 
 from qtpy.QtTest import QTest
 
-from model.RubyModel import RubyModel
-from widget.RubyWidget import RubyWidget
-from controller.RubyController import RubyController
+from ...model.RubyModel import RubyModel
+from ...widget.RubyWidget import RubyWidget
+from ...controller.RubyController import RubyController
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')

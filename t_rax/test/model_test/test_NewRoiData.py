@@ -20,7 +20,7 @@
 import unittest
 from qtpy import QtWidgets
 
-from model.RoiData import RoiDataManager
+from ...model.RoiData import RoiDataManager
 
 
 class TestNewRoiData(unittest.TestCase):

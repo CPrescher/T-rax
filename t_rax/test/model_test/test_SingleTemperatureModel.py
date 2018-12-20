@@ -24,9 +24,9 @@ from qtpy import QtWidgets
 
 import numpy as np
 
-from model.TemperatureModel import SingleTemperatureModel
-from model.RoiData import RoiDataManager
-from model.SpeFile import SpeFile
+from ...model.TemperatureModel import SingleTemperatureModel
+from ...model.RoiData import RoiDataManager
+from ...model.SpeFile import SpeFile
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')

@@ -24,7 +24,7 @@ import numpy as np
 
 from qtpy import QtWidgets
 
-from model.RubyModel import RubyModel
+from ...model.RubyModel import RubyModel
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')

@@ -22,7 +22,7 @@ import os
 
 import numpy as np
 
-from model.Spectrum import Spectrum, BkgNotInRangeError
+from ...model.Spectrum import Spectrum, BkgNotInRangeError
 
 
 class SpectrumTest(unittest.TestCase):

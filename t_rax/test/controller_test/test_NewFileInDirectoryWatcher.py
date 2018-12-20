@@ -24,7 +24,7 @@ import os
 from qtpy import QtWidgets
 from mock import Mock
 
-from controller.NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
+from ...controller.NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 
 unittest_folder = os.path.join(os.path.dirname(__file__), '..', 'test_files')
 

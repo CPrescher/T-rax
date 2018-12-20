@@ -24,9 +24,9 @@ import numpy as np
 from qtpy import QtWidgets, QtCore
 from qtpy.QtTest import QTest
 
-from model.DiamondModel import DiamondModel
-from widget.DiamondWidget import DiamondWidget
-from controller.DiamondController import DiamondController
+from ...model.DiamondModel import DiamondModel
+from ...widget.DiamondWidget import DiamondWidget
+from ...controller.DiamondController import DiamondController
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
@@ -42,7 +42,6 @@ class DiamondControllerTest(unittest.TestCase):
     def tearDownClass(cls):
         cls.app.quit()
         cls.app.deleteLater()
-
 
     def setUp(self):
         self.model = DiamondModel()

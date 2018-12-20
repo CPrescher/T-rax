@@ -22,7 +22,7 @@ import os
 
 from qtpy import QtWidgets
 
-from model.DiamondModel import DiamondModel
+from ...model.DiamondModel import DiamondModel
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')

@@ -23,7 +23,7 @@ from qtpy import QtWidgets
 
 import numpy as np
 
-from model.RamanModel import RamanModel, RAMAN_LOG_FILE, LOG_HEADER
+from ...model.RamanModel import RamanModel, RAMAN_LOG_FILE, LOG_HEADER
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
@@ -41,7 +41,13 @@ class RamanModelTest(unittest.TestCase):
         cls.app.deleteLater()
 
     def setUp(self):
+        raman_export_path = unittest_files_path
+        self.log_path = os.path.join(raman_export_path, RAMAN_LOG_FILE)
+        self.delete_if_exists(self.log_path)
         self.model = RamanModel()
+
+    def tearDown(self):
+        del self.model
 
     def test_changing_laser_line(self):
         self.model.load_file(test_file)
@@ -65,18 +71,13 @@ class RamanModelTest(unittest.TestCase):
         self.assertTrue(np.array_equal(y, y_new))
 
     def test_logging_of_single_raman_spectrum(self):
-        raman_export_path = unittest_files_path
-
-        log_path = os.path.join(raman_export_path, RAMAN_LOG_FILE)
-        self.delete_if_exists(log_path)
-
         self.model.load_file(test_file)
         self.model.write_to_log_file()
 
-        self.assertTrue(os.path.isfile(log_path))
+        self.assertTrue(os.path.isfile(self.log_path))
         self.model.log_file.close()
 
-        file = open(log_path)
+        file = open(self.log_path)
         lines = file.readlines()
 
         self.assertEqual(lines[0], LOG_HEADER)
@@ -85,8 +86,8 @@ class RamanModelTest(unittest.TestCase):
         self.assertEqual(line2[0], os.path.basename(os.path.normpath(self.model.filename)))
         self.assertEqual(line2[1], os.path.dirname(os.path.normpath(self.model.filename)))
         file.close()
-
-        self.delete_if_exists(log_path)
+        self.model.log_file.close()
+        self.delete_if_exists(self.log_path)
 
     def delete_if_exists(self, file_name):
         if os.path.exists(os.path.join(unittest_files_path, file_name)):

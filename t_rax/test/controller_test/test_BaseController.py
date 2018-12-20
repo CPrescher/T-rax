@@ -30,9 +30,9 @@ from qtpy.QtTest import QTest
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
-from model.BaseModel import SingleSpectrumModel
-from widget.BaseWidget import BaseWidget
-from controller.BaseController import BaseController
+from ...model.BaseModel import SingleSpectrumModel
+from ...widget.BaseWidget import BaseWidget
+from ...controller.BaseController import BaseController
 
 
 class BaseControllerTest(unittest.TestCase):
@@ -53,6 +53,8 @@ class BaseControllerTest(unittest.TestCase):
 
         QtWidgets.QFileDialog.getOpenFileName = MagicMock(
             return_value=os.path.abspath(os.path.join(unittest_files_path, 'temper_009.spe')))
+        QtWidgets.QFileDialog.getOpenFileNames = MagicMock(
+            return_value=[os.path.abspath(os.path.join(unittest_files_path, 'temper_009.spe'))])
 
     def tearDown(self):
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'temp.spe'))
@@ -112,10 +114,10 @@ class BaseControllerTest(unittest.TestCase):
         self.assertTrue(os.path.exists(out_path))
 
     def test_load_multiple_frame_file(self):
-        QtWidgets.QFileDialog.getOpenFileName = MagicMock(
-            return_value=os.path.join(unittest_files_path,
-                                      'temperature_fitting',
-                                      'test_measurement_multiple.spe'))
+        QtWidgets.QFileDialog.getOpenFileNames = MagicMock(
+            return_value=[os.path.join(unittest_files_path,
+                                       'temperature_fitting',
+                                       'test_measurement_multiple.spe')])
         self.controller.load_file_btn_clicked()
 
         self.assertEqual(float(str(self.widget.frame_txt.text())), self.model.current_frame)

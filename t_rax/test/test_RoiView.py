@@ -22,7 +22,7 @@ import unittest
 import numpy as np
 from qtpy import QtWidgets
 
-from widget.RoiWidget import RoiWidget
+from ...widget.RoiWidget import RoiWidget
 
 
 class TestNewRoiView(unittest.TestCase):
