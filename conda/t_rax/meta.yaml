@@ -6,7 +6,8 @@ package:
 
 source:
   ## git_rev: {{ version }}
-  git_url: https://github.com/newville/T-Rax
+  git_url: https://github.com/erangre/T-rax.git
+  git_tag: 13IDD_Raman_C2
 
 build:
   number: 1
