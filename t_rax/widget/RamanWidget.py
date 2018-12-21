@@ -152,14 +152,14 @@ class RamanWidget(BaseWidget, object):
         self.graph_widget.remove_item(self.overlays[ind])
         # self.legend.hideItem(ind + 1)
         # self.overlay_show[ind] = False
-        self.update_graph_range()
+        # self.update_graph_range()
         QtWidgets.QApplication.processEvents()
 
     def show_overlay(self, ind):
         self.graph_widget.add_item(self.overlays[ind])
         # self.legend.showItem(ind + 1)
-        self.overlay_show[ind] = True
-        self.update_graph_range()
+        # self.overlay_show[ind] = True
+        # self.update_graph_range()
         QtWidgets.QApplication.processEvents()
 
     def select_overlay(self, ind):
