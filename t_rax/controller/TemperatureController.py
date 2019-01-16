@@ -268,7 +268,8 @@ class TemperatureController(QtCore.QObject):
 
         self.ds_calculations_changed()
         self.us_calculations_changed()
-        self.model.write_to_log_file()
+        if self.model.log_file is not None:
+            self.model.write_to_log_file()
 
     def ds_calculations_changed(self):
         if self.model.ds_calibration_filename is not None:

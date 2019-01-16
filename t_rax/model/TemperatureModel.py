@@ -103,9 +103,12 @@ class TemperatureModel(QtCore.QObject):
         return True
 
     def create_log_file(self, file_path):
-        self.log_file = open(os.path.join(file_path, T_LOG_FILE), 'a')
-        self.log_file.write(LOG_HEADER)
-        return self.log_file
+        try:
+            self.log_file = open(os.path.join(file_path, T_LOG_FILE), 'a')
+            self.log_file.write(LOG_HEADER)
+            return self.log_file
+        except PermissionError:
+            return None
 
     def write_to_log_file(self):
         if not math.isnan(self.ds_temperature):
