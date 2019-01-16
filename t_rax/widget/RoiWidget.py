@@ -109,6 +109,8 @@ class RoiWidget(QtWidgets.QWidget):
         if img_data is not None:
             self.img_widget.plot_image(img_data.T)
 
+    def add_item(self, pg_item):
+        self.img_widget.pg_viewbox.addItem(pg_item)
 
 class RoiGroupBox(QtWidgets.QGroupBox):
     roi_txt_changed = QtCore.Signal(list)

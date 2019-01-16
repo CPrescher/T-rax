@@ -90,6 +90,10 @@ class RamanController(QtCore.QObject):
         self.model.sample_position = x
         self.widget.sample_position_txt.setText("{:.2f}".format(x))
         self.widget.set_raman_line_pos(x)
+        if self.model.mode == RamanModel.REVERSE_CM_MODE:
+            x = self.model.convert_reverse_cm_to_wavelength(x, self.model.laser_line)
+        ind = self.model.get_roi_ind_from_wavelength(x)
+        self.widget.set_raman_roi_line_pos(ind)
 
     def update_widget_parameter(self):
         self.widget.laser_line_txt.setText("{:.2f}".format(self.model.laser_line))

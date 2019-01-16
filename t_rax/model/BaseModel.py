@@ -33,7 +33,7 @@ class SingleSpectrumModel(QtCore.QObject, object):
     def __init__(self):
         super(SingleSpectrumModel, self).__init__()
 
-        self.spe_file = None
+        self.spe_file = None  # type: SpeFile
         self.filename = None
 
         self._data_img = None
@@ -133,3 +133,7 @@ class SingleSpectrumModel(QtCore.QObject, object):
         return "Exp. Time: {}s | Grating: {} | Detector: {}".format(self.spe_file.exposure_time,
                                                                     self.spe_file.grating,
                                                                     self.spe_file.detector)
+
+    def get_roi_ind_from_wavelength(self, wl):
+        ind = (np.abs(self._data_img_x_calibration - wl)).argmin()
+        return ind

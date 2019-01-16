@@ -46,6 +46,7 @@ class RamanWidget(BaseWidget, object):
 
         self.create_raman_shortcuts()
         self.modify_graph_widget()
+        self.modify_roi_widget()
 
         # self.overlay_add_btn = QtWidgets.QPushButton('Add')
         # self._main_layout.addWidget(self.overlay_add_btn)
@@ -65,11 +66,18 @@ class RamanWidget(BaseWidget, object):
         self._raman_line = pg.InfiniteLine(pen=pg.mkPen((0, 197, 3), width=2))
         self.graph_widget.add_item(self._raman_line)
 
+    def modify_roi_widget(self):
+        self._raman_roi_line = pg.InfiniteLine(pen=pg.mkPen((0, 197, 3), width=2))
+        self.roi_widget.add_item(self._raman_roi_line)
+
     def set_raman_line_pos(self, value):
         self._raman_line.setValue(value)
 
     def get_raman_line_pos(self):
         return self._raman_line.value()
+
+    def set_raman_roi_line_pos(self, value):
+        self._raman_roi_line.setValue(value)
 
     # def update_graph_range(self):
     #     x_range = list(self.plot_item.dataBounds(0))

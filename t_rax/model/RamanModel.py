@@ -76,7 +76,7 @@ class RamanModel(SingleSpectrumModel, object):
     def spectrum(self):
         spec = super(RamanModel, self).spectrum
         if self._mode is RamanModel.REVERSE_CM_MODE:
-            spec._x = convert_wavelength_to_reverse_cm(spec.x, self.laser_line)
+            spec._x = self.convert_wavelength_to_reverse_cm(spec.x, self.laser_line)
         return spec
 
     @property
@@ -150,6 +150,8 @@ class RamanModel(SingleSpectrumModel, object):
     #     h = (0.19 * (ind + 2)) % 1
     #     return np.array(hsv_to_rgb(h, s, v)) * 255
 
+    def convert_wavelength_to_reverse_cm(self, wavelength, laser_line):
+        return (1.0 / laser_line - 1 / np.array(wavelength)) * 1.0e7
 
-def convert_wavelength_to_reverse_cm(wavelength, laser_line):
-    return (1.0 / laser_line - 1 / np.array(wavelength)) * 1.0e7
+    def convert_reverse_cm_to_wavelength(self, reverse_cm, laser_line):
+        return 1.0/(1.0/laser_line - reverse_cm/1.0e7)
