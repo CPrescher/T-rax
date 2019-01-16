@@ -110,21 +110,22 @@ class RamanController(QtCore.QObject):
         settings.setValue("raman roi", " ".join(str(e) for e in self.model.roi.as_list()))
 
     def load_settings(self, settings):
-        raman_data_path = str(settings.value("raman data file").toString())
+        raman_data_path = str(settings.value("raman data file"))
         if os.path.exists(raman_data_path):
             self.base_controller.load_file_btn_clicked(raman_data_path)
 
-        raman_autoprocessing = settings.value("raman autoprocessing").toBool()
+        raman_autoprocessing = settings.value("raman autoprocessing") == 'True' or \
+                               settings.value("raman autoprocessing") == 'true'
         if raman_autoprocessing:
             self.widget.autoprocess_cb.setChecked(True)
 
-        value = settings.value("raman laser line").toFloat()
-        self.model.laser_line = value[0] if value[1] else self.model.laser_line
+        value = float(settings.value("raman laser line"))
+        self.model.laser_line = value
 
-        value = settings.value("raman mode").toInt()
-        self.model.mode = value[0] if value[1] else self.model.mode
+        value = int(settings.value("raman mode"))
+        self.model.mode = value
 
-        roi_str = str(settings.value("raman roi").toString())
+        roi_str = str(settings.value("raman roi"))
         if roi_str != "":
             roi = [float(e) for e in roi_str.split()]
             self.model.roi = roi

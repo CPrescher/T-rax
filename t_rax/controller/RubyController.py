@@ -120,32 +120,33 @@ class RubyController(QtCore.QObject):
         settings.setValue("ruby roi", " ".join(str(e) for e in self.model.roi.as_list()))
 
     def load_settings(self, settings):
-        data_path = str(settings.value("ruby data file").toString())
+        data_path = str(settings.value("ruby data file"))
         if os.path.exists(data_path):
             self.base_controller.load_file_btn_clicked(data_path)
 
-        autoprocessing_flag = settings.value("ruby autoprocessing").toBool()
+        autoprocessing_flag = settings.value("ruby autoprocessing") == 'True' or \
+                              settings.value("ruby autoprocessing") == 'true'
         if autoprocessing_flag:
             self.widget.autoprocess_cb.setChecked(True)
 
         self.model.blockSignals(True)
-        value = settings.value("ruby scale").toInt()
-        self.model.ruby_scale = value[0] if value[1] else self.model.ruby_scale
+        value = int(settings.value("ruby scale"))
+        self.model.ruby_scale = value
 
-        value = settings.value("ruby reference position").toFloat()
-        self.model.reference_position = value[0] if value[1] else self.model.reference_position
+        value = float(settings.value("ruby reference position"))
+        self.model.reference_position = value
 
-        value = settings.value("ruby reference temperature").toFloat()
-        self.model.reference_temperature = value[0] if value[1] else self.model.reference_temperature
+        value = float(settings.value("ruby reference temperature"))
+        self.model.reference_temperature = value
 
-        value = settings.value("ruby sample position").toFloat()
-        self.model.sample_position = value[0] if value[1] else self.model.sample_position
+        value = float(settings.value("ruby sample position"))
+        self.model.sample_position = value
 
         self.model.blockSignals(False)
-        value = settings.value("ruby sample temperature").toFloat()
-        self.model.sample_temperature = value[0] if value[1] else self.model.sample_temperature
+        value = float(settings.value("ruby sample temperature"))
+        self.model.sample_temperature = value
 
-        roi_str = str(settings.value("ruby roi").toString())
+        roi_str = str(settings.value("ruby roi"))
         if roi_str is not "":
             roi = [float(e) for e in roi_str.split()]
             self.model.roi = roi

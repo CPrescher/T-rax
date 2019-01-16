@@ -95,29 +95,30 @@ class DiamondController(QtCore.QObject):
         settings.setValue("diamond roi", " ".join(str(e) for e in self.model.roi.as_list()))
 
     def load_settings(self, settings):
-        data_path = str(settings.value("diamond data file").toString())
+        data_path = str(settings.value("diamond data file"))
         if os.path.exists(data_path):
             self.base_controller.load_file_btn_clicked(data_path)
 
-        autoprocessing = settings.value("diamond autoprocessing").toBool()
+        autoprocessing = settings.value("diamond autoprocessing") == 'True' or \
+                         settings.value("diamond autoprocessing") == 'true'
         if autoprocessing:
             self.widget.autoprocess_cb.setChecked(True)
 
-        value = settings.value("diamond laser line").toFloat()
-        self.model.laser_line = value[0] if value[1] else self.model.laser_line
+        value = float(settings.value("diamond laser line"))
+        self.model.laser_line = value
 
-        value = settings.value("diamond derivative").toInt()
-        self.widget.derivative_sb.setValue(value[0])
+        value = int(settings.value("diamond derivative"))
+        self.widget.derivative_sb.setValue(value)
 
-        value = settings.value("diamond reference position").toFloat()
-        self.model.reference_position = value[0] if value[1] else self.model.reference_position
+        value = float(settings.value("diamond reference position"))
+        self.model.reference_position = value
 
-        value = settings.value("diamond sample position").toFloat()
-        self.model.sample_position = value[0] if value[1] else self.model.sample_position
+        value = float(settings.value("diamond sample position"))
+        self.model.sample_position = value
 
         self.update_widget_parameter()
 
-        roi_str = str(settings.value("diamond roi").toString())
+        roi_str = str(settings.value("diamond roi"))
         if roi_str != "":
             roi = [float(e) for e in roi_str.split()]
             self.model.roi = roi
