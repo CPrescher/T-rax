@@ -295,7 +295,10 @@ class SpeFile(object):
             self._read_num_combined_frames_from_header()
 
     def _select_wavelength_from_roi(self):
-        self.x_calibration = self.x_calibration[self.roi_x: self.roi_x + self.roi_width]
+        try:
+            self.x_calibration = self.x_calibration[self.roi_x: self.roi_x + self.roi_width]
+        except AttributeError:
+            print("SPE File bad!")
 
     def _read_datatype(self):
         self._data_type = self._read_at(108, 1, np.uint16)[0]
