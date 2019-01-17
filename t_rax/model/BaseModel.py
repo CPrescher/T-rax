@@ -44,6 +44,7 @@ class SingleSpectrumModel(QtCore.QObject, object):
 
         self._spectrum = None
 
+        self.file_iteration_mode = 'number'
         self._filename_iterator = FileNameIterator()
         self.roi_manager = RoiDataManager(1)
         self.data_spectrum = Spectrum([], [])
@@ -66,12 +67,12 @@ class SingleSpectrumModel(QtCore.QObject, object):
         self.spectrum_changed.emit(*self.spectrum.data)
 
     def load_next_file(self):
-        new_filename = self._filename_iterator.get_next_filename()
+        new_filename = self._filename_iterator.get_next_filename(mode=self.file_iteration_mode)
         if new_filename is not None:
             self.load_file(new_filename)
 
     def load_previous_file(self):
-        new_filename = self._filename_iterator.get_previous_filename()
+        new_filename = self._filename_iterator.get_previous_filename(mode=self.file_iteration_mode)
         if new_filename is not None:
             self.load_file(new_filename)
 
@@ -137,3 +138,17 @@ class SingleSpectrumModel(QtCore.QObject, object):
     def get_roi_ind_from_wavelength(self, wl):
         ind = (np.abs(self._data_img_x_calibration - wl)).argmin()
         return ind
+
+    def set_file_iteration_mode(self, mode):
+        """
+        Sets the file iteration mode for the load_next_file and load_previous_file functions. Possible modes:
+            * 'number' will increment or decrement based on numbers in the filename.
+            * 'time' will increment or decrement based on creation time for the files.
+        """
+        if mode == 'number':
+            self.file_iteration_mode = 'number'
+            self._filename_iterator.create_timed_file_list = False
+        elif mode == 'time':
+            self.file_iteration_mode = 'time'
+            self._filename_iterator.create_timed_file_list = True
+            self._filename_iterator.update_filename(self.filename)

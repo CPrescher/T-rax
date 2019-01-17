@@ -72,6 +72,8 @@ class BaseWidget(QtWidgets.QWidget):
         self.load_file_btn = self.control_widget._file_gb.load_file_btn
         self.load_next_file_btn = self.control_widget._file_gb.load_next_file_btn
         self.load_previous_file_btn = self.control_widget._file_gb.load_previous_file_btn
+        self.browse_by_name_rb = self.control_widget._file_gb.browse_by_name_rb
+        self.browse_by_time_rb = self.control_widget._file_gb.browse_by_time_rb
 
         self.autoprocess_cb = self.control_widget._file_gb.autoprocess_cb
 
