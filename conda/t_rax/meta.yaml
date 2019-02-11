@@ -10,7 +10,7 @@ source:
   git_tag: 13IDD_Raman_C2
 
 build:
-  number: 6
+  number: 7
   script: python setup.py install
 
 requirements:

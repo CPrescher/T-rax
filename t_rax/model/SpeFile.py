@@ -321,7 +321,8 @@ class SpeFile(object):
     def _read_frame(self, pos=None):
         """Reads in a frame at a specific binary position. The following parameters have to
         be predefined before calling this function:
-        datatype - either 0,1,2,3 for float32, int32, int16 or uint16
+        datatype - either 0,1,2,3,8 for float32, int32, int16, uint16 or uint32 (datatypes can be found on page 10 in
+        the SPE 3.0 File format manual)
         _xdim, _ydim - being the dimensions.
         """
         if pos == None:
@@ -334,6 +335,8 @@ class SpeFile(object):
             img = self._read_at(pos, self._xdim * self._ydim, np.int16)
         elif self._data_type == 3:
             img = self._read_at(pos, self._xdim * self._ydim, np.uint16)
+        elif self._data_type == 8:
+            img = self._read_at(pos, self._xdim * self._ydim, np.uint32)
         return img.reshape((self._ydim, self._xdim))
 
     def get_index_from(self, wavelength):
