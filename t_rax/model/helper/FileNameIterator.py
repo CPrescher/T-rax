@@ -173,7 +173,7 @@ class FileNameIterator(QtCore.QObject):
             if self.create_timed_file_list:
                 self.update_file_list()
 
-        if (self.create_timed_file_list and self.ordered_file_list == []):
+        if self.create_timed_file_list and self.ordered_file_list == []:
             self.update_file_list()
 
     def add_new_files_to_list(self):

@@ -54,8 +54,8 @@ class BaseController(QtCore.QObject):
 
         self.connect_click_function(self.widget.save_data_btn, self.save_data_btn_clicked)
         self.connect_click_function(self.widget.save_graph_btn, self.save_graph_btn_clicked)
-        self.connect_click_function(self.widget.browse_by_name_rb, self.set_iteratoin_mode_number)
-        self.connect_click_function(self.widget.browse_by_time_rb, self.set_iteratoin_mode_time)
+        self.connect_click_function(self.widget.browse_by_name_rb, self.set_iteration_mode_number)
+        self.connect_click_function(self.widget.browse_by_time_rb, self.set_iteration_mode_time)
 
         self.model.data_changed.connect(self.data_changed)
         self.model.spectrum_changed.connect(self.widget.graph_widget.plot_data)
@@ -165,8 +165,8 @@ class BaseController(QtCore.QObject):
         self._directory_watcher = NewFileInDirectoryWatcher(file_types=['.spe'])
         self._directory_watcher.file_added.connect(self.load_data_file)
 
-    def set_iteratoin_mode_number(self):
+    def set_iteration_mode_number(self):
         self.model.set_file_iteration_mode('number')
 
-    def set_iteratoin_mode_time(self):
+    def set_iteration_mode_time(self):
         self.model.set_file_iteration_mode('time')
