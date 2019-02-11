@@ -420,7 +420,8 @@ class TemperatureController(QtCore.QObject):
             epics.camonitor(eps.epics_settings['T_folder'], callback=self.temperature_file_folder_changed)
 
     def temperature_file_folder_changed(self, *args, **kwargs):
-        self.temperature_folder_changed.emit()
+        if self.widget.connect_to_epics_cb.isChecked() and self.widget.autoprocess_cb.isChecked():
+            self.temperature_folder_changed.emit()
 
     def temperature_folder_changed_emitted(self):
         self._exp_working_dir = epics.caget(eps.epics_settings['T_folder'], as_string=True)
