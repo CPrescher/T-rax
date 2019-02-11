@@ -271,18 +271,21 @@ class SetupEpicsDialog(QtWidgets.QDialog):
         self.us_int_lbl = QtWidgets.QLabel("US Intensity PV")
         self.ds_int_lbl = QtWidgets.QLabel("DS Intensity PV")
         self.file_counter_lbl = QtWidgets.QLabel("File Counter PV")
+        self.temperature_file_directory_pv_lbl = QtWidgets.QLabel("T File Directory PV")
 
         self.us_temp_txt = QtWidgets.QLineEdit()
         self.ds_temp_txt = QtWidgets.QLineEdit()
         self.us_int_txt = QtWidgets.QLineEdit()
         self.ds_int_txt = QtWidgets.QLineEdit()
         self.file_counter_txt = QtWidgets.QLineEdit()
+        self.temperature_file_directory_pv_txt = QtWidgets.QLineEdit()
 
         self.us_temp_txt.setToolTip("Enter the complete PV, or None")
         self.ds_temp_txt.setToolTip("Enter the complete PV, or None")
         self.us_int_txt.setToolTip("Enter the complete PV, or None")
         self.ds_int_txt.setToolTip("Enter the complete PV, or None")
         self.file_counter_txt.setToolTip("Enter the complete PV, or None")
+        self.temperature_file_directory_pv_txt.setToolTip("Enter the PV which points to the T files folder, or None")
 
         self.ok_btn = QtWidgets.QPushButton("Done")
         self.cancel_btn = QtWidgets.QPushButton("Cancel")
@@ -295,13 +298,16 @@ class SetupEpicsDialog(QtWidgets.QDialog):
         self._grid_layout.addWidget(self.us_int_lbl, 2, 0)
         self._grid_layout.addWidget(self.ds_int_lbl, 3, 0)
         self._grid_layout.addWidget(self.file_counter_lbl, 4, 0)
+        self._grid_layout.addWidget(self.temperature_file_directory_pv_lbl, 5, 0)
         self._grid_layout.addWidget(self.us_temp_txt, 0, 1)
         self._grid_layout.addWidget(self.ds_temp_txt, 1, 1)
         self._grid_layout.addWidget(self.us_int_txt, 2, 1)
         self._grid_layout.addWidget(self.ds_int_txt, 3, 1)
         self._grid_layout.addWidget(self.file_counter_txt, 4, 1)
-        self._grid_layout.addWidget(self.ok_btn, 5, 0)
-        self._grid_layout.addWidget(self.cancel_btn, 5, 1)
+        self._grid_layout.addWidget(self.temperature_file_directory_pv_txt, 5, 1)
+
+        self._grid_layout.addWidget(self.ok_btn, 6, 0)
+        self._grid_layout.addWidget(self.cancel_btn, 6, 1)
 
         self.setLayout(self._grid_layout)
 
@@ -368,6 +374,14 @@ class SetupEpicsDialog(QtWidgets.QDialog):
     @file_counter_pv.setter
     def file_counter_pv(self, pv):
         self.file_counter_txt.setText(pv)
+
+    @property
+    def temperature_file_folder_pv(self):
+        return str(self.temperature_file_directory_pv_txt.text())
+
+    @temperature_file_folder_pv.setter
+    def temperature_file_folder_pv(self, pv):
+        self.temperature_file_directory_pv_txt.setText(pv)
 
     def exec_(self):
         """

@@ -124,4 +124,3 @@ class NewFileInDirectoryWatcher(QtCore.QObject):
                 else:
                     return
         self._files_in_path = files_now
-

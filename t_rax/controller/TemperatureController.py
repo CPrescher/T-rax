@@ -35,6 +35,9 @@ except ImportError:
 
 
 class TemperatureController(QtCore.QObject):
+
+    temperature_folder_changed = QtCore.Signal()
+
     def __init__(self, temperature_widget, model):
         """
         :param temperature_widget: reference to the temperature widget
@@ -66,6 +69,8 @@ class TemperatureController(QtCore.QObject):
 
         self.connect_click_function(self.widget.save_data_btn, self.save_data_btn_clicked)
         self.connect_click_function(self.widget.save_graph_btn, self.save_graph_btn_clicked)
+
+        self.temperature_folder_changed.connect(self.temperature_folder_changed_emitted)
 
         # Calibration signals
         self.connect_click_function(self.widget.load_ds_calibration_file_btn, self.load_ds_calibration_file)
@@ -406,6 +411,20 @@ class TemperatureController(QtCore.QObject):
     def _create_autoprocess_system(self):
         self._directory_watcher = NewFileInDirectoryWatcher(file_types=['.spe'])
         self._directory_watcher.file_added.connect(self.load_data_file)
+        self.setup_temperature_file_folder_monitor()
+
+    def setup_temperature_file_folder_monitor(self):
+        if epics is not None and eps.epics_settings['T_folder'] is not None \
+                and eps.epics_settings['T_folder'] is not 'None':
+            # epics.camonitor_clear(eps.epics_settings['T_folder'])
+            epics.camonitor(eps.epics_settings['T_folder'], callback=self.temperature_file_folder_changed)
+
+    def temperature_file_folder_changed(self, *args, **kwargs):
+        self.temperature_folder_changed.emit()
+
+    def temperature_folder_changed_emitted(self):
+        self._exp_working_dir = epics.caget(eps.epics_settings['T_folder'], as_string=True)
+        self._directory_watcher.path = self._exp_working_dir
 
     def setup_epics_pb_clicked(self):
         self.setup_epics_dialog.ok_btn.setEnabled(True)
@@ -414,6 +433,7 @@ class TemperatureController(QtCore.QObject):
         self.setup_epics_dialog.us_int_pv = eps.epics_settings['us_last_int']
         self.setup_epics_dialog.ds_int_pv = eps.epics_settings['ds_last_int']
         self.setup_epics_dialog.file_counter_pv = eps.epics_settings['file_counter']
+        self.setup_epics_dialog.temperature_file_folder_pv = eps.epics_settings['T_folder']
         self.setup_epics_dialog.exec_()
         if self.setup_epics_dialog.approved:
             with open('model/epics_settings.py', 'w') as outfile:
@@ -423,9 +443,11 @@ class TemperatureController(QtCore.QObject):
                 outfile.write("    'us_last_int': '" + self.setup_epics_dialog.us_int_pv + "',\n")
                 outfile.write("    'ds_last_int': '" + self.setup_epics_dialog.ds_int_pv + "',\n")
                 outfile.write("    'file_counter': '" + self.setup_epics_dialog.file_counter_pv + "',\n")
+                outfile.write("    'T_folder': '" + self.setup_epics_dialog.temperature_file_folder_pv + ",\n")
                 outfile.write("}\n")
             eps.epics_settings['us_last_temp'] = self.setup_epics_dialog.us_temp_pv
             eps.epics_settings['ds_last_temp'] = self.setup_epics_dialog.ds_temp_pv
             eps.epics_settings['us_last_int'] = self.setup_epics_dialog.us_int_pv
             eps.epics_settings['ds_last_int'] = self.setup_epics_dialog.ds_int_pv
             eps.epics_settings['file_counter'] = self.setup_epics_dialog.file_counter_pv
+            eps.epics_settings['T_folder'] = self.setup_epics_dialog.temperature_file_folder_pv
