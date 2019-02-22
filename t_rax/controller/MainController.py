@@ -69,19 +69,19 @@ class MainController(object):
     def load_settings(self):
         try:
             self.temperature_controller.load_settings(self.settings)
-        except AttributeError:
+        except (AttributeError, TypeError):
             pass
         try:
             self.ruby_controller.load_settings(self.settings)
-        except AttributeError:
+        except (AttributeError, TypeError):
             pass
         try:
             self.diamond_controller.load_settings(self.settings)
-        except AttributeError:
+        except (AttributeError, TypeError):
             pass
         try:
             self.raman_controller.load_settings(self.settings)
-        except AttributeError:
+        except (AttributeError, TypeError):
             pass
 
     def save_settings(self):
