@@ -24,6 +24,25 @@ from ..model.RamanModel import RamanModel
 from ..controller.BaseController import BaseController
 
 
+class RamanBaseController(BaseController):
+    def __init__(self, model, widget):
+        """
+        :type widget: BaseWidget
+        :type model: SingleSpectrumModel
+        """
+        super(RamanBaseController, self).__init__(model, widget)
+
+    def graph_mouse_moved(self, x, y):
+        if self.widget.nanometer_cb.isChecked():
+            x1 = self.model.convert_wavelength_to_reverse_cm(x, self.model.laser_line)
+            self.widget.graph_mouse_pos_lbl.setText(
+                "X: {:8.2f} nm , {:8.2f} cm<sup>-1</sup>   Y: {:8.2f}".format(x, x1, y))
+        elif self.widget.reverse_cm_cb.isChecked():
+            x1 = self.model.convert_reverse_cm_to_wavelength(x, self.model.laser_line)
+            self.widget.graph_mouse_pos_lbl.setText(
+                "X: {:8.2f} nm , {:8.2f} cm<sup>-1</sup>   Y: {:8.2f}".format(x1, x, y))
+
+
 class RamanController(QtCore.QObject):
     def __init__(self, model, widget):
         """
@@ -35,7 +54,7 @@ class RamanController(QtCore.QObject):
         """
         super(RamanController, self).__init__()
 
-        self.base_controller = BaseController(model, widget)
+        self.base_controller = RamanBaseController(model, widget)
 
         self.model = model
         self.widget = widget
