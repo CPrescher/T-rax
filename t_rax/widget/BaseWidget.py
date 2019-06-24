@@ -90,6 +90,7 @@ class BaseWidget(QtWidgets.QWidget):
 
         self.graph_info_lbl = self.graph_status_bar.right_lbl
         self.graph_mouse_pos_lbl = self.graph_status_bar.left_lbl
+        self.graph_mouse_click_pos_lbl = self.graph_status_bar.bottom_lbl
 
     def add_control_widget(self, widget):
         self.control_widget._layout.insertWidget(self.control_widget._layout.count() - 1, widget)

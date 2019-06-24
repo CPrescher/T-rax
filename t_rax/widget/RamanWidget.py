@@ -63,18 +63,27 @@ class RamanWidget(BaseWidget, object):
         self.overlay_offset_sb = self.overlay_gb.offset_sb
 
     def modify_graph_widget(self):
-        self._raman_line = pg.InfiniteLine(pen=pg.mkPen((0, 197, 3), width=2))
-        self.graph_widget.add_item(self._raman_line)
+        self._raman_vertical_line = pg.InfiniteLine(angle=90, pen=pg.mkPen((0, 197, 3), width=2))
+        self.graph_widget.add_item(self._raman_vertical_line)
+        self._raman_horizontal_line = pg.InfiniteLine(angle=0, pen=pg.mkPen((0, 197, 3), width=2))
+        self.graph_widget.add_item(self._raman_horizontal_line)
 
     def modify_roi_widget(self):
         self._raman_roi_line = pg.InfiniteLine(pen=pg.mkPen((0, 197, 3), width=2))
         self.roi_widget.add_item(self._raman_roi_line)
 
-    def set_raman_line_pos(self, value):
-        self._raman_line.setValue(value)
+    def set_raman_vertical_line_pos(self, value):
+        self._raman_vertical_line.setValue(value)
 
-    def get_raman_line_pos(self):
-        return self._raman_line.value()
+    def get_raman_vertical_line_pos(self):
+        return self._raman_vertical_line.value()
+
+    def set_raman_horizontal_line_pos(self, value):
+        self._raman_horizontal_line.setValue(value)
+
+    def get_raman_horizontal_line_pos(self):
+        return self._raman_horizontal_line.value()
+
 
     def set_raman_roi_line_pos(self, value):
         self._raman_roi_line.setValue(value)

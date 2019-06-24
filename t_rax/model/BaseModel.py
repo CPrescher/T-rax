@@ -136,6 +136,8 @@ class SingleSpectrumModel(QtCore.QObject, object):
                                                                     self.spe_file.detector)
 
     def get_roi_ind_from_wavelength(self, wl):
+        if self._data_img_x_calibration is None:
+            return 1
         ind = (np.abs(self._data_img_x_calibration - wl)).argmin()
         return ind
 

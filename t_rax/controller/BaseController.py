@@ -141,7 +141,7 @@ class BaseController(QtCore.QObject):
         self.model.roi = self.widget.roi_widget.get_rois()[0]
 
     def graph_mouse_moved(self, x, y):
-        self.widget.graph_mouse_pos_lbl.setText("X: {:8.2f}  Y: {:8.2f}".format(x, y))
+        self.widget.graph_mouse_pos_lbl.setText("X: {:8.2f} Y: {:8.2f}".format(x, y))
 
     def img_mouse_moved(self, x, y):
         x = int(np.floor(x))
