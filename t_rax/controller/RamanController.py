@@ -91,7 +91,8 @@ class RamanController(QtCore.QObject):
     def sample_pos_txt_changed(self):
         new_value = float(str(self.widget.sample_position_txt.text()))
         self.model.sample_position = new_value
-        self.widget.set_raman_line_pos(new_value)
+        self.widget.set_raman_vertical_line_pos(new_value)
+        self.widget.set_raman_horizontal_line_pos(new_value)
 
     def display_mode_changed(self):
         if self.widget.nanometer_cb.isChecked():
@@ -107,8 +108,19 @@ class RamanController(QtCore.QObject):
 
     def mouse_left_clicked(self, x, y):
         self.model.sample_position = x
+        self.model.sample_position = y
         self.widget.sample_position_txt.setText("{:.2f}".format(x))
-        self.widget.set_raman_line_pos(x)
+        self.widget.set_raman_vertical_line_pos(x)
+        self.widget.set_raman_horizontal_line_pos(y)
+        if self.widget.nanometer_cb.isChecked():
+            x1 = self.model.convert_wavelength_to_reverse_cm(x, self.model.laser_line)
+            self.widget.graph_mouse_click_pos_lbl.setText(
+                "X: {:8.2f} nm , {:8.2f} cm<sup>-1</sup>     Y: {:8.2f}".format(x, x1, y))
+        elif self.widget.reverse_cm_cb.isChecked():
+            x1 = self.model.convert_reverse_cm_to_wavelength(x, self.model.laser_line)
+            self.widget.graph_mouse_click_pos_lbl.setText(
+                "X: {:8.2f} nm , {:8.2f} cm<sup>-1</sup>     Y: {:8.2f}".format(x1, x, y))
+
         if self.model.mode == RamanModel.REVERSE_CM_MODE:
             x = self.model.convert_reverse_cm_to_wavelength(x, self.model.laser_line)
         ind = self.model.get_roi_ind_from_wavelength(x)
@@ -117,7 +129,8 @@ class RamanController(QtCore.QObject):
     def update_widget_parameter(self):
         self.widget.laser_line_txt.setText("{:.2f}".format(self.model.laser_line))
         self.widget.sample_position_txt.setText("{:.2f}".format(self.model.sample_position))
-        self.widget.set_raman_line_pos(self.model.sample_position)
+        self.widget.set_raman_vertical_line_pos(self.model.sample_position)
+        self.widget.set_raman_horizontal_line_pos(self.model.sample_position)
         if self.model.mode == RamanModel.WAVELENGTH_MODE:
             self.widget.nanometer_cb.setChecked(True)
 

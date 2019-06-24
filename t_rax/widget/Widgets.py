@@ -144,19 +144,25 @@ class StatusBar(QtWidgets.QWidget):
     def create_widgets(self):
         self.left_lbl = QtWidgets.QLabel()
         self.right_lbl = QtWidgets.QLabel()
+        self.bottom_lbl = QtWidgets.QLabel()
 
     def create_layout(self):
-        self._layout = QtWidgets.QHBoxLayout()
-        self._layout.addWidget(self.left_lbl)
-        self._layout.addSpacerItem(QtWidgets.QSpacerItem(QtWidgets.QSpacerItem(10, 10,
+        self._layout = QtWidgets.QVBoxLayout()
+        self._top_status_layout = QtWidgets.QHBoxLayout()
+        self._top_status_layout.addWidget(self.left_lbl)
+        self._top_status_layout.addSpacerItem(QtWidgets.QSpacerItem(QtWidgets.QSpacerItem(10, 10,
                                                                        QtWidgets.QSizePolicy.Expanding,
                                                                        QtWidgets.QSizePolicy.Fixed)))
-        self._layout.addWidget(self.right_lbl)
+        self._top_status_layout.addWidget(self.right_lbl)
+
+        self._layout.addLayout(self._top_status_layout)
+        self._layout.addWidget(self.bottom_lbl)
 
         self.setLayout(self._layout)
 
     def style_widgets(self):
         self._layout.setContentsMargins(8, 0, 8, 0)
+        self.bottom_lbl.setStyleSheet("color: #00C503")
 
 
 def open_file_dialog(parent_widget, caption, directory, filter=None):
