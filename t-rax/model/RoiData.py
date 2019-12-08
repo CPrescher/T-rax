@@ -121,7 +121,7 @@ class RoiDataManager():
                                    0.75 * (img_dimension[0]) - 1,
                                    (2 * ind + 1) * part_height - 1,
                                    (2 * ind + 2) * part_height - 1])
-                limits = np.round(limits)
+                limits = np.round(limits).astype(np.int)
                 rois.append(Roi(limits))
 
             self._add(img_dimension, rois)

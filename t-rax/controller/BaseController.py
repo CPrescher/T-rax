@@ -126,7 +126,7 @@ class BaseController(QtCore.QObject):
         called when the roi is changed in the roi Widget, will recalculate the spectrum and then plot the new updated
         one.
         """
-        self.model.roi = self.widget.roi_widget.get_rois()[0]
+        self.model.roi = np.round(self.widget.roi_widget.get_rois()[0]).astype(np.int)
 
     def graph_mouse_moved(self, x, y):
         self.widget.graph_mouse_pos_lbl.setText("X: {:8.2f}  Y: {:8.2f}".format(x, y))
