@@ -325,6 +325,9 @@ class SpeFile(object):
             img = self._read_at(pos, self._xdim * self._ydim, np.int16)
         elif self._data_type == 3:
             img = self._read_at(pos, self._xdim * self._ydim, np.uint16)
+        elif self._data_type == 8:
+            img = self._read_at(pos, self._xdim * self._ydim, np.uint32)
+            
         return img.reshape((self._ydim, self._xdim))
 
     def get_index_from(self, wavelength):
