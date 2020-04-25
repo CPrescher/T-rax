@@ -29,7 +29,7 @@ jobs:
       run: sudo apt-get install libxkbcommon-x11-0
 
     - name: Install Pip Dependencies
-      run: pip install scipy python-dateutil pytest pyqt5 h5py qtpy pyqtgraph lmfit mock pyshortcuts
+      run: pip install scipy python-dateutil pytest pyqt5 h5py qtpy pyqtgraph lmfit mock pyshortcuts nose
         
     - name: Run tests
-      run: xvfb-run -a py.test
+      run: xvfb-run nosetests
