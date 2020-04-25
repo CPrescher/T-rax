@@ -1,22 +1,44 @@
 # -*- mode: python -*-
-folder = 't-rax'
 
-a = Analysis([os.path.join(folder, 'T-Rax.py')],
+block_cipher = None
+
+import os
+folder = os.getcwd()
+
+from distutils.sysconfig import get_python_lib
+
+site_packages_path = get_python_lib()
+import lib2to3
+
+lib2to3_path = os.path.dirname(lib2to3.__file__)
+
+extra_datas = [
+    (os.path.join(lib2to3_path, 'Grammar.txt'), 'lib2to3/'),
+    (os.path.join(lib2to3_path, 'PatternGrammar.txt'), 'lib2to3/'),
+]
+
+
+a = Analysis(['run_t_rax.py'],
              pathex=[folder],
+             datas=extra_datas,
              hiddenimports=['scipy.special._ufuncs_cxx', 'scipy.integrate', 'scipy.integrate.quadrature',
                             'scipy.integrate.odepack', 'scipy.integrate._odepack', 'scipy.integrate._ode',
                             'scipy.integrate.quadpack', 'scipy.integrate._quadpack',
                             'scipy.integrate.vode', 'scipy.integrate._dop', 'scipy.integrate.lsoda',
-                            'h5py.h5ac', 'h5py.defs', 'h5py.utils', 'h5py._proxy'],
-             hookspath=None,
-             runtime_hooks=None)
+                            'h5py.h5ac', 'h5py.defs', 'h5py.utils', 'h5py._proxy', 'pkg_resources.py2_warn',
+                            'pywt._extensions._cwt'],
+             hookspath=[],
+             runtime_hooks=[],
+             excludes=['PyQt4', 'PySide'],
+             win_no_prefer_redirects=False,
+             win_private_assemblies=False,
+             cipher=block_cipher)
 
 ## extra files for getting things to work
-a.datas += [('widget/TRaxStyle.qss', 't-rax/widget/TRaxStyle.qss', 'DATA')]
-a.datas += [('widget/NavigationStyle.qss', 't-rax/widget/NavigationStyle.qss', 'DATA')]
+a.datas += [('t_rax/widget/TRaxStyle.qss', 't_rax/widget/TRaxStyle.qss', 'DATA')]
+a.datas += [('t_rax/widget/NavigationStyle.qss', 't_rax/widget/NavigationStyle.qss', 'DATA')]
+a.datas += [('t_rax/widget/stylesheet.qss', 't_rax/widget/stylesheet.qss', 'DATA')]
 
-
-pyz = PYZ(a.pure)
 
 from sys import platform as _platform
 
@@ -30,15 +52,14 @@ elif _platform == "win32" or _platform == "cygwin":
     name = "T-Rax.exe"
 elif _platform == "darwin":
     platform = "Mac64"
-    name = "T-Rax"
+    name = "run_t_rax"
 
-import sys
-sys.path.append(a.pathex[0])
 
-from controller.MainController import get_version
-version = get_version()
+version = 1.2
 
-pyz = PYZ(a.pure)
+pyz = PYZ(a.pure, a.zipped_data,
+          cipher=block_cipher)
+
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
@@ -46,7 +67,8 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=False)
+          console=True,
+          icon="t_rax/widget/icons/t_rax.ico")
 
 
 coll = COLLECT(exe,
@@ -59,4 +81,5 @@ coll = COLLECT(exe,
 
 if _platform == "darwin":
     app = BUNDLE(coll,
-                 name='T-Rax_{}.app'.format(version))
+                 name='T-Rax_{}.app'.format(version),
+                 icon='t_rax/widget/icons/t_rax.png')
