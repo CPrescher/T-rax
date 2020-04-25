@@ -517,7 +517,10 @@ class TestTemperatureModel(unittest.TestCase):
         out_path = os.path.join(unittest_files_path, 'data.txt')
         self.model.save_txt(out_path)
 
-        file = open(out_path)
+        ds_out_path = str(out_path).rsplit('.', 1)[0] + '_ds.txt'
+        us_out_path = str(out_path).rsplit('.', 1)[0] + '_us.txt'
+
+        file = open(ds_out_path)
         lines = file.readlines()
 
         self.assertEqual(lines[0], "# Fitted Temperatures:\n")
@@ -525,10 +528,23 @@ class TestTemperatureModel(unittest.TestCase):
         self.assertEqual(lines[2], "# Upstream (K): 1413.6	2.1\n")
         self.assertEqual(lines[3], "# \n")
         self.assertEqual(lines[4], "# Datacolumns:\n")
-        self.assertEqual(lines[5], "# lambda(nm)	DS_data	DS_fit	US_data	US_fit\n")
+        self.assertEqual(lines[5], "# lambda(nm)	DS_data	DS_fit\n")
 
         file.close()
-        os.remove(out_path)
+        os.remove(ds_out_path)
+
+        file = open(us_out_path)
+        lines = file.readlines()
+
+        self.assertEqual(lines[0], "# Fitted Temperatures:\n")
+        self.assertEqual(lines[1], "# Downstream (K): 1046.9	14.7\n")
+        self.assertEqual(lines[2], "# Upstream (K): 1413.6	2.1\n")
+        self.assertEqual(lines[3], "# \n")
+        self.assertEqual(lines[4], "# Datacolumns:\n")
+        self.assertEqual(lines[5], "# lambda(nm)	US_data	US_fit\n")
+
+        file.close()
+        os.remove(us_out_path)
 
     def test_get_roi_sum_handles_negative_indices(self):
         self.model.load_data_image(os.path.join(unittest_files_path, 'temper_009.spe'))
