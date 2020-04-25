@@ -39,12 +39,11 @@ jobs:
     - name: Run PyInstaller
       run: pyinstaller T-Rax.spec
 
-#    - name: Clean Up Executable Folder
-#      run: |
-#        cd dist/Dioptas*
-#        cd Contents/MacOS
-#        rm QtQuick QtQml QtQmlmodels QtNetwork QtWebSockets libcrypto.1.0.0.dylib
-#        rm -r imageio matplotlib mpl-data
+    - name: Clean Up Executable Folder
+      run: |
+        cd dist/T-Rax*
+        cd Contents/MacOS
+        rm QtQuick QtQml QtQmlmodels QtNetwork QtWebSockets libcrypto.1.0.0.dylib
 
     - name: Run T-Rax Executable
       run: |
