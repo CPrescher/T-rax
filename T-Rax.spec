@@ -88,4 +88,4 @@ coll = COLLECT(exe,
 if _platform == "darwin":
     app = BUNDLE(coll,
                  name='T-Rax_{}.app'.format(__version__),
-                 icon='t_rax/widget/icons/t_rax.png')
+                 icon='t_rax/widget/icons/t_rax.icns')
