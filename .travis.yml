@@ -6,23 +6,23 @@ services:
   - xvfb
 
 python:
-    - 3.7
+    - 3.6
 
 before_install:
     - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
     - ./miniconda.sh -b
     - export PATH=/home/travis/miniconda3/bin:$PATH
+    - conda install --yes python=3.6;
     - conda update --yes conda
-    - export PYTHONPATH=$PWD/t_rax:$PYTHONPATH
 
     #start x-server
     - export DISPLAY=:99.0
 
 install:
     - conda config --add channels cprescher
-    - conda install --yes scipy python-dateutil pytest pyqt h5py qtpy pyqtgraph lmfit
-    - pip install mock pyshortcuts
+    - conda install --yes scipy python-dateutil pytest pyqt h5py qtpy pyqtgraph lmfit mock
+    - pip install pyshortcuts
 
 script:
     - pytest

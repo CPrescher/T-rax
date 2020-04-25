@@ -20,11 +20,13 @@
 import unittest
 from mock import patch
 import os, shutil
-import sys
+
+import numpy as np
 
 from qtpy import QtCore, QtWidgets
 from qtpy.QtTest import QTest
-import numpy as np
+
+from tests.utility import QtTest
 
 from t_rax.model.TemperatureModel import TemperatureModel
 from t_rax.controller.TemperatureController import TemperatureController
@@ -35,16 +37,7 @@ unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 temperature_fitting_path = os.path.join(unittest_files_path, 'temperature_fitting')
 
 
-class TestTemperatureController(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class TestTemperatureController(QtTest):
     def setUp(self):
         self.widget = TemperatureWidget()
         self.model = TemperatureModel()

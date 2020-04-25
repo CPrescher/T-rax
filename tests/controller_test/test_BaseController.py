@@ -27,6 +27,8 @@ from numpy import array_equal
 from qtpy import QtWidgets, QtCore
 from qtpy.QtTest import QTest
 
+from tests.utility import QtTest
+
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
@@ -35,16 +37,7 @@ from t_rax.widget.BaseWidget import BaseWidget
 from t_rax.controller.BaseController import BaseController
 
 
-class BaseControllerTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class BaseControllerTest(QtTest):
     def setUp(self):
         self.widget = BaseWidget()
         self.model = SingleSpectrumModel()
@@ -60,7 +53,7 @@ class BaseControllerTest(unittest.TestCase):
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'temp.spe'))
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.txt'))
         self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.png'))
-        self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.svq'))
+        self.delete_file_if_exists(os.path.join(unittest_files_path, 'output.svg'))
 
     def delete_file_if_exists(self, path):
         if os.path.exists(path):

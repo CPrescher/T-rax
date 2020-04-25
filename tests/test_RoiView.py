@@ -23,18 +23,10 @@ import numpy as np
 from qtpy import QtWidgets
 
 from t_rax.widget.RoiWidget import RoiWidget
+from tests.utility import QtTest
 
 
-class TestNewRoiView(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class TestNewRoiView(QtTest):
     def setUp(self):
         self.roi_widget = RoiWidget()
         self.img_roi = self.roi_widget.img_widget.rois[0]

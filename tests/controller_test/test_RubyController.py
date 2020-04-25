@@ -24,6 +24,8 @@ from qtpy import QtWidgets, QtCore
 
 from qtpy.QtTest import QTest
 
+from tests.utility import QtTest
+
 from t_rax.model.RubyModel import RubyModel
 from t_rax.widget.RubyWidget import RubyWidget
 from t_rax.controller.RubyController import RubyController
@@ -33,16 +35,7 @@ unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
-class RubyControllerTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class RubyControllerTest(QtTest):
     def setUp(self):
         self.model = RubyModel()
         self.widget = RubyWidget(None)

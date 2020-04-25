@@ -25,6 +25,8 @@ from ..ehook import excepthook
 from qtpy import QtWidgets, QtCore
 from qtpy.QtTest import QTest
 
+from tests.utility import QtTest
+
 from t_rax.model.RamanModel import RamanModel
 from t_rax.widget.RamanWidget import RamanWidget
 from t_rax.controller.RamanController import RamanController
@@ -35,16 +37,7 @@ unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
-class RamanControllerTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class RamanControllerTest(QtTest):
     def setUp(self):
         self.model = RamanModel()
         self.widget = RamanWidget(None)
@@ -78,16 +71,7 @@ class RamanControllerTest(unittest.TestCase):
 ########Testing Overlays########
 
 
-class RamanOverlayControllerTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class RamanOverlayControllerTest(QtTest):
     def setUp(self):
         self.widget = RamanWidget(None)
         self.model = RamanModel()

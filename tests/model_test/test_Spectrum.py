@@ -20,18 +20,14 @@
 import unittest
 import os
 
+from tests.utility import QtTest
+
 import numpy as np
 
 from t_rax.model.Spectrum import Spectrum, BkgNotInRangeError
 
 
-class SpectrumTest(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
+class SpectrumTest(QtTest):
     def array_almost_equal(self, array1, array2, places=7):
         self.assertAlmostEqual(np.sum(array1 - array2), 0, places=places)
 

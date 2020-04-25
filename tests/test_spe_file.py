@@ -21,11 +21,12 @@ import datetime
 import os
 
 from t_rax.model.SpeFile import SpeFile
+from tests.utility import QtTest
 
 unittest_folder = os.path.join(os.path.dirname(__file__), 'test_files')
 
 
-class TestSPEModule(unittest.TestCase):
+class TestSPEModule(QtTest):
     def setUp(self):
         self.vers2_spe_file = SpeFile(os.path.join(unittest_folder, 'SPE_v2_PIXIS.SPE'))
         self.vers2_converted_spe_file = SpeFile(os.path.join(unittest_folder, 'SPE_v2_converted.SPE'))

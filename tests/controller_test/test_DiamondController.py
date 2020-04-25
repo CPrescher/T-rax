@@ -21,8 +21,9 @@ import unittest
 import os
 import numpy as np
 
-from qtpy import QtWidgets, QtCore
+from qtpy import QtCore
 from qtpy.QtTest import QTest
+from tests.utility import QtTest
 
 from t_rax.model.DiamondModel import DiamondModel
 from t_rax.widget.DiamondWidget import DiamondWidget
@@ -33,16 +34,7 @@ unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
-class DiamondControllerTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class DiamondControllerTest(QtTest):
     def setUp(self):
         self.model = DiamondModel()
         self.widget = DiamondWidget(None)

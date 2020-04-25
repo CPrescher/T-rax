@@ -17,10 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 import os
 
-from qtpy import QtWidgets
+from tests.utility import QtTest
 
 import numpy as np
 
@@ -32,16 +31,7 @@ unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
 
-class TestSingleTemperatureModel(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class TestSingleTemperatureModel(QtTest):
     def setUp(self):
         self.roi_manager = RoiDataManager(1)
         self.model = SingleTemperatureModel(0, self.roi_manager)

@@ -23,23 +23,15 @@ from qtpy import QtWidgets
 
 import numpy as np
 
+from tests.utility import QtTest
+
 from t_rax.model.BaseModel import SingleSpectrumModel
 
 unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
 
-class TestSingleSpectrumModel(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
-
+class TestSingleSpectrumModel(QtTest):
     def setUp(self):
         self.model = SingleSpectrumModel()
 

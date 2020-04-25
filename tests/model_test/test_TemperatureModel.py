@@ -24,6 +24,8 @@ from qtpy import QtWidgets
 
 import numpy as np
 
+from tests.utility import QtTest
+
 from t_rax.model.TemperatureModel import TemperatureModel, T_LOG_FILE, LOG_HEADER
 from t_rax.model.RoiData import Roi, get_roi_max, get_roi_sum
 
@@ -31,16 +33,7 @@ unittest_path = os.path.dirname(__file__)
 unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 
 
-class TestTemperatureModel(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class TestTemperatureModel(QtTest):
     def setUp(self):
         self.model = TemperatureModel()
 

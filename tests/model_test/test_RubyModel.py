@@ -24,6 +24,8 @@ import numpy as np
 
 from qtpy import QtWidgets
 
+from tests.utility import QtTest
+
 from t_rax.model.RubyModel import RubyModel
 
 unittest_path = os.path.dirname(__file__)
@@ -32,16 +34,7 @@ test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 ruby_file = os.path.join(unittest_files_path, 'ruby_fitting', 'Ruby.spe')
 
 
-class RubyModelTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class RubyModelTest(QtTest):
     def setUp(self):
         self.model = RubyModel()
 

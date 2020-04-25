@@ -21,6 +21,8 @@ import unittest
 import os
 from qtpy import QtWidgets
 
+from tests.utility import QtTest
+
 import numpy as np
 
 from t_rax.model.RamanModel import RamanModel, RAMAN_LOG_FILE, LOG_HEADER
@@ -30,16 +32,7 @@ unittest_files_path = os.path.join(unittest_path, '..', 'test_files')
 test_file = os.path.join(unittest_files_path, 'temper_009.spe')
 
 
-class RamanModelTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
+class RamanModelTest(QtTest):
     def setUp(self):
         raman_export_path = unittest_files_path
         self.log_path = os.path.join(raman_export_path, RAMAN_LOG_FILE)

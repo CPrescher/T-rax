@@ -20,20 +20,12 @@
 import unittest
 from qtpy import QtWidgets
 
+from tests.utility import QtTest
+
 from t_rax.model.RoiData import RoiDataManager
 
 
-class TestNewRoiData(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.app = QtWidgets.QApplication([])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-        cls.app.deleteLater()
-
-
+class TestNewRoiData(QtTest):
     def test_single_roi_get_and_set_methods(self):
         roi_data_manager = RoiDataManager(1)
 

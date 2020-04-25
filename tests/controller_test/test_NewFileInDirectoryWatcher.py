@@ -17,22 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.import unittest
 
-
-import unittest
 import os
-
-from qtpy import QtWidgets
 from mock import Mock
+
+from tests.utility import QtTest
 
 from t_rax.controller.NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 
 unittest_folder = os.path.join(os.path.dirname(__file__), '..', 'test_files')
 
 
-class TestNewFileInDirectoryWatcher(unittest.TestCase):
-    def setUp(self):
-        self.app = QtWidgets.QApplication([])
-
+class TestNewFileInDirectoryWatcher(QtTest):
     def tearDown(self):
         self.delete_if_exists('test.txt')
 
