@@ -37,7 +37,7 @@ jobs:
         pip install --pre pyqtgraph
 
     - name: Run T-rax from source to test and create version file
-      run: xvfb-run run_t_rax.py test
+      run: xvfb-run python run_t_rax.py test
         
     - name: Run PyInstaller
       run: pyinstaller T-Rax.spec
