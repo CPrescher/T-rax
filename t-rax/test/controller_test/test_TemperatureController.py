@@ -263,8 +263,13 @@ class TestTemperatureController(unittest.TestCase):
         filedialog.return_value = out_path
         QTest.mouseClick(self.widget.save_data_btn, QtCore.Qt.LeftButton)
 
-        self.assertTrue(os.path.exists(out_path))
-        os.remove(out_path)
+        saved_filename_us = os.path.splitext(out_path)[0] + '_us.txt'
+        saved_filename_ds = os.path.splitext(out_path)[0] + '_ds.txt'
+
+        self.assertTrue(os.path.exists(saved_filename_us))
+        self.assertTrue(os.path.exists(saved_filename_us))
+        os.remove(saved_filename_us)
+        os.remove(saved_filename_ds)
 
     @patch('qtpy.QtWidgets.QFileDialog.getSaveFileName')
     def test_saving_graph_image(self, filedialog):
