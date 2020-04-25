@@ -19,7 +19,7 @@
 
 import unittest
 from mock import patch
-import os
+import os, shutil
 import sys
 
 from qtpy import QtCore, QtWidgets
@@ -87,6 +87,13 @@ class TestTemperatureController(unittest.TestCase):
         self.array_almost_equal(ds_y, ds_y_2)
         self.array_almost_equal(us_x, us_x_2)
         self.array_almost_equal(us_y, us_y_2)
+
+    def test_loading_multiple_files(self):
+        filename1 = os.path.join(temperature_fitting_path, 'test_measurement.spe')
+        filename2 = os.path.join(temperature_fitting_path, 'test_measurement2.spe')
+        shutil.copyfile(filename1, filename2)
+        self.controller.load_data_file([filename1, filename2])
+        self.assertEqual(self.model.filename, filename2)
 
     def test_updating_gui_after_loading_single_frame_data(self):
         filename = os.path.join(temperature_fitting_path, 'test_measurement.spe')

@@ -22,7 +22,7 @@ import os
 from qtpy import QtWidgets, QtCore
 
 from widget.TemperatureWidget import TemperatureWidget
-from widget.Widgets import open_file_dialog, save_file_dialog
+from widget.Widgets import open_file_dialog, open_files_dialog, save_file_dialog
 from model.TemperatureModel import TemperatureModel
 from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 import numpy as np
@@ -100,15 +100,19 @@ class TemperatureController(QtCore.QObject):
     def connect_click_function(self, emitter, function):
         emitter.clicked.connect(function)
 
-    def load_data_file(self, filename=None):
-        if filename is None or filename is False:
-            filename = open_file_dialog(self.widget, caption="Load Experiment SPE",
-                                        directory=self._exp_working_dir)
+    def load_data_file(self, filenames=None):
+        if isinstance(filenames, str):
+            filenames = [filenames]
+        if filenames is None or filenames is False:
+            filenames = open_files_dialog(self.widget, caption="Load Experiment SPE",
+                                          directory=self._exp_working_dir)
 
-        if filename is not '':
-            self._exp_working_dir = os.path.dirname(str(filename))
-            self.model.load_data_image(str(filename))
-            self._directory_watcher.path = self._exp_working_dir
+        for filename in filenames:
+            if filename is not '':
+                self._exp_working_dir = os.path.dirname(str(filename))
+                self.model.load_data_image(str(filename))
+                self._directory_watcher.path = self._exp_working_dir
+                print('Loaded File: ', filename)
 
     def load_ds_calibration_file(self, filename=None):
         if filename is None or filename is False:
@@ -250,6 +254,7 @@ class TemperatureController(QtCore.QObject):
 
         self.ds_calculations_changed()
         self.us_calculations_changed()
+        self.model.write_to_log_file()
 
     def ds_calculations_changed(self):
         if self.model.ds_calibration_filename is not None:
