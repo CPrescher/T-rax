@@ -11,23 +11,25 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    - uses: goanpeca/setup-miniconda@v1
+    - name: Setup Python 3.7
+      uses: actions/setup-python@v1
       with:
-        auto-update-conda: true
         python-version: 3.7
-        channels: cprescher
 
-    - name: Install Conda Dependencies
-      shell: bash -l {0}
-      run: |
-        conda install --yes scipy python-dateutil pytest pyqt h5py qtpy pyqtgraph lmfit
-        
+    - name: Use Python Dependency Cache
+      id: pip-cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('T-Rax.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install Apt Dependencies
+      run: sudo apt-get install libxkbcommon-x11-0
+
     - name: Install Pip Dependencies
-      shell: bash -l {0}
-      run:
-        pip install mock pyshortcuts
-
+      run: pip install scipy python-dateutil pytest pyqt5 h5py qtpy pyqtgraph lmfit mock pyshortcuts
+        
     - name: Run tests
-      shell: bash -l {0}
-      run: |
-        xvfb-run -a py.test
+      run: xvfb-run -a py.test
