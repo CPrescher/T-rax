@@ -51,9 +51,15 @@ def run_t_rax():
         make_shortcut(script, name='T-Rax',icon=iconfile, terminal=True)
         
     else:
-        app = QtWidgets.QApplication(sys.argv)
-        if platform != "darwin":
-            app.setStyle('plastique')
-        controller = MainController()
-        controller.show_window()
-        app.exec_()
+        if len(sys.argv) == 1: # normal start
+            app = QtWidgets.QApplication(sys.argv)
+            if platform != "darwin":
+                app.setStyle('plastique')
+            controller = MainController()
+            controller.show_window()
+            app.exec_()
+        else: # with command line arguments
+            if sys.argv[1] == 'test':
+                app = QtWidgets.QApplication(sys.argv)
+                controller = MainController()
+                controller.show_window()
