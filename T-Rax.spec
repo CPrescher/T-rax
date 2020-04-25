@@ -54,8 +54,14 @@ elif _platform == "darwin":
     platform = "Mac64"
     name = "run_t_rax"
 
+# getting the current version of Dioptas
+# __version__ file for executable has prevalence over versioneer output
+try:
+    with open(os.path.join('dioptas', '__version__'), 'r') as fp:
+        __version__ = fp.readline()
+except FileNotFoundError:
+    from t_rax import __version__
 
-version = 1.2
 
 pyz = PYZ(a.pure, a.zipped_data,
           cipher=block_cipher)
@@ -67,7 +73,7 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=True,
+          console=False,
           icon="t_rax/widget/icons/t_rax.ico")
 
 
@@ -77,9 +83,9 @@ coll = COLLECT(exe,
                a.datas,
                strip=None,
                upx=True,
-               name='T-Rax_{}_{}'.format(platform, version))
+               name='T-Rax_{}_{}'.format(platform, __version__))
 
 if _platform == "darwin":
     app = BUNDLE(coll,
-                 name='T-Rax_{}.app'.format(version),
+                 name='T-Rax_{}.app'.format(__version__),
                  icon='t_rax/widget/icons/t_rax.png')

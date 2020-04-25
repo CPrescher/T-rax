@@ -11,11 +11,11 @@
 *.XML
 T-Rax/spe_xml.xml
 T_log.txt
+__version__
 
 spe_xml.xml
 dist/
 build/
-_version.py
 
 
 # Build results

@@ -17,15 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__version__ = '1.2'
-
 import os
 import sys
 from sys import platform
 from optparse import OptionParser
 from pyshortcuts import make_shortcut
 from qtpy import QtWidgets
+
+from .version import get_version
+__version__ = get_version()
+
 from .controller.MainController import MainController
+
 
 
 def run_t_rax():
@@ -54,4 +57,3 @@ def run_t_rax():
         controller = MainController()
         controller.show_window()
         app.exec_()
-
