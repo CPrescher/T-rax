@@ -14,7 +14,7 @@ before_install:
     - ./miniconda.sh -b
     - export PATH=/home/travis/miniconda/bin:$PATH
     - conda update --yes conda
-    - export PYTHONPATH=$PWD/t-rax:$PYTHONPATH
+    - export PYTHONPATH=$PWD/t_rax:$PYTHONPATH
 
     #start x-server
     - export DISPLAY=:99.0
@@ -25,5 +25,5 @@ install:
     - pip install coverage PyOpenGL mock
 
 script:
-    - cd t-rax/test
+    - cd t_rax/test
     - nosetests --with-coverage --cover-package=controller,model,widget
