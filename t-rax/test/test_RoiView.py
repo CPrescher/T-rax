@@ -50,7 +50,7 @@ class TestNewRoiView(unittest.TestCase):
         self.assertEqual(x_min_gb, 100)
         self.assertEqual(y_min_gb, 100)
 
-        self.img_roi.setSize(100, 100)
+        self.img_roi.setSize((100, 100))
 
         x_max_gb = np.round(float(str(self.roi_gb.x_max_txt.text())))
         y_max_gb = np.round(float(str(self.roi_gb.y_max_txt.text())))
