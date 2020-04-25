@@ -42,11 +42,10 @@ jobs:
     - name: Run PyInstaller
       run: pyinstaller T-Rax.spec
 
-#    - name: Clean Up Executable Folder
-#      run: |
-#        cd dist/T-Rax*
-#        rm libQt5Quick.so.5 libQt5Qml.so.5 libQt5Network.so.5 libcrypto.so.1.1 libsqlite3.so.0
-#        rm -r imageio matplotlib mpl-data
+    - name: Clean Up Executable Folder
+      run: |
+        cd dist/T-Rax*
+        rm libQt5Quick.so.5 libQt5Qml.so.5 libQt5Network.so.5 libcrypto.so.1.1
 
     - name: Run T-Rax executable
       run: |
