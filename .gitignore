@@ -7,13 +7,11 @@
 *.sln.docstates
 
 *.pyc
-*.spe
-*.SPE
-*.txt
 *.xml
 *.XML
 *.trs
 T-Rax/spe_xml.xml
+T_log.txt
 
 spe_xml.xml
 dist/
