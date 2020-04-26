@@ -81,5 +81,8 @@ class TestSPEModule(QtTest):
         self.assertEqual(self.vers3_spe_file_full_sensor.get_roi(),
                          [0, dimensions[0] - 1, 0, dimensions[1] - 1])
 
+    def test_reading_files_with_asian_characters(self):
+        self.spe_file = SpeFile(os.path.join(unittest_folder, 'asian character.spe'))
+
     def test_multiple_frames(self):
         self.spe3_2frames_file = SpeFile(os.path.join(unittest_folder, 'SPE_v3_PIMAX_2frames.spe'))
