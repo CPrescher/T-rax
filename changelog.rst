@@ -1,3 +1,7 @@
+Version 1.3
+-----------
+    - fixed a bug for spe files with asian characters inside the xml description
+
 Version 1.2
 -----------
     - temperature mode 'save data' files are now saved separately for upstream (us) and downstream (ds), to also
