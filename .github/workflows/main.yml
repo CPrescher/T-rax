@@ -1,0 +1,37 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    - name: Setup Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - name: Use Python Dependency Cache
+      id: pip-cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('T-Rax.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install Apt Dependencies
+      run: sudo apt-get install libxkbcommon-x11-0
+
+    - name: Install Pip Dependencies
+      run: |
+        pip install scipy python-dateutil pytest pyqt5 h5py qtpy lmfit mock pyshortcuts
+        pip install --pre pyqtgraph
+        
+    - name: Run tests
+      run: xvfb-run -a pytest
