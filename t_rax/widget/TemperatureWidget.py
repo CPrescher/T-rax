@@ -23,7 +23,8 @@ from .TemperatureSpectrumWidget import TemperatureSpectrumWidget
 from .RoiWidget import RoiWidget
 from .Widgets import TemperatureFileGroupBox as FileGroupBox
 from .Widgets import OutputGroupBox, StatusBar
-widget_path = os.path.dirname(__file__)
+
+from .. import style_path
 
 
 class TemperatureWidget(QtWidgets.QWidget):
@@ -198,7 +199,7 @@ class TemperatureCalibrationTab(QtWidgets.QWidget):
         self._layout.addWidget(self.upstream_gb)
 
         self._layout.addSpacerItem(QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Fixed,
-                                                     QtWidgets.QSizePolicy.Expanding))
+                                                         QtWidgets.QSizePolicy.Expanding))
         self.setLayout(self._layout)
 
 
@@ -315,7 +316,7 @@ class SetupEpicsDialog(QtWidgets.QDialog):
         self.ok_btn.setEnabled(False)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
-        file = open(os.path.join(widget_path, "stylesheet.qss"))
+        file = open(os.path.join(style_path, "stylesheet.qss"))
         stylesheet = file.read()
         self.setStyleSheet(stylesheet)
         file.close()

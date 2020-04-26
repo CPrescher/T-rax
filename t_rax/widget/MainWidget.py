@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from qtpy import QtCore, QtWidgets
+from qtpy import QtCore, QtWidgets, QtGui
 from functools import partial
 
 from .TemperatureWidget import TemperatureWidget
@@ -26,7 +26,8 @@ from .RubyWidget import RubyWidget
 from .DiamondWidget import DiamondWidget
 from .RamanWidget import RamanWidget
 
-module_path = os.path.dirname(__file__)
+from .. import style_path
+from .. import icons_path
 
 
 class MainWidget(QtWidgets.QWidget):
@@ -54,11 +55,13 @@ class MainWidget(QtWidgets.QWidget):
         self.load_stylesheet()
         self.setLayout(self._main_layout)
 
+        self.setWindowIcon(QtGui.QIcon(os.path.join(icons_path, 't_rax.ico')))
+
     def load_stylesheet(self):
-        main_stylesheet_file = open(os.path.join(module_path, "TRaxStyle.qss"), 'r')
+        main_stylesheet_file = open(os.path.join(style_path, "TRaxStyle.qss"), 'r')
         main_stylesheet_str = main_stylesheet_file.read()
         main_stylesheet_file.close()
-        navigation_stylesheet_file = open(os.path.join(module_path, "NavigationStyle.qss"), 'r')
+        navigation_stylesheet_file = open(os.path.join(style_path, "NavigationStyle.qss"), 'r')
         navigation_stylesheet_str = navigation_stylesheet_file.read()
         navigation_stylesheet_file.close()
         self.setStyleSheet(main_stylesheet_str + '\n' + navigation_stylesheet_str)
@@ -96,7 +99,7 @@ class NavigationWidget(QtWidgets.QFrame):
         self._layout.addWidget(self.diamond_btn)
         self._layout.addWidget(self.raman_btn)
         self._layout.addSpacerItem(QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Expanding,
-                                                     QtWidgets.QSizePolicy.Fixed))
+                                                         QtWidgets.QSizePolicy.Fixed))
         self._layout.addWidget(self.copyright_lbl)
         self.setLayout(self._layout)
 

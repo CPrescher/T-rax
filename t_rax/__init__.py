@@ -27,8 +27,11 @@ from qtpy import QtWidgets
 from .version import get_version
 __version__ = get_version()
 
-from .controller.MainController import MainController
+resources_path = os.path.join(os.path.dirname(__file__), 'resources')
+icons_path = os.path.join(resources_path, 'icons')
+style_path = os.path.join(resources_path, 'style')
 
+from .controller.MainController import MainController
 
 
 def run_t_rax():
@@ -47,7 +50,7 @@ def run_t_rax():
             bindir = 'Scripts'
         script = os.path.join(sys.prefix, bindir, 'run_t_rax')
         _path, _fname = os.path.split(__file__)
-        iconfile = os.path.join(_path, 'widget', 'icons', 't_rax.ico')
+        iconfile = os.path.join(_path, 'resources', 'icons', 't_rax.ico')
         make_shortcut(script, name='T-Rax',icon=iconfile, terminal=True)
         
     else:

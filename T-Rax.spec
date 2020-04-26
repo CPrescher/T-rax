@@ -1,18 +1,17 @@
 # -*- mode: python -*-
 
-block_cipher = None
 
 import os
-folder = os.getcwd()
-
-from distutils.sysconfig import get_python_lib
-
-site_packages_path = get_python_lib()
 import lib2to3
+
+
+block_cipher = None
+folder = os.getcwd()
 
 lib2to3_path = os.path.dirname(lib2to3.__file__)
 
 extra_datas = [
+    ("t_rax/resources", "t_rax/resources"),
     (os.path.join(lib2to3_path, 'Grammar.txt'), 'lib2to3/'),
     (os.path.join(lib2to3_path, 'PatternGrammar.txt'), 'lib2to3/'),
 ]
@@ -33,11 +32,6 @@ a = Analysis(['run_t_rax.py'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher)
-
-## extra files for getting things to work
-a.datas += [('t_rax/widget/TRaxStyle.qss', 't_rax/widget/TRaxStyle.qss', 'DATA')]
-a.datas += [('t_rax/widget/NavigationStyle.qss', 't_rax/widget/NavigationStyle.qss', 'DATA')]
-a.datas += [('t_rax/widget/stylesheet.qss', 't_rax/widget/stylesheet.qss', 'DATA')]
 
 
 from sys import platform as _platform
@@ -62,6 +56,7 @@ try:
 except FileNotFoundError:
     from t_rax import __version__
 
+from t_rax import icons_path
 
 pyz = PYZ(a.pure, a.zipped_data,
           cipher=block_cipher)
@@ -74,7 +69,7 @@ exe = EXE(pyz,
           strip=None,
           upx=True,
           console=False,
-          icon="t_rax/widget/icons/t_rax.ico")
+          icon=os.path.join(icons_path, "t_rax.ico"))
 
 
 coll = COLLECT(exe,
@@ -88,4 +83,4 @@ coll = COLLECT(exe,
 if _platform == "darwin":
     app = BUNDLE(coll,
                  name='T-Rax_{}.app'.format(__version__),
-                 icon='t_rax/widget/icons/t_rax.icns')
+                 icon=os.path.join(icons_path, "t_rax.icns"))
