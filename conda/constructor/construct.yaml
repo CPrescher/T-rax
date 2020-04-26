@@ -32,5 +32,5 @@ specs:
 post_install: post_install_unix.sh  # [linux64 or osx]
 post_install: post_install_windows.bat # [win]
 
-welcome_image: ../../t_rax/widget/icons/t_rax.png  #  [win]
+welcome_image: ../../t_rax/resources/icons/t_rax.png  #  [win]
 

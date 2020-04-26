@@ -1,0 +1,52 @@
+{% set name = "T-Rax" %}
+{% set version = "1.2" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/Dioptas/{{ name }}/archive/{{ version }}.tar.gz
+
+build:
+  number: 11
+  script: python setup.py build install --single-version-externally-managed --record record.txt
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy>=1.10
+    - scipy>=0.17
+    - six>=1.10
+    - h5py
+    - matplotlib
+    - qtpy
+    - pyqtgraph
+    - lmfit
+    - pyshortcuts
+
+  run:
+    - python
+    - setuptools
+    - numpy>=1.10
+    - scipy>=0.17
+    - six>=1.10
+    - h5py
+    - matplotlib
+    - qtpy
+    - pyqtgraph
+    - lmfit
+    - pyshortcuts
+
+about:
+  home: http://github.com/CPrescher/T-Rax
+  license: GPLv3
+  license_family: GPL
+  license_file: license.txt
+  summary: 'GUI Software for displaying and analyzing Raman and Spectroscopic data collected as SPE-Files'
+
+  extra:
+    recipe-maintainers:
+      - CPrescher
+
