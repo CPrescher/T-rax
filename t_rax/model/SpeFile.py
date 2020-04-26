@@ -168,9 +168,9 @@ class SpeFile(object):
 
     def _get_xml_string(self):
         """Reads out the xml string from the file end"""
-        xml_size = self.get_file_size() - self.xml_offset
-        xml = self._read_at(self.xml_offset, xml_size, np.byte)
-        self.xml_string = ''.join([chr(i) for i in xml])
+        self._fid.seek(int(self.xml_offset))
+        self.xml_string = self._fid.read()
+
         if self.debug:
             fid = open(self.filename+'.xml', 'w')
             for line in self.xml_string:
