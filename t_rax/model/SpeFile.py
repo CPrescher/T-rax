@@ -276,6 +276,16 @@ class SpeFile(object):
                 self.roi_y = 0
                 self.roi_width = self._xdim
                 self.roi_height = self._ydim
+            elif self.roi_modus == 'LineSensor':
+                self.roi_dom_width = self.dom.getElementsByTagName('DataFormat')[0]. \
+                                        getElementsByTagName('DataBlock')[0].\
+                                        getElementsByTagName('DataBlock')[0]
+                self.roi_width = int(self.roi_dom_width.attributes['width'].value)
+                self.roi_height = 1
+                self.roi_x = 0
+                self.roi_y = 0
+                self._xdim = self.roi_width
+                self._ydim = 1
 
         except IndexError:
             self.roi_x = 0
