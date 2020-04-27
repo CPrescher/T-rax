@@ -1,3 +1,7 @@
+Version 1.4
+-----------
+    - fixed a bug for spe files with collected in LineSensor mode (spectroscopy mode)
+
 Version 1.3
 -----------
     - fixed a bug for spe files with asian characters inside the xml description
