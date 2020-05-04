@@ -1,3 +1,7 @@
+Version 1.4.2 (4.05.2020)
+.........................
+    - fixed reading SPE Files with arbitrary XML offset (not zero, but positive for some reason)
+
 Version 1.4.1 (04.05.2020)
 --------------------------
     - fixed bug for loading unspecified SPE files (xml_offset is negative for some reason)
