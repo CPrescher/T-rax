@@ -99,5 +99,8 @@ class TestSPEModule(QtTest):
         self.assertEqual(len(self.spe_file.x_calibration), self.spe_file.img.shape[1])
 
     def test_reading_undefined_spe_file(self):
-        self.spe_file = SpeFile(os.path.join(unittest_folder, 'undefined.spe'))
+        self.spe_file = SpeFile(os.path.join(unittest_folder, 'undefined_1.spe'))
+        self.assertEqual(len(self.spe_file.x_calibration), self.spe_file.img.shape[1])
+
+        self.spe_file = SpeFile(os.path.join(unittest_folder, 'undefined_2.spe'))
         self.assertEqual(len(self.spe_file.x_calibration), self.spe_file.img.shape[1])
