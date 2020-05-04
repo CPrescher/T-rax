@@ -68,8 +68,8 @@ class SpeFile(object):
         header (version 2) or in the xml-footer for the experimental parameters"""
         self._read_size()
         self._read_datatype()
-        self.xml_offset = self._read_at(678, 1, np.long)
-        if self.xml_offset == [0]:  # means that there is no XML present, hence it is a pre 3.0 version of the SPE
+        self.xml_offset = self._read_at(678, 1, np.long)[0]
+        if self.xml_offset <= 0:  # means that there is no XML present, hence it is a pre 3.0 version of the SPE
             # file
             self._read_parameter_from_header()
         else:
@@ -276,6 +276,16 @@ class SpeFile(object):
                 self.roi_y = 0
                 self.roi_width = self._xdim
                 self.roi_height = self._ydim
+            elif self.roi_modus == 'LineSensor':
+                self.roi_dom_width = self.dom.getElementsByTagName('DataFormat')[0]. \
+                                        getElementsByTagName('DataBlock')[0].\
+                                        getElementsByTagName('DataBlock')[0]
+                self.roi_width = int(self.roi_dom_width.attributes['width'].value)
+                self.roi_height = 1
+                self.roi_x = 0
+                self.roi_y = 0
+                self._xdim = self.roi_width
+                self._ydim = 1
 
         except IndexError:
             self.roi_x = 0

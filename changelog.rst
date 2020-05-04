@@ -1,3 +1,12 @@
+Version 1.4.1 (04.05.2020)
+--------------------------
+    - fixed bug for loading unspecified SPE files (xml_offset is negative for some reason)
+    - zooming out with a single right click in a graph or image widget is now working correctly
+
+Version 1.4
+-----------
+    - fixed a bug for spe files with collected in LineSensor mode (spectroscopy mode)
+
 Version 1.3
 -----------
     - fixed a bug for spe files with asian characters inside the xml description
