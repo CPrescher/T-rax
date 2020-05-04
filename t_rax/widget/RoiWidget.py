@@ -267,7 +267,7 @@ class RoiImageWidget(QtWidgets.QWidget):
         if ev.button() == QtCore.Qt.RightButton or \
                 (ev.button() == QtCore.Qt.LeftButton and
                          ev.modifiers() & QtCore.Qt.ControlModifier):
-            self.pg_viewbox.scaleBy(2)
+            self.pg_viewbox.scaleBy((2, 2))
 
         elif ev.button() == QtCore.Qt.LeftButton:
             pos = self.pg_viewbox.mapFromScene(ev.pos())

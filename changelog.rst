@@ -1,6 +1,7 @@
 Version 1.4.1 (04.05.2020)
 --------------------------
     - fixed bug for loading unspecified SPE files (xml_offset is negative for some reason)
+    - zooming out with a single right click in a graph or image widget is now working correctly
 
 Version 1.4
 -----------
