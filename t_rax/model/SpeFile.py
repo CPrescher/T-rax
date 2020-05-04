@@ -73,7 +73,10 @@ class SpeFile(object):
             # file
             self._read_parameter_from_header()
         else:
-            self._read_parameter_from_dom()
+            try:
+                self._read_parameter_from_dom()
+            except: # if fails for any reason, try reading from the header
+                self._read_parameter_from_header()
 
     def _read_size(self):
         """reads the dimensions of the Model from the header into the object
