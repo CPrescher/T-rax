@@ -1,3 +1,7 @@
+Version 1.4.1 (04.05.2020)
+--------------------------
+    - fixed bug for loading unspecified SPE files (xml_offset is negative for some reason)
+
 Version 1.4
 -----------
     - fixed a bug for spe files with collected in LineSensor mode (spectroscopy mode)

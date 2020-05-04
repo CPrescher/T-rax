@@ -97,3 +97,7 @@ class TestSPEModule(QtTest):
     def test_reading_image_with_glue_and_spectroscopy_mode(self):
         self.spe_file = SpeFile(os.path.join(unittest_folder, 'spectroscopy_glue.spe'))
         self.assertEqual(len(self.spe_file.x_calibration), self.spe_file.img.shape[1])
+
+    def test_reading_undefined_spe_file(self):
+        self.spe_file = SpeFile(os.path.join(unittest_folder, 'undefined.spe'))
+        self.assertEqual(len(self.spe_file.x_calibration), self.spe_file.img.shape[1])
