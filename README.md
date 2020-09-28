@@ -38,12 +38,12 @@ winpython or Python(x,y). On Linux PyQt usually can be easily installed using th
 
 Using the minimum anaconda distribution, you have to only type the following two commands:
 
-    conda install pyqt numpy scipy h5py
-    pip install pyqtgraph dateutils lmfit
+    conda install pyqt numpy scipy h5py qtpy pyqtgraph
+    pip install dateutils lmfit pyshortcuts
     
 The program itself can then be run by going into the "t-rax" directory and type:
     
-    python t-rax.py
+    python run_t-rax.py
 
 
 
